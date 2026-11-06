@@ -1,6 +1,6 @@
 # Workflow and Engineering Profile — AlgoQuest
 
-Status: **Proposed** (D-004, D-005, D-007); stack approved (D-030).
+Status: **Approved** (D-004, D-005, D-007, D-030), PO, 2026-11-06.
 
 ## Branching and merges
 
@@ -28,7 +28,7 @@ Proposed → Ready → In Progress → In Review → Done in [BACKLOG.md](BACKLO
 
 Each sprint ends with `docs/reports/sprint-N-report.md`: goal and outcome, delivered work with evidence, implemented vs. verified vs. reviewed vs. merged, decisions, problems, what is not done, next sprint.
 
-## Engineering profile (standard §16) — option B (D-030), finalised in Sprint 1
+## Engineering profile (standard §16) — option B (D-030); tool versions confirmed in Sprint 1
 
 ```text
 Languages, versions, platforms:

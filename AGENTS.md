@@ -2,7 +2,7 @@
 
 Project: AlgoQuest — gamified algorithm-learning web app
 Standard: AI-Assisted Software Engineering Standard **v1.5**, commit `ec037a4` of the private repository `lamkhai0604/engineering-standard` (D-009, D-003). Contributors need access to that repository; a local copy may be placed in `docs/standard/`, which is git-ignored.
-Adoption: Approved — Product Owner, 2026-11-06 (D-009). The remaining planning baseline is under review (T-002).
+Adoption: Approved — Product Owner, 2026-11-06 (D-009). Planning baseline approved (T-002).
 
 ## Read before work
 
@@ -18,9 +18,9 @@ Adoption: Approved — Product Owner, 2026-11-06 (D-009). The remaining planning
 
 Then verify the actual repository state (branch, latest commit, uncommitted changes, open PRs) before making changes. Never invent repository state, test results, or approvals.
 
-## Permissions (D-004, proposed)
+## Permissions (D-004)
 
-Implementation: tasks marked Ready in BACKLOG.md, within their acceptance criteria. No application code until the planning baseline is approved (D-008).
+Implementation: tasks marked Ready in BACKLOG.md, within their acceptance criteria. No application code before Sprint 1 is planned (D-008).
 Branch / commit / merge: one task branch per task, cut from `dev` and named per WORKFLOW.md; merged into `dev` when its checks pass
 `main`: protected; changed only through a `dev → main` pull request merged by the Product Owner
 Deployment / release: Product Owner approval required
