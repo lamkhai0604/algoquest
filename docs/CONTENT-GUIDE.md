@@ -1,6 +1,6 @@
 # Content Guide — AlgoQuest
 
-How lessons and problems are written (D-020). Status: **Proposed**.
+How lessons and problems are written (D-020). Status: **Approved** — PO, 2026-11-06.
 
 ## 1. Rules for all content
 
