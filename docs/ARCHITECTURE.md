@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Version | 0.2 (draft) |
-| Status | **Proposed** for detail; the stack itself (option B) is **Approved** (D-030) |
-| Requirements baseline | [SRS.md](SRS.md) v0.2 |
+| Version | 1.0 |
+| Status | **Approved baseline** — PO, 2026-11-06 (T-002) |
+| Requirements baseline | [SRS.md](SRS.md) v1.0 |
 
 Diagrams are Mermaid source in this file; GitHub renders them and this file is their single editable source.
 
@@ -176,7 +176,7 @@ stateDiagram-v2
     }
 ```
 
-Level 1 starts Open. Assumption to confirm: an Easy-only level can also reach its practice round and test from its Easy problems.
+Level 1 starts Open. An Easy-only level can also reach its practice round and test from its Easy problems (approved in T-002).
 
 ### 6.3 Sign-in (FR-01)
 
@@ -232,7 +232,7 @@ sequenceDiagram
     end
 ```
 
-## 7. API (v1, proposed)
+## 7. API (v1)
 
 | Method | Path | Permission | Requirement |
 | --- | --- | --- | --- |
@@ -261,7 +261,7 @@ sequenceDiagram
 | GET | `/api/v1/admin/audit-log` | `admin.auditLog.view` | FR-17.6 |
 | GET | `/actuator/health` | — | Hosting |
 
-## 8. Data Model (ER, proposed)
+## 8. Data Model (ER)
 
 ```mermaid
 erDiagram
