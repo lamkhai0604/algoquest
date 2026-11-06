@@ -2,9 +2,9 @@
 
 Authoritative backlog (D-005). States: Proposed → Ready → In Progress → In Review → Done; also Blocked, Awaiting Approval, Cancelled.
 Priorities: P1 = blocks the current milestone, P2 = planned, P3 = deferrable.
-Acceptance criteria for feature tasks are the referenced SRS criteria plus any listed here. Evidence is added when a task moves to Done. Task IDs are fixed once the PO approves the backlog in T-002; until then the proposal may be renumbered (it was renumbered on 2026-11-06 after option B was chosen).
+Acceptance criteria for feature tasks are the referenced SRS criteria plus any listed here. Evidence is added when a task moves to Done. Task IDs are fixed (backlog approved in T-002, 2026-11-06).
 
-## Sprint roadmap (proposed, option B)
+## Sprint roadmap (approved, option B)
 
 Each sprint is about one week, sized for a few hours of PO review time. Dates are set when a sprint is planned. Every sprint ends with a report (D-007) and screenshots of any UI work.
 
@@ -22,7 +22,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | ID | Title | Req | Owner | Priority | Status | Depends on | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Baseline planning docs + grading test kit | all | Claude | P1 | In Review — on `dev` | — | Docs on `dev`; proposals labelled; links work |
-| T-002 | Review and approve the planning baseline | all | PO | P1 | In Progress — D-009 (standard v1.5) and D-030 (option B) approved 2026-11-06 | T-001, T-006, T-007 | Every Proposed decision Approved, changed, or rejected; backlog IDs frozen |
+| T-002 | Review and approve the planning baseline | all | PO | P1 | Done — all decisions approved 2026-11-06; SRS and ARCHITECTURE v1.0 | T-001, T-006, T-007 | Every Proposed decision Approved, changed, or rejected; backlog IDs frozen |
 | T-003 | Accounts and keys: Gemini (AI Studio), RapidAPI (Judge0 CE Basic), Google OAuth client, GitHub OAuth App (local + production), Neon project for AlgoQuest | — | PO | P1 | Proposed | T-002 | Keys stored only in Render/GitHub secrets or a local `.env` (names in TOOLS.md §5); never shared in messages or committed |
 | T-004 | Repository settings: private visibility (D-023), branch protection on `main`, Actions enabled | NFR-08 | PO | P2 | Proposed | — | Verified by Claude through the GitHub API, or recorded as a gap |
 | T-005 | Run the grading test with Gemini Flash and tune the prompt until NFR-03 passes | NFR-03, D-031 | PO (runs), Claude (analysis) | P1 | Proposed | T-003 (Gemini key) | Output and CSV recorded; NFR-03 met or another model decided; latency noted for NFR-04 |
@@ -31,7 +31,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-008 | Apply the professional record style to all project records (neutral wording, no conversation traces or personal details) | D-005 | Claude | P2 | In Review — on `dev` | T-007 | No conversational wording, personal details, or private links in committed records |
 | T-009 | Upgrade the project pin to standard v1.5 | D-009 | Claude | P2 | Done — pinned to `ec037a4` | T-008 | D-009 and AGENTS.md name the merged v1.5 commit |
 
-## Sprint 1 — Foundations (proposed)
+## Sprint 1 — Foundations
 
 | ID | Title | Req | Priority | Acceptance criteria (in addition to the requirement's) |
 | --- | --- | --- | --- | --- |
@@ -43,7 +43,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-106 | Smoke workflow: compose Postgres + backend image + Vite + Playwright, fake OAuth login for CI, screenshots as artifacts | NFR-08 | P2 | Runs on PRs and on demand; screenshots attached as review evidence |
 | T-107 | Sprint 1 report | D-007 | P2 | Report on `dev` |
 
-## Sprint 2 — First playable level (proposed)
+## Sprint 2 — First playable level
 
 | ID | Title | Req | Priority |
 | --- | --- | --- | --- |
@@ -56,7 +56,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-207 | Solve page and feedback page | FR-04, FR-05 | P1 |
 | T-208 | Sprint 2 report | D-007 | P2 |
 
-## Sprint 3 — Levels 1–3 test build (proposed)
+## Sprint 3 — Levels 1–3 test build
 
 | ID | Title | Req | Priority |
 | --- | --- | --- | --- |
@@ -69,7 +69,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-307 | First deployment (Vercel, Render, Neon) + live smoke check — **needs PO approval** | D-037 | P1 |
 | T-308 | Sprint 3 report | D-007 | P2 |
 
-## Sprint 4 — Code and polish (proposed)
+## Sprint 4 — Code and polish
 
 | ID | Title | Req | Priority |
 | --- | --- | --- | --- |

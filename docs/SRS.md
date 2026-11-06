@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Version | 0.2 (draft) |
-| Status | **Proposed** — product decisions D-010 to D-024 and stack option B (D-030) are approved; the document as a whole is under review (T-002) |
+| Version | 1.0 |
+| Status | **Approved baseline** — PO, 2026-11-06 (T-002). Changes go through DECISIONS.md. |
 | Product Owner | Repository owner (lamkhai0604) |
 | Standard | AI-Assisted Software Engineering Standard v1.5 (D-009) |
 | Last updated | 2026-11-06 |
@@ -39,7 +39,7 @@ Voice answers, battle mode (dummy placeholder at most), real friends or social f
 
 ## 3. Functional Requirements
 
-Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't (this release)**. Status of every requirement: **Proposed**.
+Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't (this release)**. Status of every requirement: **Approved** (baseline v1.0), with the priority shown.
 
 ### FR-01 — Sign in (Must)
 1. The learner signs in with Google or GitHub; there is no password form.
@@ -159,11 +159,11 @@ Future model (D-022): an organization, for example a teacher's class, subscribes
 ## 5. Data and External Interfaces
 
 - **Content files** (D-033): levels, lessons (Markdown + JSON), problems (JSON: statement, examples, constraints, answer key, 3 hints, hidden tests, similar-LeetCode reference). Schema in CONTENT-GUIDE.md.
-- **Database** (proposed): users, attempts, problem progress, level progress, practice Done marks, test attempts, hint usage, streak, dummy players, role assignments (with optional scope), audit log, game config. ER view in ARCHITECTURE.md §8.
+- **Database**: users, attempts, problem progress, level progress, practice Done marks, test attempts, hint usage, streak, dummy players, role assignments (with optional scope), audit log, game config. ER view in ARCHITECTURE.md §8.
 - **Gemini API**: one structured-JSON request per grading.
 - **Judge0 CE (RapidAPI)**: submit Java source + test input, read output.
 
-## 6. Level List (D-012, proposed content order)
+## 6. Level List (D-012, content order)
 
 1 Big-O & Basics · 2 Arrays & Hashing · 3 Two Pointers · 4 Sliding Window · 5 Stack · 6 Binary Search · 7 Linked List · 8 Trees · 9 Tries · 10 Heap / Priority Queue · 11 Backtracking · 12 Graphs · 13 Advanced Graphs · 14 Greedy & Intervals · 15 1D Dynamic Programming · 16 2D Dynamic Programming · 17 Bit Manipulation & Math (extra).
 
@@ -172,7 +172,7 @@ Each level: about 3 Easy, 3 Medium, 2 Hard practice problems (levels 1–2 may s
 ## 7. Constraints, Assumptions, Dependencies
 
 - **Assumption:** one real user, so free-tier limits (Gemini, Judge0 50/day, Neon, Render) are enough.
-- **Assumption:** test score = average of the three problem totals (FR-10.2); to be confirmed in T-002.
+- **Decision:** test score = average of the three problem totals (FR-10.2), approved in T-002.
 - **Constraint:** the free Render backend sleeps after 15 minutes idle and takes about a minute to wake; the frontend shows a "waking the server" state (D-037).
 - **Dependency:** a Gemini Flash model passes the grading test (T-005) before FR-05 is built.
 
@@ -186,4 +186,4 @@ Each level: about 3 Easy, 3 Medium, 2 Hard practice problems (levels 1–2 may s
 | OQ-04 | Should the time bonus timer pause when the learner leaves the page? Proposed: no, it measures wall time from opening the problem. | Sprint 1 |
 | OQ-05 | Which permissions should the Admin role get in this release, if any (FR-17.1)? | Sprint 2 |
 | OQ-06 | Seat numbers and prices of future plans (5 or 10 members?) | Before FR-19 |
-| OQ-07 | Are Medium problems built in this release (assumed yes, D-024)? | Sprint 2 |
+| OQ-07 | ~~Are Medium problems built in this release?~~ Resolved: yes (D-024), 2026-11-06 | — |

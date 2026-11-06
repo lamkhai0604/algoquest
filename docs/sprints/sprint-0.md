@@ -14,7 +14,7 @@
 
 ## Dependencies and decisions needed
 
-- T-002: D-009 (standard v1.5) and D-030 (option B) are approved; the remaining proposals (D-002–D-005, D-007, D-031–D-037) → unblock Sprint 1.
+- T-002: done — all decisions approved 2026-11-06.
 - T-003 Gemini key → unblocks T-005. Google and GitHub OAuth apps → needed by T-104 in Sprint 1.
 - T-005 must pass NFR-03 before T-206 (grading) starts in Sprint 2.
 
