@@ -10,4 +10,4 @@
 | Outstanding changes | None |
 | Verification | Documentation only: links and IDs checked by script; Mermaid diagrams rendered without errors; `tools/grading-test` dry run (`MOCK=1`, Node 22) completed. Not yet run against the real Gemini API. |
 | Blockers | T-003 and T-004 (PO); T-005 needs the Gemini key |
-| Next action | PO completes T-003 to T-005; then the Sprint 0 report and the detailed Sprint 1 plan |
+| Next action | PO completes T-003 to T-005 and reviews the Sprint 1 plan (docs/sprints/sprint-1.md); then the Sprint 0 report and Sprint 1 starts |

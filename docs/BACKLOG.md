@@ -31,7 +31,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-008 | Apply the professional record style to all project records (neutral wording, no conversation traces or personal details) | D-005 | Claude | P2 | In Review — on `dev` | T-007 | No conversational wording, personal details, or private links in committed records |
 | T-009 | Upgrade the project pin to internal guidelines | D-009 | Claude | P2 | Done — pinned to | T-008 | D-009 and AGENTS.md name the merged commit |
 
-## Sprint 1 — Foundations
+## Sprint 1 — Foundations ([plan](sprints/sprint-1.md), proposed)
 
 | ID | Title | Req | Priority | Acceptance criteria (in addition to the requirement's) |
 | --- | --- | --- | --- | --- |
