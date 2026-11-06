@@ -1,0 +1,23 @@
+# Private engineering standard (kept outside this repo, D-003)
+docs/standard/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Grading test output (may contain model feedback; regenerate locally)
+tools/grading-test/results*.csv
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
