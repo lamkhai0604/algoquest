@@ -22,6 +22,7 @@ Proposed → Ready → In Progress → In Review → Done in [BACKLOG.md](BACKLO
 - Approvals are recorded as "Approved — PO, date".
 - Significant changes to design, rules, or workflow are proposed to the PO before they are applied.
 - Frontend tasks include CI-generated screenshots as review evidence.
+- The records check in CI (D-038) enforces these rules for every contributor.
 
 ## Sprint reports (D-007)
 
@@ -53,6 +54,7 @@ Tests and commands:
   Grading accuracy: tools/grading-test (manual, needs a Gemini key)
 Required CI checks and branch protection:
   backend.yml and frontend.yml on every push and PR into dev/main (path-filtered);
+  docs.yml (records check, D-038) on pushes and PRs that change Markdown;
   smoke.yml on PRs and on demand (private repo minutes, D-023). Branch protection on main is configured by the PO (T-004).
 Review, merge, release, communication:
   The PO reviews and merges dev -> main; every deployment needs PO approval.

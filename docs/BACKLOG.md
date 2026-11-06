@@ -35,7 +35,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 
 | ID | Title | Req | Priority | Acceptance criteria (in addition to the requirement's) |
 | --- | --- | --- | --- | --- |
-| T-101 | Backend skeleton: Spring Boot 4.1 / Java 21, modules from ARCHITECTURE §3 as empty packages, Flyway baseline, health endpoint, RFC 9457 errors, Spotless, Dockerfile; `backend.yml` CI | NFR-08 | P1 | `./mvnw verify` green in CI; Docker image builds |
+| T-101 | Backend skeleton: Spring Boot 4.1 / Java 21, modules from ARCHITECTURE §3 as empty packages, Flyway baseline, health endpoint, RFC 9457 errors, Spotless, Dockerfile; `backend.yml` CI; **records check** (`docs.yml`, D-038) | NFR-08, D-038 | P1 | `./mvnw verify` green in CI; Docker image builds; records check runs on every push and PR that changes Markdown and fails on a seeded violation |
 | T-102 | Frontend skeleton: React 19 + Vite + TS, router, design tokens, shared components (button, card, XP bar, loading, error, "waking the server"), API client; `frontend.yml` CI | NFR-05, NFR-08 | P1 | Lint, format, typecheck, test, build green in CI |
 | T-103 | Local development: `docker-compose.yml` (Postgres 16), `.env.example`, README setup steps | — | P1 | A fresh clone runs both apps by following the README |
 | T-104 | Sign in with Google and GitHub: OAuth2 login, one-time code exchange, JWT, `/api/v1/me`, sign-out, route guards | FR-01, D-036 | P1 | Unauthenticated calls get 401; code is single-use and expires after 60 s (tests) |
