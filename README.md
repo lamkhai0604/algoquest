@@ -20,6 +20,51 @@ A web app for learning the algorithm patterns used in coding interviews. Topics 
 
 React 19 + Vite + TypeScript frontend, Spring Boot 4.1 (Java 21) REST API, PostgreSQL. AI grading with Google Gemini; Java code runs on Judge0.
 
+## Run locally
+
+You need Git, [Docker Desktop](https://www.docker.com/products/docker-desktop/), Java 21, and Node.js 22.
+
+1. **Settings.** Copy the example file and fill in the values you have (sign-in keys are needed from Sprint 1 task T-104 on):
+
+   ```bash
+   cp .env.example .env        # Windows: copy .env.example .env
+   ```
+
+2. **Database.** Start PostgreSQL 16 in Docker:
+
+   ```bash
+   docker compose up -d
+   ```
+
+3. **Backend** (API on <http://localhost:8080>; check <http://localhost:8080/actuator/health>):
+
+   ```bash
+   cd backend
+   ./mvnw spring-boot:run      # Windows: mvnw.cmd spring-boot:run
+   ```
+
+   The first run downloads Maven and the dependencies, which takes a few minutes.
+
+4. **Frontend** (in a second terminal; app on <http://localhost:5173>):
+
+   ```bash
+   cd frontend
+   npm ci
+   npm run dev
+   ```
+
+The shared components are shown at <http://localhost:5173/ui-kit>.
+
+### Checks
+
+| Part | Command | Notes |
+| --- | --- | --- |
+| Backend | `./mvnw verify` in `backend/` | Formatting, tests, build; tests start their own database, so Docker must be running |
+| Frontend | `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test`, `npm run build` in `frontend/` | Same steps as CI |
+| Records | `node scripts/check-records.mjs` | Links, IDs, and record style (D-038) |
+
+To stop the database: `docker compose down` (add `-v` to delete its data).
+
 ## Documentation
 
 | Document | What it covers |
