@@ -44,7 +44,16 @@ jobs:
             attr() { v=$(echo "$suite" | grep -o " $1=\"[0-9]*\"" | tr -dc 0-9); echo "${v:-0}"; }
             n=$(( $(attr failures) + $(attr errors) ))
             total=$((total + $(attr tests))); failed=$((failed + n))
-            [ "$n" -gt 0 ] && echo "::warning title=failing suite::$(basename "$f"): $suite"
+            if [ "$n" -gt 0 ]; then
+              python3 - "$f" <<'PY'
+          import sys, xml.etree.ElementTree as ET
+          for case in ET.parse(sys.argv[1]).getroot().iter("testcase"):
+              for problem in list(case.findall("error")) + list(case.findall("failure")):
+                  text = (problem.get("message") or "") + " | " + (problem.text or "")[:1500]
+                  text = text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+                  print(f"::warning title={case.get('name')}::{text}")
+          PY
+            fi
           done
           echo "::notice title=backend tests::${total} tests, ${failed} failed"
 
