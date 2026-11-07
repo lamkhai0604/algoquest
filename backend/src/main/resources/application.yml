@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: algoquest
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/algoquest}
+    username: ${DATABASE_USERNAME:algoquest}
+    password: ${DATABASE_PASSWORD:algoquest}
+  flyway:
+    locations: classpath:db/migration
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    # Testcontainers starts a throwaway PostgreSQL 16 for the test run (needs Docker).
+    url: jdbc:tc:postgresql:16-alpine:///algoquest
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    username: test
+    password: test
