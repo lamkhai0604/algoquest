@@ -28,14 +28,14 @@ Requires Node.js 18 or later; no dependencies to install.
    - macOS / Linux: `GEMINI_API_KEY=<key> node grade-test.mjs`
    - Windows PowerShell: `$env:GEMINI_API_KEY="<key>"; node grade-test.mjs`
 
-The script waits 6 seconds between requests to stay within free-tier limits; a full run takes about 2–3 minutes.
+The script waits 13 seconds between requests to stay within free-tier limits; a full run takes about 5 minutes.
 
 ### Options
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `GEMINI_MODEL` | `gemini-3.8-flash` | Model to use. If it is not found, pick a current free Flash model listed in AI Studio |
-| `DELAY_MS` | `6000` | Delay between requests (ms) |
+| `GEMINI_MODEL` | `gemini-3.5-flash-lite` | Model to use. Free tier (checked 2026-11-06): Flash-Lite about 500 requests/day and 10/minute; `gemini-3.8-flash` about 20 requests/day and 5/minute, so one full run uses its whole day. If a model is not found, pick a current free model listed in AI Studio |
+| `DELAY_MS` | `13000` | Delay between requests (ms), below every free Flash model's per-minute limit |
 | `ONLY` | all | Grade only some samples, e.g. `ONLY=S05,S12` |
 | `RESUME` | off | `RESUME=1` keeps answers already graded in the last CSV for the same model and grades only the missing ones |
 | `MAX_ATTEMPTS` | `6` | Attempts per answer when the model is busy (HTTP 429/503) or the network fails; waits grow from 20 s to 90 s |
@@ -52,7 +52,7 @@ The script waits 6 seconds between requests to stay within free-tier limits; a f
 
 ## If the model is busy
 
-Free-tier models sometimes answer HTTP 503 ("high demand"). The script retries with growing waits; answers that still fail are marked as errors. Run again later with `RESUME=1` to grade only those, or try another Flash model with `GEMINI_MODEL`.
+Free-tier models sometimes answer HTTP 503 ("high demand") or 429 (rate limit). The script retries with growing waits; answers that still fail are marked as errors. When the **daily** quota is used up it stops at once (the quota resets at midnight Pacific time). Run again later with `RESUME=1` to grade only the missing answers, or try another free model with `GEMINI_MODEL`.
 
 ## If the result is not good enough
 
