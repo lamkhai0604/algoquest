@@ -39,7 +39,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-102 | Frontend skeleton: React 19 + Vite + TS, router, design tokens, shared components (button, card, XP bar, loading, error, "waking the server"), API client; `frontend.yml` CI | NFR-05, NFR-08 | P1 | Lint, format, typecheck, test, build green in CI. **Done 2026-11-07** (CI green on `140221e`) |
 | T-103 | Local development: `docker-compose.yml` (Postgres 16), `.env.example`, README setup steps | — | P1 | A fresh clone runs both apps by following the README. **Done 2026-11-07**: the `local-dev` CI job follows the README backend steps (green on `5e74be1`); the frontend steps match `frontend.yml` |
 | T-104 | Sign in with Google and GitHub: OAuth2 login, one-time code exchange, JWT, `/api/v1/me`, sign-out, route guards | FR-01, D-036 | P1 | Unauthenticated calls get 401; code is single-use and expires after 60 s (tests) |
-| T-105 | Access core: permission catalogue, role assignments with scope, Owner seeded from `OWNER_EMAIL`, `PermissionEvaluator`, audit log, last-Owner rule | FR-17, D-034 | P1 | Tests for every permission rule; 403 for a Player on admin endpoints |
+| T-105 | Access core: permission catalogue, role assignments with scope, Owner seeded from `OWNER_EMAIL`, `PermissionEvaluator`, audit log, last-Owner rule | FR-17, D-034 | P1 | Tests for every permission rule; 403 for a Player on admin endpoints. **Done 2026-11-07** (CI green) |
 | T-106 | Smoke workflow: compose Postgres + backend image + Vite + Playwright, fake OAuth login for CI, screenshots as artifacts | NFR-08 | P2 | Runs on PRs and on demand; screenshots attached as review evidence |
 | T-107 | Sprint 1 report | D-007 | P2 | Report on `dev` |
 

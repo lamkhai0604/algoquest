@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,7 +29,10 @@ class ApplicationIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    mvc = MockMvcBuilders.webAppContextSetup(context).build();
+    mvc =
+        MockMvcBuilders.webAppContextSetup(context)
+            .apply(SecurityMockMvcConfigurers.springSecurity())
+            .build();
   }
 
   @Test
@@ -49,7 +53,7 @@ class ApplicationIntegrationTest {
 
   @Test
   void unknownPathReturnsProblemDetail() throws Exception {
-    mvc.perform(get("/api/v1/does-not-exist"))
+    mvc.perform(get("/does-not-exist"))
         .andExpect(status().isNotFound())
         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.status").value(404))
