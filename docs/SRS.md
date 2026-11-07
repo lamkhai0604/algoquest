@@ -148,7 +148,7 @@ Future model (D-022): an organization, for example a teacher's class, subscribes
 | NFR-01 | Cost | $0: free tiers only (D-006) |
 | NFR-02 | Security | API keys only on the server, never in the browser or the repository; every data route checks the session; every query filtered by the signed-in user; answer keys and hidden tests never sent to the browser |
 | NFR-03 | Grading accuracy | On the grading test set (T-005, 20 answers): average difference ≤ 8 points, at most 3 answers off by more than 10, pass/fail agreement ≥ 19/20 |
-| NFR-04 | Grading latency | Unresolved: measure in T-005; proposed target 95% of gradings within 10 s |
+| NFR-04 | Grading latency | Unresolved: measure in T-206; proposed target 95% of gradings within 10 s |
 | NFR-05 | Responsive UI | Usable from 360 px width; solving works on a phone |
 | NFR-06 | Accessibility | Text contrast meets WCAG AA; all controls reachable by keyboard |
 | NFR-07 | Privacy | Only problem text, answer key, and the learner's explanation go to the grader; no name or email |
