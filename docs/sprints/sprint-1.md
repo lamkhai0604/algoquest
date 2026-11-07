@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Proposed** — starts when the PO approves this plan and T-003 (Google and GitHub OAuth apps) is done |
+| Status | **Proposed** — starts when the PO approves this plan (T-003 done 2026-11-07) |
 | Goal | A signed-in Owner or Player sees an empty level map. Backend and frontend skeletons, CI, local database, sign-in with Google and GitHub, and permission checks are in place. |
 | Duration | About 1 week; dates set on approval |
 | Tasks | T-101 to T-107 ([BACKLOG.md](../BACKLOG.md)) |
@@ -41,7 +41,7 @@ T-105 comes before T-104 so that sign-in creates users through the access module
 | Risk | Mitigation |
 | --- | --- |
 | Spring Boot 4.1 OAuth2 configuration differs from older examples | Follow current Spring Security reference; integration tests for the login success handler |
-| GitHub Actions minutes on a private repository | Path filters; smoke only on PRs and on demand |
+| Slow CI feedback | Path filters; smoke only on PRs and on demand |
 | Test-only login leaking into production | Bean active only under the `smoke` profile; a test asserts it is absent in the default profile |
 
 ## Design updates in this sprint

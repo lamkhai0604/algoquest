@@ -55,7 +55,7 @@ Tests and commands:
 Required CI checks and branch protection:
   backend.yml and frontend.yml on every push and PR into dev/main (path-filtered);
   docs.yml (records check, D-038) on pushes and PRs that change Markdown;
-  smoke.yml on PRs and on demand (private repo minutes, D-023). Branch protection on main is configured by the PO (T-004).
+  smoke.yml on PRs and on demand. Branch protection on main: ruleset requiring a pull request, blocking deletions and force pushes (D-039, T-004).
 Review, merge, release, communication:
   The PO reviews and merges dev -> main; every deployment needs PO approval.
 Authorized delegation and permissions:
