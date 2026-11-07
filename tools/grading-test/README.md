@@ -37,6 +37,8 @@ The script waits 6 seconds between requests to stay within free-tier limits; a f
 | `GEMINI_MODEL` | `gemini-3.8-flash` | Model to use. If it is not found, pick a current free Flash model listed in AI Studio |
 | `DELAY_MS` | `6000` | Delay between requests (ms) |
 | `ONLY` | all | Grade only some samples, e.g. `ONLY=S05,S12` |
+| `RESUME` | off | `RESUME=1` keeps answers already graded in the last CSV for the same model and grades only the missing ones |
+| `MAX_ATTEMPTS` | `6` | Attempts per answer when the model is busy (HTTP 429/503) or the network fails; waits grow from 20 s to 90 s |
 
 ## Reading the result
 
@@ -47,6 +49,10 @@ The script waits 6 seconds between requests to stay within free-tier limits; a f
 | Pass/fail (≥ 70) agrees with expected | at least 19/20 |
 
 `Verdict: GOOD ENOUGH` means all three targets are met. Per-answer details (criterion scores and model feedback) are written to `results-<model>.csv` (git-ignored).
+
+## If the model is busy
+
+Free-tier models sometimes answer HTTP 503 ("high demand"). The script retries with growing waits; answers that still fail are marked as errors. Run again later with `RESUME=1` to grade only those, or try another Flash model with `GEMINI_MODEL`.
 
 ## If the result is not good enough
 
