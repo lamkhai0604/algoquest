@@ -2,7 +2,7 @@
 // Run:  GEMINI_API_KEY=your_key node grade-test.mjs
 // Dry run without an API key:  MOCK=1 node grade-test.mjs
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ALLOWED, SYSTEM_PROMPT, buildUserPrompt, RESPONSE_SCHEMA, snap, total } from './prompt.mjs';
@@ -16,6 +16,9 @@ const API_KEY = process.env.GEMINI_API_KEY;
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 const DELAY_MS = Number(process.env.DELAY_MS ?? (MOCK ? 0 : 6000)); // stay under free-tier requests per minute
 const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null; // e.g. ONLY=S05,S12
+const RESUME = process.env.RESUME === '1'; // keep answers already graded in the last CSV, grade only the rest
+const MAX_ATTEMPTS = Number(process.env.MAX_ATTEMPTS ?? 6);
+const backoff = (attempt) => Math.min(20000 * attempt, 90000);
 const TOLERANCE = 10; // a total within +-10 of the expected counts as a match
 const PASS_MARK = 70;
 const CRITERIA = Object.keys(ALLOWED);
@@ -48,12 +51,25 @@ async function gradeWithGemini(problem, answer) {
     },
   };
 
-  for (let attempt = 1; attempt <= 4; attempt++) {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': API_KEY },
-      body: JSON.stringify(body),
-    });
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    let res;
+    try {
+      res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': API_KEY },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(60000),
+      });
+    } catch (err) {
+      // Network error or timeout: retry like a temporary server error.
+      if (attempt < MAX_ATTEMPTS) {
+        const wait = backoff(attempt);
+        console.warn(`  ${err.name === 'TimeoutError' ? 'timeout' : 'network error'}, waiting ${wait / 1000}s and retrying (${attempt}/${MAX_ATTEMPTS - 1})...`);
+        await sleep(wait);
+        continue;
+      }
+      throw new Error(`request failed after ${MAX_ATTEMPTS} attempts: ${err.message}`);
+    }
     if (res.ok) {
       const data = await res.json();
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -61,9 +77,9 @@ async function gradeWithGemini(problem, answer) {
       return JSON.parse(text);
     }
     const errText = await res.text();
-    if ((res.status === 429 || res.status >= 500) && attempt < 4) {
-      const wait = 15000 * attempt;
-      console.warn(`  HTTP ${res.status}, waiting ${wait / 1000}s and retrying (${attempt}/3)...`);
+    if ((res.status === 429 || res.status >= 500) && attempt < MAX_ATTEMPTS) {
+      const wait = backoff(attempt);
+      console.warn(`  HTTP ${res.status}${res.status === 503 ? ' (model busy)' : ''}, waiting ${wait / 1000}s and retrying (${attempt}/${MAX_ATTEMPTS - 1})...`);
       await sleep(wait);
       continue;
     }
@@ -82,11 +98,51 @@ function gradeMock(sample, i) {
   return out;
 }
 
+const outFile = join(here, MOCK ? 'results-mock.csv' : `results-${MODEL}.csv`);
+
+// Minimal CSV reader for the file this script writes (every field quoted).
+function readCsv(file) {
+  const text = readFileSync(file, 'utf8');
+  const records = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (ch === '"') inQuotes = false;
+      else field += ch;
+    } else if (ch === '"') inQuotes = true;
+    else if (ch === ',') { row.push(field); field = ''; }
+    else if (ch === '\n') { row.push(field); records.push(row); row = []; field = ''; }
+    else if (ch !== '\r') field += ch;
+  }
+  if (field || row.length) { row.push(field); records.push(row); }
+  const [head, ...body] = records;
+  return body.map((r) => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ''])));
+}
+
 const rows = [];
-const list = ONLY ? samples.filter((s) => ONLY.includes(s.id)) : samples;
+const previous = new Map();
+if (RESUME && existsSync(outFile)) {
+  for (const r of readCsv(outFile)) {
+    if (r.error || r.got_total === '') continue;
+    const sample = samples.find((s) => s.id === r.id);
+    if (!sample) continue;
+    const got = Object.fromEntries(CRITERIA.map((c) => [c, Number(r[`got_${c}`])]));
+    previous.set(r.id, { sample, got, exp: sample.expected, diff: total(got) - total(sample.expected), feedback: r.feedback });
+  }
+  console.log(`Resuming: ${previous.size} answers already graded in ${outFile}`);
+}
+const list = (ONLY ? samples.filter((s) => ONLY.includes(s.id)) : samples);
 console.log(`Grading ${list.length} answers with ${MOCK ? 'MOCK grader' : MODEL}...\n`);
 
 for (const [i, sample] of list.entries()) {
+  if (previous.has(sample.id)) {
+    const row = previous.get(sample.id);
+    rows.push(row);
+    console.log(`SKIP ${sample.id}  already graded: expected ${total(row.exp)}  got ${total(row.got)}`);
+    continue;
+  }
   const problem = problems.find((p) => p.id === sample.problemId);
   let raw;
   try {
@@ -152,6 +208,8 @@ const lines = rows.map((r) =>
     r.error ?? '',
   ].map(esc).join(',')
 );
-const outFile = join(here, MOCK ? 'results-mock.csv' : `results-${MODEL}.csv`);
 writeFileSync(outFile, [header.map(esc).join(','), ...lines].join('\n'));
 console.log(`\nDetails saved to ${outFile}`);
+if (rows.some((r) => r.error)) {
+  console.log('Some answers were not graded (model busy or network). Run again with RESUME=1 to grade only those.');
+}
