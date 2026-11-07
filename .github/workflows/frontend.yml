@@ -1,0 +1,63 @@
+name: frontend
+
+on:
+  push:
+    branches: ["**"]
+    paths: ["frontend/**", ".github/workflows/frontend.yml"]
+  pull_request:
+    branches: [dev, main]
+    paths: ["frontend/**", ".github/workflows/frontend.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+      - name: Lint
+        run: npm run lint 2>&1 | tee -a check.log
+      - name: Format
+        run: npm run format:check 2>&1 | tee -a check.log
+      - name: Typecheck
+        run: npm run typecheck 2>&1 | tee -a check.log
+      - name: Test
+        run: npm test 2>&1 | tee -a check.log
+      - name: Build
+        run: npm run build 2>&1 | tee -a check.log
+
+      - name: Report failure details as annotations
+        if: failure()
+        run: |
+          annotate() { # title, file: emits up to 5 annotations of about 3,000 characters each
+            [ -s "$2" ] || return 0
+            split -b 3000 "$2" /tmp/chunk-
+            for c in $(ls /tmp/chunk-* | head -5); do
+              echo "::error title=$1::$(sed -e 's/%/%25/g' "$c" | sed -e ':a;N;$!ba;s/\r//g;s/\n/%0A/g')"
+            done
+            rm -f /tmp/chunk-*
+          }
+          [ -f check.log ] && tail -c 9000 check.log | sed 's/\x1b\[[0-9;]*m//g' > /tmp/log.txt
+          annotate "frontend log tail" /tmp/log.txt
+          if [ -d node_modules ] && npx prettier --write . >/dev/null 2>&1; then
+            git diff > /tmp/format.diff
+            annotate "prettier diff" /tmp/format.diff
+          fi
