@@ -13,8 +13,8 @@ const samples = JSON.parse(readFileSync(join(here, 'samples.json'), 'utf8'));
 
 const MOCK = process.env.MOCK === '1';
 const API_KEY = process.env.GEMINI_API_KEY;
-const MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
-const DELAY_MS = Number(process.env.DELAY_MS ?? (MOCK ? 0 : 6000)); // stay under free-tier requests per minute
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite'; // free tier: about 500 requests/day; gemini-3.8-flash allows about 20/day
+const DELAY_MS = Number(process.env.DELAY_MS ?? (MOCK ? 0 : 13000)); // about 4-5 requests per minute: under every free Flash model's per-minute limit
 const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null; // e.g. ONLY=S05,S12
 const RESUME = process.env.RESUME === '1'; // keep answers already graded in the last CSV, grade only the rest
 const MAX_ATTEMPTS = Number(process.env.MAX_ATTEMPTS ?? 6);
@@ -38,6 +38,7 @@ for (const s of samples) {
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+class DailyQuotaError extends Error {}
 
 async function gradeWithGemini(problem, answer) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
@@ -77,6 +78,9 @@ async function gradeWithGemini(problem, answer) {
       return JSON.parse(text);
     }
     const errText = await res.text();
+    if (res.status === 429 && /PerDay/i.test(errText)) {
+      throw new DailyQuotaError(`Daily free quota for "${MODEL}" is used up (resets at midnight Pacific time). Run later with RESUME=1, or try another free model with GEMINI_MODEL.`);
+    }
     if ((res.status === 429 || res.status >= 500) && attempt < MAX_ATTEMPTS) {
       const wait = backoff(attempt);
       console.warn(`  HTTP ${res.status}${res.status === 503 ? ' (model busy)' : ''}, waiting ${wait / 1000}s and retrying (${attempt}/${MAX_ATTEMPTS - 1})...`);
@@ -150,6 +154,12 @@ for (const [i, sample] of list.entries()) {
   } catch (err) {
     console.error(`${sample.id}: ERROR ${err.message}`);
     rows.push({ sample, error: err.message });
+    if (err instanceof DailyQuotaError) {
+      for (const rest of list.slice(i + 1)) {
+        rows.push(previous.get(rest.id) ?? { sample: rest, error: 'not graded: daily quota used up' });
+      }
+      break;
+    }
     continue;
   }
   const got = Object.fromEntries(CRITERIA.map((c) => [c, snap(c, raw[c])]));
