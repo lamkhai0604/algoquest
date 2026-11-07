@@ -1,27 +1,41 @@
 package com.algoquest.access.security;
 
 import com.algoquest.access.AccessService;
+import com.algoquest.access.signin.BearerTokenFilter;
+import com.algoquest.access.signin.GitHubEmailUserService;
+import com.algoquest.access.signin.OAuthSignInHandler;
+import com.algoquest.access.signin.TokenService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Request security (ARCHITECTURE §9.2): API calls need an authenticated user (401 otherwise), and
- * endpoints check named permissions with {@code @PreAuthorize} (403 otherwise). Sessions are not
- * used; the sign-in flow (T-104) adds the bearer token filter.
+ * endpoints check named permissions with {@code @PreAuthorize} (403 otherwise). Requests carry the
+ * app's bearer token; a session exists only during the provider sign-in redirect.
  */
 @Configuration
 @EnableMethodSecurity
@@ -39,17 +53,53 @@ public class SecurityConfig {
           writeProblem(response, 403, "Forbidden", "You do not have access to this.");
 
   @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  SecurityFilterChain securityFilterChain(
+      HttpSecurity http, TokenService tokens, OAuthSignInHandler signIn) throws Exception {
     http.csrf(csrf -> csrf.disable());
+    http.cors(Customizer.withDefaults());
     http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     http.httpBasic(basic -> basic.disable());
     http.formLogin(form -> form.disable());
     http.logout(logout -> logout.disable());
     http.authorizeHttpRequests(
-        auth -> auth.requestMatchers("/api/**").authenticated().anyRequest().permitAll());
+        auth -> {
+          auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/exchange").permitAll();
+          auth.requestMatchers("/api/**").authenticated();
+          auth.anyRequest().permitAll();
+        });
+    GitHubEmailUserService users = new GitHubEmailUserService(github());
+    http.oauth2Login(
+        login -> {
+          login.userInfoEndpoint(info -> info.userService(users));
+          login.authorizedClientRepository(new HttpSessionOAuth2AuthorizedClientRepository());
+          login.successHandler(signIn);
+          login.failureHandler(signIn);
+        });
+    http.addFilterBefore(new BearerTokenFilter(tokens), UsernamePasswordAuthenticationFilter.class);
     http.exceptionHandling(
         errors -> errors.authenticationEntryPoint(UNAUTHORIZED).accessDeniedHandler(FORBIDDEN));
     return http.build();
+  }
+
+  /** Only the frontend may call the API from a browser. */
+  @Bean
+  CorsConfigurationSource corsConfigurationSource(
+      @Value("${algoquest.frontend-url}") String frontendUrl) {
+    CorsConfiguration cors = new CorsConfiguration();
+    cors.setAllowedOrigins(List.of(frontendUrl));
+    cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+    cors.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    cors.setMaxAge(3600L);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/api/**", cors);
+    return source;
+  }
+
+  private static RestClient github() {
+    return RestClient.builder()
+        .baseUrl("https://api.github.com")
+        .defaultHeader("Accept", "application/vnd.github+json")
+        .build();
   }
 
   @Bean
