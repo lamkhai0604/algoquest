@@ -58,6 +58,7 @@ public class AccessService {
     if (!ownerEmail.isEmpty() && ownerEmail.equals(user.getEmail())) {
       ensureRole(null, user.getId(), Role.OWNER, Scope.GLOBAL, "configured owner email");
     }
+    users.flush(); // other modules may reference the user through plain SQL in this transaction
     return user.getId();
   }
 
