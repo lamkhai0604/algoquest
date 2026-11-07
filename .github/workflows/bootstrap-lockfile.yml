@@ -1,0 +1,52 @@
+# Temporary (T-102): generates frontend/package-lock.json once, because the
+# development workspace cannot reach the npm registry. Pins every "*" range in
+# package.json to the resolved version and commits both files to the branch.
+# Removed in the same task after the lockfile exists.
+name: bootstrap-lockfile
+
+on:
+  push:
+    branches: ["feat/T-102-*"]
+    paths: ["frontend/package.json", ".github/workflows/bootstrap-lockfile.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Resolve dependencies
+        run: |
+          if [ -f package-lock.json ]; then echo "Lockfile exists"; exit 0; fi
+          npm install --no-audit --no-fund 2>&1 | tee install.log
+          node -e '
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            for (const group of ["dependencies", "devDependencies"]) {
+              for (const name of Object.keys(pkg[group] || {})) {
+                const installed = require("./node_modules/" + name + "/package.json").version;
+                if (pkg[group][name] === "*") pkg[group][name] = "^" + installed;
+              }
+            }
+            fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
+          '
+          npm install --no-audit --no-fund --package-lock-only
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore(frontend): pin dependency versions and add package-lock.json"
+          git push
+      - name: Report failure details as annotations
+        if: failure()
+        run: |
+          [ -f install.log ] || exit 0
+          echo "::error title=npm install::$(tail -c 3000 install.log | sed -e 's/%/%25/g' | sed -e ':a;N;$!ba;s/\r//g;s/\n/%0A/g')"
