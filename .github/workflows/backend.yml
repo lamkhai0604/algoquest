@@ -16,12 +16,18 @@ concurrency:
   group: backend-${{ github.ref }}
   cancel-in-progress: true
 
+# bash runs with -eo pipefail, so a failing command piped into tee fails the step.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
       run:
+        shell: bash
         working-directory: backend
     steps:
       - uses: actions/checkout@v5
@@ -40,9 +46,20 @@ jobs:
         run: |
           total=0; failed=0
           for f in target/surefire-reports/TEST-*.xml; do
-            t=$(grep -o 'tests="[0-9]*"' "$f" | head -1 | tr -dc 0-9)
-            x=$(grep -oE '(failures|errors)="[0-9]*"' "$f" | head -2 | tr -dc '0-9\n' | awk '{s+=$1} END {print s+0}')
-            total=$((total + t)); failed=$((failed + x))
+            suite=$(grep -m1 -o '<testsuite [^>]*>' "$f")
+            attr() { v=$(echo "$suite" | grep -o " $1=\"[0-9]*\"" | tr -dc 0-9); echo "${v:-0}"; }
+            n=$(( $(attr failures) + $(attr errors) ))
+            total=$((total + $(attr tests))); failed=$((failed + n))
+            if [ "$n" -gt 0 ]; then
+              python3 - "$f" <<'PY'
+          import sys, xml.etree.ElementTree as ET
+          for case in ET.parse(sys.argv[1]).getroot().iter("testcase"):
+              for problem in list(case.findall("error")) + list(case.findall("failure")):
+                  text = (problem.get("message") or "") + " | " + (problem.text or "")[:1500]
+                  text = text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+                  print(f"::warning title={case.get('name')}::{text}")
+          PY
+            fi
           done
           echo "::notice title=backend tests::${total} tests, ${failed} failed"
 
@@ -52,6 +69,7 @@ jobs:
       - name: Report failure details as annotations
         if: failure()
         run: |
+          set +e  # collect as much detail as possible
           annotate() { # title, file: emits up to 5 annotations of about 3,000 characters each
             [ -s "$2" ] || return 0
             split -b 3000 "$2" /tmp/chunk-

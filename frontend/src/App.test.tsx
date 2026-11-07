@@ -2,13 +2,21 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { App } from "./App";
+import { setSession } from "./auth/session";
+import { fakeApi, inFourHours, json, ME } from "./test/fakeApi";
 
 describe("App", () => {
-  it("shows the header with zero stats and the level map shell", () => {
+  it("shows zero stats and the level map when signed in", async () => {
+    fakeApi({ "GET /api/v1/me": () => json(200, ME) });
+    setSession({ token: "jwt-1", expiresAt: inFourHours() });
+
     render(<App />);
+
+    expect(
+      await screen.findByRole("heading", { name: "Your quest" }),
+    ).toBeVisible();
     expect(screen.getByRole("link", { name: /AlgoQuest/ })).toBeVisible();
     expect(screen.getByTitle("Total XP")).toHaveTextContent("0");
-    expect(screen.getByRole("heading", { name: "Your quest" })).toBeVisible();
   });
 
   it("toggles the theme and remembers the choice", async () => {

@@ -11,11 +11,7 @@ export class ApiError extends Error {
   readonly status: number;
   readonly problem: ProblemDetail | null;
 
-  constructor(
-    status: number,
-    problem: ProblemDetail | null,
-    message?: string,
-  ) {
+  constructor(status: number, problem: ProblemDetail | null, message?: string) {
     super(
       message ??
         problem?.detail ??
@@ -37,6 +33,8 @@ export interface ApiClientOptions {
   retryDelayMs?: number;
   /** After this long, the request counts as slow ("waking the server"). */
   slowAfterMs?: number;
+  /** Called when the server answers 401, for example after the token expired. */
+  onUnauthorized?: () => void;
 }
 
 export interface ApiClient {
@@ -52,9 +50,7 @@ const RETRYABLE_STATUS = new Set([502, 503, 504]);
 const delay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-async function readProblem(
-  response: Response,
-): Promise<ProblemDetail | null> {
+async function readProblem(response: Response): Promise<ProblemDetail | null> {
   try {
     return (await response.json()) as ProblemDetail;
   } catch {
@@ -70,6 +66,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     retries = 3,
     retryDelayMs = 1000,
     slowAfterMs = 3000,
+    onUnauthorized,
   } = options;
 
   const listeners = new Set<(waking: boolean) => void>();
@@ -120,6 +117,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
           continue;
         }
         if (!response.ok) {
+          if (response.status === 401) onUnauthorized?.();
           throw new ApiError(response.status, await readProblem(response));
         }
         if (response.status === 204) return undefined as T;
