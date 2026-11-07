@@ -21,3 +21,7 @@ test-results/
 .DS_Store
 .idea/
 .vscode/
+
+# Java build output
+target/
+build.log
