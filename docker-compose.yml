@@ -1,0 +1,20 @@
+# Local development database (T-103). Start with: docker compose up -d
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: algoquest
+      POSTGRES_USER: ${DATABASE_USERNAME:-algoquest}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-algoquest}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d algoquest"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:
