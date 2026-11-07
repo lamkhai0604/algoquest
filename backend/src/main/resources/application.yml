@@ -10,6 +10,10 @@ spring:
     password: ${DATABASE_PASSWORD:algoquest}
   flyway:
     locations: classpath:db/migration
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
   mvc:
     problemdetails:
       enabled: true
@@ -28,3 +32,7 @@ management:
   endpoint:
     health:
       show-details: never
+
+algoquest:
+  # The account with this email becomes the first Owner when it signs in (FR-17).
+  owner-email: ${OWNER_EMAIL:}

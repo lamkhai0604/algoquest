@@ -36,6 +36,16 @@ jobs:
       - name: Format, compile, test (./mvnw verify)
         run: ./mvnw -B -ntp verify 2>&1 | tee build.log
 
+      - name: Test summary
+        run: |
+          total=0; failed=0
+          for f in target/surefire-reports/TEST-*.xml; do
+            t=$(grep -o 'tests="[0-9]*"' "$f" | head -1 | tr -dc 0-9)
+            x=$(grep -oE '(failures|errors)="[0-9]*"' "$f" | head -2 | tr -dc '0-9\n' | awk '{s+=$1} END {print s+0}')
+            total=$((total + t)); failed=$((failed + x))
+          done
+          echo "::notice title=backend tests::${total} tests, ${failed} failed"
+
       - name: Build Docker image
         run: docker build -t algoquest-backend:ci .
 
