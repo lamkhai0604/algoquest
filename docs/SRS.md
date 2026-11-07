@@ -35,7 +35,7 @@
 
 ### Exclusions (this release)
 
-Voice answers, battle mode (dummy placeholder at most), real friends or social features, payments and a working VIP plan (placeholder only), organizations and seat plans (FR-19; only the groundwork in FR-17 is built), content authoring UI, other languages besides JavaScript and Java for code, mobile apps, opening the app to the public.
+Voice answers, battle mode (dummy placeholder at most), real friends or social features, a working VIP feature (placeholder only), organizations (FR-19; only the groundwork in FR-17 is built), content authoring UI, other languages besides JavaScript and Java for code, mobile apps, opening the app to the public.
 
 ## 3. Functional Requirements
 
@@ -138,8 +138,8 @@ Visible only to users with at least one admin permission. In this release:
 3. **Game config**: edit the XP numbers of D-015 (base, bonuses, level target formula values, hint quota) without a deployment; values are validated and audit-logged; defaults come from a file.
 4. **Users and roles**: list users; Owner can grant or remove roles.
 
-### FR-19 — Organizations and seat plans (Won't, this release; groundwork in FR-17)
-Future model (D-022): an organization, for example a teacher's class, subscribes to a plan and its administrator becomes **Admin of that organization**. Depending on the plan they invite up to **5 or 10 members** (number to be discussed). Each organization sees only its own members and their progress; the platform Owner sees everything. Needs payments, invitations, seat limits, and an organization dashboard. Planned after the game is complete and has been trialled.
+### FR-19 — Organizations (Won't, this release; groundwork in FR-17)
+Future model (D-022): an organization, for example a study group or class, has an administrator who becomes **Admin of that organization** and invites up to **5 or 10 members** (number to be discussed). Each organization sees only its own members and their progress; the platform Owner sees everything. Needs invitations, member limits, and an organization dashboard. Planned after the game is complete and has been trialled.
 
 ## 4. Nonfunctional Requirements
 
@@ -154,7 +154,7 @@ Future model (D-022): an organization, for example a teacher's class, subscribes
 | NFR-07 | Privacy | Only problem text, answer key, and the learner's explanation go to the grader; no name or email |
 | NFR-08 | Quality gates | CI runs lint, type check, tests, content-schema validation, and build on every push and PR |
 | NFR-09 | Resilience | Grader and Judge0 calls have timeouts and clear error states; no XP is lost or double-counted on retry |
-| NFR-10 | Extensibility | Adding organizations and seat plans (FR-19) must not change the game domain (scoring, unlocking, grading); the parts it may touch are listed in ARCHITECTURE.md §9.3 |
+| NFR-10 | Extensibility | Adding organizations (FR-19) must not change the game domain (scoring, unlocking, grading); the parts it may touch are listed in ARCHITECTURE.md §9.3 |
 
 ## 5. Data and External Interfaces
 
@@ -185,5 +185,5 @@ Each level: about 3 Easy, 3 Medium, 2 Hard practice problems (levels 1–2 may s
 | OQ-03 | Are the XP numbers right? Revisit after the levels 1–3 trial. | Sprint 3 review |
 | OQ-04 | Should the time bonus timer pause when the learner leaves the page? Proposed: no, it measures wall time from opening the problem. | Sprint 1 |
 | OQ-05 | Which permissions should the Admin role get in this release, if any (FR-17.1)? | Sprint 2 |
-| OQ-06 | Seat numbers and prices of future plans (5 or 10 members?) | Before FR-19 |
+| OQ-06 | Member limit per organization (5 or 10 members?) | Before FR-19 |
 | OQ-07 | ~~Are Medium problems built in this release?~~ Resolved: yes (D-024), 2026-11-06 | — |

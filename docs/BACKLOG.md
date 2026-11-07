@@ -15,7 +15,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | 2 — First playable level | Content format and Level 1 content, level map, lesson page, game rules, AI grading, solve and feedback pages, XP | FR-02–FR-05, FR-08 | Level 1 problems explained and graded |
 | 3 — Levels 1–3 test build | Hints, practice round, level-up test with unlocking, Levels 2–3 content, profile and streak, admin grading log and reset, first deployment | FR-06, FR-09, FR-10, FR-12, FR-13, FR-18.1–2 | Levels 1–3 playable on the live site |
 | 4 — Code and polish | Code in JavaScript and Java for 2× XP, dummy leaderboard, VIP and "coming later" placeholders, admin config and roles pages, design pass, XP tuning | FR-07, FR-11 (placeholder), FR-14, FR-15, FR-18.3–4 | Complete first release |
-| Later | Hard problems and hard test mode, levels 4–17, organizations and seat plans, payments, voice answers, battle mode | FR-11, FR-16, FR-19 | — |
+| Later | Hard problems and hard test mode, levels 4–17, organizations, voice answers, battle mode | FR-11, FR-16, FR-19 | — |
 
 ## Sprint 0 — Preparation ([plan](sprints/sprint-0.md))
 
@@ -88,8 +88,8 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | --- | --- | --- |
 | T-501 | Hard problems and hard test mode for real | FR-11, D-024 |
 | T-502 | Levels 4–17 content, about 2 levels per sprint | SRS §6 |
-| T-503 | Organizations and seat plans (teacher buys a plan, invites 5 or 10 members) | FR-19, OQ-06 |
-| T-504 | Payments for plans — paid-service decision (D-006) and commercial hosting first | FR-19 |
+| T-503 | Organizations (admin invites 5 or 10 members) | FR-19, OQ-06 |
+| T-504 | Withdrawn | — |
 | T-505 | Move JavaScript checking to Judge0 or a server sandbox before graded organization use | D-035 |
 | T-506 | Voice answers | Excluded this release |
 | T-507 | Battle mode | FR-16 |
