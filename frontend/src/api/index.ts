@@ -6,8 +6,7 @@ import type { ApiClient } from "./client";
 export { ApiError, createApiClient } from "./client";
 export type { ApiClient, ProblemDetail } from "./client";
 
-export const API_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+export const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
 
 export const api = createApiClient({
   baseUrl: API_URL,

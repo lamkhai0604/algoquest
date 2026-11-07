@@ -11,11 +11,7 @@ export class ApiError extends Error {
   readonly status: number;
   readonly problem: ProblemDetail | null;
 
-  constructor(
-    status: number,
-    problem: ProblemDetail | null,
-    message?: string,
-  ) {
+  constructor(status: number, problem: ProblemDetail | null, message?: string) {
     super(
       message ??
         problem?.detail ??
@@ -54,9 +50,7 @@ const RETRYABLE_STATUS = new Set([502, 503, 504]);
 const delay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-async function readProblem(
-  response: Response,
-): Promise<ProblemDetail | null> {
+async function readProblem(response: Response): Promise<ProblemDetail | null> {
   try {
     return (await response.json()) as ProblemDetail;
   } catch {
