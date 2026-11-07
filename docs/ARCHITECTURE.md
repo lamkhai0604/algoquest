@@ -399,15 +399,14 @@ flowchart LR
 
 Other measures: CORS allows only the frontend origin; secrets only in Render/GitHub environment variables; repository queries always filter by the authenticated user (or, later, by an authorized scope); the database user has no superuser rights; the learner's text goes to Gemini inside a delimited block with an instruction to treat it as data; Java runs only in Judge0's sandbox; JavaScript runs only in the learner's own browser.
 
-### 9.3 Adding organizations and seat plans later (FR-19)
+### 9.3 Adding organizations later (FR-19)
 
 | Change | Where | Touches existing code? |
 | --- | --- | --- |
-| Tables `organization`, `membership`, `plan` (seat limit) | New Flyway migration | No |
+| Tables `organization` (member limit), `membership` | New Flyway migration | No |
 | Roles `orgAdmin`, `orgMember`; permissions such as `org.members.invite`, `org.progress.view` | `access` catalogue | Adds entries only |
 | Organization-scoped role assignments | Existing `role_assignment` columns | No schema change |
 | Scoped checks `hasPermission(org, 'org.progress.view')` | `access` `PermissionEvaluator` | Extends one class; existing annotations unchanged |
-| Invitations, seat-limit check, organization dashboard | New `org` module + new frontend feature folder | No |
+| Invitations, member-limit check, organization dashboard | New `org` module + new frontend feature folder | No |
 | Organization admin reads members' progress | New read methods exposed by `game` services | Adds methods; existing ones unchanged |
-| Payments | New adapter behind an interface | No |
 | Game rules (`game.domain`, grading) | — | **Not touched** (NFR-10) |
