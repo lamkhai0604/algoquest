@@ -96,7 +96,7 @@ async function gradeWithGemini(problem, answer) {
 
 // Fake grader for a dry run: expected scores with a few deliberate mistakes, so the report has something to show.
 function gradeMock(sample, i) {
-  const out = { ...sample.expected, feedback: '(mock)' };
+  const out = { ...sample.expected, trace: '(mock)', feedback: '(mock)' };
   if (i % 7 === 3) out.complexity = out.complexity === 20 ? 10 : 20;
   if (i % 9 === 4) out.steps = out.steps === 30 ? 15 : 30;
   return out;
@@ -133,7 +133,7 @@ if (RESUME && existsSync(outFile)) {
     const sample = samples.find((s) => s.id === r.id);
     if (!sample) continue;
     const got = Object.fromEntries(CRITERIA.map((c) => [c, Number(r[`got_${c}`])]));
-    previous.set(r.id, { sample, got, exp: sample.expected, diff: total(got) - total(sample.expected), feedback: r.feedback });
+    previous.set(r.id, { sample, got, exp: sample.expected, diff: total(got) - total(sample.expected), feedback: r.feedback, trace: r.trace ?? '' });
   }
   console.log(`Resuming: ${previous.size} answers already graded in ${outFile}`);
 }
@@ -165,7 +165,7 @@ for (const [i, sample] of list.entries()) {
   const got = Object.fromEntries(CRITERIA.map((c) => [c, snap(c, raw[c])]));
   const exp = sample.expected;
   const diff = total(got) - total(exp);
-  const row = { sample, got, exp, diff, feedback: raw.feedback ?? '' };
+  const row = { sample, got, exp, diff, feedback: raw.feedback ?? '', trace: raw.trace ?? '' };
   rows.push(row);
   const mark = Math.abs(diff) <= TOLERANCE ? 'OK ' : 'OFF';
   console.log(
@@ -204,7 +204,7 @@ console.log(
 
 // CSV for a closer look (opens in Excel / Google Sheets)
 const esc = (v) => `"${String(v ?? '').replaceAll('"', '""')}"`;
-const header = ['id', 'problem', 'note', ...CRITERIA.flatMap((c) => [`exp_${c}`, `got_${c}`]), 'exp_total', 'got_total', 'diff', 'feedback', 'error'];
+const header = ['id', 'problem', 'note', ...CRITERIA.flatMap((c) => [`exp_${c}`, `got_${c}`]), 'exp_total', 'got_total', 'diff', 'trace', 'feedback', 'error'];
 const lines = rows.map((r) =>
   [
     r.sample.id,
@@ -214,6 +214,7 @@ const lines = rows.map((r) =>
     total(r.sample.expected),
     r.got ? total(r.got) : '',
     r.diff ?? '',
+    r.trace ?? '',
     r.feedback ?? '',
     r.error ?? '',
   ].map(esc).join(',')
