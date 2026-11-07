@@ -25,7 +25,9 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
   return (
     <header className={styles.header}>
       <Link to="/" className={styles.brand}>
-        <span className={styles.logo} aria-hidden="true">A</span>
+        <span className={styles.logo} aria-hidden="true">
+          A
+        </span>
         AlgoQuest
       </Link>
       <div className={styles.stats}>

@@ -29,9 +29,23 @@ export function AuthProvider({ children, client = api }: AuthProviderProps) {
     }
   }, [client]);
 
+  // Load the signed-in user once at start; state changes happen in the request callbacks.
   useEffect(() => {
-    if (getToken()) void refresh();
-  }, [refresh]);
+    if (!getToken()) return;
+    let active = true;
+    client.get<CurrentUser>("/api/v1/me").then(
+      (user) => {
+        if (active) setState({ status: "signed-in", user });
+      },
+      () => {
+        clearSession();
+        if (active) setState(SIGNED_OUT);
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [client]);
 
   useEffect(() => {
     return onSessionChange(() => {
