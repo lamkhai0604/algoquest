@@ -32,8 +32,8 @@ Each sprint ends with `docs/reports/sprint-N-report.md`: goal and outcome, deliv
 
 ```text
 Languages, versions, platforms:
-  Backend: Java 21, Spring Boot 4.1.x, Maven Wrapper, PostgreSQL 16 (local) / Neon (hosted).
-  Frontend: TypeScript 5.9 strict, React 19, Vite 8, Node 22 LTS. Evergreen browsers, 360 px minimum width.
+  Backend: Java 21, Spring Boot 4.1.0, Maven 3.9.11 through the Maven Wrapper, PostgreSQL 16 (local) / Neon (hosted).
+  Frontend: TypeScript 5.9 strict, React 19, React Router 7, Vite 8, Vitest 5, ESLint 9, Prettier 3, Node 22 LTS. Evergreen browsers, 360 px minimum width.
 Style, formatter, linter, commands:
   Backend: Spotless (Google Java Format) -> ./mvnw spotless:check
   Frontend: ESLint + Prettier -> npm run lint / npm run format:check / npm run typecheck
