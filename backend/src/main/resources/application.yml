@@ -1,6 +1,9 @@
 spring:
   application:
     name: algoquest
+  config:
+    # Local settings from the repository root (git-ignored); absent in CI and on the host.
+    import: optional:file:../.env[.properties]
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/algoquest}
     username: ${DATABASE_USERNAME:algoquest}

@@ -65,3 +65,4 @@ Claude's workspace may not reach package registries or external APIs, so install
 | `JWT_SECRET` | Render env; local `.env` |
 | `DATABASE_URL` / user / password | Render env; local `.env` |
 | `OWNER_EMAIL` | Render env; local `.env` (not secret, but configuration) |
+| `FRONTEND_URL` | Render env; local `.env` (not secret: sign-in redirects and CORS) |
