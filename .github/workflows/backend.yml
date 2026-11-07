@@ -42,7 +42,9 @@ jobs:
           for f in target/surefire-reports/TEST-*.xml; do
             suite=$(grep -m1 -o '<testsuite [^>]*>' "$f")
             attr() { v=$(echo "$suite" | grep -o " $1=\"[0-9]*\"" | tr -dc 0-9); echo "${v:-0}"; }
-            total=$((total + $(attr tests))); failed=$((failed + $(attr failures) + $(attr errors)))
+            n=$(( $(attr failures) + $(attr errors) ))
+            total=$((total + $(attr tests))); failed=$((failed + n))
+            [ "$n" -gt 0 ] && echo "::warning title=failing suite::$(basename "$f"): $suite"
           done
           echo "::notice title=backend tests::${total} tests, ${failed} failed"
 
