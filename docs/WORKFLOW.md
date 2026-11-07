@@ -7,6 +7,7 @@ Status: **Approved** (D-004, D-005, D-007, D-030), PO, 2026-11-06.
 - **`main`** is protected and always demo-ready. It changes only through a `dev → main` pull request reviewed and merged by the Product Owner (PO).
 - **`dev`** is the integration branch.
 - Every task gets its own branch cut from the latest `dev`: `feat/T-206-grading`, `fix/T-xxx-...`, `docs/T-xxx-...`, `chore/T-xxx-...`, `test/T-xxx-...`, `content/T-xxx-...`.
+- Task branches stay local; to run CI before the merge, the contributor pushes the task branch to the shared branch `ci/claude` (force-push, so no stale remote branches remain).
 - When the task's checks pass (lint, format, type check, tests, build, content validation; for documentation, link and ID consistency), the contributor merges the branch into `dev` with `--no-ff` and pushes `dev`.
 - Commits follow Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`, `chore:`, `refactor:`, `content:`) and reference the task ID.
 - The merge commit states the task ID, the problem, the resulting behavior, how it was verified, security or data implications, and whether review was self-review.

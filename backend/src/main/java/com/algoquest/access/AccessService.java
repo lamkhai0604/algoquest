@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -57,6 +58,7 @@ public class AccessService {
     if (!ownerEmail.isEmpty() && ownerEmail.equals(user.getEmail())) {
       ensureRole(null, user.getId(), Role.OWNER, Scope.GLOBAL, "configured owner email");
     }
+    users.flush(); // other modules may reference the user through plain SQL in this transaction
     return user.getId();
   }
 
@@ -118,23 +120,35 @@ public class AccessService {
   }
 
   @Transactional(readOnly = true)
+  public Optional<UserSummary> findUser(UUID userId) {
+    return users.findById(userId).map(user -> summarize(user, assignments.findByUserId(userId)));
+  }
+
+  @Transactional(readOnly = true)
   public List<UserSummary> listUsers() {
     List<AppUser> all = users.findAllByOrderByCreatedAtAsc();
     List<UUID> ids = all.stream().map(AppUser::getId).toList();
-    Map<UUID, List<Role>> rolesByUser = new HashMap<>();
+    Map<UUID, List<RoleAssignment>> byUser = new HashMap<>();
     for (RoleAssignment a : assignments.findByUserIdIn(ids)) {
-      if (a.getScope().isGlobal()) {
-        rolesByUser.computeIfAbsent(a.getUserId(), id -> new ArrayList<>()).add(a.getRole());
-      }
+      byUser.computeIfAbsent(a.getUserId(), id -> new ArrayList<>()).add(a);
     }
     List<UserSummary> result = new ArrayList<>();
     for (AppUser u : all) {
-      List<Role> roles = new ArrayList<>(rolesByUser.getOrDefault(u.getId(), List.of()));
-      Collections.sort(roles);
-      result.add(
-          new UserSummary(u.getId(), u.getEmail(), u.getDisplayName(), roles, u.getCreatedAt()));
+      result.add(summarize(u, byUser.getOrDefault(u.getId(), List.of())));
     }
     return result;
+  }
+
+  private static UserSummary summarize(AppUser user, List<RoleAssignment> userAssignments) {
+    List<Role> roles = new ArrayList<>();
+    for (RoleAssignment a : userAssignments) {
+      if (a.getScope().isGlobal()) {
+        roles.add(a.getRole());
+      }
+    }
+    Collections.sort(roles);
+    return new UserSummary(
+        user.getId(), user.getEmail(), user.getDisplayName(), roles, user.getCreatedAt());
   }
 
   private AppUser createPlayer(SignInProfile profile, String email) {
