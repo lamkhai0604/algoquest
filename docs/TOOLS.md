@@ -11,11 +11,11 @@ Authoritative list of tools, services, and accounts for stack option B (D-030). 
 | **Judge0 CE via RapidAPI** | Running Java code (D-032) | Basic plan: 50 submissions/day ([Judge0 CE pricing](https://judge0.com/ce)) | 50 Java runs/day; JavaScript runs in the browser and does not count | RapidAPI account + key |
 | **Google OAuth client** | Sign in with Google (D-036) | Free | Redirect URIs must list local and production backend URLs | Google Cloud console: OAuth client ID/secret |
 | **GitHub OAuth App** | Sign in with GitHub (D-036) | Free | One callback URL per app; use separate apps for local and production | GitHub developer settings |
-| **Vercel Hobby** | Frontend hosting (D-037), when deployment is approved | Free | Personal, non-commercial use only: any paid offering (FR-19) needs paid hosting | Existing account |
+| **Vercel Hobby** | Frontend hosting (D-037), when deployment is approved | Free | Personal projects (D-022) | Existing account |
 | **Render free web service** | Backend hosting (D-037) | Free, 512 MB, Docker | Sleeps after 15 minutes idle; about a minute to wake | Existing account |
 | **Neon Free** | PostgreSQL (D-037) | Free, scales to zero | A separate project for AlgoQuest; check the project limit of the free plan when creating it | Existing account |
 
-Not needed in this release: payment providers, email sending, analytics.
+Not needed in this release: email sending, analytics.
 
 ## 2. Development tools
 
