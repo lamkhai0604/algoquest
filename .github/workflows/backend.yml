@@ -40,9 +40,9 @@ jobs:
         run: |
           total=0; failed=0
           for f in target/surefire-reports/TEST-*.xml; do
-            t=$(grep -o 'tests="[0-9]*"' "$f" | head -1 | tr -dc 0-9)
-            x=$(grep -oE '(failures|errors)="[0-9]*"' "$f" | head -2 | tr -dc '0-9\n' | awk '{s+=$1} END {print s+0}')
-            total=$((total + t)); failed=$((failed + x))
+            suite=$(grep -m1 -o '<testsuite [^>]*>' "$f")
+            attr() { v=$(echo "$suite" | grep -o " $1=\"[0-9]*\"" | tr -dc 0-9); echo "${v:-0}"; }
+            total=$((total + $(attr tests))); failed=$((failed + $(attr failures) + $(attr errors)))
           done
           echo "::notice title=backend tests::${total} tests, ${failed} failed"
 
