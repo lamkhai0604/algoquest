@@ -1,0 +1,92 @@
+/*
+ * Design tokens from the UI draft. Dark is the default theme; the light theme
+ * overrides the same names. Components use only these variables for color.
+ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #120e1a;
+  --color-bg-sunken: #0e0a14;
+  --color-surface: #1b1526;
+  --color-surface-2: #17121f;
+  --color-surface-3: #261c33;
+  --color-border: #32284a;
+  --color-border-strong: #4a3c66;
+
+  --color-text: #f2ecf7;
+  --color-text-2: #cfc3db;
+  --color-text-muted: #ac9fbc;
+  --color-text-faint: #8a7e9a;
+
+  --color-primary: #b369c6;
+  --color-on-primary: #1b0e21;
+  --color-primary-strong: #d39be3;
+  --color-primary-soft: #241a33;
+  --color-primary-soft-text: #e9c8f2;
+
+  --color-success: #5fe0b8;
+  --color-success-soft: #123a33;
+  --color-xp: #f5c451;
+  --color-xp-soft: #2a2410;
+  --color-on-xp: #1a1300;
+  --color-warning: #ff9a6b;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: #faf7fc;
+  --color-bg-sunken: #f6f1f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f7f2f9;
+  --color-surface-3: #f3e9f7;
+  --color-border: #e8dfee;
+  --color-border-strong: #d3c3dd;
+
+  --color-text: #1f1628;
+  --color-text-2: #4a3f57;
+  --color-text-muted: #645a70;
+  --color-text-faint: #7a6f86;
+
+  --color-primary: #b369c6;
+  --color-on-primary: #1b0e21;
+  --color-primary-strong: #8a3fa3;
+  --color-primary-soft: #f7eefa;
+  --color-primary-soft-text: #3b2a4a;
+
+  --color-success: #0b7a5a;
+  --color-success-soft: #e3f5ee;
+  --color-xp: #a35f00;
+  --color-xp-soft: #fff1d6;
+  --color-on-xp: #ffffff;
+  --color-warning: #c2410c;
+}
+
+:root {
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Space Grotesk", var(--font-body);
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.2);
+  --focus-ring: 0 0 0 3px rgb(179 105 198 / 0.45);
+}
