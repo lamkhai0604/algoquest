@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Updated | 2026-11-07 |
-| Sprint | Sprint 0 — Preparation ([plan](sprints/sprint-0.md), [report](reports/sprint-0-report.md)): complete; no application code yet (D-008) |
+| Sprint | Sprint 1 — Foundations ([plan](sprints/sprint-1.md)), approved 2026-11-07. Sprint 0 complete ([report](reports/sprint-0-report.md)) |
 | Repository | `lamkhai0604/algoquest` (public, D-039); branches `main` (protected by ruleset) and `dev` |
-| Active work | Sprint 0 closed: all tasks T-001 to T-009 done. Sprint 1 plan awaiting PO approval. |
+| Active work | T-101 done (backend skeleton, backend and docs CI). Next: T-102 frontend skeleton |
 | Source revision | `dev` (see `git log dev`) |
 | Outstanding changes | None |
-| Verification | Grading test against the real Gemini API on 2026-11-07: average difference 3.8, 2 answers off by more than 10, pass/fail 19/20 (NFR-03 met). Repository settings verified through the GitHub API. Documentation links and IDs checked by script. |
+| Verification | GitHub Actions on 2026-11-07: `backend` (./mvnw verify with Testcontainers, Docker image build) and `docs` (records check and self-test) green. Sprint 0 grading test: NFR-03 met. |
 | Blockers | None |
-| Next action | PO reviews and approves the Sprint 1 plan ([sprint-1.md](sprints/sprint-1.md)); then T-101 starts |
+| Next action | T-102 frontend skeleton |

@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Proposed** — starts when the PO approves this plan (T-003 done 2026-11-07) |
+| Status | **Approved — PO, 2026-11-07** |
 | Goal | A signed-in Owner or Player sees an empty level map. Backend and frontend skeletons, CI, local database, sign-in with Google and GitHub, and permission checks are in place. |
-| Duration | About 1 week; dates set on approval |
+| Duration | 2026-11-07 → 2026-11-14 |
 | Tasks | T-101 to T-107 ([BACKLOG.md](../BACKLOG.md)) |
 | Requirements | FR-01, FR-17, NFR-02, NFR-05, NFR-08; decisions D-030, D-034, D-036, D-038 |
 

@@ -1,0 +1,61 @@
+name: backend
+
+on:
+  push:
+    branches: ["**"]
+    paths: ["backend/**", ".github/workflows/backend.yml"]
+  pull_request:
+    branches: [dev, main]
+    paths: ["backend/**", ".github/workflows/backend.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      - name: Format, compile, test (./mvnw verify)
+        run: ./mvnw -B -ntp verify 2>&1 | tee build.log
+
+      - name: Build Docker image
+        run: docker build -t algoquest-backend:ci .
+
+      - name: Report failure details as annotations
+        if: failure()
+        run: |
+          annotate() { # title, file: emits up to 5 annotations of about 3,000 characters each
+            [ -s "$2" ] || return 0
+            split -b 3000 "$2" /tmp/chunk-
+            for c in $(ls /tmp/chunk-* | head -5); do
+              echo "::error title=$1::$(sed -e 's/%/%25/g' "$c" | sed -e ':a;N;$!ba;s/\r//g;s/\n/%0A/g')"
+            done
+            rm -f /tmp/chunk-*
+          }
+          [ -f build.log ] && grep -E '^\[ERROR\]|FAIL|Caused by' build.log | head -60 > /tmp/errors.txt
+          annotate "maven errors" /tmp/errors.txt
+          for f in target/surefire-reports/*.txt; do
+            [ -f "$f" ] && grep -qE 'FAILURE|ERROR' "$f" && annotate "$(basename "$f")" "$f"
+          done
+          if ./mvnw -B -q -ntp spotless:apply >/dev/null 2>&1; then
+            git diff > /tmp/format.diff
+            annotate "spotless diff" /tmp/format.diff
+          fi
