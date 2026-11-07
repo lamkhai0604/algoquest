@@ -37,6 +37,8 @@ export interface ApiClientOptions {
   retryDelayMs?: number;
   /** After this long, the request counts as slow ("waking the server"). */
   slowAfterMs?: number;
+  /** Called when the server answers 401, for example after the token expired. */
+  onUnauthorized?: () => void;
 }
 
 export interface ApiClient {
@@ -70,6 +72,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     retries = 3,
     retryDelayMs = 1000,
     slowAfterMs = 3000,
+    onUnauthorized,
   } = options;
 
   const listeners = new Set<(waking: boolean) => void>();
@@ -120,6 +123,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
           continue;
         }
         if (!response.ok) {
+          if (response.status === 401) onUnauthorized?.();
           throw new ApiError(response.status, await readProblem(response));
         }
         if (response.status === 204) return undefined as T;
