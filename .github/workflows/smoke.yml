@@ -96,10 +96,11 @@ jobs:
             [ -n "$msg" ] && echo "::warning title=playwright output::$msg"
           fi
           docker logs backend 2>&1 | grep -E "ERROR|Exception" | head -20 | sed -e 's/^/backend: /'
+          exit 0  # this step only reports; the Playwright step decides pass or fail
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: smoke-screenshots
           path: |
