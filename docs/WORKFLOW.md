@@ -51,7 +51,7 @@ Dependency management:
 Tests and commands:
   Backend: ./mvnw verify (JUnit 5, MockMvc with 401/403 cases per endpoint, Testcontainers, content validation)
   Frontend: npm test (Vitest + React Testing Library), npm run build
-  Smoke: docker compose Postgres + backend image with FakeGrader + Vite + Playwright headless + screenshots
+  Smoke: docker compose Postgres + backend image (smoke profile; FakeGrader from Sprint 2) + production frontend build + Playwright headless + screenshots. The smoke profile's `/test-login` replaces only the provider sign-in step.
   Grading accuracy: tools/grading-test (manual, needs a Gemini key)
 Required CI checks and branch protection:
   backend.yml and frontend.yml on every push and PR into dev/main (path-filtered);
