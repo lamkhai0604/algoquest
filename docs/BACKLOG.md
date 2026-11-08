@@ -43,7 +43,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-106 | Smoke workflow: compose Postgres + backend image + Vite + Playwright, fake OAuth login for CI, screenshots as artifacts | NFR-08 | P2 | Runs on PRs and on demand; screenshots attached as review evidence. **Done 2026-11-07**: 4 Playwright tests passed; screenshots in the `smoke-screenshots` artifact of run 42447092178 |
 | T-107 | Sprint 1 report | D-007 | P2 | Report on `dev`. **Done 2026-11-07**: [sprint-1-report.md](reports/sprint-1-report.md) |
 
-## Sprint 2 — First playable level
+## Sprint 2 — First playable level ([plan](sprints/sprint-2.md), proposed)
 
 | ID | Title | Req | Priority |
 | --- | --- | --- | --- |
