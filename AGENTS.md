@@ -1,7 +1,7 @@
 # Project Contributor Entry Point
 
 Project: AlgoQuest — gamified algorithm-learning web app
-Engineering guidelines: internal and kept outside this repository (D-009, D-003). A local copy may be placed in `docs/standard/`, which is git-ignored.
+Engineering guidelines: internal and kept outside this repository (D-009, D-003). A local copy may be placed in `docs/standard/`, which is git-ignored. Read and follow them, but never copy, quote, or name them in this repository, commits, or pull requests.
 Adoption: Approved — PO, 2026-11-06 (D-009). Planning baseline approved (T-002).
 
 ## Read before work
