@@ -98,7 +98,7 @@ class ContentLoaderTest {
 
     assertThat(problems)
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Worked example"))
-        .anyMatch(p -> p.contains("quick-check.json, question 2") && p.contains("index"))
+        .anyMatch(p -> p.contains("quick-check.json, question 1") && p.contains("index"))
         .anyMatch(p -> p.contains("L1-pair-max.json") && p.contains("answerkey"))
         .anyMatch(p -> p.contains("L1-renamed.json") && p.contains("file name"))
         .anyMatch(p -> p.contains("9-stray/notes.md"));
