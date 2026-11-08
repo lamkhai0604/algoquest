@@ -1,0 +1,137 @@
+{
+  "id": "L1-count-passing-scores",
+  "level": 1,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "title": "Count Passing Scores",
+  "statement": "A class's quiz scores are stored in an array, and a pass mark is given. Return how many scores are greater than or equal to the pass mark.",
+  "examples": [
+    {
+      "input": "scores = [55, 70, 82, 69], mark = 70",
+      "output": "2",
+      "explanation": "70 and 82 pass."
+    },
+    {
+      "input": "scores = [], mark = 50",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "0 <= scores.length <= 10^5",
+    "0 <= scores[i], mark <= 100"
+  ],
+  "answerKey": {
+    "pattern": "Single linear scan with a counter",
+    "keyPoints": [
+      "Start a counter at 0",
+      "Visit each score once and add 1 when score >= mark",
+      "Return the counter"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Empty array returns 0",
+      "A score equal to the mark counts as passing",
+      "No score passes"
+    ],
+    "acceptableSlowerApproaches": [
+      "Sort and binary search for the mark: O(n log n)"
+    ]
+  },
+  "hints": [
+    "How many times do you need to look at each score?",
+    "A single counter is enough; no extra array is needed.",
+    "Use >= so that a score equal to the mark is counted."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          55,
+          70,
+          82,
+          69
+        ],
+        70
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [],
+        50
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          100
+        ],
+        100
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          10,
+          20,
+          30
+        ],
+        50
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          60,
+          60,
+          60
+        ],
+        60
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          0,
+          100,
+          50,
+          49
+        ],
+        50
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          99
+        ],
+        100
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          70,
+          71,
+          69,
+          70
+        ],
+        70
+      ],
+      "expected": 3
+    }
+  ],
+  "starterCode": {
+    "javascript": "function countPassing(scores, mark) {\n  // return how many scores are >= mark\n}",
+    "java": "class Solution {\n  int countPassing(int[] scores, int mark) {\n    // return how many scores are >= mark\n  }\n}"
+  },
+  "similarLeetCode": "Count Negative Numbers in a Sorted Matrix"
+}

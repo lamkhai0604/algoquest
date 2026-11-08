@@ -1,0 +1,25 @@
+[
+  {
+    "question": "A function loops over a list of n items, and inside that loop it loops over the whole list again. What is its time complexity?",
+    "options": ["O(n)", "O(2n)", "O(n²)", "O(log n)"],
+    "answer": 2,
+    "explanation": "For each of the n items, the inner loop does n steps, so the work is n × n = O(n²)."
+  },
+  {
+    "question": "You find the largest value by keeping one 'best so far' variable during a single pass. What is the extra space used?",
+    "options": ["O(1)", "O(n)", "O(n log n)", "O(n²)"],
+    "answer": 0,
+    "explanation": "Only one variable is kept, however long the list is, so the extra space is constant: O(1)."
+  },
+  {
+    "question": "Why is starting a running maximum at 0 a mistake?",
+    "options": [
+      "It makes the loop O(n²)",
+      "It returns 0 when every value is negative",
+      "It uses O(n) extra space",
+      "It fails on lists with one element"
+    ],
+    "answer": 1,
+    "explanation": "If all values are negative, none is bigger than 0, so the function wrongly returns 0. Start from the first element instead."
+  }
+]

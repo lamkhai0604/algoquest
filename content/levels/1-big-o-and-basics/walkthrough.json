@@ -1,0 +1,31 @@
+[
+  {
+    "title": "The task",
+    "body": "Find the highest temperature in **[3, -2, 9, 4]**. We will read the list once and keep one variable, `best`."
+  },
+  {
+    "title": "Handle the empty list",
+    "body": "The list has values, so we can start. If it were empty, we would return null right away instead of reading `temps[0]`.",
+    "code": "if (temps.length === 0) return null;"
+  },
+  {
+    "title": "Start from the first value",
+    "body": "Set `best = 3`. Starting from the first element, not from 0, keeps the answer right when every temperature is negative.",
+    "code": "let best = temps[0]; // 3"
+  },
+  {
+    "title": "Visit -2",
+    "body": "-2 is not bigger than 3, so `best` stays 3. One comparison, no extra memory.",
+    "code": "if (-2 > best) ... // no change, best = 3"
+  },
+  {
+    "title": "Visit 9",
+    "body": "9 is bigger than 3, so `best` becomes 9.",
+    "code": "if (9 > best) best = 9; // best = 9"
+  },
+  {
+    "title": "Visit 4 and finish",
+    "body": "4 is not bigger than 9. The loop ends and we return **9**. We did one comparison per element: **O(n) time**, and kept one variable: **O(1) space**.",
+    "code": "return best; // 9"
+  }
+]

@@ -1,0 +1,129 @@
+{
+  "id": "L1-largest-jump",
+  "level": 1,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Largest Jump",
+  "statement": "An array records a runner's position after each second. Return the largest distance travelled in a single second: the largest absolute difference between two neighbouring values. Return 0 if there are fewer than two values.",
+  "examples": [
+    {
+      "input": "[2, 5, 1, 1, 9]",
+      "output": "8",
+      "explanation": "From 1 to 9."
+    },
+    {
+      "input": "[4]",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "0 <= positions.length <= 10^5",
+    "-10^6 <= positions[i] <= 10^6"
+  ],
+  "answerKey": {
+    "pattern": "Single scan over neighbouring pairs keeping the largest absolute difference",
+    "keyPoints": [
+      "Visit each neighbouring pair once (i - 1, i)",
+      "Use the absolute value of the difference",
+      "Keep the largest difference, starting from 0"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Fewer than two values returns 0",
+      "Moves backwards need the absolute value",
+      "All values equal returns 0"
+    ],
+    "acceptableSlowerApproaches": [
+      "Compare every pair of positions: O(n^2), and wrong because only neighbours count"
+    ]
+  },
+  "hints": [
+    "Only neighbouring values matter. How many neighbouring pairs are there?",
+    "Walk once through the array and compare each value with the one before it.",
+    "A move backwards is still a distance: use the absolute difference."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          2,
+          5,
+          1,
+          1,
+          9
+        ]
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        [
+          4
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          3,
+          3,
+          3
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          10,
+          0
+        ]
+      ],
+      "expected": 10
+    },
+    {
+      "input": [
+        [
+          -5,
+          5
+        ]
+      ],
+      "expected": 10
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          4,
+          7
+        ]
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          0,
+          -1000000,
+          1000000
+        ]
+      ],
+      "expected": 2000000
+    }
+  ],
+  "starterCode": {
+    "javascript": "function largestJump(positions) {\n  // return the largest neighbour difference\n}",
+    "java": "class Solution {\n  long largestJump(int[] positions) {\n    // return the largest neighbour difference\n  }\n}"
+  },
+  "similarLeetCode": "Maximum Gap"
+}
