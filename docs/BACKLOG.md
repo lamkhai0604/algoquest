@@ -45,16 +45,16 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 
 ## Sprint 2 — First playable level ([plan](sprints/sprint-2.md), approved 2026-11-07)
 
-| ID | Title | Req | Priority |
-| --- | --- | --- | --- |
-| T-201 | Content format, loader, and validation (startup + CI); public DTOs without answer keys | D-033, NFR-02 | P1 |
-| T-202 | Level 1 content: lesson, walkthrough, quick check, Easy + Medium problems, test problems, Hard placeholders (PO reviews) | FR-03, D-024 | P1 |
-| T-203 | Level map and problem list (lock states, XP bars, "Coming in a later version" for Hard) | FR-02, FR-04.4 | P1 |
-| T-204 | Lesson page: Markdown, step walkthrough, quick check | FR-03 | P1 |
-| T-205 | `game.domain`: problem XP, level target, totals, lock states (pure Java, unit tests) | FR-08, FR-10 | P1 |
-| T-206 | Grading module (Gemini + Fake) and attempts endpoint with failure paths and idempotency | FR-05, NFR-09 | P1 |
-| T-207 | Solve page and feedback page | FR-04, FR-05 | P1 |
-| T-208 | Sprint 2 report | D-007 | P2 |
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-201 | Content format, loader, and validation (startup + CI); public DTOs without answer keys | D-033, NFR-02 | P1 | Done 2026-11-08 (CI: 53 backend tests, smoke green) |
+| T-202 | Level 1 content: lesson, walkthrough, quick check, Easy + Medium problems, test problems, Hard placeholders (PO reviews) | FR-03, D-024 | P1 |  |
+| T-203 | Level map and problem list (lock states, XP bars, "Coming in a later version" for Hard) | FR-02, FR-04.4 | P1 |  |
+| T-204 | Lesson page: Markdown, step walkthrough, quick check | FR-03 | P1 |  |
+| T-205 | `game.domain`: problem XP, level target, totals, lock states (pure Java, unit tests) | FR-08, FR-10 | P1 |  |
+| T-206 | Grading module (Gemini + Fake) and attempts endpoint with failure paths and idempotency | FR-05, NFR-09 | P1 |  |
+| T-207 | Solve page and feedback page | FR-04, FR-05 | P1 |  |
+| T-208 | Sprint 2 report | D-007 | P2 |  |
 
 ## Sprint 3 — Levels 1–3 test build
 

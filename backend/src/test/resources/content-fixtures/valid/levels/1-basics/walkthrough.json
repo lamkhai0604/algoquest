@@ -1,0 +1,15 @@
+[
+  {
+    "title": "Start",
+    "body": "Set best to the first value."
+  },
+  {
+    "title": "Scan",
+    "body": "Compare each value.",
+    "code": "if (x > best) best = x;"
+  },
+  {
+    "title": "Finish",
+    "body": "Return best."
+  }
+]
