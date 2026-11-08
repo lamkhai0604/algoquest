@@ -1,0 +1,110 @@
+name: smoke
+
+# End-to-end smoke run (T-106): PostgreSQL, the backend Docker image, the built
+# frontend, and Playwright in a real browser. Screenshots are uploaded as review
+# evidence. Runs on pull requests, on demand, and when the smoke files change on
+# the shared CI branch.
+on:
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+  push:
+    branches: [ci/claude]
+    paths: ["e2e/**", ".github/workflows/smoke.yml", "backend/src/main/java/com/algoquest/access/smoke/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+# bash runs with -eo pipefail, so a failing command piped into tee fails the step.
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      FRONTEND_URL: http://localhost:5173
+      API_URL: http://localhost:8080
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Database
+        run: |
+          cp .env.example .env
+          docker compose up -d --wait
+
+      - name: Backend image (smoke profile)
+        run: |
+          docker build -t algoquest-backend:smoke backend
+          docker run -d --name backend --network host \
+            -e SPRING_PROFILES_ACTIVE=smoke \
+            -e DATABASE_URL=jdbc:postgresql://localhost:5432/algoquest \
+            -e DATABASE_USERNAME=algoquest -e DATABASE_PASSWORD=algoquest \
+            -e OWNER_EMAIL=owner@example.com \
+            -e FRONTEND_URL="$FRONTEND_URL" \
+            -e JWT_SECRET="smoke-run-secret-$(openssl rand -hex 16)" \
+            algoquest-backend:smoke
+          for i in $(seq 1 90); do
+            curl -fs "$API_URL/actuator/health" | grep -q '"UP"' && { echo "Backend up after ${i}s"; exit 0; }
+            sleep 1
+          done
+          docker logs backend | tail -80
+          exit 1
+
+      - name: Frontend (production build, served on port 5173)
+        working-directory: frontend
+        run: |
+          npm ci
+          VITE_API_URL="$API_URL" npm run build
+          nohup npx vite preview --port 5173 --strictPort > /tmp/preview.log 2>&1 &
+          for i in $(seq 1 30); do curl -fs "$FRONTEND_URL" > /dev/null && exit 0; sleep 1; done
+          cat /tmp/preview.log
+          exit 1
+
+      - name: Playwright
+        working-directory: e2e
+        run: |
+          npm install --no-audit --no-fund --no-package-lock
+          npx playwright install --with-deps chromium
+          npx playwright test 2>&1 | tee playwright.log
+
+      - name: Summary
+        if: always()
+        working-directory: e2e
+        run: |
+          set +e
+          if [ -f results/report.json ]; then
+            node -e '
+              const r = require("./results/report.json").stats;
+              console.log(`::notice title=smoke tests::${r.expected} passed, ${r.unexpected} failed, ${r.skipped} skipped`);
+            '
+          fi
+          if [ -f playwright.log ]; then
+            msg=$(grep -E "✘|Error|expect|›" playwright.log | head -40 | sed -e 's/%/%25/g' | sed -e ':a;N;$!ba;s/\n/%0A/g')
+            [ -n "$msg" ] && echo "::warning title=playwright output::$msg"
+          fi
+          docker logs backend 2>&1 | grep -E "ERROR|Exception" | head -20 | sed -e 's/^/backend: /'
+          exit 0  # this step only reports; the Playwright step decides pass or fail
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: smoke-screenshots
+          path: |
+            e2e/results/screenshots
+            e2e/results/artifacts
+          if-no-files-found: warn
+          retention-days: 30
