@@ -102,6 +102,9 @@ final class ContentLoader {
   /** Every file under {@code levels/}, keyed by its path relative to the content root. */
   private Map<String, Resource> listFiles() {
     Map<String, Resource> files = new TreeMap<>();
+    if (!resolver.getResource(base + "levels/").exists()) {
+      return files; // no level has content yet
+    }
     try {
       String root = resolver.getResource(base + "levels.json").getURL().toString();
       String prefix = root.substring(0, root.length() - "levels.json".length());
