@@ -46,7 +46,8 @@ class LevelRulesTest {
     "88,  2, true,  false",
     "125, 2, true,  true",
   })
-  void practiceOpensAt70PercentAndTestAtAFullBar(int xp, int level, boolean practice, boolean test) {
+  void practiceOpensAt70PercentAndTestAtAFullBar(
+      int xp, int level, boolean practice, boolean test) {
     assertThat(LevelRules.practiceOpen(xp, level)).isEqualTo(practice);
     assertThat(LevelRules.testOpen(xp, level)).isEqualTo(test);
   }

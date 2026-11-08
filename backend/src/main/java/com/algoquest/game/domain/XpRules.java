@@ -13,8 +13,8 @@ public final class XpRules {
   private XpRules() {}
 
   /**
-   * Problem XP = (base + difficulty bonus + time bonus) × (1 − 0.2 × hints, at least 0) × (2 if code
-   * passed), rounded down.
+   * Problem XP = (base + difficulty bonus + time bonus) × (1 − 0.2 × hints, at least 0) × (2 if
+   * code passed), rounded down.
    */
   public static int problemXp(
       Difficulty difficulty, Duration timeTaken, int hintsUsed, boolean codePassed) {
