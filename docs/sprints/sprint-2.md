@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Proposed** — starts when the PO approves this plan |
+| Status | **Approved — PO, 2026-11-07** |
 | Goal | A signed-in player opens Level 1, reads the lesson, solves an Easy or Medium problem by explaining it in words, and receives AI feedback and XP. |
 | Duration | About 1 week from approval |
 | Tasks | T-201 to T-208 ([BACKLOG.md](../BACKLOG.md)) |
