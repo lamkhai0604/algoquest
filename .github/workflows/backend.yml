@@ -3,10 +3,10 @@ name: backend
 on:
   push:
     branches: ["**"]
-    paths: ["backend/**", "docker-compose.yml", ".env.example", ".github/workflows/backend.yml"]
+    paths: ["backend/**", "content/**", "docker-compose.yml", ".env.example", ".github/workflows/backend.yml"]
   pull_request:
     branches: [dev, main]
-    paths: ["backend/**", "docker-compose.yml", ".env.example", ".github/workflows/backend.yml"]
+    paths: ["backend/**", "content/**", "docker-compose.yml", ".env.example", ".github/workflows/backend.yml"]
   workflow_dispatch:
 
 permissions:
@@ -64,7 +64,7 @@ jobs:
           echo "::notice title=backend tests::${total} tests, ${failed} failed"
 
       - name: Build Docker image
-        run: docker build -t algoquest-backend:ci .
+        run: docker build -f Dockerfile -t algoquest-backend:ci ..
 
       - name: Report failure details as annotations
         if: failure()

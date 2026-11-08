@@ -47,7 +47,7 @@ jobs:
 
       - name: Backend image (smoke profile)
         run: |
-          docker build -t algoquest-backend:smoke backend
+          docker build -f backend/Dockerfile -t algoquest-backend:smoke .
           docker run -d --name backend --network host \
             -e SPRING_PROFILES_ACTIVE=smoke \
             -e DATABASE_URL=jdbc:postgresql://localhost:5432/algoquest \
