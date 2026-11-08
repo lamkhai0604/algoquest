@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: algoquest
+  config:
+    # Local settings from the repository root (git-ignored); absent in CI and on the host.
+    import: optional:file:../.env[.properties]
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/algoquest}
+    username: ${DATABASE_USERNAME:algoquest}
+    password: ${DATABASE_PASSWORD:algoquest}
+  flyway:
+    locations: classpath:db/migration
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:not-configured}
+            client-secret: ${GOOGLE_CLIENT_SECRET:not-configured}
+            scope: openid, email, profile
+          github:
+            client-id: ${GITHUB_CLIENT_ID:not-configured}
+            client-secret: ${GITHUB_CLIENT_SECRET:not-configured}
+            scope: read:user, user:email
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+algoquest:
+  # The account with this email becomes the first Owner when it signs in (FR-17).
+  owner-email: ${OWNER_EMAIL:}
+  # Address of the frontend: sign-in redirects and the only allowed CORS origin.
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  # Signs the app's login tokens (D-036). When empty, a random key is used and tokens end at restart.
+  jwt-secret: ${JWT_SECRET:}

@@ -7,6 +7,7 @@ Status: **Approved** (D-004, D-005, D-007, D-030), PO, 2026-11-06.
 - **`main`** is protected and always demo-ready. It changes only through a `dev → main` pull request reviewed and merged by the Product Owner (PO).
 - **`dev`** is the integration branch.
 - Every task gets its own branch cut from the latest `dev`: `feat/T-206-grading`, `fix/T-xxx-...`, `docs/T-xxx-...`, `chore/T-xxx-...`, `test/T-xxx-...`, `content/T-xxx-...`.
+- Task branches stay local; to run CI before the merge, the contributor pushes the task branch to the shared branch `ci/claude` (force-push, so no stale remote branches remain).
 - When the task's checks pass (lint, format, type check, tests, build, content validation; for documentation, link and ID consistency), the contributor merges the branch into `dev` with `--no-ff` and pushes `dev`.
 - Commits follow Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`, `chore:`, `refactor:`, `content:`) and reference the task ID.
 - The merge commit states the task ID, the problem, the resulting behavior, how it was verified, security or data implications, and whether review was self-review.
@@ -32,8 +33,8 @@ Each sprint ends with `docs/reports/sprint-N-report.md`: goal and outcome, deliv
 
 ```text
 Languages, versions, platforms:
-  Backend: Java 21, Spring Boot 4.1.x, Maven Wrapper, PostgreSQL 16 (local) / Neon (hosted).
-  Frontend: TypeScript 5.9 strict, React 19, Vite 8, Node 22 LTS. Evergreen browsers, 360 px minimum width.
+  Backend: Java 21, Spring Boot 4.1.0, Maven 3.9.11 through the Maven Wrapper, PostgreSQL 16 (local) / Neon (hosted).
+  Frontend: TypeScript 5.9 strict, React 19, React Router 7, Vite 8, Vitest 5, ESLint 9, Prettier 3, Node 22 LTS. Evergreen browsers, 360 px minimum width.
 Style, formatter, linter, commands:
   Backend: Spotless (Google Java Format) -> ./mvnw spotless:check
   Frontend: ESLint + Prettier -> npm run lint / npm run format:check / npm run typecheck
@@ -50,12 +51,12 @@ Dependency management:
 Tests and commands:
   Backend: ./mvnw verify (JUnit 5, MockMvc with 401/403 cases per endpoint, Testcontainers, content validation)
   Frontend: npm test (Vitest + React Testing Library), npm run build
-  Smoke: docker compose Postgres + backend image with FakeGrader + Vite + Playwright headless + screenshots
+  Smoke: docker compose Postgres + backend image (smoke profile; FakeGrader from Sprint 2) + production frontend build + Playwright headless + screenshots. The smoke profile's `/test-login` replaces only the provider sign-in step.
   Grading accuracy: tools/grading-test (manual, needs a Gemini key)
 Required CI checks and branch protection:
   backend.yml and frontend.yml on every push and PR into dev/main (path-filtered);
   docs.yml (records check, D-038) on pushes and PRs that change Markdown;
-  smoke.yml on PRs and on demand (private repo minutes, D-023). Branch protection on main is configured by the PO (T-004).
+  smoke.yml on PRs and on demand. Branch protection on main: ruleset requiring a pull request, blocking deletions and force pushes (D-039, T-004).
 Review, merge, release, communication:
   The PO reviews and merges dev -> main; every deployment needs PO approval.
 Authorized delegation and permissions:

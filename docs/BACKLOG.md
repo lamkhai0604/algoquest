@@ -15,33 +15,33 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | 2 — First playable level | Content format and Level 1 content, level map, lesson page, game rules, AI grading, solve and feedback pages, XP | FR-02–FR-05, FR-08 | Level 1 problems explained and graded |
 | 3 — Levels 1–3 test build | Hints, practice round, level-up test with unlocking, Levels 2–3 content, profile and streak, admin grading log and reset, first deployment | FR-06, FR-09, FR-10, FR-12, FR-13, FR-18.1–2 | Levels 1–3 playable on the live site |
 | 4 — Code and polish | Code in JavaScript and Java for 2× XP, dummy leaderboard, VIP and "coming later" placeholders, admin config and roles pages, design pass, XP tuning | FR-07, FR-11 (placeholder), FR-14, FR-15, FR-18.3–4 | Complete first release |
-| Later | Hard problems and hard test mode, levels 4–17, organizations and seat plans, payments, voice answers, battle mode | FR-11, FR-16, FR-19 | — |
+| Later | Hard problems and hard test mode, levels 4–17, organizations, voice answers, battle mode | FR-11, FR-16, FR-19 | — |
 
 ## Sprint 0 — Preparation ([plan](sprints/sprint-0.md))
 
 | ID | Title | Req | Owner | Priority | Status | Depends on | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-001 | Baseline planning docs + grading test kit | all | Claude | P1 | In Review — on `dev` | — | Docs on `dev`; proposals labelled; links work |
+| T-001 | Baseline planning docs + grading test kit | all | Claude | P1 | Done — accepted with T-002 | — | Docs on `dev`; proposals labelled; links work |
 | T-002 | Review and approve the planning baseline | all | PO | P1 | Done — all decisions approved 2026-11-06; SRS and ARCHITECTURE v1.0 | T-001, T-006, T-007 | Every Proposed decision Approved, changed, or rejected; backlog IDs frozen |
-| T-003 | Accounts and keys: Gemini (AI Studio), RapidAPI (Judge0 CE Basic), Google OAuth client, GitHub OAuth App (local + production), Neon project for AlgoQuest | — | PO | P1 | Proposed | T-002 | Keys stored only in Render/GitHub secrets or a local `.env` (names in TOOLS.md §5); never shared in messages or committed |
-| T-004 | Repository settings: private visibility (D-023), branch protection on `main`, Actions enabled | NFR-08 | PO | P2 | Proposed | — | Verified by Claude through the GitHub API, or recorded as a gap |
+| T-003 | Accounts and keys: Gemini (AI Studio), RapidAPI (Judge0 CE Basic), Google OAuth client, GitHub OAuth App (local + production), Neon project for AlgoQuest | — | PO | P1 | Done — 2026-11-07 (local OAuth apps; production OAuth apps are created at deployment) | T-002 | Keys stored only in Render/GitHub secrets or a local `.env` (names in TOOLS.md §5); never shared in messages or committed |
+| T-004 | Repository settings: visibility (D-039), branch protection on `main`, Actions enabled | NFR-08 | PO | P2 | Done — verified through the GitHub API on 2026-11-07: public; ruleset `main` active (pull request required, 0 approvals; deletions and force pushes blocked); only `main` and `dev` remain | — | Verified by Claude through the GitHub API, or recorded as a gap |
 | T-005 | Run the grading test and tune the prompt until NFR-03 passes | NFR-03, D-031 | PO (runs), Claude (analysis) | P1 | Done — 2026-11-07: `gemini-3.5-flash-lite`, prompt v2 (`ab616a4`): average difference 3.8, 2 answers off by more than 10 (S09, S12), pass/fail agreement 19/20 | T-003 (Gemini key) | NFR-03 met. Run 1 (prompt v1): 4.8 / 4 / 16 of 20. Latency not measured: moved to T-206 (NFR-04). Watch in T-206: wrong stated complexity also lowers steps (S09) |
-| T-006 | Roles, admin panel, and organization groundwork in the plan | FR-17–FR-19 | Claude | P1 | In Review — on `dev` | T-001 | Docs updated |
-| T-007 | Redesign for option B: architecture v0.2, tools, engineering profile, sprint plan | D-030 | Claude | P1 | In Review — on `dev` | T-006 | Docs updated; no references to option A left except as rejected alternative |
-| T-008 | Apply the professional record style to all project records (neutral wording, no conversation traces or personal details) | D-005 | Claude | P2 | In Review — on `dev` | T-007 | No conversational wording, personal details, or private links in committed records |
+| T-006 | Roles, admin panel, and organization groundwork in the plan | FR-17–FR-19 | Claude | P1 | Done — accepted with T-002 | T-001 | Docs updated |
+| T-007 | Redesign for option B: architecture v0.2, tools, engineering profile, sprint plan | D-030 | Claude | P1 | Done — accepted with T-002 | T-006 | Docs updated; no references to option A left except as rejected alternative |
+| T-008 | Apply the professional record style to all project records (neutral wording, no conversation traces or personal details) | D-005 | Claude | P2 | Done — accepted with T-002 | T-007 | No conversational wording, personal details, or private links in committed records |
 | T-009 | Upgrade the project pin to internal guidelines | D-009 | Claude | P2 | Done — pinned to | T-008 | D-009 and AGENTS.md name the merged commit |
 
-## Sprint 1 — Foundations ([plan](sprints/sprint-1.md), proposed)
+## Sprint 1 — Foundations ([plan](sprints/sprint-1.md), approved 2026-11-07)
 
 | ID | Title | Req | Priority | Acceptance criteria (in addition to the requirement's) |
 | --- | --- | --- | --- | --- |
-| T-101 | Backend skeleton: Spring Boot 4.1 / Java 21, modules from ARCHITECTURE §3 as empty packages, Flyway baseline, health endpoint, RFC 9457 errors, Spotless, Dockerfile; `backend.yml` CI; **records check** (`docs.yml`, D-038) | NFR-08, D-038 | P1 | `./mvnw verify` green in CI; Docker image builds; records check runs on every push and PR that changes Markdown and fails on a seeded violation |
-| T-102 | Frontend skeleton: React 19 + Vite + TS, router, design tokens, shared components (button, card, XP bar, loading, error, "waking the server"), API client; `frontend.yml` CI | NFR-05, NFR-08 | P1 | Lint, format, typecheck, test, build green in CI |
-| T-103 | Local development: `docker-compose.yml` (Postgres 16), `.env.example`, README setup steps | — | P1 | A fresh clone runs both apps by following the README |
-| T-104 | Sign in with Google and GitHub: OAuth2 login, one-time code exchange, JWT, `/api/v1/me`, sign-out, route guards | FR-01, D-036 | P1 | Unauthenticated calls get 401; code is single-use and expires after 60 s (tests) |
-| T-105 | Access core: permission catalogue, role assignments with scope, Owner seeded from `OWNER_EMAIL`, `PermissionEvaluator`, audit log, last-Owner rule | FR-17, D-034 | P1 | Tests for every permission rule; 403 for a Player on admin endpoints |
-| T-106 | Smoke workflow: compose Postgres + backend image + Vite + Playwright, fake OAuth login for CI, screenshots as artifacts | NFR-08 | P2 | Runs on PRs and on demand; screenshots attached as review evidence |
-| T-107 | Sprint 1 report | D-007 | P2 | Report on `dev` |
+| T-101 | Backend skeleton: Spring Boot 4.1 / Java 21, modules from ARCHITECTURE §3 as empty packages, Flyway baseline, health endpoint, RFC 9457 errors, Spotless, Dockerfile; `backend.yml` CI; **records check** (`docs.yml`, D-038) | NFR-08, D-038 | P1 | `./mvnw verify` green in CI; Docker image builds; records check runs on every push and PR that changes Markdown and fails on a seeded violation. **Done 2026-11-07** (CI green on `09b85df`) |
+| T-102 | Frontend skeleton: React 19 + Vite + TS, router, design tokens, shared components (button, card, XP bar, loading, error, "waking the server"), API client; `frontend.yml` CI | NFR-05, NFR-08 | P1 | Lint, format, typecheck, test, build green in CI. **Done 2026-11-07** (CI green on `140221e`) |
+| T-103 | Local development: `docker-compose.yml` (Postgres 16), `.env.example`, README setup steps | — | P1 | A fresh clone runs both apps by following the README. **Done 2026-11-07**: the `local-dev` CI job follows the README backend steps (green on `5e74be1`); the frontend steps match `frontend.yml` |
+| T-104 | Sign in with Google and GitHub: OAuth2 login, one-time code exchange, JWT, `/api/v1/me`, sign-out, route guards | FR-01, D-036 | P1 | Unauthenticated calls get 401; code is single-use and expires after 60 s (tests). **Implemented and verified in CI 2026-11-07** (41 backend tests, frontend tests green); manual sign-in with real Google and GitHub apps pending (PO) |
+| T-105 | Access core: permission catalogue, role assignments with scope, Owner seeded from `OWNER_EMAIL`, `PermissionEvaluator`, audit log, last-Owner rule | FR-17, D-034 | P1 | Tests for every permission rule; 403 for a Player on admin endpoints. **Done 2026-11-07** (CI green) |
+| T-106 | Smoke workflow: compose Postgres + backend image + Vite + Playwright, fake OAuth login for CI, screenshots as artifacts | NFR-08 | P2 | Runs on PRs and on demand; screenshots attached as review evidence. **Done 2026-11-07**: 4 Playwright tests passed; screenshots in the `smoke-screenshots` artifact of run 42447092178 |
+| T-107 | Sprint 1 report | D-007 | P2 | Report on `dev`. **Done 2026-11-07**: [sprint-1-report.md](reports/sprint-1-report.md) |
 
 ## Sprint 2 — First playable level
 
@@ -88,8 +88,8 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | --- | --- | --- |
 | T-501 | Hard problems and hard test mode for real | FR-11, D-024 |
 | T-502 | Levels 4–17 content, about 2 levels per sprint | SRS §6 |
-| T-503 | Organizations and seat plans (teacher buys a plan, invites 5 or 10 members) | FR-19, OQ-06 |
-| T-504 | Payments for plans — paid-service decision (D-006) and commercial hosting first | FR-19 |
+| T-503 | Organizations (admin invites 5 or 10 members) | FR-19, OQ-06 |
+| T-504 | Withdrawn | — |
 | T-505 | Move JavaScript checking to Judge0 or a server sandbox before graded organization use | D-035 |
 | T-506 | Voice answers | Excluded this release |
 | T-507 | Battle mode | FR-16 |
