@@ -41,7 +41,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-104 | Sign in with Google and GitHub: OAuth2 login, one-time code exchange, JWT, `/api/v1/me`, sign-out, route guards | FR-01, D-036 | P1 | Unauthenticated calls get 401; code is single-use and expires after 60 s (tests). **Implemented and verified in CI 2026-11-07** (41 backend tests, frontend tests green); manual sign-in with real Google and GitHub apps pending (PO) |
 | T-105 | Access core: permission catalogue, role assignments with scope, Owner seeded from `OWNER_EMAIL`, `PermissionEvaluator`, audit log, last-Owner rule | FR-17, D-034 | P1 | Tests for every permission rule; 403 for a Player on admin endpoints. **Done 2026-11-07** (CI green) |
 | T-106 | Smoke workflow: compose Postgres + backend image + Vite + Playwright, fake OAuth login for CI, screenshots as artifacts | NFR-08 | P2 | Runs on PRs and on demand; screenshots attached as review evidence. **Done 2026-11-07**: 4 Playwright tests passed; screenshots in the `smoke-screenshots` artifact of run 42447092178 |
-| T-107 | Sprint 1 report | D-007 | P2 | Report on `dev` |
+| T-107 | Sprint 1 report | D-007 | P2 | Report on `dev`. **Done 2026-11-07**: [sprint-1-report.md](reports/sprint-1-report.md) |
 
 ## Sprint 2 — First playable level
 
