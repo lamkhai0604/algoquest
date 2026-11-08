@@ -18,8 +18,8 @@
 | T-005 Grading test | Done | NFR-03 met (see below) |
 | T-006 Roles, admin panel, organization groundwork | Done | FR-17 to FR-19; ARCHITECTURE §9; D-034 |
 | T-007 Redesign for option B | Done | D-030; architecture, tools, engineering profile, sprint plans |
-| T-008 Professional record style | Done | Records follow internal guidelines §3; records check planned in CI (D-038, T-101) |
-| T-009 internal guidelines pin | Done | D-009, |
+| T-008 Professional record style | Done | Records follow the record style in WORKFLOW.md; records check planned in CI (D-038, T-101) |
+| T-009 Current engineering guidelines | Done | D-009 |
 
 ## Grading test (NFR-03)
 
@@ -41,7 +41,7 @@ Follow-ups for T-206 (grading feature):
 
 ## Decisions made in this sprint
 
-D-002 to D-024 and D-030 to D-038 approved on 2026-11-06. D-009 superseded D-001 (internal guidelines). D-039 superseded D-023 (public repository) on 2026-11-07.
+D-002 to D-024 and D-030 to D-038 approved on 2026-11-06. D-009 superseded D-001 (current engineering guidelines). D-039 superseded D-023 (public repository) on 2026-11-07.
 
 ## Problems and fixes
 

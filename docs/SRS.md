@@ -5,7 +5,7 @@
 | Version | 1.0 |
 | Status | **Approved baseline** — PO, 2026-11-06 (T-002). Changes go through DECISIONS.md. |
 | Product Owner | Repository owner (lamkhai0604) |
-| Standard | internal engineering guidelines (D-009) |
+| Engineering guidelines | Internal (D-009) |
 | Last updated | 2026-11-06 |
 
 ## 1. Product Definition

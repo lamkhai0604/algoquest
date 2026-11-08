@@ -29,7 +29,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-006 | Roles, admin panel, and organization groundwork in the plan | FR-17–FR-19 | Claude | P1 | Done — accepted with T-002 | T-001 | Docs updated |
 | T-007 | Redesign for option B: architecture v0.2, tools, engineering profile, sprint plan | D-030 | Claude | P1 | Done — accepted with T-002 | T-006 | Docs updated; no references to option A left except as rejected alternative |
 | T-008 | Apply the professional record style to all project records (neutral wording, no conversation traces or personal details) | D-005 | Claude | P2 | Done — accepted with T-002 | T-007 | No conversational wording, personal details, or private links in committed records |
-| T-009 | Upgrade the project pin to internal guidelines | D-009 | Claude | P2 | Done — pinned to | T-008 | D-009 and AGENTS.md name the merged commit |
+| T-009 | Move the project to the current internal engineering guidelines | D-009 | Claude | P2 | Done | T-008 | D-009 records the change |
 
 ## Sprint 1 — Foundations ([plan](sprints/sprint-1.md), approved 2026-11-07)
 
@@ -43,7 +43,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-106 | Smoke workflow: compose Postgres + backend image + Vite + Playwright, fake OAuth login for CI, screenshots as artifacts | NFR-08 | P2 | Runs on PRs and on demand; screenshots attached as review evidence. **Done 2026-11-07**: 4 Playwright tests passed; screenshots in the `smoke-screenshots` artifact of run 42447092178 |
 | T-107 | Sprint 1 report | D-007 | P2 | Report on `dev`. **Done 2026-11-07**: [sprint-1-report.md](reports/sprint-1-report.md) |
 
-## Sprint 2 — First playable level ([plan](sprints/sprint-2.md), proposed)
+## Sprint 2 — First playable level ([plan](sprints/sprint-2.md), approved 2026-11-07)
 
 | ID | Title | Req | Priority |
 | --- | --- | --- | --- |

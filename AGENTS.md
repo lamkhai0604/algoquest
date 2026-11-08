@@ -1,8 +1,8 @@
 # Project Contributor Entry Point
 
 Project: AlgoQuest — gamified algorithm-learning web app
-Standard: internal engineering guidelines the private repository the internal guidelines repository (D-009, D-003). Contributors need access to that repository; a local copy may be placed in `docs/standard/`, which is git-ignored.
-Adoption: Approved — Product Owner, 2026-11-06 (D-009). Planning baseline approved (T-002).
+Engineering guidelines: internal and kept outside this repository (D-009, D-003). A local copy may be placed in `docs/standard/`, which is git-ignored.
+Adoption: Approved — PO, 2026-11-06 (D-009). Planning baseline approved (T-002).
 
 ## Read before work
 
