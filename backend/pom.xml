@@ -80,6 +80,16 @@
 
   <build>
     <finalName>algoquest-backend</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- Lessons and problems (D-033) are packaged into the jar under content/. -->
+      <resource>
+        <directory>../content</directory>
+        <targetPath>content</targetPath>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>

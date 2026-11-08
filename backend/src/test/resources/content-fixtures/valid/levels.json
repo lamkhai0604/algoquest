@@ -1,0 +1,14 @@
+[
+  {
+    "number": 1,
+    "slug": "basics",
+    "title": "Basics",
+    "summary": "First level."
+  },
+  {
+    "number": 2,
+    "slug": "later",
+    "title": "Later",
+    "summary": "No content yet."
+  }
+]

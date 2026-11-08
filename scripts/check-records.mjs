@@ -12,6 +12,7 @@
 //   language  records are in English (Vietnamese text is reported)
 //   chat      no conversational markers such as "in chat"
 //   private   no links to private workspaces such as claude.ai
+//   internal  no references to the internal engineering guidelines (D-003)
 
 import fs from "node:fs";
 import os from "node:os";
@@ -19,7 +20,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const SKIP_DIRS = new Set([".git", "node_modules", "target", "dist", "coverage", "playwright-report", "test-results"]);
-const SKIP_PATHS = ["docs/standard/"]; // private standard, git-ignored (D-003)
+const SKIP_PATHS = ["docs/standard/"]; // internal guidelines, git-ignored (D-003)
 const LANGUAGE_EXEMPT = ["tools/grading-test/data/"]; // test data may contain other languages
 const DEFINITION_FILES = ["docs/SRS.md", "docs/BACKLOG.md", "docs/DECISIONS.md"];
 
@@ -29,6 +30,7 @@ const HEADING_DEFINITION = /^#{2,4}\s+((?:FR|NFR|OQ|D|T)-\d+)\b/;
 const VIETNAMESE = /[ăâđêôơưĂÂĐÊÔƠƯẠ-ỹ]/;
 const CHAT_MARKERS = /\b(in (?:the )?chat|as we discussed|you said|I said)\b/i;
 const PRIVATE_LINKS = /\bclaude\.ai\//i;
+const INTERNAL_GUIDELINES = /\bstandard\s+(v\d|§)/i;
 const LINK = /\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
 
 function listMarkdown(root) {
@@ -104,6 +106,7 @@ export function checkRecords(root) {
     });
     rawLines.forEach((line, i) => {
       if (PRIVATE_LINKS.test(line)) report("private", file, i + 1, "link to a private workspace (claude.ai)");
+      if (INTERNAL_GUIDELINES.test(line)) report("internal", file, i + 1, "reference to the internal engineering guidelines");
       if (VIETNAMESE.test(line) && !LANGUAGE_EXEMPT.some((p) => file.startsWith(p))) {
         report("language", file, i + 1, "non-English text in a record");
       }
@@ -137,6 +140,7 @@ function selfTest() {
     { rule: "language", extra: { "docs/a.md": "Ghi chú tiếng Việt.\n" } },
     { rule: "chat", extra: { "docs/a.md": "As agreed in chat, we use Java.\n" } },
     { rule: "private", extra: { "docs/a.md": "Source: https://claude.ai/chat/123\n" } },
+    { rule: "internal", extra: { "docs/a.md": "Follows standard v2 §1.\n" } },
   ];
   let failed = 0;
   for (const c of cases) {

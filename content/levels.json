@@ -1,0 +1,104 @@
+[
+  {
+    "number": 1,
+    "slug": "big-o-and-basics",
+    "title": "Big-O & Basics",
+    "summary": "Measure how fast code grows and solve problems with one pass over the data."
+  },
+  {
+    "number": 2,
+    "slug": "arrays-and-hashing",
+    "title": "Arrays & Hashing",
+    "summary": "Use hash sets and maps to remember what you have seen and count things in one pass."
+  },
+  {
+    "number": 3,
+    "slug": "two-pointers",
+    "title": "Two Pointers",
+    "summary": "Walk two indexes toward each other or side by side to avoid nested loops."
+  },
+  {
+    "number": 4,
+    "slug": "sliding-window",
+    "title": "Sliding Window",
+    "summary": "Keep a moving range over an array or string and update it instead of recomputing."
+  },
+  {
+    "number": 5,
+    "slug": "stack",
+    "title": "Stack",
+    "summary": "Use last-in, first-out order for matching brackets, undo steps, and next-greater problems."
+  },
+  {
+    "number": 6,
+    "slug": "binary-search",
+    "title": "Binary Search",
+    "summary": "Halve the search space each step on sorted data or on the answer itself."
+  },
+  {
+    "number": 7,
+    "slug": "linked-list",
+    "title": "Linked List",
+    "summary": "Rewire nodes with pointers: reverse, merge, and detect cycles."
+  },
+  {
+    "number": 8,
+    "slug": "trees",
+    "title": "Trees",
+    "summary": "Traverse binary trees with depth-first and breadth-first search."
+  },
+  {
+    "number": 9,
+    "slug": "tries",
+    "title": "Tries",
+    "summary": "Store words letter by letter to answer prefix questions quickly."
+  },
+  {
+    "number": 10,
+    "slug": "heap-priority-queue",
+    "title": "Heap / Priority Queue",
+    "summary": "Keep the smallest or largest items at hand for top-k and scheduling problems."
+  },
+  {
+    "number": 11,
+    "slug": "backtracking",
+    "title": "Backtracking",
+    "summary": "Build answers step by step and undo choices to explore every option."
+  },
+  {
+    "number": 12,
+    "slug": "graphs",
+    "title": "Graphs",
+    "summary": "Model connections as graphs and explore them with BFS and DFS."
+  },
+  {
+    "number": 13,
+    "slug": "advanced-graphs",
+    "title": "Advanced Graphs",
+    "summary": "Shortest paths, minimum spanning trees, and topological order."
+  },
+  {
+    "number": 14,
+    "slug": "greedy-and-intervals",
+    "title": "Greedy & Intervals",
+    "summary": "Make the best local choice and reason about overlapping ranges."
+  },
+  {
+    "number": 15,
+    "slug": "1d-dynamic-programming",
+    "title": "1D Dynamic Programming",
+    "summary": "Break a problem into smaller ones along one dimension and reuse their answers."
+  },
+  {
+    "number": 16,
+    "slug": "2d-dynamic-programming",
+    "title": "2D Dynamic Programming",
+    "summary": "Fill a grid of subproblems for strings, paths, and knapsack-style choices."
+  },
+  {
+    "number": 17,
+    "slug": "bit-manipulation-and-math",
+    "title": "Bit Manipulation & Math",
+    "summary": "Use binary operations and number facts for compact, fast solutions."
+  }
+]

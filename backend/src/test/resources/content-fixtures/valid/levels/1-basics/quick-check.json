@@ -1,0 +1,20 @@
+[
+  {
+    "question": "Time of one pass?",
+    "options": [
+      "O(1)",
+      "O(n)"
+    ],
+    "answer": 1,
+    "explanation": "Each item once."
+  },
+  {
+    "question": "Extra space?",
+    "options": [
+      "O(1)",
+      "O(n)"
+    ],
+    "answer": 0,
+    "explanation": "One variable."
+  }
+]

@@ -19,7 +19,7 @@ Proposed → Ready → In Progress → In Review → Done in [BACKLOG.md](BACKLO
 
 ## Records
 
-- Repository records follow internal guidelines §3 (Record Style and Audience): English, written as professional engineering documents: facts, decisions, rationale, and evidence, without conversation transcripts, quotes, personal details, or links to private workspaces.
+- Repository records are in English, written as professional engineering documents: facts, decisions, rationale, and evidence, without conversation transcripts, quotes, personal details, or links to private workspaces.
 - Approvals are recorded as "Approved — PO, date".
 - Significant changes to design, rules, or workflow are proposed to the PO before they are applied.
 - Frontend tasks include CI-generated screenshots as review evidence.
