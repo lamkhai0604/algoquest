@@ -59,7 +59,8 @@ class LevelTestApiTest {
   private static final Instant START = Instant.parse("2026-11-09T12:00:00Z");
   private static final String GOOD =
       "Walk through the array once and keep the largest value seen so far; O(n) time.";
-  private static final List<String> PROBLEMS = List.of("L1-test-max", "L1-test-three", "L1-test-two");
+  private static final List<String> PROBLEMS =
+      List.of("L1-test-max", "L1-test-three", "L1-test-two");
 
   @Autowired private WebApplicationContext context;
   @Autowired private AccessService access;
@@ -112,8 +113,7 @@ class LevelTestApiTest {
   }
 
   private void expectLevel2(String state) throws Exception {
-    mvc.perform(get("/api/v1/levels").with(player))
-        .andExpect(jsonPath("$[1].state").value(state));
+    mvc.perform(get("/api/v1/levels").with(player)).andExpect(jsonPath("$[1].state").value(state));
   }
 
   @Test
@@ -135,7 +135,8 @@ class LevelTestApiTest {
         .andExpect(jsonPath("$.problems[0].problem.hintCount").value(3))
         .andExpect(jsonPath("$.problems[0].result").doesNotExist());
     // Starting again returns the same running test.
-    mvc.perform(post("/api/v1/levels/1/tests").with(player)).andExpect(jsonPath("$.id").value(test));
+    mvc.perform(post("/api/v1/levels/1/tests").with(player))
+        .andExpect(jsonPath("$.id").value(test));
   }
 
   @Test

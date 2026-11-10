@@ -32,8 +32,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class AttemptService {
 
   public static final int MAX_LENGTH = 2000;
+
   /** Longer than any time limit; stored times are capped here. */
   private static final int NO_TIME_BONUS_SECONDS = 24 * 60 * 60;
+
   private static final Logger log = LoggerFactory.getLogger(AttemptService.class);
 
   public static final String EXPLAIN = "explain";

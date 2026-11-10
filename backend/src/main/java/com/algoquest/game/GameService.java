@@ -36,10 +36,7 @@ public class GameService {
   private final ProblemStartStore starts;
 
   public GameService(
-      ContentCatalog catalog,
-      ProgressStore progress,
-      TestStore tests,
-      ProblemStartStore starts) {
+      ContentCatalog catalog, ProgressStore progress, TestStore tests, ProblemStartStore starts) {
     this.catalog = catalog;
     this.progress = progress;
     this.tests = tests;
@@ -116,7 +113,6 @@ public class GameService {
     return result;
   }
 
-  @Transactional(readOnly = true)
   @Transactional
   public ProblemPage problem(UUID userId, String id) {
     Problem problem = playableProblem(userId, id);

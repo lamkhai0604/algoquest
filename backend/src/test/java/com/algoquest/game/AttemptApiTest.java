@@ -124,8 +124,7 @@ class AttemptApiTest {
         .andExpect(jsonPath("$.openedAt").exists())
         .andExpect(jsonPath("$.title").value("Max Value"));
     clock.advance(Duration.ofMinutes(16));
-    submit(player, EASY, UUID.randomUUID(), GOOD, 60)
-        .andExpect(jsonPath("$.xpGained").value(20));
+    submit(player, EASY, UUID.randomUUID(), GOOD, 60).andExpect(jsonPath("$.xpGained").value(20));
     submit(player, MEDIUM, UUID.randomUUID(), GOOD, 60)
         .andExpect(jsonPath("$.xpGained").value(35))
         .andExpect(jsonPath("$.levelXp").value(55));
