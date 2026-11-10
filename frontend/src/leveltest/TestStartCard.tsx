@@ -28,8 +28,8 @@ export function TestStartCard({ level }: { level: Level }) {
     <Card heading="Level-up test">
       <p className={styles.muted}>
         3 new problems, about 2 hours. A score of 70 to 99 opens the next
-        level&apos;s Easy problems; 100 opens the whole level. Retakes are always
-        allowed.
+        level&apos;s Easy problems; 100 opens the whole level. Retakes are
+        always allowed.
       </p>
       {level.bestTestScore !== null && (
         <p className={styles.muted}>
@@ -44,7 +44,9 @@ export function TestStartCard({ level }: { level: Level }) {
       <div className={styles.actions}>
         {level.testOpen ? (
           <Button onClick={start} disabled={starting}>
-            {level.bestTestScore === null ? "Start the test" : "Retake the test"}
+            {level.bestTestScore === null
+              ? "Start the test"
+              : "Retake the test"}
           </Button>
         ) : (
           <span className={styles.muted}>

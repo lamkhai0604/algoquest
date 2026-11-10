@@ -54,7 +54,9 @@ describe("level-up test", () => {
     expect(
       await screen.findByRole("heading", { name: "Level 1 test" }),
     ).toBeVisible();
-    expect(screen.getByTitle("Time left")).toHaveTextContent(/^1(19|20):\d\d left$/);
+    expect(screen.getByTitle("Time left")).toHaveTextContent(
+      /^1(19|20):\d\d left$/,
+    );
   });
 
   it("is closed below a full bar", async () => {

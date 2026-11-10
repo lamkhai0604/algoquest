@@ -22,23 +22,19 @@ const SAVE_DELAY_MS = 1000;
 
 /** Seconds left, counted with the server's clock. */
 function useSecondsLeft(test: LevelTest): number {
-  const offset = useRef(new Date(test.serverTime).getTime() - Date.now());
-  const measure = useCallback(
-    () =>
-      Math.max(
-        0,
-        Math.floor(
-          (new Date(test.endsAt).getTime() - (Date.now() + offset.current)) /
-            1000,
-        ),
-      ),
-    [test.endsAt],
+  const endsAt = new Date(test.endsAt).getTime();
+  const serverTime = new Date(test.serverTime).getTime();
+  const [left, setLeft] = useState(() =>
+    Math.max(0, Math.floor((endsAt - serverTime) / 1000)),
   );
-  const [left, setLeft] = useState(measure);
   useEffect(() => {
-    const id = setInterval(() => setLeft(measure()), 1000);
+    // The difference between the server's clock and this device's clock.
+    const offset = serverTime - Date.now();
+    const tick = () =>
+      setLeft(Math.max(0, Math.floor((endsAt - (Date.now() + offset)) / 1000)));
+    const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [measure]);
+  }, [endsAt, serverTime]);
   return left;
 }
 
