@@ -12,7 +12,7 @@ const PROFILE: Profile = {
   currentStreak: 4,
   bestStreak: 7,
   levels: [
-    { ...LEVELS[0], xp: 100, bestTestScore: 95 },
+    { ...LEVELS[0]!, xp: 100, bestTestScore: 95 },
     LEVELS[1]!,
     LEVELS[2]!,
   ],
