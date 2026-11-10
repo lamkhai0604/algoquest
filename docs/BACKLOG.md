@@ -48,9 +48,9 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
 | T-201 | Content format, loader, and validation (startup + CI); public DTOs without answer keys | D-033, NFR-02 | P1 | Done 2026-11-08 (CI: 53 backend tests, smoke green) |
-| T-202 | Level 1 content: lesson, walkthrough, quick check, Easy + Medium problems, test problems, Hard placeholders (PO reviews) | FR-03, D-024 | P1 | Content ready; waiting for PO review |
-| T-203 | Level map and problem list (lock states, XP bars, "Coming in a later version" for Hard) | FR-02, FR-04.4 | P1 | Done 2026-11-09 (CI green; reaches `dev` with T-202) |
-| T-204 | Lesson page: Markdown, step walkthrough, quick check | FR-03 | P1 | Done 2026-11-09 (CI green; reaches `dev` with T-202) |
+| T-202 | Level 1 content: lesson, walkthrough, quick check, Easy + Medium problems, test problems, Hard placeholders (PO reviews) | FR-03, D-024 | P1 | Done 2026-11-09: content approved — PO, 2026-11-09 |
+| T-203 | Level map and problem list (lock states, XP bars, "Coming in a later version" for Hard) | FR-02, FR-04.4 | P1 | Done 2026-11-09 (CI green) |
+| T-204 | Lesson page: Markdown, step walkthrough, quick check | FR-03 | P1 | Done 2026-11-09 (CI green) |
 | T-205 | `game.domain`: problem XP, level target, totals, lock states (pure Java, unit tests) | FR-08, FR-10 | P1 | Done 2026-11-08 (CI: 105 tests, 0 failed) |
 | T-206 | Grading module (Gemini + Fake) and attempts endpoint with failure paths and idempotency | FR-05, NFR-09 | P1 | Done 2026-11-09 (126 backend tests; real-grader check pending, PO) |
 | T-207 | Solve page and feedback page | FR-04, FR-05 | P1 | Done 2026-11-09 (frontend tests; smoke 5 passed) |

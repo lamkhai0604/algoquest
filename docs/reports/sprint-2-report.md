@@ -5,7 +5,7 @@
 | Sprint | Sprint 2 ([plan](../sprints/sprint-2.md)) |
 | Dates | 2026-11-08 → 2026-11-09 |
 | Goal | A signed-in player opens Level 1, reads the lesson, solves an Easy or Medium problem by explaining it in words, and receives AI feedback and XP |
-| Outcome | **Goal met in CI with the fake grader.** All eight tasks are implemented and verified. Open: PO review of the Level 1 content, and the real-grader check (latency, prompt injection) |
+| Outcome | **Goal met in CI with the fake grader.** All eight tasks are implemented, verified, and merged. Level 1 content approved — PO, 2026-11-09. Open: the real-grader check (latency, prompt injection) |
 
 ## Increment
 
@@ -21,16 +21,14 @@
 | --- | --- | --- | --- |
 | T-201 Content format and loader | Loader and validation at startup; content packaged into the jar | Loader rule tests; the real content folder is loaded in CI | Yes |
 | T-205 Game rules | XP, level target, lock states, practice and test rules in pure Java | Parameterized unit tests; isolation test (NFR-10) | Yes |
-| T-202 Level 1 content | Lesson, walkthrough, quick check, 3 Easy + 3 Medium, 3 test problems, placeholders | Content validation in CI; hidden test answers computed by reference solutions | **Waiting for PO review** |
-| T-203 Level map and problem list | `GET /levels` and `/levels/{n}/problems` with state, XP, and solved counts; map and level pages | API tests (progress is per player; bar stops at the target); frontend tests; smoke | With the PO review |
-| T-204 Lesson page | Markdown reader (data, not HTML), walkthrough, quick check | Reader and page tests; smoke | With the PO review |
-| T-206 Grading and attempts | `Grader`, `GeminiGrader` (20 s limit, schema-bound JSON, score snapping), `FakeGrader`; `POST /problems/{id}/attempts`, idempotent by `attemptId`; XP on first solve | Tests for failure, quota, timeout, unusable answers, idempotency, validation, and ownership; the system prompt is compared with the one proven in T-005 | With the PO review |
-| T-207 Solve and feedback pages | Explanation form with counter and timer; feedback panel; text kept on failure | Frontend tests; smoke | With the PO review |
-| T-208 Sprint report | This document | Records check | With the PO review |
+| T-202 Level 1 content | Lesson, walkthrough, quick check, 3 Easy + 3 Medium, 3 test problems, placeholders | Content validation in CI; hidden test answers computed by reference solutions | Yes (approved — PO, 2026-11-09) |
+| T-203 Level map and problem list | `GET /levels` and `/levels/{n}/problems` with state, XP, and solved counts; map and level pages | API tests (progress is per player; bar stops at the target); frontend tests; smoke | Yes |
+| T-204 Lesson page | Markdown reader (data, not HTML), walkthrough, quick check | Reader and page tests; smoke | Yes |
+| T-206 Grading and attempts | `Grader`, `GeminiGrader` (20 s limit, schema-bound JSON, score snapping), `FakeGrader`; `POST /problems/{id}/attempts`, idempotent by `attemptId`; XP on first solve | Tests for failure, quota, timeout, unusable answers, idempotency, validation, and ownership; the system prompt is compared with the one proven in T-005 | Yes |
+| T-207 Solve and feedback pages | Explanation form with counter and timer; feedback panel; text kept on failure | Frontend tests; smoke | Yes |
+| T-208 Sprint report | This document | Records check | Yes |
 
-T-203 to T-208 are built on the Level 1 content, so they reach `dev` together with it once the PO approves the content.
-
-Review: all tasks are self-reviewed. The PO reviews the content and the sprint pull request.
+Review: all tasks are self-reviewed. The PO reviews the `dev → main` pull request.
 
 ## Verification evidence
 
@@ -56,7 +54,6 @@ Requirements covered by tests: answer keys, hints, and hidden tests never appear
 
 ## Not done
 
-- **PO review of the Level 1 content** (T-202).
 - **Real-grader check** (NFR-04 latency, FR-05.4 prompt injection): `RealGraderCheck`, run by the PO with a Gemini key (README, "Checks"). Until then NFR-04 stays unresolved.
 - Manual sign-in with the real Google and GitHub apps, open since Sprint 1.
 
