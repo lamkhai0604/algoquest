@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import styles from "./Lesson.module.css";
-import { parseInline } from "./markdown";
-import type { Block } from "./markdown";
+import { parseInline } from "./parseMarkdown";
+import type { Block } from "./parseMarkdown";
 
 export function InlineText({ text }: { text: string }) {
   return (
