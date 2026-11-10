@@ -11,6 +11,7 @@ import { AppHeader, WakingServer } from "./components";
 import type { HeaderAccount } from "./components";
 import { totalXp, useGame } from "./game/gameContext";
 import { GameProvider } from "./game/GameProvider";
+import { LessonPage } from "./lesson/LessonPage";
 import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -50,6 +51,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <LevelPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/levels/:number/lesson"
+            element={
+              <RequireAuth>
+                <LessonPage />
               </RequireAuth>
             }
           />
