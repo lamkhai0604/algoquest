@@ -1,0 +1,111 @@
+{
+  "id": "L3-palindrome-name",
+  "level": 3,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "title": "Palindrome Name",
+  "statement": "Given a string, return true if it reads the same forwards and backwards after ignoring every character that is not a letter or digit and ignoring upper and lower case.",
+  "examples": [
+    {
+      "input": "\"Ana-na\"",
+      "output": "true"
+    },
+    {
+      "input": "\"Rac e, car!\"",
+      "output": "true"
+    },
+    {
+      "input": "\"abc\"",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "0 <= s.length <= 2 * 10^5"
+  ],
+  "answerKey": {
+    "pattern": "Two pointers moving inward from both ends",
+    "keyPoints": [
+      "left = 0, right = last index",
+      "Skip characters that are not letters or digits on each side",
+      "Compare characters case-insensitively; if different return false",
+      "Move both pointers inward until they meet, then return true"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Empty string returns true",
+      "String with only symbols returns true",
+      "Mixed upper and lower case"
+    ],
+    "acceptableSlowerApproaches": [
+      "Build a cleaned lowercase copy and compare it with its reverse: O(n) time but O(n) extra space"
+    ]
+  },
+  "hints": [
+    "Do you need a cleaned copy of the string, or can you skip characters as you go?",
+    "Put one pointer at each end and move them toward each other.",
+    "Skip non-letters on each side before comparing, and compare in lowercase."
+  ],
+  "tests": [
+    {
+      "input": [
+        "Ana-na"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "Rac e, car!"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abc"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        ""
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "!!"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "a"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "ab"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "No lemon, no melon"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "0P"
+      ],
+      "expected": false
+    }
+  ],
+  "starterCode": {
+    "javascript": "function isPalindromeName(s) {\n  // return true if s is a palindrome after cleaning\n}",
+    "java": "class Solution {\n  boolean isPalindromeName(String s) {\n    // return true if s is a palindrome after cleaning\n  }\n}"
+  },
+  "similarLeetCode": "Valid Palindrome"
+}

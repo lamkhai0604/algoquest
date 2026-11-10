@@ -70,3 +70,38 @@
     display: none;
   }
 }
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.nav {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.nav a {
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nav a:hover {
+  color: var(--color-text);
+}
+
+.nav a[aria-current="page"] {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
+}
+
+@media (max-width: 720px) {
+  .nav a {
+    padding: 6px var(--space-2);
+  }
+}

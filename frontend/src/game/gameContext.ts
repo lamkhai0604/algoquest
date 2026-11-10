@@ -1,10 +1,11 @@
 import { createContext, useContext } from "react";
 import type { Loadable } from "../api/useApiGet";
-import type { HintQuota, Level } from "./types";
+import type { HintQuota, Level, Profile } from "./types";
 
 export interface GameContextValue {
   levels: Loadable<Level[]>;
-  /** Fetches the levels again, for example after XP was earned. */
+  profile: Loadable<Profile>;
+  /** Fetches the levels and the profile again, for example after XP was earned. */
   reloadLevels: () => void;
   hintQuota: Loadable<HintQuota>;
   reloadHintQuota: () => void;
@@ -16,6 +17,10 @@ export function useGame(): GameContextValue {
   const value = useContext(GameContext);
   if (!value) throw new Error("useGame must be used inside GameProvider");
   return value;
+}
+
+export function streakDays(profile: Loadable<Profile>): number {
+  return profile.status === "ready" ? profile.data.currentStreak : 0;
 }
 
 export function hintsLeft(quota: Loadable<HintQuota>): number {

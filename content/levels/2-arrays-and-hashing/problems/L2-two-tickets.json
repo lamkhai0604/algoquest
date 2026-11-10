@@ -1,0 +1,184 @@
+{
+  "id": "L2-two-tickets",
+  "level": 2,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "title": "Two Tickets",
+  "statement": "You are given an array of ticket prices and a budget. Return the indices [i, j] (i < j) of the two tickets whose prices add up exactly to the budget. Exactly one valid pair exists, and you may not use the same ticket twice.",
+  "examples": [
+    {
+      "input": "[12, 5, 9, 20], 14",
+      "output": "[1, 2]"
+    },
+    {
+      "input": "[3, 3], 6",
+      "output": "[0, 1]"
+    }
+  ],
+  "constraints": [
+    "2 <= prices.length <= 10^5",
+    "exactly one valid pair exists"
+  ],
+  "answerKey": {
+    "pattern": "One pass with a hash map from price to index (complement lookup)",
+    "keyPoints": [
+      "For each index i compute need = budget - prices[i]",
+      "If need is already in the map, return [map[need], i]",
+      "Otherwise store prices[i] -> i",
+      "Checking before inserting prevents using the same ticket twice"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Two equal prices, e.g. [3, 3] with budget 6",
+      "Must not pair a ticket with itself"
+    ],
+    "acceptableSlowerApproaches": [
+      "Nested loops over all pairs: O(n^2)",
+      "Sort with original indices kept, then two pointers: O(n log n)"
+    ]
+  },
+  "hints": [
+    "For each price, which other price would complete the budget?",
+    "Store each price you pass in a map from price to its index.",
+    "Look for the needed price before storing the current one, so a ticket is never paired with itself."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          12,
+          5,
+          9,
+          20
+        ],
+        14
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          3,
+          3
+        ],
+        6
+      ],
+      "expected": [
+        0,
+        1
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ],
+        3
+      ],
+      "expected": [
+        0,
+        1
+      ]
+    },
+    {
+      "input": [
+        [
+          5,
+          1,
+          4
+        ],
+        9
+      ],
+      "expected": [
+        0,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          7,
+          11,
+          15
+        ],
+        9
+      ],
+      "expected": [
+        0,
+        1
+      ]
+    },
+    {
+      "input": [
+        [
+          -3,
+          4,
+          3,
+          90
+        ],
+        0
+      ],
+      "expected": [
+        0,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          5,
+          5,
+          8
+        ],
+        10
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          10,
+          20,
+          30,
+          40
+        ],
+        70
+      ],
+      "expected": [
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          4,
+          3,
+          0
+        ],
+        0
+      ],
+      "expected": [
+        0,
+        3
+      ]
+    }
+  ],
+  "starterCode": {
+    "javascript": "function twoTickets(prices, budget) {\n  // return [i, j]\n}",
+    "java": "class Solution {\n  int[] twoTickets(int[] prices, int budget) {\n    // return {i, j}\n  }\n}"
+  },
+  "similarLeetCode": "Two Sum"
+}

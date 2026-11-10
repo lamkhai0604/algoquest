@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { Navigate, useSearchParams } from "react-router";
-import { API_URL } from "../api";
+import { API_URL, wakeServer } from "../api";
 import { Card } from "../components";
 import styles from "./Auth.module.css";
 import { useAuth } from "./authContext";
@@ -19,6 +20,9 @@ export function SignInPage() {
   const [params] = useSearchParams();
   const { state } = useAuth();
   const error = errorMessage(params.get("error"));
+  useEffect(() => {
+    wakeServer();
+  }, []);
   if (state.status === "signed-in") {
     return <Navigate to="/" replace />;
   }

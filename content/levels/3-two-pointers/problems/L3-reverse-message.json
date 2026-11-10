@@ -1,0 +1,133 @@
+{
+  "id": "L3-reverse-message",
+  "level": 3,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "title": "Reverse the Message",
+  "statement": "A message arrives as an array of characters. Reverse it in place (O(1) extra space) and return the reversed message as a string.",
+  "examples": [
+    {
+      "input": "[\"h\", \"i\", \"!\"]",
+      "output": "\"!ih\""
+    },
+    {
+      "input": "[]",
+      "output": "\"\""
+    }
+  ],
+  "constraints": [
+    "0 <= chars.length <= 10^5"
+  ],
+  "answerKey": {
+    "pattern": "Two pointers swapping from both ends",
+    "keyPoints": [
+      "left = 0, right = last index",
+      "Swap chars[left] and chars[right]",
+      "Move both inward until they meet",
+      "Join the array into a string"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1) extra",
+    "edgeCases": [
+      "Empty array",
+      "One character",
+      "Even and odd lengths"
+    ],
+    "acceptableSlowerApproaches": [
+      "Build a new reversed array: O(n) extra space"
+    ]
+  },
+  "hints": [
+    "Building a new array uses O(n) space. Which positions trade places?",
+    "The first and last characters swap, then the second and second-to-last, and so on.",
+    "Stop when the two pointers meet or cross."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          "h",
+          "i",
+          "!"
+        ]
+      ],
+      "expected": "!ih"
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        [
+          "a"
+        ]
+      ],
+      "expected": "a"
+    },
+    {
+      "input": [
+        [
+          "a",
+          "b"
+        ]
+      ],
+      "expected": "ba"
+    },
+    {
+      "input": [
+        [
+          "a",
+          "l",
+          "g",
+          "o"
+        ]
+      ],
+      "expected": "ogla"
+    },
+    {
+      "input": [
+        [
+          "r",
+          "a",
+          "c",
+          "e",
+          "c",
+          "a",
+          "r"
+        ]
+      ],
+      "expected": "racecar"
+    },
+    {
+      "input": [
+        [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      ],
+      "expected": "54321"
+    },
+    {
+      "input": [
+        [
+          " ",
+          " ",
+          "x"
+        ]
+      ],
+      "expected": "x  "
+    }
+  ],
+  "starterCode": {
+    "javascript": "function reverseMessage(chars) {\n  // reverse chars in place and return chars.join(\"\")\n}",
+    "java": "class Solution {\n  String reverseMessage(char[] chars) {\n    // reverse chars in place and return new String(chars)\n  }\n}"
+  },
+  "similarLeetCode": "Reverse String"
+}

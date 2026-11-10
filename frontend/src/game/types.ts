@@ -13,6 +13,16 @@ export interface Level {
   testOpen: boolean;
   problems: number;
   solved: number;
+  bestTestScore: number | null;
+}
+
+export interface Profile {
+  displayName: string;
+  totalXp: number;
+  solvedProblems: number;
+  currentStreak: number;
+  bestStreak: number;
+  levels: Level[];
 }
 
 export interface HintQuota {

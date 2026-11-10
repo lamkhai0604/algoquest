@@ -35,6 +35,8 @@ export interface ApiClientOptions {
   slowAfterMs?: number;
   /** Called when the server answers 401, for example after the token expired. */
   onUnauthorized?: () => void;
+  /** Headers added to every request. */
+  extraHeaders?: () => Record<string, string>;
 }
 
 export interface ApiClient {
@@ -67,6 +69,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     retryDelayMs = 1000,
     slowAfterMs = 3000,
     onUnauthorized,
+    extraHeaders = () => ({}),
   } = options;
 
   const listeners = new Set<(waking: boolean) => void>();
@@ -85,7 +88,10 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     body?: unknown,
   ): Promise<T> {
     const attempts = method === "GET" ? retries + 1 : 1;
-    const headers: Record<string, string> = { Accept: "application/json" };
+    const headers: Record<string, string> = {
+      ...extraHeaders(),
+      Accept: "application/json",
+    };
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
     if (body !== undefined) headers["Content-Type"] = "application/json";

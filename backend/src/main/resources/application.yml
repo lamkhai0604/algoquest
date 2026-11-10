@@ -8,6 +8,9 @@ spring:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/algoquest}
     username: ${DATABASE_USERNAME:algoquest}
     password: ${DATABASE_PASSWORD:algoquest}
+    hikari:
+      # Small pool: one 512 MB instance and the Neon Free connection limit (D-037).
+      maximum-pool-size: 5
   flyway:
     locations: classpath:db/migration
   security:
@@ -32,6 +35,8 @@ spring:
 
 server:
   port: ${PORT:8080}
+  # Render ends HTTPS at its proxy; trust X-Forwarded-* so OAuth redirect URIs use https.
+  forward-headers-strategy: framework
   error:
     include-stacktrace: never
     include-message: never

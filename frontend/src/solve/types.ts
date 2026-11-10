@@ -15,6 +15,8 @@ export interface ProblemDetail {
   examples: ProblemExample[];
   constraints: string[];
   hintCount: number;
+  /** When the player first opened the problem; the time bonus runs from here. */
+  openedAt: string;
 }
 
 export type AttemptMode = "explain" | "practice";
