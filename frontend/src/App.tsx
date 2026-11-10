@@ -12,6 +12,7 @@ import type { HeaderAccount } from "./components";
 import { hintsLeft, totalXp, useGame } from "./game/gameContext";
 import { GameProvider } from "./game/GameProvider";
 import { LessonPage } from "./lesson/LessonPage";
+import { LevelTestPage } from "./leveltest/LevelTestPage";
 import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -73,6 +74,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <SolvePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/tests/:id"
+            element={
+              <RequireAuth>
+                <LevelTestPage />
               </RequireAuth>
             }
           />

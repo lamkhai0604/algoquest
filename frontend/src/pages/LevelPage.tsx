@@ -10,6 +10,7 @@ import {
 } from "../components";
 import { useGame } from "../game/gameContext";
 import type { Level, ProblemItem } from "../game/types";
+import { TestStartCard } from "../leveltest/TestStartCard";
 import game from "./Game.module.css";
 import styles from "./Pages.module.css";
 
@@ -128,6 +129,7 @@ export function LevelPage() {
       {level && problems.state.status === "ready" && (
         <PracticeRound level={level} problems={problems.state.data} />
       )}
+      {level && <TestStartCard level={level} />}
       <section className={game.path}>
         <h2 className={game.sectionTitle}>Problems</h2>
         {problems.state.status === "loading" && (

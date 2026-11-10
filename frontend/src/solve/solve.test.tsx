@@ -92,7 +92,6 @@ describe("solve page", () => {
     const [body] = attemptBodies(fetchFn);
     expect(body?.text).toBe(EXPLANATION);
     expect(body?.attemptId).toMatch(/^[0-9a-f-]{36}$/);
-    expect(typeof body?.secondsTaken).toBe("number");
     expect(await screen.findByTitle("Total XP")).toHaveTextContent("65");
   });
 

@@ -13,6 +13,7 @@ const level = (number: number, title: string, rest: Partial<Level>): Level => ({
   testOpen: false,
   problems: 0,
   solved: 0,
+  bestTestScore: null,
   ...rest,
 });
 
@@ -67,6 +68,7 @@ export const PROBLEM = {
   ],
   constraints: ["0 <= temps.length <= 10^5"],
   hintCount: 3,
+  openedAt: new Date().toISOString(),
 };
 
 export const GRADED = {

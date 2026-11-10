@@ -13,6 +13,7 @@ export interface Level {
   testOpen: boolean;
   problems: number;
   solved: number;
+  bestTestScore: number | null;
 }
 
 export interface HintQuota {
