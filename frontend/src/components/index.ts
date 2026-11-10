@@ -4,6 +4,7 @@ export { Badge } from "./Badge";
 export type { BadgeTone } from "./Badge";
 export { Button } from "./Button";
 export type { ButtonProps, ButtonVariant } from "./Button";
+export { ButtonLink } from "./ButtonLink";
 export { Card } from "./Card";
 export { Chip } from "./Chip";
 export { cx } from "./cx";
