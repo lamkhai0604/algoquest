@@ -1,6 +1,9 @@
 package com.algoquest.game;
 
+import com.algoquest.content.ContentViews.ProblemView;
 import com.algoquest.game.domain.LevelState;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import java.time.Instant;
 
 /** What the API returns about a player's levels and problems. */
 public final class GameViews {
@@ -14,6 +17,7 @@ public final class GameViews {
    * @param xp XP shown on the bar, never more than {@code target}
    * @param problems number of playable practice problems
    * @param solved how many of them the player has solved
+   * @param bestTestScore the best level-up test score, or null before the first test
    */
   public record LevelView(
       int number,
@@ -27,7 +31,15 @@ public final class GameViews {
       boolean practiceOpen,
       boolean testOpen,
       int problems,
-      int solved) {}
+      int solved,
+      Integer bestTestScore) {}
+
+  /**
+   * A problem as the solve page shows it.
+   *
+   * @param openedAt when the player first opened it; the time bonus is measured from here
+   */
+  public record ProblemPage(@JsonUnwrapped ProblemView problem, Instant openedAt) {}
 
   /**
    * One row of a level's problem list.

@@ -7,6 +7,7 @@ import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.Problem;
 import com.algoquest.game.GameViews.LevelView;
 import com.algoquest.game.GameViews.ProblemItem;
+import com.algoquest.game.GameViews.ProblemPage;
 import com.algoquest.game.domain.Difficulty;
 import com.algoquest.game.domain.LevelRules;
 import com.algoquest.game.domain.LevelState;
@@ -31,16 +32,25 @@ public class GameService {
 
   private final ContentCatalog catalog;
   private final ProgressStore progress;
+  private final TestStore tests;
+  private final ProblemStartStore starts;
 
-  public GameService(ContentCatalog catalog, ProgressStore progress) {
+  public GameService(
+      ContentCatalog catalog,
+      ProgressStore progress,
+      TestStore tests,
+      ProblemStartStore starts) {
     this.catalog = catalog;
     this.progress = progress;
+    this.tests = tests;
+    this.starts = starts;
   }
 
   @Transactional(readOnly = true)
   public List<LevelView> levels(UUID userId) {
     Map<Integer, Integer> xpByLevel = progress.xpByLevel(userId);
     Map<String, ProblemProgress> byProblem = progress.byProblem(userId);
+    Map<Integer, Integer> best = tests.bestScores(userId);
     List<LevelView> result = new ArrayList<>();
     for (LevelContent level : catalog.levels()) {
       int number = level.info().number();
@@ -62,13 +72,14 @@ public class GameService {
               level.info().title(),
               level.info().summary(),
               level.available(),
-              state(userId, number),
+              LevelRules.state(number, optional(best.get(number - 1))),
               LevelRules.barXp(xp, number),
               XpRules.levelTarget(number),
               LevelRules.practiceOpen(xp, number),
               LevelRules.testOpen(xp, number),
               playable,
-              solved));
+              solved,
+              best.get(number)));
     }
     return result;
   }
@@ -106,8 +117,10 @@ public class GameService {
   }
 
   @Transactional(readOnly = true)
-  public ProblemView problem(UUID userId, String id) {
-    return ProblemView.of(playableProblem(userId, id));
+  @Transactional
+  public ProblemPage problem(UUID userId, String id) {
+    Problem problem = playableProblem(userId, id);
+    return new ProblemPage(ProblemView.of(problem), starts.openedAt(userId, problem.id()));
   }
 
   /**
@@ -129,12 +142,16 @@ public class GameService {
     return problem;
   }
 
-  /**
-   * The player's state for a level. Level-up tests arrive in Sprint 3; until then only level 1 is
-   * open.
-   */
+  /** The player's state for a level, from the best test score of the level before it. */
   LevelState state(UUID userId, int level) {
-    return LevelRules.state(level, OptionalInt.empty());
+    if (level == 1) {
+      return LevelState.OPEN;
+    }
+    return LevelRules.state(level, optional(tests.bestScores(userId).get(level - 1)));
+  }
+
+  private static OptionalInt optional(Integer score) {
+    return score == null ? OptionalInt.empty() : OptionalInt.of(score);
   }
 
   private LevelContent openLevel(UUID userId, int number) {
