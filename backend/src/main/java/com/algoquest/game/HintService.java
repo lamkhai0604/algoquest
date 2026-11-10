@@ -93,15 +93,13 @@ public class HintService {
   }
 
   private Quota quota(UUID userId, Instant now) {
-    List<Instant> openedAt =
+    List<Timestamp> rows =
         jdbc.queryForList(
-                "select used_at from hint_use where user_id = ? and used_at > ?",
-                Timestamp.class,
-                userId,
-                Timestamp.from(now.minus(HintRules.WINDOW)))
-            .stream()
-            .map(Timestamp::toInstant)
-            .toList();
+            "select used_at from hint_use where user_id = ? and used_at > ?",
+            Timestamp.class,
+            userId,
+            Timestamp.from(now.minus(HintRules.WINDOW)));
+    List<Instant> openedAt = rows.stream().map(Timestamp::toInstant).toList();
     return new Quota(
         HintRules.remaining(openedAt, now),
         HintRules.PER_WINDOW,

@@ -43,10 +43,11 @@ class HintApiTest {
     @Bean
     @Primary
     MutableClock testClock() {
-      return new MutableClock(Instant.parse("2026-11-09T12:00:00Z"));
+      return new MutableClock(START);
     }
   }
 
+  private static final Instant START = Instant.parse("2026-11-09T12:00:00Z");
   private static final String GOOD =
       "Walk through the array once and keep the largest value seen so far; O(n) time.";
 
@@ -59,6 +60,7 @@ class HintApiTest {
 
   @BeforeEach
   void setUp() {
+    clock.set(START);
     mvc =
         MockMvcBuilders.webAppContextSetup(context)
             .apply(SecurityMockMvcConfigurers.springSecurity())
