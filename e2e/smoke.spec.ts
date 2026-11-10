@@ -75,7 +75,7 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
   ).toBeVisible();
   await page.getByRole("button", { name: "Next step" }).click();
   await expect(page.getByText("Step 2 of 6")).toBeVisible();
-  await page.getByRole("button", { name: "O(n²)", exact: true }).click();
+  await page.getByRole("button", { name: "O(n²)", exact: true }).first().click();
   await expect(page.getByText("Correct.")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/lesson.png`, fullPage: true });
 
