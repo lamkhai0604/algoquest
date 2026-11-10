@@ -1,0 +1,140 @@
+{
+  "id": "L2-duplicate-badge",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "title": "Duplicate Badge",
+  "statement": "A door scanner logs badge IDs as an array of integers. Return true if any badge ID appears more than once, otherwise false.",
+  "examples": [
+    {
+      "input": "[4, 7, 1, 7]",
+      "output": "true"
+    },
+    {
+      "input": "[3, 9, 2]",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "0 <= ids.length <= 10^5",
+    "-10^9 <= ids[i] <= 10^9"
+  ],
+  "answerKey": {
+    "pattern": "Hash set to remember IDs already seen",
+    "keyPoints": [
+      "Create an empty set",
+      "For each ID: if it is already in the set return true, otherwise add it",
+      "Return false after the loop"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Empty array returns false",
+      "Single element returns false"
+    ],
+    "acceptableSlowerApproaches": [
+      "Nested loops comparing every pair: O(n^2) time, O(1) space",
+      "Sort then compare neighbours: O(n log n)"
+    ]
+  },
+  "hints": [
+    "Comparing every pair is O(n^2). What could you remember about the IDs you have already read?",
+    "A hash set answers \"have I seen this before?\" in O(1) on average.",
+    "Check the set before adding the current ID, and return as soon as you find a repeat."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          4,
+          7,
+          1,
+          7
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          3,
+          9,
+          2
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          5
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          1,
+          1
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          -1,
+          2,
+          -1
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          9,
+          8,
+          7,
+          9
+        ]
+      ],
+      "expected": true
+    }
+  ],
+  "starterCode": {
+    "javascript": "function hasDuplicate(ids) {\n  // return true if any ID appears twice\n}",
+    "java": "class Solution {\n  boolean hasDuplicate(int[] ids) {\n    // return true if any ID appears twice\n  }\n}"
+  },
+  "similarLeetCode": "Contains Duplicate"
+}

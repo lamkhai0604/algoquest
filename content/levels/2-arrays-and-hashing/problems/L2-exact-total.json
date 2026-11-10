@@ -1,0 +1,154 @@
+{
+  "id": "L2-exact-total",
+  "level": 2,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "title": "Exact Total Stretches",
+  "statement": "A shop records its daily profit (which may be negative). Return how many stretches of consecutive days add up exactly to k.",
+  "examples": [
+    {
+      "input": "[1, 2, 3], 3",
+      "output": "2",
+      "explanation": "[1, 2] and [3]."
+    },
+    {
+      "input": "[1, -1, 1, -1], 0",
+      "output": "4"
+    }
+  ],
+  "constraints": [
+    "0 <= profits.length <= 2 * 10^4",
+    "-1000 <= profits[i] <= 1000"
+  ],
+  "answerKey": {
+    "pattern": "Running (prefix) sums with a hash map of how often each sum appeared",
+    "keyPoints": [
+      "Keep the running total of profits",
+      "A stretch ending today sums to k when an earlier running total equals running - k",
+      "Add how many times running - k has appeared, using a map from running total to count",
+      "Start the map with 0 seen once"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Negative values (a sliding window does not work)",
+      "The map must start with {0: 1} for stretches that start on day one",
+      "k = 0"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try every start and end with a running sum: O(n^2)"
+    ]
+  },
+  "hints": [
+    "Checking every start and end is O(n^2). What does the sum of days i to j equal in terms of running totals?",
+    "sum(i..j) = running(j) - running(i - 1). You need earlier running totals equal to running(j) - k.",
+    "Count earlier running totals in a map, and start it with 0 seen once."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          1,
+          2,
+          3
+        ],
+        3
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          1,
+          -1,
+          1,
+          -1
+        ],
+        0
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        [],
+        5
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          5
+        ],
+        5
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          1,
+          1
+        ],
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          3,
+          4,
+          7,
+          2,
+          -3,
+          1,
+          4,
+          2
+        ],
+        7
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        [
+          0,
+          0,
+          0
+        ],
+        0
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        [
+          -1,
+          -1,
+          1
+        ],
+        0
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          2,
+          2,
+          2
+        ],
+        7
+      ],
+      "expected": 0
+    }
+  ],
+  "starterCode": {
+    "javascript": "function exactTotals(profits, k) {\n  // return how many stretches sum to k\n}",
+    "java": "class Solution {\n  int exactTotals(int[] profits, int k) {\n    // return how many stretches sum to k\n  }\n}"
+  },
+  "similarLeetCode": "Subarray Sum Equals K"
+}

@@ -1,0 +1,102 @@
+{
+  "id": "L2-first-unique",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "First Unique Letter",
+  "statement": "Return the index of the first letter in a string that appears exactly once, or -1 if every letter repeats.",
+  "examples": [
+    {
+      "input": "\"level\"",
+      "output": "2",
+      "explanation": "\"v\" at index 2 appears once."
+    },
+    {
+      "input": "\"aabb\"",
+      "output": "-1"
+    }
+  ],
+  "constraints": [
+    "0 <= s.length <= 10^5",
+    "lowercase letters"
+  ],
+  "answerKey": {
+    "pattern": "Count letters in a map, then scan again for the first count of 1",
+    "keyPoints": [
+      "First pass: count every letter",
+      "Second pass: return the first index whose letter has count 1",
+      "Return -1 if none"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1) (26 letters)",
+    "edgeCases": [
+      "Every letter repeats returns -1",
+      "Empty string returns -1",
+      "The unique letter is the last one"
+    ],
+    "acceptableSlowerApproaches": [
+      "For each letter, count it again in the whole string: O(n^2)"
+    ]
+  },
+  "hints": [
+    "Counting each letter again for every position is O(n^2). Can you count all letters first?",
+    "One pass to fill a map of counts, a second pass to find the answer.",
+    "The second pass goes through the string in order, so the first match is the answer."
+  ],
+  "tests": [
+    {
+      "input": [
+        "level"
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        "aabb"
+      ],
+      "expected": -1
+    },
+    {
+      "input": [
+        ""
+      ],
+      "expected": -1
+    },
+    {
+      "input": [
+        "z"
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        "aabbc"
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        "abcabd"
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        "algoquest"
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        "xxyyzz"
+      ],
+      "expected": -1
+    }
+  ],
+  "starterCode": {
+    "javascript": "function firstUnique(s) {\n  // return the index of the first unique letter, or -1\n}",
+    "java": "class Solution {\n  int firstUnique(String s) {\n    // return the index of the first unique letter, or -1\n  }\n}"
+  },
+  "similarLeetCode": "First Unique Character in a String"
+}

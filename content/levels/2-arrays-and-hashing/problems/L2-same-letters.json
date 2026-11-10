@@ -1,0 +1,117 @@
+{
+  "id": "L2-same-letters",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "title": "Same Letters",
+  "statement": "Two words are made of lowercase letters. Return true if one word uses exactly the same letters as the other, the same number of times each (an anagram), otherwise false.",
+  "examples": [
+    {
+      "input": "\"listen\", \"silent\"",
+      "output": "true"
+    },
+    {
+      "input": "\"apple\", \"paper\"",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "0 <= a.length, b.length <= 10^5",
+    "only letters a to z"
+  ],
+  "answerKey": {
+    "pattern": "Count letters with a hash map (or an array of 26 counters) and compare",
+    "keyPoints": [
+      "If the lengths differ, return false",
+      "Add 1 for each letter of the first word",
+      "Subtract 1 for each letter of the second word",
+      "Return true only if every count is 0"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1) (26 letters)",
+    "edgeCases": [
+      "Different lengths",
+      "Two empty words are anagrams",
+      "Repeated letters such as \"aab\" and \"abb\""
+    ],
+    "acceptableSlowerApproaches": [
+      "Sort both words and compare: O(n log n)"
+    ]
+  },
+  "hints": [
+    "Sorting both words works. Can you count letters instead?",
+    "Keep a count for each letter: up for the first word, down for the second.",
+    "Check the lengths first, then make sure every count ends at zero."
+  ],
+  "tests": [
+    {
+      "input": [
+        "listen",
+        "silent"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "apple",
+        "paper"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "",
+        ""
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "a",
+        "a"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "ab",
+        "a"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "aab",
+        "abb"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "rat",
+        "tar"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abc",
+        "cba"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "aa",
+        "bb"
+      ],
+      "expected": false
+    }
+  ],
+  "starterCode": {
+    "javascript": "function sameLetters(a, b) {\n  // return true if a and b are anagrams\n}",
+    "java": "class Solution {\n  boolean sameLetters(String a, String b) {\n    // return true if a and b are anagrams\n  }\n}"
+  },
+  "similarLeetCode": "Valid Anagram"
+}

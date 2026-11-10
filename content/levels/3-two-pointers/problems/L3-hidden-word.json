@@ -1,0 +1,109 @@
+{
+  "id": "L3-hidden-word",
+  "level": 3,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Hidden Word",
+  "statement": "Return true if the letters of word appear in text in the same order (not necessarily next to each other), otherwise false.",
+  "examples": [
+    {
+      "input": "\"ace\", \"abcde\"",
+      "output": "true"
+    },
+    {
+      "input": "\"aec\", \"abcde\"",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "0 <= word.length <= 100",
+    "0 <= text.length <= 10^4"
+  ],
+  "answerKey": {
+    "pattern": "Two pointers, one in each string",
+    "keyPoints": [
+      "i points into word, j walks through text",
+      "When text[j] equals word[i], move i forward",
+      "Return true if i reaches the end of word"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Empty word returns true",
+      "Word longer than text",
+      "Repeated letters"
+    ],
+    "acceptableSlowerApproaches": [
+      "Search for each letter from the start of the text again: O(n * m)"
+    ]
+  },
+  "hints": [
+    "The order matters. What do you need to remember about your progress in word?",
+    "Keep one pointer in word and one in text.",
+    "Move the word pointer only on a match; the text pointer always moves."
+  ],
+  "tests": [
+    {
+      "input": [
+        "ace",
+        "abcde"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "aec",
+        "abcde"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "",
+        "abc"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abc",
+        ""
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "aaa",
+        "aa"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "aa",
+        "aba"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "algo",
+        "a lot of go"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "z",
+        "abc"
+      ],
+      "expected": false
+    }
+  ],
+  "starterCode": {
+    "javascript": "function hiddenWord(word, text) {\n  // return true if word is hidden in text\n}",
+    "java": "class Solution {\n  boolean hiddenWord(String word, String text) {\n    // return true if word is hidden in text\n  }\n}"
+  },
+  "similarLeetCode": "Is Subsequence"
+}
