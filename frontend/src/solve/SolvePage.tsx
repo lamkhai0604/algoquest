@@ -140,8 +140,6 @@ function Solve({ problem, mode }: SolveProps) {
           />
         ) : (
           <ExplainForm
-            difficulty={problem.difficulty}
-            seconds={seconds}
             xpNote={
               practice
                 ? "Done adds up to 10 XP"
