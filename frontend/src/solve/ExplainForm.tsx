@@ -6,6 +6,7 @@ import styles from "./Solve.module.css";
 interface ExplainFormProps {
   difficulty: Difficulty;
   seconds: number;
+  hintsUsed: number;
   text: string;
   onTextChange: (text: string) => void;
   submitting: boolean;
@@ -17,6 +18,7 @@ interface ExplainFormProps {
 export function ExplainForm({
   difficulty,
   seconds,
+  hintsUsed,
   text,
   onTextChange,
   submitting,
@@ -52,7 +54,7 @@ export function ExplainForm({
       />
       <div className={styles.formFooter}>
         <span className={styles.muted}>
-          Up to {maxXp(difficulty, seconds)} XP
+          Up to {maxXp(difficulty, seconds, hintsUsed)} XP
         </span>
         <span
           id="explanation-count"
