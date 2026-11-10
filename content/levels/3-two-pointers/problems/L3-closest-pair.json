@@ -1,0 +1,145 @@
+{
+  "id": "L3-closest-pair",
+  "level": 3,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Closest Pair Sum",
+  "statement": "Given numbers sorted in ascending order and a target, return the smallest possible distance |nums[i] + nums[j] - target| over pairs i < j.",
+  "examples": [
+    {
+      "input": "[1, 4, 6, 9], 12",
+      "output": "1",
+      "explanation": "6 + 6 is not allowed; 4 + 9 = 13 and 6 + 9 = 15, so the distance is 1."
+    },
+    {
+      "input": "[-2, 0, 5], 4",
+      "output": "1"
+    }
+  ],
+  "constraints": [
+    "2 <= nums.length <= 10^5",
+    "nums is sorted ascending"
+  ],
+  "answerKey": {
+    "pattern": "Two pointers from both ends, moving toward the target",
+    "keyPoints": [
+      "left = 0, right = last index",
+      "Track the smallest |sum - target|",
+      "If the sum is below the target move left, if above move right, if equal return 0"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "An exact match returns 0",
+      "Negative numbers",
+      "Only two numbers"
+    ],
+    "acceptableSlowerApproaches": [
+      "Check every pair: O(n^2)"
+    ]
+  },
+  "hints": [
+    "Every pair is O(n^2). How does the sorted order help?",
+    "Start from both ends and look at the sum.",
+    "A sum below the target needs a bigger left value; above needs a smaller right value."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          1,
+          4,
+          6,
+          9
+        ],
+        12
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          -2,
+          0,
+          5
+        ],
+        4
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ],
+        3
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ],
+        10
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        [
+          -5,
+          -3,
+          2,
+          8
+        ],
+        0
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        3
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          0,
+          10,
+          20,
+          30
+        ],
+        25
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        [
+          -10,
+          -1,
+          4,
+          7
+        ],
+        -9
+      ],
+      "expected": 2
+    }
+  ],
+  "starterCode": {
+    "javascript": "function closestPairSum(nums, target) {\n  // return the smallest distance to the target\n}",
+    "java": "class Solution {\n  int closestPairSum(int[] nums, int target) {\n    // return the smallest distance to the target\n  }\n}"
+  },
+  "similarLeetCode": "3Sum Closest"
+}

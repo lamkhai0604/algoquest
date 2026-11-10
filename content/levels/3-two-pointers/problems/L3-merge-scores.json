@@ -1,0 +1,184 @@
+{
+  "id": "L3-merge-scores",
+  "level": 3,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "title": "Merge Two Score Lists",
+  "statement": "Two teams each have a list of scores sorted in ascending order. Return one list with all scores, still in ascending order, without sorting again.",
+  "examples": [
+    {
+      "input": "[1, 4, 9], [2, 3, 10]",
+      "output": "[1, 2, 3, 4, 9, 10]"
+    },
+    {
+      "input": "[], [5]",
+      "output": "[5]"
+    }
+  ],
+  "constraints": [
+    "0 <= a.length, b.length <= 10^5",
+    "both lists are sorted ascending"
+  ],
+  "answerKey": {
+    "pattern": "Two pointers, one per list, always taking the smaller front value",
+    "keyPoints": [
+      "i = 0 in the first list, j = 0 in the second",
+      "Append the smaller of a[i] and b[j] and move that pointer",
+      "When one list ends, append the rest of the other"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n + m) for the result",
+    "edgeCases": [
+      "One list empty",
+      "Equal values in both lists",
+      "One list much longer than the other"
+    ],
+    "acceptableSlowerApproaches": [
+      "Concatenate and sort: O((n + m) log(n + m))"
+    ]
+  },
+  "hints": [
+    "Sorting again ignores that both lists are already sorted. Where is the smallest remaining score?",
+    "It is at the front of one of the two lists: compare a[i] and b[j].",
+    "Do not forget the leftover scores when one list runs out."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          1,
+          4,
+          9
+        ],
+        [
+          2,
+          3,
+          10
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        9,
+        10
+      ]
+    },
+    {
+      "input": [
+        [],
+        [
+          5
+        ]
+      ],
+      "expected": [
+        5
+      ]
+    },
+    {
+      "input": [
+        [],
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ],
+        []
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "expected": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "input": [
+        [
+          5,
+          6,
+          7
+        ],
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "input": [
+        [
+          -3,
+          0
+        ],
+        [
+          -2,
+          8
+        ]
+      ],
+      "expected": [
+        -3,
+        -2,
+        0,
+        8
+      ]
+    },
+    {
+      "input": [
+        [
+          2
+        ],
+        [
+          1,
+          3,
+          5,
+          7
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        5,
+        7
+      ]
+    }
+  ],
+  "starterCode": {
+    "javascript": "function mergeScores(a, b) {\n  // return one sorted list\n}",
+    "java": "class Solution {\n  int[] mergeScores(int[] a, int[] b) {\n    // return one sorted list\n  }\n}"
+  },
+  "similarLeetCode": "Merge Sorted Array"
+}

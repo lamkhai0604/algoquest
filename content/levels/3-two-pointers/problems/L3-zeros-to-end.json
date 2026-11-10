@@ -1,0 +1,160 @@
+{
+  "id": "L3-zeros-to-end",
+  "level": 3,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Zeros to the End",
+  "statement": "Move every 0 in an array to the end, keeping the other numbers in their original order. Do it in place with O(1) extra space and return the array.",
+  "examples": [
+    {
+      "input": "[0, 3, 0, 5, 1]",
+      "output": "[3, 5, 1, 0, 0]"
+    },
+    {
+      "input": "[0, 0]",
+      "output": "[0, 0]"
+    }
+  ],
+  "constraints": [
+    "0 <= nums.length <= 10^5"
+  ],
+  "answerKey": {
+    "pattern": "Read pointer and write pointer",
+    "keyPoints": [
+      "write = 0; read goes through every index",
+      "When nums[read] is not 0, copy it to nums[write] and move write forward",
+      "Fill the rest from write to the end with 0"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "No zeros",
+      "Only zeros",
+      "Empty array"
+    ],
+    "acceptableSlowerApproaches": [
+      "Build a new array of non-zeros and add zeros: O(n) extra space"
+    ]
+  },
+  "hints": [
+    "A new array uses O(n) space. Can you overwrite the array as you read it?",
+    "Keep a write position for the next non-zero number.",
+    "After the pass, everything from the write position on becomes 0."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          0,
+          3,
+          0,
+          5,
+          1
+        ]
+      ],
+      "expected": [
+        3,
+        5,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          0
+        ]
+      ],
+      "expected": [
+        0,
+        0
+      ]
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ]
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          0
+        ]
+      ],
+      "expected": [
+        0
+      ]
+    },
+    {
+      "input": [
+        [
+          4,
+          0,
+          0,
+          2
+        ]
+      ],
+      "expected": [
+        4,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          0,
+          2,
+          0,
+          3,
+          0
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "input": [
+        [
+          -1,
+          0,
+          -2
+        ]
+      ],
+      "expected": [
+        -1,
+        -2,
+        0
+      ]
+    }
+  ],
+  "starterCode": {
+    "javascript": "function zerosToEnd(nums) {\n  // move the zeros to the end in place and return nums\n}",
+    "java": "class Solution {\n  int[] zerosToEnd(int[] nums) {\n    // move the zeros to the end in place and return nums\n  }\n}"
+  },
+  "similarLeetCode": "Move Zeroes"
+}

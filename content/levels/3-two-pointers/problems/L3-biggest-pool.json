@@ -1,0 +1,146 @@
+{
+  "id": "L3-biggest-pool",
+  "level": 3,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "title": "Biggest Pool",
+  "statement": "Wall heights stand in a row, one unit apart. Choose two walls; the water they hold is the distance between them times the shorter wall. Return the largest amount of water.",
+  "examples": [
+    {
+      "input": "[1, 8, 6, 2, 5, 4, 8, 3, 7]",
+      "output": "49",
+      "explanation": "Walls at index 1 and 8: width 7, height 7, water 49."
+    },
+    {
+      "input": "[2, 2]",
+      "output": "2"
+    }
+  ],
+  "constraints": [
+    "2 <= heights.length <= 10^5",
+    "0 <= heights[i] <= 10^4"
+  ],
+  "answerKey": {
+    "pattern": "Two pointers from both ends, moving the shorter wall inward",
+    "keyPoints": [
+      "left = 0, right = last index; area = (right - left) * min(heights)",
+      "Keep the best area",
+      "Move the pointer at the shorter wall inward: the shorter wall cannot do better with a narrower width",
+      "Stop when the pointers meet"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Two walls only",
+      "Equal heights",
+      "Walls of height 0"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try every pair of walls: O(n^2)"
+    ]
+  },
+  "hints": [
+    "Trying every pair is O(n^2). Start with the widest pair: which wall limits it?",
+    "The shorter wall limits the water. Moving the taller one inward can only make things worse.",
+    "So move the pointer at the shorter wall and keep the best area seen."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          1,
+          8,
+          6,
+          2,
+          5,
+          4,
+          8,
+          3,
+          7
+        ]
+      ],
+      "expected": 49
+    },
+    {
+      "input": [
+        [
+          2,
+          2
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          1,
+          1
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          4,
+          3,
+          2,
+          1,
+          4
+        ]
+      ],
+      "expected": 16
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          1
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          0,
+          0,
+          5
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          5,
+          0,
+          0,
+          5
+        ]
+      ],
+      "expected": 15
+    },
+    {
+      "input": [
+        [
+          1,
+          3,
+          2,
+          5,
+          25,
+          24,
+          5
+        ]
+      ],
+      "expected": 24
+    }
+  ],
+  "starterCode": {
+    "javascript": "function biggestPool(heights) {\n  // return the largest amount of water\n}",
+    "java": "class Solution {\n  int biggestPool(int[] heights) {\n    // return the largest amount of water\n  }\n}"
+  },
+  "similarLeetCode": "Container With Most Water"
+}

@@ -1,0 +1,148 @@
+{
+  "id": "L2-longest-run",
+  "level": 2,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "title": "Longest Run of Numbers",
+  "statement": "Raffle tickets are numbered with integers, in no particular order. Return the length of the longest run of consecutive numbers you hold (for example 4, 5, 6, 7). Duplicates count once. Try to do better than sorting.",
+  "examples": [
+    {
+      "input": "[100, 4, 200, 1, 3, 2]",
+      "output": "4",
+      "explanation": "1, 2, 3, 4."
+    },
+    {
+      "input": "[9, 1, 9, 2]",
+      "output": "2"
+    }
+  ],
+  "constraints": [
+    "0 <= nums.length <= 10^5",
+    "-10^9 <= nums[i] <= 10^9"
+  ],
+  "answerKey": {
+    "pattern": "Hash set; start counting only at numbers that begin a run",
+    "keyPoints": [
+      "Put every number in a set",
+      "A number x starts a run only if x - 1 is not in the set",
+      "From each start, count x + 1, x + 2, ... while they are in the set",
+      "Keep the longest length"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Empty input returns 0",
+      "Duplicates count once",
+      "Negative numbers"
+    ],
+    "acceptableSlowerApproaches": [
+      "Sort and scan neighbours: O(n log n)"
+    ]
+  },
+  "hints": [
+    "Sorting gives O(n log n). Which numbers could start a run?",
+    "Put the numbers in a set; x starts a run only if x - 1 is missing.",
+    "Counting forward only from run starts keeps the total work O(n)."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          100,
+          4,
+          200,
+          1,
+          3,
+          2
+        ]
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        [
+          9,
+          1,
+          9,
+          2
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          7
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          2,
+          3
+        ]
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          10,
+          5,
+          12,
+          3,
+          11
+        ]
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          -2,
+          -1,
+          0,
+          1
+        ]
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        [
+          5,
+          5,
+          5
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          3,
+          5,
+          7
+        ]
+      ],
+      "expected": 1
+    }
+  ],
+  "starterCode": {
+    "javascript": "function longestRun(nums) {\n  // return the length of the longest run\n}",
+    "java": "class Solution {\n  int longestRun(int[] nums) {\n    // return the length of the longest run\n  }\n}"
+  },
+  "similarLeetCode": "Longest Consecutive Sequence"
+}

@@ -1,0 +1,161 @@
+{
+  "id": "L3-sorted-squares",
+  "level": 3,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "title": "Sorted Squares",
+  "statement": "Given integers sorted in ascending order (they may be negative), return the squares of the numbers, also in ascending order, in O(n) time.",
+  "examples": [
+    {
+      "input": "[-4, -1, 0, 3, 10]",
+      "output": "[0, 1, 9, 16, 100]"
+    },
+    {
+      "input": "[-7, -3, 2, 3, 11]",
+      "output": "[4, 9, 9, 49, 121]"
+    }
+  ],
+  "constraints": [
+    "0 <= nums.length <= 10^5",
+    "nums is sorted ascending"
+  ],
+  "answerKey": {
+    "pattern": "Two pointers at both ends, filling the result from the back",
+    "keyPoints": [
+      "The largest square is at one of the two ends",
+      "Compare the squares at left and right, write the larger at the end of the result",
+      "Move that pointer inward and fill the next position from the back"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n) for the result",
+    "edgeCases": [
+      "All negative numbers",
+      "All non-negative numbers",
+      "Empty input"
+    ],
+    "acceptableSlowerApproaches": [
+      "Square everything and sort: O(n log n)"
+    ]
+  },
+  "hints": [
+    "Squaring and sorting is O(n log n). Where can the largest square be?",
+    "Only at the far left (a big negative) or the far right.",
+    "Fill the result from the last position backwards."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          -4,
+          -1,
+          0,
+          3,
+          10
+        ]
+      ],
+      "expected": [
+        0,
+        1,
+        9,
+        16,
+        100
+      ]
+    },
+    {
+      "input": [
+        [
+          -7,
+          -3,
+          2,
+          3,
+          11
+        ]
+      ],
+      "expected": [
+        4,
+        9,
+        9,
+        49,
+        121
+      ]
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          5
+        ]
+      ],
+      "expected": [
+        25
+      ]
+    },
+    {
+      "input": [
+        [
+          -5,
+          -3,
+          -1
+        ]
+      ],
+      "expected": [
+        1,
+        9,
+        25
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          1,
+          2
+        ]
+      ],
+      "expected": [
+        0,
+        1,
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          -2,
+          2
+        ]
+      ],
+      "expected": [
+        4,
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          -1,
+          0,
+          0,
+          1
+        ]
+      ],
+      "expected": [
+        0,
+        0,
+        1,
+        1
+      ]
+    }
+  ],
+  "starterCode": {
+    "javascript": "function sortedSquares(nums) {\n  // return the squares in ascending order\n}",
+    "java": "class Solution {\n  int[] sortedSquares(int[] nums) {\n    // return the squares in ascending order\n  }\n}"
+  },
+  "similarLeetCode": "Squares of a Sorted Array"
+}

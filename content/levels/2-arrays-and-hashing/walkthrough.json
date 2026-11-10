@@ -1,0 +1,26 @@
+[
+  {
+    "title": "The task",
+    "body": "Does **[4, 7, 1, 7]** contain a duplicate? We keep a set called `seen` and read the list once."
+  },
+  {
+    "title": "Read 4",
+    "body": "`seen` is empty, so 4 is new. Add it.",
+    "code": "seen = {4}"
+  },
+  {
+    "title": "Read 7",
+    "body": "7 is not in `seen`. Add it.",
+    "code": "seen = {4, 7}"
+  },
+  {
+    "title": "Read 1",
+    "body": "1 is not in `seen`. Add it.",
+    "code": "seen = {4, 7, 1}"
+  },
+  {
+    "title": "Read 7 again",
+    "body": "7 **is** in `seen`: we found a duplicate and return true right away. Each check took O(1) time on average, so the whole pass is **O(n) time**, and the set used **O(n) space**.",
+    "code": "if (seen.has(7)) return true;"
+  }
+]

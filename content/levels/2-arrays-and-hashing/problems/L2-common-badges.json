@@ -1,0 +1,165 @@
+{
+  "id": "L2-common-badges",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Common Badges",
+  "statement": "Two doors log badge IDs. Return the IDs that appear in both logs, each once, in ascending order.",
+  "examples": [
+    {
+      "input": "[4, 1, 7, 4], [7, 4, 9]",
+      "output": "[4, 7]"
+    },
+    {
+      "input": "[1, 2], [3]",
+      "output": "[]"
+    }
+  ],
+  "constraints": [
+    "0 <= a.length, b.length <= 10^5"
+  ],
+  "answerKey": {
+    "pattern": "Hash set of one log, then look up the other",
+    "keyPoints": [
+      "Put the IDs of the first log in a set",
+      "For each ID of the second log that is in the set, add it to the result set",
+      "Return the result sorted"
+    ],
+    "timeComplexity": "O(n + m + r log r), r = number of common IDs",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "No common IDs returns []",
+      "Duplicates appear once",
+      "An empty log"
+    ],
+    "acceptableSlowerApproaches": [
+      "Compare every pair: O(n * m)"
+    ]
+  },
+  "hints": [
+    "Comparing every pair is slow. Which structure makes \"is this ID in the other log?\" fast?",
+    "Put one log in a set and walk through the other.",
+    "Use a second set for the answer so duplicates appear once, then sort it."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          4,
+          1,
+          7,
+          4
+        ],
+        [
+          7,
+          4,
+          9
+        ]
+      ],
+      "expected": [
+        4,
+        7
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ],
+        [
+          3
+        ]
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [],
+        [
+          1
+        ]
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          5,
+          5
+        ],
+        [
+          5,
+          5
+        ]
+      ],
+      "expected": [
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          3,
+          2,
+          1
+        ],
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "expected": [
+        0
+      ]
+    },
+    {
+      "input": [
+        [
+          10
+        ],
+        [
+          10,
+          20
+        ]
+      ],
+      "expected": [
+        10
+      ]
+    },
+    {
+      "input": [
+        [
+          8,
+          6
+        ],
+        []
+      ],
+      "expected": []
+    }
+  ],
+  "starterCode": {
+    "javascript": "function commonBadges(a, b) {\n  // return the shared IDs in ascending order\n}",
+    "java": "class Solution {\n  int[] commonBadges(int[] a, int[] b) {\n    // return the shared IDs in ascending order\n  }\n}"
+  },
+  "similarLeetCode": "Intersection of Two Arrays"
+}

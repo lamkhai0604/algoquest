@@ -1,0 +1,25 @@
+[
+  {
+    "title": "The task",
+    "body": "In the sorted list **[-4, 1, 3, 8, 11]**, find two numbers that add up to **9**. Start with `left` at -4 and `right` at 11."
+  },
+  {
+    "title": "First sum",
+    "body": "-4 + 11 = 7, which is too small. A bigger sum needs a bigger left number, so move `left` forward.",
+    "code": "sum = 7 < 9  ->  left++"
+  },
+  {
+    "title": "Second sum",
+    "body": "1 + 11 = 12, which is too big. A smaller sum needs a smaller right number, so move `right` back.",
+    "code": "sum = 12 > 9  ->  right--"
+  },
+  {
+    "title": "Third sum",
+    "body": "1 + 8 = 9. Found it: return the indexes **[1, 3]**.",
+    "code": "return [1, 3];"
+  },
+  {
+    "title": "Why it works",
+    "body": "Each move discarded a number that could not be in any answer. Every step moves one pointer, so the search is **O(n) time**, and we kept only two indexes: **O(1) space**."
+  }
+]

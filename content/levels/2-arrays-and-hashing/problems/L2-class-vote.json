@@ -1,0 +1,131 @@
+{
+  "id": "L2-class-vote",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "title": "Class Vote",
+  "statement": "Each student writes one name on a ballot. Given the ballots as an array of names, return the name with the most votes. If several names tie, return the one that comes first in alphabetical order. Return null if there are no ballots.",
+  "examples": [
+    {
+      "input": "[\"mai\", \"an\", \"mai\", \"binh\"]",
+      "output": "\"mai\""
+    },
+    {
+      "input": "[\"lan\", \"an\", \"an\", \"lan\"]",
+      "output": "\"an\"",
+      "explanation": "\"an\" and \"lan\" both have 2 votes; \"an\" comes first."
+    }
+  ],
+  "constraints": [
+    "0 <= ballots.length <= 10^5",
+    "names are lowercase letters"
+  ],
+  "answerKey": {
+    "pattern": "Hash map from name to vote count",
+    "keyPoints": [
+      "Count each name in a map in one pass",
+      "Find the highest count",
+      "Among names with that count, pick the alphabetically first"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(k), k = number of different names",
+    "edgeCases": [
+      "No ballots returns null",
+      "A tie between names",
+      "A single ballot"
+    ],
+    "acceptableSlowerApproaches": [
+      "Sort the names and count runs: O(n log n)"
+    ]
+  },
+  "hints": [
+    "Counting each name by scanning the whole list again is O(n^2). What structure counts in one pass?",
+    "Use a map from name to count, adding 1 for each ballot.",
+    "After counting, ties need a rule: compare names alphabetically."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          "mai",
+          "an",
+          "mai",
+          "binh"
+        ]
+      ],
+      "expected": "mai"
+    },
+    {
+      "input": [
+        [
+          "lan",
+          "an",
+          "an",
+          "lan"
+        ]
+      ],
+      "expected": "an"
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": null
+    },
+    {
+      "input": [
+        [
+          "solo"
+        ]
+      ],
+      "expected": "solo"
+    },
+    {
+      "input": [
+        [
+          "b",
+          "a"
+        ]
+      ],
+      "expected": "a"
+    },
+    {
+      "input": [
+        [
+          "c",
+          "c",
+          "c"
+        ]
+      ],
+      "expected": "c"
+    },
+    {
+      "input": [
+        [
+          "x",
+          "y",
+          "z",
+          "y",
+          "x"
+        ]
+      ],
+      "expected": "x"
+    },
+    {
+      "input": [
+        [
+          "dao",
+          "dao",
+          "an"
+        ]
+      ],
+      "expected": "dao"
+    }
+  ],
+  "starterCode": {
+    "javascript": "function classVote(ballots) {\n  // return the winning name, or null\n}",
+    "java": "class Solution {\n  String classVote(String[] ballots) {\n    // return the winning name, or null\n  }\n}"
+  },
+  "similarLeetCode": "Majority Element"
+}

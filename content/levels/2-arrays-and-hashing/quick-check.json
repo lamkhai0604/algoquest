@@ -1,0 +1,25 @@
+[
+  {
+    "question": "What is the average time to check whether a value is in a hash set?",
+    "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+    "answer": 0,
+    "explanation": "A hash set jumps straight to where the value would be stored, so a lookup is O(1) on average."
+  },
+  {
+    "question": "You store every badge ID you have seen in a set. How much extra space can that use?",
+    "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+    "answer": 2,
+    "explanation": "In the worst case every ID is different and all of them are stored: O(n) space."
+  },
+  {
+    "question": "In \"two prices that add up to the budget\", why look up the needed price before storing the current one?",
+    "options": [
+      "It makes the lookup faster",
+      "It stops a ticket from being paired with itself",
+      "It keeps the map sorted",
+      "It uses less memory"
+    ],
+    "answer": 1,
+    "explanation": "If the current price were stored first, a price equal to half the budget could match itself."
+  }
+]
