@@ -15,6 +15,8 @@ import com.algoquest.shared.web.ApiException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +70,7 @@ public class AttemptService {
   private final TransactionTemplate transaction;
   private final ProblemStartStore starts;
   private final Clock clock;
+  private final ProfileService profiles;
 
   public AttemptService(
       GameService game,
@@ -78,6 +81,7 @@ public class AttemptService {
       ProgressStore progress,
       ProblemStartStore starts,
       Clock clock,
+      ProfileService profiles,
       PlatformTransactionManager transactionManager) {
     this.game = game;
     this.hints = hints;
@@ -87,10 +91,16 @@ public class AttemptService {
     this.progress = progress;
     this.starts = starts;
     this.clock = clock;
+    this.profiles = profiles;
     this.transaction = new TransactionTemplate(transactionManager);
   }
 
   public AttemptResult submit(UUID userId, String problemId, AttemptRequest request) {
+    return submit(userId, problemId, request, ZoneOffset.UTC);
+  }
+
+  /** Grades and records an attempt; {@code zone} decides the streak's calendar day. */
+  public AttemptResult submit(UUID userId, String problemId, AttemptRequest request, ZoneId zone) {
     Problem problem = game.playableProblem(userId, problemId);
     if (request == null || request.attemptId() == null) {
       throw invalid("attemptId is required.");
@@ -131,7 +141,14 @@ public class AttemptService {
 
     if (mode.equals(PRACTICE)) {
       return transaction.execute(
-          status -> recordPractice(userId, problem, request, text, seconds, result, gradingMs));
+          status -> {
+            AttemptResult practiced =
+                recordPractice(userId, problem, request, text, seconds, result, gradingMs);
+            if (practiced.solved()) {
+              profiles.recordSolve(userId, zone);
+            }
+            return practiced;
+          });
     }
     return transaction.execute(
         status -> {
@@ -155,6 +172,9 @@ public class AttemptService {
             return stored(attempts.find(request.attemptId()).orElseThrow(), userId, problem);
           }
           progress.save(userId, problem.id(), award.after());
+          if (result.total() >= XpRules.PASS_SCORE) {
+            profiles.recordSolve(userId, zone);
+          }
           return view(attempt, userId, problem);
         });
   }
