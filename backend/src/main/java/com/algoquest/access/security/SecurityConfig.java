@@ -88,7 +88,7 @@ public class SecurityConfig {
     CorsConfiguration cors = new CorsConfiguration();
     cors.setAllowedOrigins(List.of(frontendUrl));
     cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-    cors.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    cors.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Time-Zone"));
     cors.setMaxAge(3600L);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/api/**", cors);
