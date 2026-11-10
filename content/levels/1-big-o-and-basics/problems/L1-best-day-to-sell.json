@@ -1,0 +1,154 @@
+{
+  "id": "L1-best-day-to-sell",
+  "level": 1,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "title": "Best Day to Sell",
+  "statement": "You track the price of a game skin for several days. You may buy it on one day and sell it on a later day. Return the largest profit you can make, or 0 if no profit is possible.",
+  "examples": [
+    {
+      "input": "[8, 3, 6, 1, 5]",
+      "output": "4",
+      "explanation": "Buy at 1, sell at 5."
+    },
+    {
+      "input": "[9, 7, 4]",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "0 <= prices.length <= 10^5",
+    "0 <= prices[i] <= 10^4"
+  ],
+  "answerKey": {
+    "pattern": "Single pass keeping the lowest price so far and the best profit",
+    "keyPoints": [
+      "Keep the lowest price seen before the current day",
+      "For each day, profit = price - lowest so far; keep the best",
+      "Update the lowest price after checking the profit",
+      "Return the best profit, which starts at 0"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Prices only fall: return 0",
+      "Fewer than two days: return 0",
+      "The lowest price comes after the highest price"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try every buy and sell pair: O(n^2)"
+    ]
+  },
+  "hints": [
+    "Checking every buy and sell pair is O(n^2). What do you need to know about the days before today?",
+    "Remember the lowest price so far; selling today earns today's price minus that low.",
+    "Start the best profit at 0 so that falling prices give 0, not a negative number."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          8,
+          3,
+          6,
+          1,
+          5
+        ]
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        [
+          9,
+          7,
+          4
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          5
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          2,
+          1
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          3,
+          3,
+          3
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          7,
+          1,
+          5,
+          3,
+          6,
+          4
+        ]
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        [
+          1,
+          10,
+          0,
+          5
+        ]
+      ],
+      "expected": 9
+    },
+    {
+      "input": [
+        [
+          4,
+          9,
+          1,
+          8
+        ]
+      ],
+      "expected": 7
+    }
+  ],
+  "starterCode": {
+    "javascript": "function bestProfit(prices) {\n  // return the largest profit, or 0\n}",
+    "java": "class Solution {\n  int bestProfit(int[] prices) {\n    // return the largest profit, or 0\n  }\n}"
+  },
+  "similarLeetCode": "Best Time to Buy and Sell Stock"
+}

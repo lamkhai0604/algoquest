@@ -48,26 +48,26 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
 | T-201 | Content format, loader, and validation (startup + CI); public DTOs without answer keys | D-033, NFR-02 | P1 | Done 2026-11-08 (CI: 53 backend tests, smoke green) |
-| T-202 | Level 1 content: lesson, walkthrough, quick check, Easy + Medium problems, test problems, Hard placeholders (PO reviews) | FR-03, D-024 | P1 |  |
-| T-203 | Level map and problem list (lock states, XP bars, "Coming in a later version" for Hard) | FR-02, FR-04.4 | P1 |  |
-| T-204 | Lesson page: Markdown, step walkthrough, quick check | FR-03 | P1 |  |
-| T-205 | `game.domain`: problem XP, level target, totals, lock states (pure Java, unit tests) | FR-08, FR-10 | P1 |  |
-| T-206 | Grading module (Gemini + Fake) and attempts endpoint with failure paths and idempotency | FR-05, NFR-09 | P1 |  |
-| T-207 | Solve page and feedback page | FR-04, FR-05 | P1 |  |
-| T-208 | Sprint 2 report | D-007 | P2 |  |
+| T-202 | Level 1 content: lesson, walkthrough, quick check, Easy + Medium problems, test problems, Hard placeholders (PO reviews) | FR-03, D-024 | P1 | Done 2026-11-09: content approved — PO, 2026-11-09 |
+| T-203 | Level map and problem list (lock states, XP bars, "Coming in a later version" for Hard) | FR-02, FR-04.4 | P1 | Done 2026-11-09 (CI green) |
+| T-204 | Lesson page: Markdown, step walkthrough, quick check | FR-03 | P1 | Done 2026-11-09 (CI green) |
+| T-205 | `game.domain`: problem XP, level target, totals, lock states (pure Java, unit tests) | FR-08, FR-10 | P1 | Done 2026-11-08 (CI: 105 tests, 0 failed) |
+| T-206 | Grading module (Gemini + Fake) and attempts endpoint with failure paths and idempotency | FR-05, NFR-09 | P1 | Done 2026-11-09 (126 backend tests; real-grader check pending, PO) |
+| T-207 | Solve page and feedback page | FR-04, FR-05 | P1 | Done 2026-11-09 (frontend tests; smoke 5 passed) |
+| T-208 | Sprint 2 report | D-007 | P2 | Done 2026-11-09: [sprint-2-report.md](reports/sprint-2-report.md) |
 
-## Sprint 3 — Levels 1–3 test build
+## Sprint 3 — Levels 1–3 test build ([plan](sprints/sprint-3.md), approved 2026-11-09)
 
-| ID | Title | Req | Priority |
-| --- | --- | --- | --- |
-| T-301 | Hints with the 3-per-5-hours quota and XP reduction | FR-06 | P1 |
-| T-302 | Practice round (70% gate, Done +10 XP) | FR-09 | P1 |
-| T-303 | Level-up test: timer, scoring, Easy-only / Open unlocking, retakes | FR-10 | P1 |
-| T-304 | Levels 2 and 3 content (PO reviews) | FR-03, FR-04 | P1 |
-| T-305 | Profile and streak | FR-12, FR-13 | P2 |
-| T-306 | Admin panel part 1: grading log and progress reset (audit-logged) | FR-18.1–2 | P2 |
-| T-307 | First deployment (Vercel, Render, Neon) + live smoke check — **needs PO approval** | D-037 | P1 |
-| T-308 | Sprint 3 report | D-007 | P2 |
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-301 | Hints with the 3-per-5-hours quota and XP reduction | FR-06 | P1 | Done 2026-11-09 (backend 134 tests; smoke uses a hint) |
+| T-302 | Practice round (70% gate, Done +10 XP) | FR-09 | P1 | Done 2026-11-09 (backend 139 tests; frontend tests) |
+| T-303 | Level-up test: timer, scoring, Easy-only / Open unlocking, retakes | FR-10 | P1 |  |
+| T-304 | Levels 2 and 3 content (PO reviews) | FR-03, FR-04 | P1 |  |
+| T-305 | Profile and streak | FR-12, FR-13 | P2 |  |
+| T-306 | Admin panel part 1: grading log and progress reset (audit-logged) | FR-18.1–2 | P2 |  |
+| T-307 | First deployment (Vercel, Render, Neon) + live smoke check — **needs PO approval** | D-037 | P1 |  |
+| T-308 | Sprint 3 report | D-007 | P2 |  |
 
 ## Sprint 4 — Code and polish
 

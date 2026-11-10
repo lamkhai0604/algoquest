@@ -1,0 +1,142 @@
+{
+  "id": "L1-second-largest",
+  "level": 1,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "title": "Second Largest Score",
+  "statement": "Given an array of integer scores, return the second largest distinct score. If there are fewer than two distinct scores, return null.",
+  "examples": [
+    {
+      "input": "[4, 9, 7]",
+      "output": "7"
+    },
+    {
+      "input": "[5, 5, 3]",
+      "output": "3"
+    },
+    {
+      "input": "[8, 8]",
+      "output": "null"
+    }
+  ],
+  "constraints": [
+    "0 <= scores.length <= 10^5",
+    "-10^9 <= scores[i] <= 10^9"
+  ],
+  "answerKey": {
+    "pattern": "Single pass tracking the largest and second largest distinct values",
+    "keyPoints": [
+      "Keep two variables: first and second (start at -Infinity or null)",
+      "If x > first: second = first, first = x",
+      "Else if x < first and x > second: second = x (x must be strictly smaller than first so duplicates of the max are skipped)",
+      "Return null if second was never set"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Duplicates of the maximum, e.g. [5, 5, 3]",
+      "Fewer than two distinct values returns null",
+      "Empty array"
+    ],
+    "acceptableSlowerApproaches": [
+      "Deduplicate with a Set and sort: O(n log n) time, O(n) space"
+    ]
+  },
+  "hints": [
+    "Sorting works, but can you find the answer while reading each score only once?",
+    "Keep two variables: the largest and the second largest distinct value.",
+    "A value equal to the largest must not become the second largest."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          4,
+          9,
+          7
+        ]
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        [
+          5,
+          5,
+          3
+        ]
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          8,
+          8
+        ]
+      ],
+      "expected": null
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": null
+    },
+    {
+      "input": [
+        [
+          1
+        ]
+      ],
+      "expected": null
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          9,
+          9,
+          9,
+          1
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          -1,
+          -2,
+          -3
+        ]
+      ],
+      "expected": -2
+    },
+    {
+      "input": [
+        [
+          3,
+          1,
+          3,
+          2
+        ]
+      ],
+      "expected": 2
+    }
+  ],
+  "starterCode": {
+    "javascript": "function secondLargest(scores) {\n  // return the second largest distinct value, or null\n}",
+    "java": "class Solution {\n  Integer secondLargest(int[] scores) {\n    // return the second largest distinct value, or null\n  }\n}"
+  },
+  "similarLeetCode": "Third Maximum Number"
+}

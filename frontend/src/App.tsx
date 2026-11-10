@@ -9,16 +9,27 @@ import {
 } from "./auth";
 import { AppHeader, WakingServer } from "./components";
 import type { HeaderAccount } from "./components";
+import { hintsLeft, totalXp, useGame } from "./game/gameContext";
+import { GameProvider } from "./game/GameProvider";
+import { LessonPage } from "./lesson/LessonPage";
 import { HomePage } from "./pages/HomePage";
+import { LevelPage } from "./pages/LevelPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { UiKitPage } from "./pages/UiKitPage";
+import { VipPage } from "./pages/VipPage";
+import { SolvePage } from "./solve/SolvePage";
 import { ThemeProvider } from "./theme/ThemeProvider";
-
-const EMPTY_STATS = { streakDays: 0, totalXp: 0, hintsLeft: 0 };
 
 export function AppRoutes() {
   const waking = useServerWaking();
   const { state, signOut } = useAuth();
+  const { levels, hintQuota } = useGame();
+  // The streak arrives with the profile (T-305).
+  const stats = {
+    streakDays: 0,
+    totalXp: totalXp(levels),
+    hintsLeft: hintsLeft(hintQuota),
+  };
   let account: HeaderAccount | undefined;
   if (state.status === "signed-in") {
     account = { name: state.user.displayName, onSignOut: signOut };
@@ -26,7 +37,7 @@ export function AppRoutes() {
 
   return (
     <>
-      <AppHeader stats={EMPTY_STATS} account={account} />
+      <AppHeader stats={stats} account={account} />
       <WakingServer visible={waking} />
       <main>
         <Routes>
@@ -41,6 +52,31 @@ export function AppRoutes() {
               </RequireAuth>
             }
           />
+          <Route
+            path="/levels/:number"
+            element={
+              <RequireAuth>
+                <LevelPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/levels/:number/lesson"
+            element={
+              <RequireAuth>
+                <LessonPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/problems/:id"
+            element={
+              <RequireAuth>
+                <SolvePage />
+              </RequireAuth>
+            }
+          />
+          <Route path="/vip" element={<VipPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
@@ -52,9 +88,11 @@ export function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <GameProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </GameProvider>
       </AuthProvider>
     </ThemeProvider>
   );

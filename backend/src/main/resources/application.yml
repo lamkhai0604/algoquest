@@ -52,3 +52,10 @@ algoquest:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   # Signs the app's login tokens (D-036). When empty, a random key is used and tokens end at restart.
   jwt-secret: ${JWT_SECRET:}
+  grading:
+    # "gemini" (default) or "fake" (fixed rules, no network; tests and the smoke run).
+    provider: ${GRADING_PROVIDER:gemini}
+    gemini:
+      base-url: https://generativelanguage.googleapis.com
+      api-key: ${GEMINI_API_KEY:}
+      model: ${GEMINI_MODEL:gemini-3.5-flash-lite}

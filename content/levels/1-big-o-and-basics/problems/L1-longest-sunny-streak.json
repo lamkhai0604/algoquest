@@ -1,0 +1,108 @@
+{
+  "id": "L1-longest-sunny-streak",
+  "level": 1,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "title": "Longest Sunny Streak",
+  "statement": "A weather log is a string of letters, one per day: 'S' for sunny and 'R' for rainy. Return the length of the longest run of consecutive sunny days.",
+  "examples": [
+    {
+      "input": "\"SSRSSSR\"",
+      "output": "3"
+    },
+    {
+      "input": "\"RRR\"",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "0 <= log.length <= 10^5",
+    "log contains only 'S' and 'R'"
+  ],
+  "answerKey": {
+    "pattern": "Single scan with a current run length and a best run length",
+    "keyPoints": [
+      "Keep two numbers: the current run and the best run",
+      "On 'S' add 1 to the current run and update the best",
+      "On 'R' reset the current run to 0",
+      "Return the best run"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Empty log returns 0",
+      "No sunny day returns 0",
+      "The longest run is at the very end"
+    ],
+    "acceptableSlowerApproaches": [
+      "For every start day, count forward: O(n^2)"
+    ]
+  },
+  "hints": [
+    "Starting a new count from every day repeats work. What can you carry from one day to the next?",
+    "Track the length of the current sunny run and the best length seen so far.",
+    "Update the best on every sunny day, so a run that ends the log is not missed."
+  ],
+  "tests": [
+    {
+      "input": [
+        "SSRSSSR"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "RRR"
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        ""
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        "S"
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "SSSS"
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        "RSRSRS"
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "SRSSRSSS"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "SSSRS"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "RRSSRR"
+      ],
+      "expected": 2
+    }
+  ],
+  "starterCode": {
+    "javascript": "function longestSunnyStreak(log) {\n  // return the longest run of 'S'\n}",
+    "java": "class Solution {\n  int longestSunnyStreak(String log) {\n    // return the longest run of 'S'\n  }\n}"
+  },
+  "similarLeetCode": "Max Consecutive Ones"
+}

@@ -1,29 +1,14 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
-import { AppRoutes } from "../App";
 import { fakeApi, inFourHours, json, ME } from "../test/fakeApi";
-import { ThemeProvider } from "../theme/ThemeProvider";
-import { AuthProvider } from "./AuthProvider";
+import { renderAt } from "../test/renderApp";
 import { getToken, setSession } from "./session";
 
 const SIGN_IN = "http://localhost:8080/oauth2/authorization";
 
 const isExchange = (url: unknown) =>
   String(url).endsWith("/api/v1/auth/exchange");
-
-function renderAt(path: string) {
-  return render(
-    <ThemeProvider>
-      <AuthProvider>
-        <MemoryRouter initialEntries={[path]}>
-          <AppRoutes />
-        </MemoryRouter>
-      </AuthProvider>
-    </ThemeProvider>,
-  );
-}
 
 describe("sign-in", () => {
   it("sends a signed-out visitor to the sign-in page", () => {

@@ -62,6 +62,7 @@ The shared components are shown at <http://localhost:5173/ui-kit>.
 | Backend | `./mvnw verify` in `backend/` | Formatting, tests, build; tests start their own database, so Docker must be running |
 | Frontend | `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test`, `npm run build` in `frontend/` | Same steps as CI |
 | Records | `node scripts/check-records.mjs` | Links, IDs, and record style (D-038) |
+| Real grader | `./mvnw test -Dtest=RealGraderCheck -DexcludedGroups=none` in `backend/` (Windows: `mvnw.cmd`) | Calls Gemini with `GEMINI_API_KEY` from `.env`: prints scores and latency for five sample explanations (about 1 minute; uses 5 free-tier requests) |
 
 To stop the database: `docker compose down` (add `-v` to delete its data).
 
