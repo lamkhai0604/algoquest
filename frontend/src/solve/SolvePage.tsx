@@ -13,7 +13,7 @@ import { HintPanel } from "./HintPanel";
 import { clock, maxXp, timeLimitSeconds } from "./rules";
 import styles from "./Solve.module.css";
 import type { AttemptMode, AttemptResult, ProblemDetail } from "./types";
-import { useTimer } from "./useTimer";
+import { useElapsed } from "./useTimer";
 
 function ProblemText({ problem }: { problem: ProblemDetail }) {
   return (
@@ -70,7 +70,7 @@ function Solve({ problem, mode }: SolveProps) {
   const [result, setResult] = useState<AttemptResult | null>(null);
   // One ID per submitted text, so a retry of the same text is graded once.
   const attemptId = useRef<string | null>(null);
-  const seconds = useTimer(result === null);
+  const seconds = useElapsed(problem.openedAt, result === null);
   const limit = timeLimitSeconds(problem.difficulty);
 
   const changeText = (next: string) => {
@@ -86,7 +86,6 @@ function Solve({ problem, mode }: SolveProps) {
       .post<AttemptResult>(`/api/v1/problems/${problem.id}/attempts`, {
         attemptId: attemptId.current,
         text: text.trim(),
-        secondsTaken: seconds,
         mode,
       })
       .then((graded) => {

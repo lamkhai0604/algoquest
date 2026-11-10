@@ -12,7 +12,9 @@ import com.algoquest.grading.Grader;
 import com.algoquest.grading.GraderUnavailableException;
 import com.algoquest.grading.GradingResult;
 import com.algoquest.shared.web.ApiException;
+import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,17 +32,17 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class AttemptService {
 
   public static final int MAX_LENGTH = 2000;
+
+  /** Longer than any time limit; stored times are capped here. */
   private static final int NO_TIME_BONUS_SECONDS = 24 * 60 * 60;
+
   private static final Logger log = LoggerFactory.getLogger(AttemptService.class);
 
   public static final String EXPLAIN = "explain";
   public static final String PRACTICE = "practice";
 
-  /**
-   * The request body of an attempt. {@code secondsTaken} is the time shown by the page timer;
-   * {@code mode} is {@code explain} (default) or {@code practice}.
-   */
-  public record AttemptRequest(UUID attemptId, String text, Integer secondsTaken, String mode) {}
+  /** An attempt; {@code mode} is {@code explain} (default) or {@code practice}. */
+  public record AttemptRequest(UUID attemptId, String text, String mode) {}
 
   /** What the player sees after grading. */
   public record AttemptResult(
@@ -64,6 +66,8 @@ public class AttemptService {
   private final AttemptStore attempts;
   private final ProgressStore progress;
   private final TransactionTemplate transaction;
+  private final ProblemStartStore starts;
+  private final Clock clock;
 
   public AttemptService(
       GameService game,
@@ -72,6 +76,8 @@ public class AttemptService {
       Grader grader,
       AttemptStore attempts,
       ProgressStore progress,
+      ProblemStartStore starts,
+      Clock clock,
       PlatformTransactionManager transactionManager) {
     this.game = game;
     this.hints = hints;
@@ -79,6 +85,8 @@ public class AttemptService {
     this.grader = grader;
     this.attempts = attempts;
     this.progress = progress;
+    this.starts = starts;
+    this.clock = clock;
     this.transaction = new TransactionTemplate(transactionManager);
   }
 
@@ -94,7 +102,6 @@ public class AttemptService {
     if (text.length() > MAX_LENGTH) {
       throw invalid("Your explanation is longer than " + MAX_LENGTH + " characters.");
     }
-    int seconds = seconds(request.secondsTaken());
     String mode = request.mode() == null ? EXPLAIN : request.mode();
     if (!mode.equals(EXPLAIN) && !mode.equals(PRACTICE)) {
       throw invalid("mode must be explain or practice.");
@@ -118,6 +125,9 @@ public class AttemptService {
       throw e;
     }
     long gradingMs = (System.nanoTime() - started) / 1_000_000;
+    // The time bonus runs from the first opening of the problem, as recorded by the server.
+    Instant openedAt = starts.openedAt(userId, problem.id());
+    int seconds = seconds(Duration.between(openedAt, clock.instant()));
 
     if (mode.equals(PRACTICE)) {
       return transaction.execute(
@@ -221,11 +231,8 @@ public class AttemptService {
         XpRules.levelTarget(problem.level()));
   }
 
-  private static int seconds(Integer secondsTaken) {
-    if (secondsTaken == null || secondsTaken < 0) {
-      return NO_TIME_BONUS_SECONDS;
-    }
-    return Math.min(secondsTaken, NO_TIME_BONUS_SECONDS);
+  private static int seconds(Duration taken) {
+    return (int) Math.min(Math.max(taken.toSeconds(), 0), NO_TIME_BONUS_SECONDS);
   }
 
   private static ApiException invalid(String detail) {

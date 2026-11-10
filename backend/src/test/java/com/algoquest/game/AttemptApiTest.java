@@ -10,13 +10,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.algoquest.access.AccessService;
 import com.algoquest.access.AuthenticatedUser;
 import com.algoquest.access.SignInProfile;
+import com.algoquest.access.signin.MutableClock;
 import com.algoquest.grading.GraderUnavailableException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,6 +41,15 @@ import org.springframework.web.context.WebApplicationContext;
 @Transactional
 class AttemptApiTest {
 
+  @TestConfiguration
+  static class ClockOverride {
+    @Bean
+    @Primary
+    MutableClock testClock() {
+      return new MutableClock(Instant.now());
+    }
+  }
+
   private static final String GOOD =
       "Walk through the array once and keep the largest value seen so far; O(n) time.";
   private static final String EASY = "L1-max-value";
@@ -43,6 +58,7 @@ class AttemptApiTest {
   @Autowired private WebApplicationContext context;
   @Autowired private AccessService access;
   @Autowired private JdbcTemplate jdbc;
+  @Autowired private MutableClock clock;
 
   private MockMvc mvc;
   private RequestPostProcessor player;
@@ -104,8 +120,11 @@ class AttemptApiTest {
 
   @Test
   void aSlowSolveGetsNoTimeBonusAndMediumEarnsMore() throws Exception {
-    submit(player, EASY, UUID.randomUUID(), GOOD, 16 * 60)
-        .andExpect(jsonPath("$.xpGained").value(20));
+    mvc.perform(get("/api/v1/problems/" + EASY).with(player))
+        .andExpect(jsonPath("$.openedAt").exists())
+        .andExpect(jsonPath("$.title").value("Max Value"));
+    clock.advance(Duration.ofMinutes(16));
+    submit(player, EASY, UUID.randomUUID(), GOOD, 60).andExpect(jsonPath("$.xpGained").value(20));
     submit(player, MEDIUM, UUID.randomUUID(), GOOD, 60)
         .andExpect(jsonPath("$.xpGained").value(35))
         .andExpect(jsonPath("$.levelXp").value(55));

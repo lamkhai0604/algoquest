@@ -250,6 +250,7 @@ sequenceDiagram
 | GET | `/api/v1/problems/{id}/js-inputs` | `game.play` | FR-07 (D-035) |
 | POST | `/api/v1/problems/{id}/code-runs` | `game.play` | FR-07 |
 | POST | `/api/v1/levels/{n}/tests` | `game.play` | FR-10 |
+| GET | `/api/v1/tests/{id}` | `game.play` | FR-10 |
 | POST | `/api/v1/tests/{id}/answers` | `game.play` | FR-10 |
 | POST | `/api/v1/tests/{id}/submit` | `game.play` | FR-10 |
 | GET | `/api/v1/profile` | `game.play` | FR-12, FR-13 |

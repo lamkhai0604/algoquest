@@ -2,11 +2,11 @@ package com.algoquest.game;
 
 import com.algoquest.access.AuthenticatedUser;
 import com.algoquest.content.ContentViews.LessonView;
-import com.algoquest.content.ContentViews.ProblemView;
 import com.algoquest.game.AttemptService.AttemptRequest;
 import com.algoquest.game.AttemptService.AttemptResult;
 import com.algoquest.game.GameViews.LevelView;
 import com.algoquest.game.GameViews.ProblemItem;
+import com.algoquest.game.GameViews.ProblemPage;
 import com.algoquest.game.HintService.Hints;
 import com.algoquest.game.HintService.Quota;
 import java.util.List;
@@ -53,7 +53,7 @@ public class PlayController {
   }
 
   @GetMapping("/problems/{id}")
-  public ProblemView problem(
+  public ProblemPage problem(
       @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
     return game.problem(user.id(), id);
   }

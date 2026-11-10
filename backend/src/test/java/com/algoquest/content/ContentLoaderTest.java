@@ -73,7 +73,7 @@ class ContentLoaderTest {
 
     assertThat(levels).hasSize(2);
     assertThat(levels.get(1).available()).isTrue();
-    assertThat(levels.get(1).problems()).hasSize(4);
+    assertThat(levels.get(1).problems()).hasSize(6);
     assertThat(levels.get(1).lesson().walkthrough()).hasSize(3);
     assertThat(levels.get(2).available()).isFalse();
   }

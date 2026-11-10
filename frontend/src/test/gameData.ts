@@ -1,4 +1,5 @@
 import type { Level, ProblemItem } from "../game/types";
+import type { ProblemDetail } from "../solve/types";
 
 const level = (number: number, title: string, rest: Partial<Level>): Level => ({
   number,
@@ -13,6 +14,7 @@ const level = (number: number, title: string, rest: Partial<Level>): Level => ({
   testOpen: false,
   problems: 0,
   solved: 0,
+  bestTestScore: null,
   ...rest,
 });
 
@@ -55,7 +57,7 @@ export const PROBLEMS: ProblemItem[] = [
   },
 ];
 
-export const PROBLEM = {
+export const PROBLEM: ProblemDetail = {
   id: "L1-max-temperature",
   level: 1,
   title: "Max Temperature",
@@ -67,6 +69,7 @@ export const PROBLEM = {
   ],
   constraints: ["0 <= temps.length <= 10^5"],
   hintCount: 3,
+  openedAt: new Date().toISOString(),
 };
 
 export const GRADED = {
