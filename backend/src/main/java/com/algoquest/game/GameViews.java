@@ -34,6 +34,7 @@ public final class GameViews {
    *
    * @param status {@code ready} or {@code comingSoon}
    * @param locked true when the player's level state does not open this difficulty
+   * @param practiceDone whether the problem was marked Done in the practice round
    */
   public record ProblemItem(
       String id,
@@ -42,5 +43,6 @@ public final class GameViews {
       String status,
       boolean locked,
       boolean solved,
-      int xp) {}
+      int xp,
+      boolean practiceDone) {}
 }

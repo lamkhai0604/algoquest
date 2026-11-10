@@ -4,7 +4,9 @@ import com.algoquest.game.domain.ProblemProgress;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -40,7 +42,7 @@ public class ProgressStore {
   public Map<Integer, Integer> xpByLevel(UUID userId) {
     Map<Integer, Integer> result = new HashMap<>();
     jdbc.query(
-        "select level, sum(xp_awarded) as xp from problem_progress"
+        "select level, sum(xp_awarded + practice_xp) as xp from problem_progress"
             + " where user_id = ? group by level",
         rs -> {
           result.put(rs.getInt("level"), rs.getInt("xp"));
@@ -67,6 +69,26 @@ public class ProgressStore {
         (rs, row) ->
             new ProblemProgress(
                 rs.getBoolean("solved"), rs.getInt("xp_awarded"), rs.getBoolean("code_bonus")),
+        userId,
+        problemId);
+  }
+
+  /** IDs of the problems the player has marked Done in a practice round. */
+  public Set<String> practiceDone(UUID userId) {
+    return new HashSet<>(
+        jdbc.queryForList(
+            "select problem_id from problem_progress where user_id = ? and practice_done",
+            String.class,
+            userId));
+  }
+
+  /** Marks a problem Done in the practice round with the XP it earned. */
+  public void markPracticeDone(UUID userId, String problemId, int xp) {
+    jdbc.update(
+        "update problem_progress set practice_done = true, practice_xp = ?, updated_at = ?"
+            + " where user_id = ? and problem_id = ?",
+        xp,
+        Timestamp.from(clock.instant()),
         userId,
         problemId);
   }

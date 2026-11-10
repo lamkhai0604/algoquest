@@ -15,7 +15,7 @@ public class AttemptStore {
 
   /** A stored attempt: who made it, for which problem, and what it earned. */
   public record StoredAttempt(
-      UUID id, UUID userId, String problemId, GradingResult result, int xpGained) {}
+      UUID id, UUID userId, String problemId, String mode, GradingResult result, int xpGained) {}
 
   private final JdbcTemplate jdbc;
   private final Clock clock;
@@ -28,13 +28,14 @@ public class AttemptStore {
   public Optional<StoredAttempt> find(UUID attemptId) {
     List<StoredAttempt> found =
         jdbc.query(
-            "select id, user_id, problem_id, pattern, steps, complexity, edge_cases, feedback,"
-                + " xp_gained from attempt where id = ?",
+            "select id, user_id, problem_id, mode, pattern, steps, complexity, edge_cases,"
+                + " feedback, xp_gained from attempt where id = ?",
             (rs, row) ->
                 new StoredAttempt(
                     rs.getObject("id", UUID.class),
                     rs.getObject("user_id", UUID.class),
                     rs.getString("problem_id"),
+                    rs.getString("mode"),
                     new GradingResult(
                         rs.getInt("pattern"),
                         rs.getInt("steps"),
@@ -49,6 +50,7 @@ public class AttemptStore {
   /** Saves the attempt. Returns false when an attempt with this ID already exists. */
   public boolean insert(
       StoredAttempt attempt,
+      String mode,
       String explanation,
       int hintsUsed,
       int secondsTaken,
@@ -60,11 +62,12 @@ public class AttemptStore {
             "insert into attempt (id, user_id, problem_id, mode, explanation, pattern, steps,"
                 + " complexity, edge_cases, total, feedback, hints_used, seconds_taken, xp_gained,"
                 + " grader, grading_ms, created_at)"
-                + " values (?, ?, ?, 'explain', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 + " on conflict (id) do nothing",
             attempt.id(),
             attempt.userId(),
             attempt.problemId(),
+            mode,
             explanation,
             result.pattern(),
             result.steps(),
