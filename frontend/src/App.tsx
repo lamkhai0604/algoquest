@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router";
+import { AdminPage } from "./admin/AdminPage";
 import { useServerWaking } from "./api";
 import {
   AuthCallbackPage,
@@ -94,6 +95,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <LevelTestPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <RequireAuth>
+                <AdminPage />
               </RequireAuth>
             }
           />
