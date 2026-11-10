@@ -1,12 +1,10 @@
 import { Badge, Button, Card } from "../components";
-import type { Difficulty } from "../game/types";
-import { CRITERIA, MAX_LENGTH, maxXp } from "./rules";
+import { CRITERIA, MAX_LENGTH } from "./rules";
 import styles from "./Solve.module.css";
 
 interface ExplainFormProps {
-  difficulty: Difficulty;
-  seconds: number;
-  hintsUsed: number;
+  /** For example "Up to 25 XP". */
+  xpNote: string;
   text: string;
   onTextChange: (text: string) => void;
   submitting: boolean;
@@ -16,9 +14,7 @@ interface ExplainFormProps {
 
 /** The explanation box with its rubric, counter, and Submit (FR-04). */
 export function ExplainForm({
-  difficulty,
-  seconds,
-  hintsUsed,
+  xpNote,
   text,
   onTextChange,
   submitting,
@@ -53,9 +49,7 @@ export function ExplainForm({
         onChange={(event) => onTextChange(event.target.value)}
       />
       <div className={styles.formFooter}>
-        <span className={styles.muted}>
-          Up to {maxXp(difficulty, seconds, hintsUsed)} XP
-        </span>
+        <span className={styles.muted}>{xpNote}</span>
         <span
           id="explanation-count"
           className={tooLong ? styles.over : styles.muted}

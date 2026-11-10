@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
 import { Badge, Card, ErrorState, LoadingState } from "../components";
@@ -10,9 +10,9 @@ import pages from "../pages/Pages.module.css";
 import { ExplainForm } from "./ExplainForm";
 import { FeedbackPanel } from "./FeedbackPanel";
 import { HintPanel } from "./HintPanel";
-import { clock, timeLimitSeconds } from "./rules";
+import { clock, maxXp, timeLimitSeconds } from "./rules";
 import styles from "./Solve.module.css";
-import type { AttemptResult, ProblemDetail } from "./types";
+import type { AttemptMode, AttemptResult, ProblemDetail } from "./types";
 import { useTimer } from "./useTimer";
 
 function ProblemText({ problem }: { problem: ProblemDetail }) {
@@ -44,9 +44,17 @@ function ProblemText({ problem }: { problem: ProblemDetail }) {
   );
 }
 
-function Solve({ problem }: { problem: ProblemDetail }) {
+interface SolveProps {
+  problem: ProblemDetail;
+  mode: AttemptMode;
+}
+
+function Solve({ problem, mode }: SolveProps) {
+  const practice = mode === "practice";
   const { reloadLevels, reloadHintQuota } = useGame();
-  const hintState = useApiGet<Hints>(`/api/v1/problems/${problem.id}/hints`);
+  const hintState = useApiGet<Hints>(
+    practice ? null : `/api/v1/problems/${problem.id}/hints`,
+  );
   const [hints, setHints] = useState<Hints | null>(null);
   const currentHints =
     hints ?? (hintState.state.status === "ready" ? hintState.state.data : null);
@@ -79,6 +87,7 @@ function Solve({ problem }: { problem: ProblemDetail }) {
         attemptId: attemptId.current,
         text: text.trim(),
         secondsTaken: seconds,
+        mode,
       })
       .then((graded) => {
         attemptId.current = null;
@@ -99,15 +108,23 @@ function Solve({ problem }: { problem: ProblemDetail }) {
     <>
       <div className={styles.titleRow}>
         <Badge tone="primary">{problem.difficulty}</Badge>
+        {practice && <Badge tone="xp">Practice round</Badge>}
         <h1 className={pages.title}>{problem.title}</h1>
         <span className={styles.timer} title="Time on this problem">
-          <strong>{clock(seconds)}</strong> / {clock(limit)} time bonus
+          <strong>{clock(seconds)}</strong>
+          {!practice && ` / ${clock(limit)} time bonus`}
         </span>
       </div>
       <div className={styles.columns}>
         <div className={styles.stack}>
           <ProblemText problem={problem} />
-          {currentHints && (
+          {practice && (
+            <p className={styles.muted}>
+              Explain the problem again without hints. A score of 70 or more
+              marks it Done and adds up to 10 XP.
+            </p>
+          )}
+          {!practice && currentHints && (
             <HintPanel
               hints={currentHints}
               problemId={problem.id}
@@ -123,9 +140,11 @@ function Solve({ problem }: { problem: ProblemDetail }) {
           />
         ) : (
           <ExplainForm
-            difficulty={problem.difficulty}
-            seconds={seconds}
-            hintsUsed={hintsUsed}
+            xpNote={
+              practice
+                ? "Done adds up to 10 XP"
+                : `Up to ${maxXp(problem.difficulty, seconds, hintsUsed)} XP`
+            }
             text={text}
             onTextChange={changeText}
             submitting={submitting}
@@ -141,6 +160,9 @@ function Solve({ problem }: { problem: ProblemDetail }) {
 /** Solve page (FR-04, FR-05): problem, explanation box, and result. */
 export function SolvePage() {
   const { id } = useParams();
+  const [params] = useSearchParams();
+  const mode: AttemptMode =
+    params.get("mode") === "practice" ? "practice" : "explain";
   const { state, reload } = useApiGet<ProblemDetail>(`/api/v1/problems/${id}`);
   const level = state.status === "ready" ? state.data.level : null;
 
@@ -160,7 +182,11 @@ export function SolvePage() {
         <ErrorState message={state.message} onRetry={reload} />
       )}
       {state.status === "ready" && (
-        <Solve key={state.data.id} problem={state.data} />
+        <Solve
+          key={`${state.data.id}-${mode}`}
+          problem={state.data}
+          mode={mode}
+        />
       )}
     </div>
   );

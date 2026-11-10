@@ -33,12 +33,19 @@ public class AttemptService {
   private static final int NO_TIME_BONUS_SECONDS = 24 * 60 * 60;
   private static final Logger log = LoggerFactory.getLogger(AttemptService.class);
 
-  /** The request body of an attempt. {@code secondsTaken} is the time shown by the page timer. */
-  public record AttemptRequest(UUID attemptId, String text, Integer secondsTaken) {}
+  public static final String EXPLAIN = "explain";
+  public static final String PRACTICE = "practice";
+
+  /**
+   * The request body of an attempt. {@code secondsTaken} is the time shown by the page timer;
+   * {@code mode} is {@code explain} (default) or {@code practice}.
+   */
+  public record AttemptRequest(UUID attemptId, String text, Integer secondsTaken, String mode) {}
 
   /** What the player sees after grading. */
   public record AttemptResult(
       UUID attemptId,
+      String mode,
       int pattern,
       int steps,
       int complexity,
@@ -88,12 +95,19 @@ public class AttemptService {
       throw invalid("Your explanation is longer than " + MAX_LENGTH + " characters.");
     }
     int seconds = seconds(request.secondsTaken());
+    String mode = request.mode() == null ? EXPLAIN : request.mode();
+    if (!mode.equals(EXPLAIN) && !mode.equals(PRACTICE)) {
+      throw invalid("mode must be explain or practice.");
+    }
 
     StoredAttempt earlier = attempts.find(request.attemptId()).orElse(null);
     if (earlier != null) {
       return stored(earlier, userId, problem);
     }
 
+    if (mode.equals(PRACTICE)) {
+      requirePracticeOpen(userId, problem);
+    }
     String levelTitle = catalog.level(problem.level()).orElseThrow().info().title();
     long started = System.nanoTime();
     GradingResult result;
@@ -105,6 +119,10 @@ public class AttemptService {
     }
     long gradingMs = (System.nanoTime() - started) / 1_000_000;
 
+    if (mode.equals(PRACTICE)) {
+      return transaction.execute(
+          status -> recordPractice(userId, problem, request, text, seconds, result, gradingMs));
+    }
     return transaction.execute(
         status -> {
           ProblemProgress before = progress.lock(userId, problem.id(), problem.level());
@@ -119,14 +137,62 @@ public class AttemptService {
                   false);
           StoredAttempt attempt =
               new StoredAttempt(
-                  request.attemptId(), userId, problem.id(), result, award.xpGained());
-          if (!attempts.insert(attempt, text, hintsUsed, seconds, grader.name(), gradingMs)) {
+                  request.attemptId(), userId, problem.id(), EXPLAIN, result, award.xpGained());
+          boolean saved =
+              attempts.insert(attempt, EXPLAIN, text, hintsUsed, seconds, grader.name(), gradingMs);
+          if (!saved) {
             // The same attempt was saved by a concurrent request: return it, award nothing.
             return stored(attempts.find(request.attemptId()).orElseThrow(), userId, problem);
           }
           progress.save(userId, problem.id(), award.after());
           return view(attempt, userId, problem);
         });
+  }
+
+  /**
+   * A practice-round attempt (FR-09): a solved problem explained again, with the hints hidden. A
+   * score of 70 or more marks it Done and adds up to 10 XP, never past a full level bar.
+   */
+  private AttemptResult recordPractice(
+      UUID userId,
+      Problem problem,
+      AttemptRequest request,
+      String text,
+      int seconds,
+      GradingResult result,
+      long gradingMs) {
+    progress.lock(userId, problem.id(), problem.level());
+    requirePracticeOpen(userId, problem);
+    int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
+    boolean passed = result.total() >= XpRules.PASS_SCORE;
+    int gained = passed ? LevelRules.practiceDoneXp(levelXp, problem.level()) : 0;
+    StoredAttempt attempt =
+        new StoredAttempt(request.attemptId(), userId, problem.id(), PRACTICE, result, gained);
+    if (!attempts.insert(attempt, PRACTICE, text, 0, seconds, grader.name(), gradingMs)) {
+      return stored(attempts.find(request.attemptId()).orElseThrow(), userId, problem);
+    }
+    if (passed) {
+      progress.markPracticeDone(userId, problem.id(), gained);
+    }
+    return view(attempt, userId, problem);
+  }
+
+  /** The practice round is open at 70% of the level bar, for solved problems not yet Done. */
+  private void requirePracticeOpen(UUID userId, Problem problem) {
+    int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
+    if (!LevelRules.practiceOpen(levelXp, problem.level())) {
+      throw new ApiException(
+          HttpStatus.FORBIDDEN, "Forbidden", "The practice round opens at 70% of the level bar.");
+    }
+    boolean solved =
+        progress.byProblem(userId).getOrDefault(problem.id(), ProblemProgress.NEW).solved();
+    if (!solved) {
+      throw new ApiException(
+          HttpStatus.CONFLICT, "Conflict", "Solve this problem before practising it.");
+    }
+    if (progress.practiceDone(userId).contains(problem.id())) {
+      throw new ApiException(HttpStatus.CONFLICT, "Conflict", "This problem is already Done.");
+    }
   }
 
   private AttemptResult stored(StoredAttempt attempt, UUID userId, Problem problem) {
@@ -142,6 +208,7 @@ public class AttemptService {
     int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
     return new AttemptResult(
         attempt.id(),
+        attempt.mode(),
         result.pattern(),
         result.steps(),
         result.complexity(),

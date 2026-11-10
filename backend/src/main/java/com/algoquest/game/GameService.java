@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -82,6 +83,7 @@ public class GameService {
     LevelContent level = openLevel(userId, number);
     LevelState state = state(userId, number);
     Map<String, ProblemProgress> byProblem = progress.byProblem(userId);
+    Set<String> done = progress.practiceDone(userId);
     List<ProblemItem> result = new ArrayList<>();
     for (Problem problem : level.problems()) {
       if (isPractice(problem)) {
@@ -95,7 +97,8 @@ public class GameService {
                 problem.status(),
                 locked,
                 mine.solved(),
-                mine.xpAwarded()));
+                mine.xpAwarded(),
+                done.contains(problem.id())));
       }
     }
     result.sort(GameService::byDifficultyThenId);
