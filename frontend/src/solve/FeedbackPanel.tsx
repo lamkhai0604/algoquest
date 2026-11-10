@@ -20,9 +20,7 @@ export function FeedbackPanel({ result, level, onTryAgain }: Props) {
         <p className={styles.total} aria-label={`Score ${result.total} of 100`}>
           <strong>{result.total}</strong> / 100
         </p>
-        <p className={styles.muted}>
-          {PASS_TOTAL} or more solves the problem.
-        </p>
+        <p className={styles.muted}>{PASS_TOTAL} or more solves the problem.</p>
       </Card>
       <Card heading="Score by criterion">
         <ul className={styles.criteria}>
