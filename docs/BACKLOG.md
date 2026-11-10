@@ -61,7 +61,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
 | T-301 | Hints with the 3-per-5-hours quota and XP reduction | FR-06 | P1 | Done 2026-11-09 (backend 134 tests; smoke uses a hint) |
-| T-302 | Practice round (70% gate, Done +10 XP) | FR-09 | P1 |  |
+| T-302 | Practice round (70% gate, Done +10 XP) | FR-09 | P1 | Done 2026-11-09 (backend 139 tests; frontend tests) |
 | T-303 | Level-up test: timer, scoring, Easy-only / Open unlocking, retakes | FR-10 | P1 |  |
 | T-304 | Levels 2 and 3 content (PO reviews) | FR-03, FR-04 | P1 |  |
 | T-305 | Profile and streak | FR-12, FR-13 | P2 |  |
