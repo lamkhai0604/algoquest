@@ -38,7 +38,9 @@ export function ProfilePage() {
       <h1 className={styles.title}>
         {profile.status === "ready" ? profile.data.displayName : "Profile"}
       </h1>
-      {profile.status === "loading" && <LoadingState label="Loading profile…" />}
+      {profile.status === "loading" && (
+        <LoadingState label="Loading profile…" />
+      )}
       {profile.status === "error" && (
         <ErrorState message={profile.message} onRetry={reloadLevels} />
       )}
@@ -60,7 +62,11 @@ export function ProfilePage() {
                         ? "No test yet"
                         : `Best test: ${level.bestTestScore} / 100`}
                     </span>
-                    <XpBar label="Level XP" value={level.xp} max={level.target} />
+                    <XpBar
+                      label="Level XP"
+                      value={level.xp}
+                      max={level.target}
+                    />
                   </li>
                 ))}
             </ul>

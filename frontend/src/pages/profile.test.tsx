@@ -11,7 +11,11 @@ const PROFILE: Profile = {
   solvedProblems: 5,
   currentStreak: 4,
   bestStreak: 7,
-  levels: [{ ...LEVELS[0], xp: 100, bestTestScore: 95 }, LEVELS[1]!, LEVELS[2]!],
+  levels: [
+    { ...LEVELS[0], xp: 100, bestTestScore: 95 },
+    LEVELS[1]!,
+    LEVELS[2]!,
+  ],
 };
 
 describe("profile", () => {
@@ -24,7 +28,9 @@ describe("profile", () => {
     renderSignedInAt("/profile");
 
     expect(await screen.findByRole("heading", { name: "Ann" })).toBeVisible();
-    expect(screen.getByText("Best streak").previousSibling).toHaveTextContent("7");
+    expect(screen.getByText("Best streak").previousSibling).toHaveTextContent(
+      "7",
+    );
     expect(screen.getByTitle("Day streak")).toHaveTextContent("4");
     const progress = screen
       .getByRole("heading", { name: "Progress by level" })
@@ -36,7 +42,9 @@ describe("profile", () => {
     const [, init] = fetchFn.mock.calls.find(([url]) =>
       String(url).endsWith("/profile"),
     )!;
-    expect((init?.headers as Record<string, string>)["X-Time-Zone"]).toBeTruthy();
+    expect(
+      (init?.headers as Record<string, string>)["X-Time-Zone"],
+    ).toBeTruthy();
   });
 
   it("shows the main navigation and no Admin link for a player", async () => {
