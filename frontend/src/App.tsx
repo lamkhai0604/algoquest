@@ -9,13 +9,14 @@ import {
 } from "./auth";
 import { AppHeader, WakingServer } from "./components";
 import type { HeaderAccount } from "./components";
-import { hintsLeft, totalXp, useGame } from "./game/gameContext";
+import { hintsLeft, streakDays, totalXp, useGame } from "./game/gameContext";
 import { GameProvider } from "./game/GameProvider";
 import { LessonPage } from "./lesson/LessonPage";
 import { LevelTestPage } from "./leveltest/LevelTestPage";
 import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { UiKitPage } from "./pages/UiKitPage";
 import { VipPage } from "./pages/VipPage";
 import { SolvePage } from "./solve/SolvePage";
@@ -24,16 +25,19 @@ import { ThemeProvider } from "./theme/ThemeProvider";
 export function AppRoutes() {
   const waking = useServerWaking();
   const { state, signOut } = useAuth();
-  const { levels, hintQuota } = useGame();
-  // The streak arrives with the profile (T-305).
+  const { levels, hintQuota, profile } = useGame();
   const stats = {
-    streakDays: 0,
+    streakDays: streakDays(profile),
     totalXp: totalXp(levels),
     hintsLeft: hintsLeft(hintQuota),
   };
   let account: HeaderAccount | undefined;
   if (state.status === "signed-in") {
-    account = { name: state.user.displayName, onSignOut: signOut };
+    account = {
+      name: state.user.displayName,
+      onSignOut: signOut,
+      isAdmin: state.user.permissions.some((p) => p.startsWith("admin.")),
+    };
   }
 
   return (
@@ -74,6 +78,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <SolvePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <RequireAuth>
+                <ProfilePage />
               </RequireAuth>
             }
           />

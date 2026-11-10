@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import styles from "./AppHeader.module.css";
 import { Button } from "./Button";
 import { cx } from "./cx";
@@ -12,6 +12,8 @@ export interface HeaderStats {
 
 export interface HeaderAccount {
   name: string;
+  /** Shows the Admin link (FR-18: users with at least one admin permission). */
+  isAdmin?: boolean;
   onSignOut: () => void;
 }
 
@@ -24,12 +26,23 @@ interface AppHeaderProps {
 export function AppHeader({ stats, account }: AppHeaderProps) {
   return (
     <header className={styles.header}>
-      <Link to="/" className={styles.brand}>
-        <span className={styles.logo} aria-hidden="true">
-          A
-        </span>
-        AlgoQuest
-      </Link>
+      <div className={styles.left}>
+        <Link to="/" className={styles.brand}>
+          <span className={styles.logo} aria-hidden="true">
+            A
+          </span>
+          AlgoQuest
+        </Link>
+        {account && (
+          <nav className={styles.nav} aria-label="Main">
+            <NavLink to="/" end>
+              Map
+            </NavLink>
+            <NavLink to="/profile">Profile</NavLink>
+            {account.isAdmin && <NavLink to="/admin">Admin</NavLink>}
+          </nav>
+        )}
+      </div>
       <div className={styles.stats}>
         {account && (
           <>

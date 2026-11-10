@@ -16,6 +16,15 @@ export interface Level {
   bestTestScore: number | null;
 }
 
+export interface Profile {
+  displayName: string;
+  totalXp: number;
+  solvedProblems: number;
+  currentStreak: number;
+  bestStreak: number;
+  levels: Level[];
+}
+
 export interface HintQuota {
   remaining: number;
   perWindow: number;
