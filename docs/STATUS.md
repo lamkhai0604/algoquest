@@ -2,12 +2,12 @@
 
 | Field | Value |
 | --- | --- |
-| Updated | 2026-11-07 |
-| Sprint | Sprint 2 — First playable level ([plan](sprints/sprint-2.md)), approved 2026-11-07. Sprint 1 complete ([report](reports/sprint-1-report.md)) |
+| Updated | 2026-11-09 |
+| Sprint | Sprint 2 — First playable level: complete ([plan](sprints/sprint-2.md), [report](reports/sprint-2-report.md)). Sprint 3 plan not yet proposed |
 | Repository | `lamkhai0604/algoquest` (public, D-039); branches `main` (protected by ruleset) and `dev` |
-| Active work | Sprint 2: T-201 and T-205 done. Next: T-202 Level 1 content (PO review) |
+| Active work | Sprint 2 closed: T-201 to T-208 on `dev`; `dev → main` pull request open for PO review |
 | Source revision | `dev` (see `git log dev`) |
 | Outstanding changes | None |
-| Verification | GitHub Actions on 2026-11-07 (bash with pipefail): `backend` 41 tests, 0 failed, plus Docker build and the local-dev run; `frontend` lint, format, typecheck, tests, build; `docs` records check. Sprint 0 grading test: NFR-03 met. |
+| Verification | GitHub Actions on 2026-11-09 (commit `1727989`): backend 126 tests, 0 failed; frontend lint, format, typecheck, tests, build; smoke 5 passed (full Level 1 flow with the fake grader); records check |
 | Blockers | None |
-| Next action | Claude: T-202 Level 1 content. PO: review Level 1 content when ready; manual sign-in check |
+| Next action | PO: review the `dev → main` pull request; run the real-grader check; manual sign-in check. Claude: propose the Sprint 3 plan |

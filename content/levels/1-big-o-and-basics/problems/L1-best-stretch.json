@@ -1,0 +1,140 @@
+{
+  "id": "L1-best-stretch",
+  "level": 1,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "title": "Best Stretch of Points",
+  "statement": "A player's score changes each round by a positive or negative number of points. Return the largest total of any run of consecutive rounds (at least one round). Return null if there are no rounds.",
+  "examples": [
+    {
+      "input": "[2, -5, 3, 4, -1, 2]",
+      "output": "8",
+      "explanation": "Rounds 3 to 6: 3 + 4 - 1 + 2."
+    },
+    {
+      "input": "[-4, -2, -7]",
+      "output": "-2"
+    }
+  ],
+  "constraints": [
+    "0 <= points.length <= 10^5",
+    "-10^4 <= points[i] <= 10^4"
+  ],
+  "answerKey": {
+    "pattern": "Single pass keeping the best total that ends at the current round (Kadane's idea)",
+    "keyPoints": [
+      "For each round, the best run ending here either starts fresh or extends the previous run: max(x, current + x)",
+      "Keep the best total seen over all rounds",
+      "Start both values from the first round, not from 0, so all-negative input works"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "All values negative: the answer is the largest single value",
+      "Empty array returns null",
+      "A single round"
+    ],
+    "acceptableSlowerApproaches": [
+      "Sum every start and end pair with a running sum: O(n^2)"
+    ]
+  },
+  "hints": [
+    "Summing every possible run is O(n^2). At each round, which runs ending there are worth keeping?",
+    "A run ending at this round either starts here or extends the best run ending at the previous round.",
+    "Start from the first value instead of 0, so an array of only negative numbers still works."
+  ],
+  "tests": [
+    {
+      "input": [
+        [
+          2,
+          -5,
+          3,
+          4,
+          -1,
+          2
+        ]
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        [
+          -4,
+          -2,
+          -7
+        ]
+      ],
+      "expected": -2
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": null
+    },
+    {
+      "input": [
+        [
+          5
+        ]
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        [
+          -3
+        ]
+      ],
+      "expected": -3
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        [
+          3,
+          -1,
+          3
+        ]
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        [
+          -1,
+          4,
+          -10,
+          5
+        ]
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "expected": 0
+    }
+  ],
+  "starterCode": {
+    "javascript": "function bestStretch(points) {\n  // return the largest total of consecutive rounds, or null\n}",
+    "java": "class Solution {\n  Integer bestStretch(int[] points) {\n    // return the largest total of consecutive rounds, or null\n  }\n}"
+  },
+  "similarLeetCode": "Maximum Subarray"
+}

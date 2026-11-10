@@ -52,3 +52,7 @@
 .ghost:hover:not(:disabled) {
   background: var(--color-surface-3);
 }
+
+.link {
+  text-decoration: none;
+}

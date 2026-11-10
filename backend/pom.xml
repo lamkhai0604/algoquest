@@ -20,6 +20,8 @@
   <properties>
     <java.version>21</java.version>
     <spotless.version>2.46.1</spotless.version>
+    <!-- Tests tagged "real" call paid or rate-limited services; run them on purpose only. -->
+    <excludedGroups>real</excludedGroups>
   </properties>
 
   <dependencies>

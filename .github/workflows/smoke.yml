@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   push:
     branches: [ci/claude]
-    paths: ["e2e/**", ".github/workflows/smoke.yml", "backend/src/main/java/com/algoquest/access/smoke/**"]
+    paths: ["e2e/**", ".github/workflows/smoke.yml"]
 
 permissions:
   contents: read
