@@ -47,7 +47,10 @@ export function FeedbackPanel({ result, level, onTryAgain }: Props) {
       </Card>
       <Card heading="XP earned">
         <p className={styles.xp}>+{result.xpGained} XP</p>
-        {result.solved && result.xpGained === 0 && (
+        {result.mode === "practice" && result.solved && (
+          <p className={styles.muted}>Marked Done in the practice round.</p>
+        )}
+        {result.mode === "explain" && result.solved && result.xpGained === 0 && (
           <p className={styles.muted}>
             XP is earned the first time a problem is solved.
           </p>
@@ -60,7 +63,7 @@ export function FeedbackPanel({ result, level, onTryAgain }: Props) {
       </Card>
       <div className={styles.actions}>
         <ButtonLink to={`/levels/${level}`}>Back to the problems</ButtonLink>
-        {!result.solved && (
+        {!result.solved && result.mode === "explain" && (
           <Button variant="secondary" onClick={onTryAgain}>
             Try again
           </Button>

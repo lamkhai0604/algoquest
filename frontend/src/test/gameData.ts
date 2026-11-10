@@ -31,6 +31,7 @@ export const PROBLEMS: ProblemItem[] = [
     locked: false,
     solved: true,
     xp: 25,
+    practiceDone: false,
   },
   {
     id: "L1-second-largest",
@@ -40,6 +41,7 @@ export const PROBLEMS: ProblemItem[] = [
     locked: false,
     solved: false,
     xp: 0,
+    practiceDone: false,
   },
   {
     id: "L1-moving-median",
@@ -49,6 +51,7 @@ export const PROBLEMS: ProblemItem[] = [
     locked: false,
     solved: false,
     xp: 0,
+    practiceDone: false,
   },
 ];
 
@@ -68,6 +71,7 @@ export const PROBLEM = {
 
 export const GRADED = {
   attemptId: "a-1",
+  mode: "explain",
   pattern: 40,
   steps: 30,
   complexity: 20,

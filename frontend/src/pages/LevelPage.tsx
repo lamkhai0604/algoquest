@@ -9,7 +9,7 @@ import {
   XpBar,
 } from "../components";
 import { useGame } from "../game/gameContext";
-import type { ProblemItem } from "../game/types";
+import type { Level, ProblemItem } from "../game/types";
 import game from "./Game.module.css";
 import styles from "./Pages.module.css";
 
@@ -19,7 +19,8 @@ function ProblemStatus({ problem }: { problem: ProblemItem }) {
   }
   if (problem.locked) return <Badge>Locked</Badge>;
   if (problem.solved) {
-    return <Badge tone="success">Solved · +{problem.xp} XP</Badge>;
+    const done = problem.practiceDone ? " · Done" : "";
+    return <Badge tone="success">{`Solved · +${problem.xp} XP${done}`}</Badge>;
   }
   return <Badge>Not tried</Badge>;
 }
@@ -48,7 +49,53 @@ function ProblemRow({ problem }: { problem: ProblemItem }) {
   );
 }
 
-/** One level: its XP bar, lesson, and practice problems (FR-04.1). */
+function PracticeRound({
+  level,
+  problems,
+}: {
+  level: Level;
+  problems: ProblemItem[];
+}) {
+  const solved = problems.filter((problem) => problem.solved);
+  if (!level.practiceOpen) {
+    const at = Math.ceil(level.target * 0.7);
+    return (
+      <p className={game.note}>
+        The practice round opens at {at} XP (70% of the bar).
+      </p>
+    );
+  }
+  return (
+    <Card heading="Practice round">
+      <p className={game.note}>
+        Explain a solved problem again without hints. Each one marked Done
+        adds 10 XP until the bar is full.
+      </p>
+      <ul className={game.levelList}>
+        {solved.map((problem) =>
+          problem.practiceDone ? (
+            <li key={problem.id} className={game.levelRow}>
+              <span className={game.rowText}>{problem.title}</span>
+              <Badge tone="success">Done</Badge>
+            </li>
+          ) : (
+            <li key={problem.id}>
+              <Link
+                to={`/problems/${problem.id}?mode=practice`}
+                className={game.levelRow}
+              >
+                <span className={game.rowText}>{problem.title}</span>
+                <Badge tone="xp">Practice</Badge>
+              </Link>
+            </li>
+          ),
+        )}
+      </ul>
+    </Card>
+  );
+}
+
+/** One level: XP bar, lesson, practice round, and problems (FR-04, FR-09). */
 export function LevelPage() {
   const number = Number(useParams().number);
   const { levels } = useGame();
@@ -77,6 +124,9 @@ export function LevelPage() {
             </ButtonLink>
           </div>
         </Card>
+      )}
+      {level && problems.state.status === "ready" && (
+        <PracticeRound level={level} problems={problems.state.data} />
       )}
       <section className={game.path}>
         <h2 className={game.sectionTitle}>Problems</h2>

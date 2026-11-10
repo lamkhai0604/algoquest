@@ -17,8 +17,11 @@ export interface ProblemDetail {
   hintCount: number;
 }
 
+export type AttemptMode = "explain" | "practice";
+
 export interface AttemptResult {
   attemptId: string;
+  mode: AttemptMode;
   pattern: number;
   steps: number;
   complexity: number;

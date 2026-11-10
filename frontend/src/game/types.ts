@@ -38,4 +38,5 @@ export interface ProblemItem {
   locked: boolean;
   solved: boolean;
   xp: number;
+  practiceDone: boolean;
 }
