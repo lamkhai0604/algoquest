@@ -50,11 +50,13 @@ export function FeedbackPanel({ result, level, onTryAgain }: Props) {
         {result.mode === "practice" && result.solved && (
           <p className={styles.muted}>Marked Done in the practice round.</p>
         )}
-        {result.mode === "explain" && result.solved && result.xpGained === 0 && (
-          <p className={styles.muted}>
-            XP is earned the first time a problem is solved.
-          </p>
-        )}
+        {result.mode === "explain" &&
+          result.solved &&
+          result.xpGained === 0 && (
+            <p className={styles.muted}>
+              XP is earned the first time a problem is solved.
+            </p>
+          )}
         <XpBar
           label={`Level ${level} XP`}
           value={result.levelXp}

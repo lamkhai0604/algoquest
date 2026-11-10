@@ -68,8 +68,8 @@ function PracticeRound({
   return (
     <Card heading="Practice round">
       <p className={game.note}>
-        Explain a solved problem again without hints. Each one marked Done
-        adds 10 XP until the bar is full.
+        Explain a solved problem again without hints. Each one marked Done adds
+        10 XP until the bar is full.
       </p>
       <ul className={game.levelList}>
         {solved.map((problem) =>
