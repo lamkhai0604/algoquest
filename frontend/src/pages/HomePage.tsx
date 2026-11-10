@@ -109,9 +109,7 @@ export function HomePage() {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Your quest</h1>
-      {levels.status === "loading" && (
-        <LoadingState label="Loading levels…" />
-      )}
+      {levels.status === "loading" && <LoadingState label="Loading levels…" />}
       {levels.status === "error" && (
         <ErrorState message={levels.message} onRetry={reloadLevels} />
       )}
