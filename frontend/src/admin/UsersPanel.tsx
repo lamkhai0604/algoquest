@@ -53,12 +53,20 @@ function ResetLevel({ user }: { user: AdminUser }) {
           <Button size="sm" onClick={reset}>
             Confirm reset of level {level}
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => setConfirming(false)}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setConfirming(false)}
+          >
             Cancel
           </Button>
         </>
       ) : (
-        <Button size="sm" variant="secondary" onClick={() => setConfirming(true)}>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => setConfirming(true)}
+        >
           Reset…
         </Button>
       )}
@@ -87,7 +95,10 @@ export function UsersPanel() {
               <strong>{user.displayName}</strong>
               <span className={styles.muted}>{user.email}</span>
               {user.roles.map((role) => (
-                <Badge key={role} tone={role === "OWNER" ? "primary" : "neutral"}>
+                <Badge
+                  key={role}
+                  tone={role === "OWNER" ? "primary" : "neutral"}
+                >
                   {role}
                 </Badge>
               ))}

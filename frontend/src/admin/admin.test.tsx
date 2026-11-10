@@ -55,14 +55,21 @@ describe("admin panel", () => {
       await screen.findByText("Keep the largest value while reading once."),
     ).toBeVisible();
     expect(screen.getByText("95 / 100")).toBeVisible();
-    expect(screen.getByText(/gemini-3.5-flash-lite\/v2 · 3100 ms/)).toBeVisible();
+    expect(
+      screen.getByText(/gemini-3.5-flash-lite\/v2 · 3100 ms/),
+    ).toBeVisible();
     const nav = screen.getByRole("navigation", { name: "Main" });
     expect(within(nav).getByRole("link", { name: "Admin" })).toBeVisible();
 
-    await userEvent.type(screen.getByLabelText("Problem ID"), "L1-max-temperature");
+    await userEvent.type(
+      screen.getByLabelText("Problem ID"),
+      "L1-max-temperature",
+    );
     await userEvent.click(screen.getByRole("button", { name: "Filter" }));
     const urls = fetchFn.mock.calls.map(([url]) => String(url));
-    expect(urls.some((u) => u.endsWith("?problemId=L1-max-temperature"))).toBe(true);
+    expect(urls.some((u) => u.endsWith("?problemId=L1-max-temperature"))).toBe(
+      true,
+    );
   });
 
   it("resets a level only after confirmation", async () => {
@@ -80,9 +87,13 @@ describe("admin panel", () => {
     renderSignedInAt("/admin");
 
     await userEvent.click(await screen.findByRole("button", { name: "Users" }));
-    await userEvent.click(await screen.findByRole("button", { name: "Reset…" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Reset…" }),
+    );
     const resets = () =>
-      fetchFn.mock.calls.filter(([url]) => String(url).endsWith("/progress-reset"));
+      fetchFn.mock.calls.filter(([url]) =>
+        String(url).endsWith("/progress-reset"),
+      );
     expect(resets()).toHaveLength(0);
 
     await userEvent.click(
