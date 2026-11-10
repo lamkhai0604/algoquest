@@ -100,8 +100,7 @@ public class AttemptService {
   }
 
   /** Grades and records an attempt; {@code zone} decides the streak's calendar day. */
-  public AttemptResult submit(
-      UUID userId, String problemId, AttemptRequest request, ZoneId zone) {
+  public AttemptResult submit(UUID userId, String problemId, AttemptRequest request, ZoneId zone) {
     Problem problem = game.playableProblem(userId, problemId);
     if (request == null || request.attemptId() == null) {
       throw invalid("attemptId is required.");

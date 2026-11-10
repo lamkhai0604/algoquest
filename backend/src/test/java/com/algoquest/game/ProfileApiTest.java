@@ -117,7 +117,9 @@ class ProfileApiTest {
     // Tuesday evening in Los Angeles.
     clock.advance(Duration.ofHours(22));
     solve("L1-max-value", GOOD);
-    profile().andExpect(jsonPath("$.currentStreak").value(2)).andExpect(jsonPath("$.bestStreak").value(2));
+    profile()
+        .andExpect(jsonPath("$.currentStreak").value(2))
+        .andExpect(jsonPath("$.bestStreak").value(2));
   }
 
   @Test
@@ -127,7 +129,9 @@ class ProfileApiTest {
     solve("L1-max-value", GOOD);
 
     clock.advance(Duration.ofDays(2));
-    profile().andExpect(jsonPath("$.currentStreak").value(0)).andExpect(jsonPath("$.bestStreak").value(2));
+    profile()
+        .andExpect(jsonPath("$.currentStreak").value(0))
+        .andExpect(jsonPath("$.bestStreak").value(2));
   }
 
   @Test
