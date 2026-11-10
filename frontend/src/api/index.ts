@@ -24,6 +24,18 @@ function timeZone(): string {
   }
 }
 
+/**
+ * Starts a sleeping backend before the player clicks a sign-in button (D-037).
+ * The answer is ignored; a failure only means the server is still waking.
+ */
+export function wakeServer(fetchFn: typeof fetch = fetch): void {
+  try {
+    void fetchFn(`${API_URL}/actuator/health`).catch(() => undefined);
+  } catch {
+    // No fetch available (for example in an old browser); nothing to do.
+  }
+}
+
 /** True while any request has been waiting long enough to look like a cold start. */
 export function useServerWaking(client: ApiClient = api): boolean {
   return useSyncExternalStore(client.onWakingChange, client.isWaking);

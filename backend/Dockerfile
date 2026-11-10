@@ -17,4 +17,5 @@ WORKDIR /app
 COPY --from=build /app/backend/target/algoquest-backend.jar app.jar
 USER app
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "/app/app.jar"]
+# Fits the 512 MB free instance (D-037): serial GC, smaller thread stacks, heap at 70% of memory.
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=70", "-XX:+UseSerialGC", "-Xss512k", "-XX:TieredStopAtLevel=1", "-jar", "/app/app.jar"]
