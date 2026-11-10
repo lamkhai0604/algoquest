@@ -16,6 +16,7 @@ import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { UiKitPage } from "./pages/UiKitPage";
+import { SolvePage } from "./solve/SolvePage";
 import { ThemeProvider } from "./theme/ThemeProvider";
 
 export function AppRoutes() {
@@ -59,6 +60,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <LessonPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/problems/:id"
+            element={
+              <RequireAuth>
+                <SolvePage />
               </RequireAuth>
             }
           />

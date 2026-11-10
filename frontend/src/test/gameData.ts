@@ -51,3 +51,31 @@ export const PROBLEMS: ProblemItem[] = [
     xp: 0,
   },
 ];
+
+export const PROBLEM = {
+  id: "L1-max-temperature",
+  level: 1,
+  title: "Max Temperature",
+  difficulty: "Easy",
+  statement: "Return the highest temperature, or null for an empty array.",
+  examples: [
+    { input: "[3, -2, 9, 4]", output: "9" },
+    { input: "[]", output: "null", explanation: "Nothing to compare." },
+  ],
+  constraints: ["0 <= temps.length <= 10^5"],
+  hintCount: 3,
+};
+
+export const GRADED = {
+  attemptId: "a-1",
+  pattern: 40,
+  steps: 30,
+  complexity: 20,
+  edgeCases: 5,
+  total: 95,
+  solved: true,
+  feedback: "Clear approach. Say how the empty array is handled.",
+  xpGained: 25,
+  levelXp: 65,
+  levelTarget: 100,
+};
