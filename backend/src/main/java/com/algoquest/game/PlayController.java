@@ -7,6 +7,8 @@ import com.algoquest.game.AttemptService.AttemptRequest;
 import com.algoquest.game.AttemptService.AttemptResult;
 import com.algoquest.game.GameViews.LevelView;
 import com.algoquest.game.GameViews.ProblemItem;
+import com.algoquest.game.HintService.Hints;
+import com.algoquest.game.HintService.Quota;
 import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Level map, lesson, problem, and attempt endpoints (FR-02 to FR-05). */
+/** Level map, lesson, problem, attempt, and hint endpoints (FR-02 to FR-06). */
 @RestController
 @RequestMapping("/api/v1")
 @PreAuthorize("hasPermission(null, 'game.play')")
@@ -25,10 +27,12 @@ public class PlayController {
 
   private final GameService game;
   private final AttemptService attempts;
+  private final HintService hints;
 
-  public PlayController(GameService game, AttemptService attempts) {
+  public PlayController(GameService game, AttemptService attempts, HintService hints) {
     this.game = game;
     this.attempts = attempts;
+    this.hints = hints;
   }
 
   @GetMapping("/levels")
@@ -60,5 +64,21 @@ public class PlayController {
       @PathVariable String id,
       @RequestBody AttemptRequest request) {
     return attempts.submit(user.id(), id, request);
+  }
+
+  @GetMapping("/problems/{id}/hints")
+  public Hints openedHints(
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
+    return hints.opened(user.id(), id);
+  }
+
+  @PostMapping("/problems/{id}/hints")
+  public Hints openHint(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
+    return hints.openNext(user.id(), id);
+  }
+
+  @GetMapping("/hints/quota")
+  public Quota hintQuota(@AuthenticationPrincipal AuthenticatedUser user) {
+    return hints.quota(user.id());
   }
 }

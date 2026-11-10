@@ -56,7 +56,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-207 | Solve page and feedback page | FR-04, FR-05 | P1 | Done 2026-11-09 (frontend tests; smoke 5 passed) |
 | T-208 | Sprint 2 report | D-007 | P2 | Done 2026-11-09: [sprint-2-report.md](reports/sprint-2-report.md) |
 
-## Sprint 3 — Levels 1–3 test build ([plan](sprints/sprint-3.md), proposed)
+## Sprint 3 — Levels 1–3 test build ([plan](sprints/sprint-3.md), approved 2026-11-09)
 
 | ID | Title | Req | Priority |
 | --- | --- | --- | --- |

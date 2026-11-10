@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Proposed** — starts when the PO approves this plan |
+| Status | **Approved — PO, 2026-11-09** |
 | Goal | A player can finish Level 1 completely: use hints, do the practice round, pass the level-up test, and continue into Levels 2 and 3. |
 | Duration | About 1 to 2 weeks from approval |
 | Tasks | T-301 to T-308 ([BACKLOG.md](../BACKLOG.md)) |

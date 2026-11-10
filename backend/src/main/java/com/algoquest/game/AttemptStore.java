@@ -48,14 +48,19 @@ public class AttemptStore {
 
   /** Saves the attempt. Returns false when an attempt with this ID already exists. */
   public boolean insert(
-      StoredAttempt attempt, String explanation, int secondsTaken, String grader, long gradingMs) {
+      StoredAttempt attempt,
+      String explanation,
+      int hintsUsed,
+      int secondsTaken,
+      String grader,
+      long gradingMs) {
     GradingResult result = attempt.result();
     int rows =
         jdbc.update(
             "insert into attempt (id, user_id, problem_id, mode, explanation, pattern, steps,"
                 + " complexity, edge_cases, total, feedback, hints_used, seconds_taken, xp_gained,"
                 + " grader, grading_ms, created_at)"
-                + " values (?, ?, ?, 'explain', ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)"
+                + " values (?, ?, ?, 'explain', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 + " on conflict (id) do nothing",
             attempt.id(),
             attempt.userId(),
@@ -67,6 +72,7 @@ public class AttemptStore {
             result.edgeCases(),
             result.total(),
             result.feedback(),
+            hintsUsed,
             secondsTaken,
             attempt.xpGained(),
             grader,
