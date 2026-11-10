@@ -3,6 +3,8 @@ package com.algoquest.game;
 import com.algoquest.access.AuthenticatedUser;
 import com.algoquest.content.ContentViews.LessonView;
 import com.algoquest.content.ContentViews.ProblemView;
+import com.algoquest.game.AttemptService.AttemptRequest;
+import com.algoquest.game.AttemptService.AttemptResult;
 import com.algoquest.game.GameViews.LevelView;
 import com.algoquest.game.GameViews.ProblemItem;
 import java.util.List;
@@ -10,19 +12,23 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Level map, lesson, and problem endpoints (FR-02 to FR-04). */
+/** Level map, lesson, problem, and attempt endpoints (FR-02 to FR-05). */
 @RestController
 @RequestMapping("/api/v1")
 @PreAuthorize("hasPermission(null, 'game.play')")
 public class PlayController {
 
   private final GameService game;
+  private final AttemptService attempts;
 
-  public PlayController(GameService game) {
+  public PlayController(GameService game, AttemptService attempts) {
     this.game = game;
+    this.attempts = attempts;
   }
 
   @GetMapping("/levels")
@@ -46,5 +52,13 @@ public class PlayController {
   public ProblemView problem(
       @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
     return game.problem(user.id(), id);
+  }
+
+  @PostMapping("/problems/{id}/attempts")
+  public AttemptResult attempt(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable String id,
+      @RequestBody AttemptRequest request) {
+    return attempts.submit(user.id(), id, request);
   }
 }

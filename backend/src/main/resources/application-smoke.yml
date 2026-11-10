@@ -1,0 +1,3 @@
+algoquest:
+  grading:
+    provider: fake
