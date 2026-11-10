@@ -1,4 +1,5 @@
 import type { Level, ProblemItem } from "../game/types";
+import type { ProblemDetail } from "../solve/types";
 
 const level = (number: number, title: string, rest: Partial<Level>): Level => ({
   number,
@@ -56,7 +57,7 @@ export const PROBLEMS: ProblemItem[] = [
   },
 ];
 
-export const PROBLEM = {
+export const PROBLEM: ProblemDetail = {
   id: "L1-max-temperature",
   level: 1,
   title: "Max Temperature",
