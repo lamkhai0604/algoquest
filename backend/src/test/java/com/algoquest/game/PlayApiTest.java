@@ -1,4 +1,4 @@
-package com.algoquest.content;
+package com.algoquest.game;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.algoquest.access.AccessService;
 import com.algoquest.access.AuthenticatedUser;
 import com.algoquest.access.SignInProfile;
+import com.algoquest.game.domain.ProblemProgress;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,12 +29,14 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(properties = "algoquest.content.location=classpath:content-fixtures/valid/")
 @ActiveProfiles("test")
 @Transactional
-class ContentApiTest {
+class PlayApiTest {
 
   @Autowired private WebApplicationContext context;
   @Autowired private AccessService access;
+  @Autowired private ProgressStore progress;
 
   private MockMvc mvc;
+  private UUID playerId;
   private RequestPostProcessor player;
 
   @BeforeEach
@@ -42,41 +45,85 @@ class ContentApiTest {
         MockMvcBuilders.webAppContextSetup(context)
             .apply(SecurityMockMvcConfigurers.springSecurity())
             .build();
-    UUID id = access.signIn(new SignInProfile("github", "p-1", "player@example.com", "Player"));
-    player =
-        authentication(
-            new UsernamePasswordAuthenticationToken(new AuthenticatedUser(id), null, List.of()));
+    playerId = signIn("player@example.com");
+    player = as(playerId);
+  }
+
+  private UUID signIn(String email) {
+    return access.signIn(new SignInProfile("github", "id-" + email, email, "Player"));
+  }
+
+  private static RequestPostProcessor as(UUID id) {
+    return authentication(
+        new UsernamePasswordAuthenticationToken(new AuthenticatedUser(id), null, List.of()));
   }
 
   @Test
-  void levelsListEveryLevelWithItsPracticeCount() throws Exception {
+  void levelMapShowsStateXpAndCounts() throws Exception {
     mvc.perform(get("/api/v1/levels").with(player))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$[0].state").value("OPEN"))
         .andExpect(jsonPath("$[0].available").value(true))
-        .andExpect(jsonPath("$[0].problems").value(3))
-        .andExpect(jsonPath("$[1].available").value(false));
+        .andExpect(jsonPath("$[0].xp").value(0))
+        .andExpect(jsonPath("$[0].target").value(100))
+        .andExpect(jsonPath("$[0].problems").value(2))
+        .andExpect(jsonPath("$[0].solved").value(0))
+        .andExpect(jsonPath("$[1].state").value("LOCKED"))
+        .andExpect(jsonPath("$[1].available").value(false))
+        .andExpect(jsonPath("$[1].target").value(125));
   }
 
   @Test
-  void lessonHasMarkdownWalkthroughAndQuickCheck() throws Exception {
+  void progressBelongsToOnePlayerOnly() throws Exception {
+    progress.lock(playerId, "L1-max-value", 1);
+    progress.save(playerId, "L1-max-value", new ProblemProgress(true, 75, false));
+    RequestPostProcessor other = as(signIn("other@example.com"));
+
+    mvc.perform(get("/api/v1/levels").with(player))
+        .andExpect(jsonPath("$[0].xp").value(75))
+        .andExpect(jsonPath("$[0].solved").value(1))
+        .andExpect(jsonPath("$[0].practiceOpen").value(true))
+        .andExpect(jsonPath("$[0].testOpen").value(false));
+    mvc.perform(get("/api/v1/levels/1/problems").with(player))
+        .andExpect(jsonPath("$[0].solved").value(true))
+        .andExpect(jsonPath("$[0].xp").value(75));
+    mvc.perform(get("/api/v1/levels").with(other))
+        .andExpect(jsonPath("$[0].xp").value(0))
+        .andExpect(jsonPath("$[0].solved").value(0));
+  }
+
+  @Test
+  void theBarStopsAtTheTarget() throws Exception {
+    progress.lock(playerId, "L1-max-value", 1);
+    progress.save(playerId, "L1-max-value", new ProblemProgress(true, 140, true));
+
+    mvc.perform(get("/api/v1/levels").with(player))
+        .andExpect(jsonPath("$[0].xp").value(100))
+        .andExpect(jsonPath("$[0].testOpen").value(true));
+  }
+
+  @Test
+  void lessonIsServedForAnOpenLevelOnly() throws Exception {
     mvc.perform(get("/api/v1/levels/1/lesson").with(player))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.markdown").value(containsString("Intuition")))
         .andExpect(jsonPath("$.walkthrough.length()").value(3))
         .andExpect(jsonPath("$.quickCheck.length()").value(2));
     mvc.perform(get("/api/v1/levels/2/lesson").with(player)).andExpect(status().isNotFound());
+    mvc.perform(get("/api/v1/levels/99/problems").with(player)).andExpect(status().isNotFound());
   }
 
   @Test
   void problemListHasPracticeProblemsByDifficulty() throws Exception {
     mvc.perform(get("/api/v1/levels/1/problems").with(player))
         .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(3))
         .andExpect(jsonPath("$[0].id").value("L1-max-value"))
+        .andExpect(jsonPath("$[0].locked").value(false))
         .andExpect(jsonPath("$[1].id").value("L1-pair-max"))
         .andExpect(jsonPath("$[2].id").value("L1-hard-later"))
-        .andExpect(jsonPath("$[2].status").value("comingSoon"))
-        .andExpect(jsonPath("$.length()").value(3));
+        .andExpect(jsonPath("$[2].status").value("comingSoon"));
   }
 
   @Test
@@ -95,13 +142,16 @@ class ContentApiTest {
   }
 
   @Test
-  void testProblemsAndUnknownIdsAreNotServed() throws Exception {
+  void testProblemsPlaceholdersAndUnknownIdsCannotBeOpened() throws Exception {
     mvc.perform(get("/api/v1/problems/L1-test-max").with(player)).andExpect(status().isNotFound());
     mvc.perform(get("/api/v1/problems/L9-none").with(player)).andExpect(status().isNotFound());
+    mvc.perform(get("/api/v1/problems/L1-hard-later").with(player))
+        .andExpect(status().isForbidden())
+        .andExpect(jsonPath("$.detail").value(containsString("later version")));
   }
 
   @Test
-  void contentNeedsSignIn() throws Exception {
+  void playNeedsSignIn() throws Exception {
     mvc.perform(get("/api/v1/levels")).andExpect(status().isUnauthorized());
   }
 }
