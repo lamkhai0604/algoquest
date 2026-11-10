@@ -51,6 +51,7 @@ public class AttemptService {
       int levelTarget) {}
 
   private final GameService game;
+  private final HintService hints;
   private final ContentCatalog catalog;
   private final Grader grader;
   private final AttemptStore attempts;
@@ -59,12 +60,14 @@ public class AttemptService {
 
   public AttemptService(
       GameService game,
+      HintService hints,
       ContentCatalog catalog,
       Grader grader,
       AttemptStore attempts,
       ProgressStore progress,
       PlatformTransactionManager transactionManager) {
     this.game = game;
+    this.hints = hints;
     this.catalog = catalog;
     this.grader = grader;
     this.attempts = attempts;
@@ -105,18 +108,19 @@ public class AttemptService {
     return transaction.execute(
         status -> {
           ProblemProgress before = progress.lock(userId, problem.id(), problem.level());
+          int hintsUsed = hints.usedFor(userId, problem.id());
           XpAward award =
               XpRules.award(
                   before,
                   result.total(),
                   Difficulty.fromLabel(problem.difficulty()),
                   Duration.ofSeconds(seconds),
-                  0,
+                  hintsUsed,
                   false);
           StoredAttempt attempt =
               new StoredAttempt(
                   request.attemptId(), userId, problem.id(), result, award.xpGained());
-          if (!attempts.insert(attempt, text, seconds, grader.name(), gradingMs)) {
+          if (!attempts.insert(attempt, text, hintsUsed, seconds, grader.name(), gradingMs)) {
             // The same attempt was saved by a concurrent request: return it, award nothing.
             return stored(attempts.find(request.attemptId()).orElseThrow(), userId, problem);
           }

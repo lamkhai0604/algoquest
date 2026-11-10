@@ -15,6 +15,19 @@ export interface Level {
   solved: number;
 }
 
+export interface HintQuota {
+  remaining: number;
+  perWindow: number;
+  /** When the next hint comes back (ISO time), or null when none is in use. */
+  refillsAt: string | null;
+}
+
+export interface Hints {
+  opened: string[];
+  total: number;
+  quota: HintQuota;
+}
+
 export type Difficulty = "Easy" | "Medium" | "Hard";
 
 export interface ProblemItem {

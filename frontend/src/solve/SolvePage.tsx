@@ -4,10 +4,12 @@ import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
 import { Badge, Card, ErrorState, LoadingState } from "../components";
 import { useGame } from "../game/gameContext";
+import type { Hints } from "../game/types";
 import { InlineText } from "../lesson/Markdown";
 import pages from "../pages/Pages.module.css";
 import { ExplainForm } from "./ExplainForm";
 import { FeedbackPanel } from "./FeedbackPanel";
+import { HintPanel } from "./HintPanel";
 import { clock, timeLimitSeconds } from "./rules";
 import styles from "./Solve.module.css";
 import type { AttemptResult, ProblemDetail } from "./types";
@@ -43,7 +45,17 @@ function ProblemText({ problem }: { problem: ProblemDetail }) {
 }
 
 function Solve({ problem }: { problem: ProblemDetail }) {
-  const { reloadLevels } = useGame();
+  const { reloadLevels, reloadHintQuota } = useGame();
+  const hintState = useApiGet<Hints>(`/api/v1/problems/${problem.id}/hints`);
+  const [hints, setHints] = useState<Hints | null>(null);
+  const currentHints =
+    hints ?? (hintState.state.status === "ready" ? hintState.state.data : null);
+  const hintsUsed = currentHints?.opened.length ?? 0;
+
+  const changeHints = (next: Hints) => {
+    setHints(next);
+    reloadHintQuota();
+  };
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -93,7 +105,16 @@ function Solve({ problem }: { problem: ProblemDetail }) {
         </span>
       </div>
       <div className={styles.columns}>
-        <ProblemText problem={problem} />
+        <div className={styles.stack}>
+          <ProblemText problem={problem} />
+          {currentHints && (
+            <HintPanel
+              hints={currentHints}
+              problemId={problem.id}
+              onChange={changeHints}
+            />
+          )}
+        </div>
         {result ? (
           <FeedbackPanel
             result={result}
@@ -104,6 +125,7 @@ function Solve({ problem }: { problem: ProblemDetail }) {
           <ExplainForm
             difficulty={problem.difficulty}
             seconds={seconds}
+            hintsUsed={hintsUsed}
             text={text}
             onTextChange={changeText}
             submitting={submitting}

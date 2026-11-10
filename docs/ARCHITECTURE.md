@@ -244,6 +244,7 @@ sequenceDiagram
 | GET | `/api/v1/levels/{n}/problems` | `game.play` | FR-04 |
 | GET | `/api/v1/problems/{id}` | `game.play` | FR-04 |
 | POST | `/api/v1/problems/{id}/attempts` | `game.play` | FR-05, FR-08, FR-09 |
+| GET | `/api/v1/problems/{id}/hints` | `game.play` | FR-06 (hints already opened) |
 | POST | `/api/v1/problems/{id}/hints` | `game.play` | FR-06 |
 | GET | `/api/v1/hints/quota` | `game.play` | FR-06 |
 | GET | `/api/v1/problems/{id}/js-inputs` | `game.play` | FR-07 (D-035) |

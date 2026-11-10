@@ -67,6 +67,7 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
     page.getByRole("heading", { name: "Level 1 · Big-O & Basics" }),
   ).toBeVisible();
   await expect(page.getByTitle("Total XP")).toContainText("0");
+  await expect(page.getByTitle("Hints left")).toContainText("3");
 
   // Lesson: text, walkthrough, quick check.
   await page.getByRole("link", { name: "Read lesson" }).click();
@@ -104,11 +105,16 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
     "If the array is empty I return null. Otherwise I keep the largest value " +
       "seen so far while walking through the array once. O(n) time, O(1) space.",
   );
+  // One hint: 25 XP becomes 20, and the header shows 2 hints left.
+  await page.getByRole("button", { name: "Show hint 1 of 3 (−20% XP)" }).click();
+  await expect(page.getByText("Hint 1.")).toBeVisible();
+  await expect(page.getByTitle("Hints left")).toContainText("2");
+  await expect(page.getByText("Up to 20 XP")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/solve.png`, fullPage: true });
   await submit.click();
   await expect(page.getByText("Solved", { exact: true })).toBeVisible();
-  await expect(page.getByText("+25 XP")).toBeVisible();
-  await expect(page.getByTitle("Total XP")).toContainText("25");
+  await expect(page.getByText("+20 XP")).toBeVisible();
+  await expect(page.getByTitle("Total XP")).toContainText("20");
   await page.screenshot({ path: `${SHOTS}/feedback.png`, fullPage: true });
 
   // The level map now shows the XP and the solved problem.

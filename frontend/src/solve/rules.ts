@@ -6,6 +6,7 @@ export const PASS_TOTAL = 70;
 
 const BASE_XP = 20;
 const TIME_BONUS = 5;
+const HINT_PENALTY_PERCENT = 20;
 const DIFFICULTY_BONUS: Record<Difficulty, number> = {
   Easy: 0,
   Medium: 10,
@@ -20,9 +21,24 @@ const TIME_LIMIT_MINUTES: Record<Difficulty, number> = {
 export const timeLimitSeconds = (difficulty: Difficulty) =>
   TIME_LIMIT_MINUTES[difficulty] * 60;
 
-export function maxXp(difficulty: Difficulty, seconds: number): number {
+export function maxXp(
+  difficulty: Difficulty,
+  seconds: number,
+  hintsUsed = 0,
+): number {
   const inTime = seconds <= timeLimitSeconds(difficulty);
-  return BASE_XP + DIFFICULTY_BONUS[difficulty] + (inTime ? TIME_BONUS : 0);
+  const bonus = DIFFICULTY_BONUS[difficulty] + (inTime ? TIME_BONUS : 0);
+  const raw = BASE_XP + bonus;
+  const percent = Math.max(0, 100 - HINT_PENALTY_PERCENT * hintsUsed);
+  return Math.floor((raw * percent) / 100);
+}
+
+/** "in 3h 12m" until an ISO time; "soon" when it has passed. */
+export function refillIn(iso: string, now = Date.now()): string {
+  const minutes = Math.ceil((new Date(iso).getTime() - now) / 60000);
+  if (minutes <= 0) return "soon";
+  const hours = Math.floor(minutes / 60);
+  return hours > 0 ? `in ${hours}h ${minutes % 60}m` : `in ${minutes}m`;
 }
 
 export function clock(seconds: number): string {

@@ -9,22 +9,27 @@ import {
 } from "./auth";
 import { AppHeader, WakingServer } from "./components";
 import type { HeaderAccount } from "./components";
-import { totalXp, useGame } from "./game/gameContext";
+import { hintsLeft, totalXp, useGame } from "./game/gameContext";
 import { GameProvider } from "./game/GameProvider";
 import { LessonPage } from "./lesson/LessonPage";
 import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { UiKitPage } from "./pages/UiKitPage";
+import { VipPage } from "./pages/VipPage";
 import { SolvePage } from "./solve/SolvePage";
 import { ThemeProvider } from "./theme/ThemeProvider";
 
 export function AppRoutes() {
   const waking = useServerWaking();
   const { state, signOut } = useAuth();
-  const { levels } = useGame();
-  // Streak and hints arrive with their features; XP is the sum over levels.
-  const stats = { streakDays: 0, totalXp: totalXp(levels), hintsLeft: 0 };
+  const { levels, hintQuota } = useGame();
+  // The streak arrives with the profile (T-305).
+  const stats = {
+    streakDays: 0,
+    totalXp: totalXp(levels),
+    hintsLeft: hintsLeft(hintQuota),
+  };
   let account: HeaderAccount | undefined;
   if (state.status === "signed-in") {
     account = { name: state.user.displayName, onSignOut: signOut };
@@ -71,6 +76,7 @@ export function AppRoutes() {
               </RequireAuth>
             }
           />
+          <Route path="/vip" element={<VipPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
