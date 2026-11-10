@@ -4,7 +4,7 @@
 
 A web app for learning the algorithm patterns used in coding interviews. Topics are levels ordered from easy to hard. Each level has a lesson and problems, and you **explain your approach in words**, the way you would in an interview. An AI grades the explanation against a teacher-written answer key; writing the code afterwards is optional and doubles your points.
 
-> **Status: planning (Sprint 0).** No application code yet. Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
+> **Status: Sprint 3 done (Levels 1–3 playable); first deployment in progress.** Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
 
 ## Planned features (first release)
 
@@ -77,6 +77,7 @@ To stop the database: `docker compose down` (add `-v` to delete its data).
 | [Workflow](docs/WORKFLOW.md) | Branching, reviews, engineering profile |
 | [Tools](docs/TOOLS.md) | Services, free-tier limits, dev tools |
 | [Content guide](docs/CONTENT-GUIDE.md) | How lessons and problems are written |
+| [Deployment](docs/DEPLOY.md) | Hosting setup, live smoke check, rollback |
 
 ## Grading test
 
