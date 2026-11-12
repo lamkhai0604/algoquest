@@ -6,6 +6,9 @@
 }
 
 .card {
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(8px);
   display: grid;
   gap: var(--space-3);
   width: min(400px, 100%);
