@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { api, useApiGet } from "../api";
+import { api } from "../api";
+import { useApiGet } from "../api/useApiGet";
 import {
   Badge,
   Button,
