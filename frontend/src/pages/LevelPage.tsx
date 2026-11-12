@@ -24,6 +24,7 @@ function ProblemStatus({ problem }: { problem: ProblemItem }) {
     const done = problem.practiceDone ? " · Done" : "";
     return <Badge tone="success">{`Solved · +${problem.xp} XP${done}`}</Badge>;
   }
+  if (problem.tried) return <Badge tone="warning">Not solved yet</Badge>;
   return <Badge>Not tried</Badge>;
 }
 
@@ -35,6 +36,7 @@ function ProblemRow({ problem }: { problem: ProblemItem }) {
       </span>
       <span className={game.rowMeta}>
         <Badge tone="primary">{problem.difficulty}</Badge>
+        {problem.paused && <Badge tone="xp">⏸ Paused</Badge>}
         <ProblemStatus problem={problem} />
       </span>
     </>
@@ -136,6 +138,9 @@ export function LevelPage() {
       {level && <TestStartCard level={level} />}
       <section className={game.path}>
         <h2 className={game.sectionTitle}>Problems</h2>
+        <p className={game.note}>
+          Problems open in order: solve one (score 70 or more) to open the next.
+        </p>
         {problems.state.status === "loading" && (
           <LoadingState label="Loading problems…" />
         )}

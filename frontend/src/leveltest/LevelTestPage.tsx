@@ -15,6 +15,7 @@ import { useGame } from "../game/gameContext";
 import { InlineText } from "../lesson/Markdown";
 import pages from "../pages/Pages.module.css";
 import { clock, MAX_LENGTH } from "../solve/rules";
+import { ScoringGuide } from "../solve/ScoringGuide";
 import styles from "./LevelTest.module.css";
 import type { LevelTest } from "./types";
 import { totalOf } from "./types";
@@ -241,6 +242,7 @@ export function LevelTestPage() {
       {test && test.status !== "submitted" && (
         <RunningTest test={test} onSubmitted={onSubmitted} />
       )}
+      {test && <ScoringGuide variant="test" />}
     </div>
   );
 }

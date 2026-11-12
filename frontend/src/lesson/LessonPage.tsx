@@ -41,7 +41,11 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
       <MarkdownBlocks blocks={before} />
       <Walkthrough steps={lesson.walkthrough} />
       <MarkdownBlocks blocks={after} />
-      <QuickCheck questions={lesson.quickCheck} />
+      <QuickCheck
+        level={lesson.level}
+        questions={lesson.quickCheck}
+        done={lesson.quickCheckDone}
+      />
       <div className={pages.row}>
         <ButtonLink to={`/levels/${lesson.level}`}>
           Go to the problems

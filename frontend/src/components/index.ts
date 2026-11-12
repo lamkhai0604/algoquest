@@ -11,6 +11,8 @@ export { Chip } from "./Chip";
 export { cx } from "./cx";
 export { ErrorState } from "./ErrorState";
 export { LoadingState } from "./LoadingState";
+export { ConfirmDialog } from "./Modal";
+export { Celebration } from "./Celebration";
 export { ThemeToggle } from "./ThemeToggle";
 export { WakingServer } from "./WakingServer";
 export { XpBar } from "./XpBar";

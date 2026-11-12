@@ -210,3 +210,34 @@
 .vipLink {
   font-weight: 600;
 }
+
+.resultActions {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.resultActions > :first-child {
+  justify-self: start;
+}
+
+.resultActions > :last-child {
+  justify-self: end;
+}
+
+.timerOver,
+.timerOver strong {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.timeNote {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
