@@ -40,7 +40,7 @@ describe("hints", () => {
 
     expect(await screen.findByText("3 of 3 hints left")).toBeVisible();
     expect(screen.getByTitle("Hints left")).toHaveTextContent("3");
-    expect(screen.getByText("Up to 25 XP")).toBeVisible();
+    expect(screen.getByText("Up to 20 XP")).toBeVisible();
 
     await userEvent.click(
       screen.getByRole("button", { name: "Show hint 1 of 3 (−20% XP)" }),
@@ -49,7 +49,7 @@ describe("hints", () => {
     expect(await screen.findByText("Keep the best so far.")).toBeVisible();
     const quota = screen.getByText(/2 of 3 hints left/);
     expect(quota).toHaveTextContent("next one back in 3h");
-    expect(screen.getByText("Up to 20 XP")).toBeVisible();
+    expect(screen.getByText("Up to 16 XP")).toBeVisible();
     const posts = fetchFn.mock.calls.filter(
       ([url, init]) => String(url).endsWith(HINTS) && init?.method === "POST",
     );
@@ -60,7 +60,7 @@ describe("hints", () => {
     const fetchFn = open(hints(["First.", "Second."], 1), hints([], 0));
 
     expect(await screen.findByText("Second.")).toBeVisible();
-    expect(screen.getByText("Up to 15 XP")).toBeVisible();
+    expect(screen.getByText("Up to 12 XP")).toBeVisible();
     expect(
       screen.getByRole("button", { name: "Show hint 3 of 3 (−20% XP)" }),
     ).toBeVisible();

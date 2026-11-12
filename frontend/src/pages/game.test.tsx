@@ -65,7 +65,7 @@ describe("level page", () => {
 
     const solved = await screen.findByRole("link", { name: /Max Temperature/ });
     expect(solved).toHaveAttribute("href", "/problems/L1-max-temperature");
-    expect(solved).toHaveTextContent("Solved · +25 XP");
+    expect(solved).toHaveTextContent("Solved · +20 XP");
     expect(
       screen.getByRole("link", { name: /Second Largest Score/ }),
     ).toHaveTextContent("Not tried");
