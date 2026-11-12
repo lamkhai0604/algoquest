@@ -58,8 +58,7 @@ public final class XpRules {
       Duration timeTaken,
       int hintsUsed,
       boolean codePassed) {
-    return award(
-        GameRules.DEFAULTS, before, score, difficulty, timeTaken, hintsUsed, codePassed);
+    return award(GameRules.DEFAULTS, before, score, difficulty, timeTaken, hintsUsed, codePassed);
   }
 
   /** {@link #award} with the given rules (D-047). */

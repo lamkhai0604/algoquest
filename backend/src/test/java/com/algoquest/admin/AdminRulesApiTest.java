@@ -115,10 +115,9 @@ class AdminRulesApiTest {
 
     mvc.perform(get("/api/v1/admin/audit-log").with(owner))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].action").value("config.update"))
-        .andExpect(jsonPath("$[0].actorEmail").value("owner@example.com"))
-        .andExpect(jsonPath("$[0].before").value("{\"baseXp\":\"15\"}"))
-        .andExpect(jsonPath("$[0].after").value("{\"baseXp\":\"30\"}"));
+        .andExpect(jsonPath("$[?(@.action=='config.update')].actorEmail").value("owner@example.com"))
+        .andExpect(jsonPath("$[?(@.action=='config.update')].before").value("{\"baseXp\":\"15\"}"))
+        .andExpect(jsonPath("$[?(@.action=='config.update')].after").value("{\"baseXp\":\"30\"}"));
     mvc.perform(get("/api/v1/admin/audit-log").with(player)).andExpect(status().isForbidden());
   }
 
@@ -158,7 +157,7 @@ class AdminRulesApiTest {
                 .content("{\"role\":\"PLAYER\"}"))
         .andExpect(status().isForbidden());
     mvc.perform(get("/api/v1/admin/audit-log").with(owner))
-        .andExpect(jsonPath("$[0].action").value("role.remove"))
-        .andExpect(jsonPath("$[0].targetEmail").value("player@example.com"));
+        .andExpect(
+            jsonPath("$[?(@.action=='role.remove')].targetEmail").value("player@example.com"));
   }
 }

@@ -19,13 +19,11 @@ public final class LevelRules {
     return state(GameRules.DEFAULTS, level, bestPreviousTestScore);
   }
 
-  public static LevelState state(
-      GameRules rules, int level, OptionalInt bestPreviousTestScore) {
+  public static LevelState state(GameRules rules, int level, OptionalInt bestPreviousTestScore) {
     if (level == 1) {
       return LevelState.OPEN;
     }
-    if (bestPreviousTestScore.isEmpty()
-        || bestPreviousTestScore.getAsInt() < rules.passScore()) {
+    if (bestPreviousTestScore.isEmpty() || bestPreviousTestScore.getAsInt() < rules.passScore()) {
       return LevelState.LOCKED;
     }
     return bestPreviousTestScore.getAsInt() >= 100 ? LevelState.OPEN : LevelState.EASY_ONLY;

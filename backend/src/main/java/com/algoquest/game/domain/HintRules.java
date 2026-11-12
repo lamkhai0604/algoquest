@@ -30,8 +30,7 @@ public final class HintRules {
     return nextRefill(GameRules.DEFAULTS, openedAt, now);
   }
 
-  public static Optional<Instant> nextRefill(
-      GameRules rules, List<Instant> openedAt, Instant now) {
+  public static Optional<Instant> nextRefill(GameRules rules, List<Instant> openedAt, Instant now) {
     return inWindow(rules, openedAt, now).stream()
         .min(Instant::compareTo)
         .map(t -> t.plus(rules.hintWindow()));

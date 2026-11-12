@@ -66,7 +66,8 @@ public class GameRulesService {
         JSON.writeValueAsString(next),
         Timestamp.from(clock.instant()),
         actorId);
-    auditLog.record(actorId, "config.update", "game-rules", changed(before, next), changed(next, before));
+    auditLog.record(
+        actorId, "config.update", "game-rules", changed(before, next), changed(next, before));
     return next;
   }
 

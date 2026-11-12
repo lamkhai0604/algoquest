@@ -32,8 +32,7 @@ public class HintService {
   private final Clock clock;
   private final GameRulesService rules;
 
-  public HintService(
-      GameService game, JdbcTemplate jdbc, Clock clock, GameRulesService rules) {
+  public HintService(GameService game, JdbcTemplate jdbc, Clock clock, GameRulesService rules) {
     this.game = game;
     this.jdbc = jdbc;
     this.clock = clock;
