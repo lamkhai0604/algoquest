@@ -131,10 +131,10 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
   await page.screenshot({ path: `${SHOTS}/retry-dialog.png` });
   await page.getByRole("button", { name: "Keep my result" }).click();
 
-  // The next problem opened when this one was solved.
+  // The next problem (Easy, order 2) opened when this one was solved.
   await page.getByRole("link", { name: /Next problem/ }).click();
   await expect(
-    page.getByRole("heading", { name: "Second Largest Score" }),
+    page.getByRole("heading", { name: "Count Passing Scores" }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "How your answer is scored" }),
