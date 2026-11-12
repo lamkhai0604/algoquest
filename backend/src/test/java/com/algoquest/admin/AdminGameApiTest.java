@@ -93,20 +93,21 @@ class AdminGameApiTest {
 
   @Test
   void theGradingLogListsAttemptsNewestFirstAndFiltersByProblem() throws Exception {
-    solve("L1-max-value", "Sort it.");
-    solve("L1-pair-max", GOOD);
+    // Problems open in order (D-042): the second one needs the first one solved.
+    solve("L1-max-value", GOOD);
+    solve("L1-pair-max", "Sort it.");
 
     mvc.perform(get("/api/v1/admin/attempts").with(owner))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
         .andExpect(jsonPath("$[0].problemId").value("L1-pair-max"))
         .andExpect(jsonPath("$[0].userEmail").value("player@example.com"))
-        .andExpect(jsonPath("$[0].explanation").value(GOOD))
-        .andExpect(jsonPath("$[0].total").value(95))
+        .andExpect(jsonPath("$[0].explanation").value("Sort it."))
+        .andExpect(jsonPath("$[0].total").value(35))
         .andExpect(jsonPath("$[0].grader").value("fake"));
     mvc.perform(get("/api/v1/admin/attempts").param("problemId", "L1-max-value").with(owner))
         .andExpect(jsonPath("$.length()").value(1))
-        .andExpect(jsonPath("$[0].total").value(35));
+        .andExpect(jsonPath("$[0].total").value(95));
   }
 
   @Test
@@ -116,14 +117,16 @@ class AdminGameApiTest {
 
     reset(owner, playerId, 1)
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.before.xp").value(25))
+        .andExpect(jsonPath("$.before.xp").value(20))
         .andExpect(jsonPath("$.before.solved").value(1))
         .andExpect(jsonPath("$.after.xp").value(0))
         .andExpect(jsonPath("$.after.solved").value(0));
 
     mvc.perform(get("/api/v1/levels").with(player)).andExpect(jsonPath("$[0].xp").value(0));
-    mvc.perform(get("/api/v1/problems/L1-pair-max/hints").with(player))
-        .andExpect(jsonPath("$.opened.length()").value(0));
+    // The second problem is locked again after the reset; its hint use is gone.
+    Integer hintsUsed = jdbc.queryForObject("select count(*) from hint_use", Integer.class);
+    assertThat(hintsUsed).isZero();
+    mvc.perform(get("/api/v1/problems/L1-pair-max").with(player)).andExpect(status().isForbidden());
     Integer attempts = jdbc.queryForObject("select count(*) from attempt", Integer.class);
     assertThat(attempts).isEqualTo(1);
 
@@ -133,7 +136,7 @@ class AdminGameApiTest {
             .toList();
     assertThat(entries).hasSize(1);
     assertThat(entries.get(0).getTarget()).isEqualTo("user:" + playerId);
-    assertThat(entries.get(0).getBeforeValue()).contains("\"xp\":\"25\"");
+    assertThat(entries.get(0).getBeforeValue()).contains("\"xp\":\"20\"");
     assertThat(entries.get(0).getAfterValue()).contains("\"xp\":\"0\"");
   }
 

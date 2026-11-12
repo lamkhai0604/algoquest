@@ -4,6 +4,7 @@
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
+  "order": 3,
   "title": "Exact Total Stretches",
   "statement": "A shop records its daily profit (which may be negative). Return how many stretches of consecutive days add up exactly to k.",
   "examples": [

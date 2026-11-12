@@ -67,6 +67,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-305 | Profile and streak | FR-12, FR-13 | P2 | Done 2026-11-09 (backend 156 tests; streak days in the player's time zone) |
 | T-306 | Admin panel part 1: grading log and progress reset (audit-logged) | FR-18.1–2 | P2 | Done 2026-11-09 (backend 160 tests; reset audited with before and after values) |
 | T-307 | First deployment (Vercel, Render, Neon) + live smoke check — **needs PO approval** | D-037 | P1 | In progress: approved by the PO on 2026-11-09; configuration and [runbook](DEPLOY.md) on `dev`; accounts set up by the PO |
+| T-309 | Trial feedback round: XP rebalance and quick check XP, ordered problems, result page with Retry and Next, active-time timer with pause, scoring guide, back button, profile and wording fixes | FR-03, FR-04, FR-08, FR-12; D-040–D-044 | P1 | Done 2026-11-12 (backend 162 tests; frontend tests; smoke 5 passed, including the result page, Retry dialog, and Next) |
 | T-308 | Sprint 3 report | D-007 | P2 | Done 2026-11-09: [sprint-3-report.md](reports/sprint-3-report.md) |
 
 ## Sprint 4 — Code and polish

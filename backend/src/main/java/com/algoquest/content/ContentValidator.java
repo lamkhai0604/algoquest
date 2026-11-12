@@ -122,6 +122,9 @@ final class ContentValidator {
     if (blank(p.title())) {
       problems.add(path + ": title is missing");
     }
+    if (p.order() != null && p.order() < 1) {
+      problems.add(path + ": order must be 1 or more");
+    }
     if ("comingSoon".equals(p.status())) {
       boolean hasMore =
           p.statement() != null

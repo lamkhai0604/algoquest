@@ -4,6 +4,7 @@
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
+  "order": 3,
   "title": "Best Stretch of Points",
   "statement": "A player's score changes each round by a positive or negative number of points. Return the largest total of any run of consecutive rounds (at least one round). Return null if there are no rounds.",
   "examples": [

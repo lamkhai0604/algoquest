@@ -33,6 +33,7 @@ final class GradingTestData {
         List.of("a", "b", "c"),
         List.of(),
         Map.of("javascript", "f", "java", "g"),
-        null);
+        null,
+        1);
   }
 }

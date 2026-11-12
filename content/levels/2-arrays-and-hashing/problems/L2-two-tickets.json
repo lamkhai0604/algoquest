@@ -4,6 +4,7 @@
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
+  "order": 1,
   "title": "Two Tickets",
   "statement": "You are given an array of ticket prices and a budget. Return the indices [i, j] (i < j) of the two tickets whose prices add up exactly to the budget. Exactly one valid pair exists, and you may not use the same ticket twice.",
   "examples": [

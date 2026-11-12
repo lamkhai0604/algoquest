@@ -2,7 +2,15 @@ import { useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
-import { Badge, Card, ErrorState, LoadingState } from "../components";
+import {
+  BackButton,
+  Badge,
+  Card,
+  ConfirmDialog,
+  cx,
+  ErrorState,
+  LoadingState,
+} from "../components";
 import { useGame } from "../game/gameContext";
 import type { Hints } from "../game/types";
 import { InlineText } from "../lesson/Markdown";
@@ -10,10 +18,11 @@ import pages from "../pages/Pages.module.css";
 import { ExplainForm } from "./ExplainForm";
 import { FeedbackPanel } from "./FeedbackPanel";
 import { HintPanel } from "./HintPanel";
-import { clock, maxXp, timeLimitSeconds } from "./rules";
+import { clock, maxXp, TIME_BONUS, timeLimitSeconds } from "./rules";
+import { ScoringGuide } from "./ScoringGuide";
 import styles from "./Solve.module.css";
 import type { AttemptMode, AttemptResult, ProblemDetail } from "./types";
-import { useElapsed } from "./useTimer";
+import { drafts, useActiveTime } from "./useTimer";
 
 function ProblemText({ problem }: { problem: ProblemDetail }) {
   return (
@@ -49,6 +58,32 @@ interface SolveProps {
   mode: AttemptMode;
 }
 
+type View = "work" | "result";
+
+function TimeNote({
+  difficulty,
+  seconds,
+}: {
+  difficulty: ProblemDetail["difficulty"];
+  seconds: number;
+}) {
+  const limit = timeLimitSeconds(difficulty);
+  if (seconds > limit) {
+    return (
+      <p className={styles.timeNote} role="status">
+        The time bonus is over. You can still solve this problem and earn its XP
+        without the +{TIME_BONUS} bonus.
+      </p>
+    );
+  }
+  return (
+    <p className={styles.timeNote}>
+      Finish within {clock(limit)} of active time for +{TIME_BONUS} XP. The
+      clock pauses when you leave this page.
+    </p>
+  );
+}
+
 function Solve({ problem, mode }: SolveProps) {
   const practice = mode === "practice";
   const { reloadLevels, reloadHintQuota } = useGame();
@@ -64,18 +99,61 @@ function Solve({ problem, mode }: SolveProps) {
     setHints(next);
     reloadHintQuota();
   };
-  const [text, setText] = useState("");
+  const [text, setText] = useState(() =>
+    practice ? "" : drafts.read(problem.id),
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<AttemptResult | null>(null);
+  // A graded problem opens on its last result (D-042).
+  const [result, setResult] = useState<AttemptResult | null>(
+    practice ? null : problem.lastResult,
+  );
+  const [view, setView] = useState<View>(result ? "result" : "work");
+  // Coming back to a problem with working time asks: continue or start again?
+  const [asking, setAsking] = useState<"resume" | "retry" | null>(
+    !practice && !problem.lastResult && problem.activeSeconds > 0
+      ? "resume"
+      : null,
+  );
+  const [restarting, setRestarting] = useState(false);
   // One ID per submitted text, so a retry of the same text is graded once.
   const attemptId = useRef<string | null>(null);
-  const seconds = useElapsed(problem.openedAt, result === null);
+  const timed = !practice && view === "work" && asking === null;
+  const [seconds, setSeconds] = useActiveTime(
+    problem.id,
+    problem.activeSeconds,
+    timed,
+  );
   const limit = timeLimitSeconds(problem.difficulty);
+  const over = seconds > limit;
 
   const changeText = (next: string) => {
     attemptId.current = null;
     setText(next);
+    if (!practice) drafts.write(problem.id, next);
+  };
+
+  const startAgain = () => {
+    setRestarting(true);
+    api
+      .post(`/api/v1/problems/${problem.id}/restart`)
+      .then(() => {
+        drafts.write(problem.id, "");
+        setText("");
+        setSeconds(0);
+        setResult(null);
+        setView("work");
+        setAsking(null);
+      })
+      .catch((failure: unknown) => {
+        setError(
+          failure instanceof Error
+            ? failure.message
+            : "Something went wrong. Please try again.",
+        );
+        setAsking(null);
+      })
+      .finally(() => setRestarting(false));
   };
 
   const submit = () => {
@@ -90,7 +168,9 @@ function Solve({ problem, mode }: SolveProps) {
       })
       .then((graded) => {
         attemptId.current = null;
+        if (!practice) drafts.write(problem.id, "");
         setResult(graded);
+        setView("result");
         reloadLevels();
       })
       .catch((failure: unknown) => {
@@ -109,10 +189,15 @@ function Solve({ problem, mode }: SolveProps) {
         <Badge tone="primary">{problem.difficulty}</Badge>
         {practice && <Badge tone="xp">Practice round</Badge>}
         <h1 className={pages.title}>{problem.title}</h1>
-        <span className={styles.timer} title="Time on this problem">
-          <strong>{clock(seconds)}</strong>
-          {!practice && ` / ${clock(limit)} time bonus`}
-        </span>
+        {!practice && view === "work" && (
+          <span
+            className={cx(styles.timer, over && styles.timerOver)}
+            title="Active time on this problem"
+          >
+            <strong>{clock(seconds)}</strong>
+            {over ? " · time bonus over" : ` / ${clock(limit)} time bonus`}
+          </span>
+        )}
       </div>
       <div className={styles.columns}>
         <div className={styles.stack}>
@@ -123,7 +208,7 @@ function Solve({ problem, mode }: SolveProps) {
               marks it Done and adds up to 10 XP.
             </p>
           )}
-          {!practice && currentHints && (
+          {!practice && currentHints && view === "work" && (
             <HintPanel
               hints={currentHints}
               problemId={problem.id}
@@ -131,27 +216,65 @@ function Solve({ problem, mode }: SolveProps) {
             />
           )}
         </div>
-        {result ? (
+        {view === "result" && result ? (
           <FeedbackPanel
             result={result}
             level={problem.level}
-            onTryAgain={() => setResult(null)}
+            nextProblemId={problem.nextProblemId}
+            onRetry={practice ? undefined : () => setAsking("retry")}
           />
         ) : (
-          <ExplainForm
-            xpNote={
-              practice
-                ? "Done adds up to 10 XP"
-                : `Up to ${maxXp(problem.difficulty, seconds, hintsUsed)} XP`
-            }
-            text={text}
-            onTextChange={changeText}
-            submitting={submitting}
-            error={error}
-            onSubmit={submit}
-          />
+          <div className={styles.stack}>
+            {!practice && (
+              <TimeNote difficulty={problem.difficulty} seconds={seconds} />
+            )}
+            <ExplainForm
+              xpNote={
+                practice
+                  ? "Done adds up to 10 XP"
+                  : `Up to ${maxXp(problem.difficulty, seconds, hintsUsed)} XP`
+              }
+              text={text}
+              onTextChange={changeText}
+              submitting={submitting}
+              error={error}
+              onSubmit={submit}
+            />
+          </div>
+        )}
+        {!practice && (
+          <div className={styles.wide}>
+            <ScoringGuide />
+          </div>
         )}
       </div>
+      {asking === "resume" && (
+        <ConfirmDialog
+          title="Continue where you left off?"
+          confirmLabel="Continue"
+          cancelLabel="Start again"
+          busy={restarting}
+          onConfirm={() => setAsking(null)}
+          onCancel={startAgain}
+        >
+          You have {clock(problem.activeSeconds)} of active time on this
+          problem. Continue keeps your draft and the clock; Start again clears
+          both.
+        </ConfirmDialog>
+      )}
+      {asking === "retry" && (
+        <ConfirmDialog
+          title="Retry this problem?"
+          confirmLabel="Retry"
+          cancelLabel="Keep my result"
+          busy={restarting}
+          onConfirm={startAgain}
+          onCancel={() => setAsking(null)}
+        >
+          The answer box starts empty and the clock starts from zero. XP you
+          already earned stays; a problem earns XP only once.
+        </ConfirmDialog>
+      )}
     </>
   );
 }
@@ -167,15 +290,23 @@ export function SolvePage() {
 
   return (
     <div className={pages.page}>
-      <nav className={styles.crumbs} aria-label="Breadcrumb">
-        <Link to="/">Level map</Link>
-        {level !== null && (
-          <>
-            {" / "}
-            <Link to={`/levels/${level}`}>Level {level}</Link>
-          </>
-        )}
-      </nav>
+      <div className={pages.topBar}>
+        <BackButton
+          to={level === null ? "/" : `/levels/${level}`}
+          label={
+            level === null ? "Back to the level map" : `Back to Level ${level}`
+          }
+        />
+        <nav className={styles.crumbs} aria-label="Breadcrumb">
+          <Link to="/">Level map</Link>
+          {level !== null && (
+            <>
+              {" / "}
+              <Link to={`/levels/${level}`}>Level {level}</Link>
+            </>
+          )}
+        </nav>
+      </div>
       {state.status === "loading" && <LoadingState label="Loading problem…" />}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />

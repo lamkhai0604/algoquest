@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 1,
   "title": "Reverse the Message",
   "statement": "A message arrives as an array of characters. Reverse it in place (O(1) extra space) and return the reversed message as a string.",
   "examples": [

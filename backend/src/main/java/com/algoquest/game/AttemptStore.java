@@ -1,6 +1,8 @@
 package com.algoquest.game;
 
 import com.algoquest.grading.GradingResult;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.util.List;
@@ -26,25 +28,45 @@ public class AttemptStore {
   }
 
   public Optional<StoredAttempt> find(UUID attemptId) {
-    List<StoredAttempt> found =
+    return first(
         jdbc.query(
             "select id, user_id, problem_id, mode, pattern, steps, complexity, edge_cases,"
                 + " feedback, xp_gained from attempt where id = ?",
-            (rs, row) ->
-                new StoredAttempt(
-                    rs.getObject("id", UUID.class),
-                    rs.getObject("user_id", UUID.class),
-                    rs.getString("problem_id"),
-                    rs.getString("mode"),
-                    new GradingResult(
-                        rs.getInt("pattern"),
-                        rs.getInt("steps"),
-                        rs.getInt("complexity"),
-                        rs.getInt("edge_cases"),
-                        rs.getString("feedback")),
-                    rs.getInt("xp_gained")),
-            attemptId);
+            AttemptStore::row,
+            attemptId));
+  }
+
+  /** The player's latest attempt at a problem in one mode. */
+  public Optional<StoredAttempt> latest(UUID userId, String problemId, String mode) {
+    return first(
+        jdbc.query(
+            "select id, user_id, problem_id, mode, pattern, steps, complexity, edge_cases,"
+                + " feedback, xp_gained from attempt"
+                + " where user_id = ? and problem_id = ? and mode = ?"
+                + " order by created_at desc limit 1",
+            AttemptStore::row,
+            userId,
+            problemId,
+            mode));
+  }
+
+  private static Optional<StoredAttempt> first(List<StoredAttempt> found) {
     return found.stream().findFirst();
+  }
+
+  private static StoredAttempt row(ResultSet rs, int row) throws SQLException {
+    return new StoredAttempt(
+        rs.getObject("id", UUID.class),
+        rs.getObject("user_id", UUID.class),
+        rs.getString("problem_id"),
+        rs.getString("mode"),
+        new GradingResult(
+            rs.getInt("pattern"),
+            rs.getInt("steps"),
+            rs.getInt("complexity"),
+            rs.getInt("edge_cases"),
+            rs.getString("feedback")),
+        rs.getInt("xp_gained"));
   }
 
   /** Saves the attempt. Returns false when an attempt with this ID already exists. */

@@ -4,6 +4,7 @@
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
+  "order": 1,
   "title": "Sorted Pair Target",
   "statement": "Given an array of integers sorted in ascending order and a target, return the indices [i, j] (i < j) of two numbers that add up to the target. If no pair exists, return [-1, -1]. Use O(1) extra space.",
   "examples": [

@@ -10,7 +10,10 @@ export interface CriterionScores {
 }
 
 export interface TestProblem {
-  problem: Omit<ProblemDetail, "openedAt">;
+  problem: Omit<
+    ProblemDetail,
+    "activeSeconds" | "lastResult" | "nextProblemId"
+  >;
   answer: string;
   result: CriterionScores | null;
 }

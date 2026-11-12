@@ -2,13 +2,19 @@ package com.algoquest.game.domain;
 
 import java.time.Duration;
 
-/** XP rules (FR-08, D-015). Pure functions with no framework or I/O. */
+/** XP rules (FR-08, D-015, D-040). Pure functions with no framework or I/O. */
 public final class XpRules {
 
-  public static final int BASE_XP = 20;
+  public static final int BASE_XP = 15;
   public static final int TIME_BONUS = 5;
   public static final int PASS_SCORE = 70;
   public static final int HINT_PENALTY_PERCENT = 20;
+
+  /** XP for finishing a level's quick check, once (D-041). */
+  public static final int QUICK_CHECK_XP = 5;
+
+  /** The level bar for Levels 1–3, which share the same content shape (D-040). */
+  public static final int LEVEL_TARGET = 150;
 
   private XpRules() {}
 
@@ -56,11 +62,14 @@ public final class XpRules {
     return new XpAward(0, before);
   }
 
-  /** XP needed to fill a level's bar: 100 + 25 × (level − 1). */
+  /**
+   * XP needed to fill a level's bar: one full pass through the level, 3 Easy and 3 Medium problems
+   * plus the quick check (D-040). Set again per level when a level's content changes.
+   */
   public static int levelTarget(int level) {
     if (level < 1) {
       throw new IllegalArgumentException("Levels start at 1");
     }
-    return 100 + 25 * (level - 1);
+    return LEVEL_TARGET;
   }
 }

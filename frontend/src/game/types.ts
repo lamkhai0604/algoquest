@@ -49,4 +49,8 @@ export interface ProblemItem {
   solved: boolean;
   xp: number;
   practiceDone: boolean;
+  /** The problem has a graded explanation. */
+  tried: boolean;
+  /** Working time spent and no graded explanation yet (D-043). */
+  paused: boolean;
 }

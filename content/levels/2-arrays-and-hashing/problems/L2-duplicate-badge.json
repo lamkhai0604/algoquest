@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 1,
   "title": "Duplicate Badge",
   "statement": "A door scanner logs badge IDs as an array of integers. Return true if any badge ID appears more than once, otherwise false.",
   "examples": [

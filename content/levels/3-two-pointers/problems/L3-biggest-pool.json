@@ -4,6 +4,7 @@
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
+  "order": 3,
   "title": "Biggest Pool",
   "statement": "Wall heights stand in a row, one unit apart. Choose two walls; the water they hold is the distance between them times the shorter wall. Return the largest amount of water.",
   "examples": [

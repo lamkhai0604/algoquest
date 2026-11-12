@@ -42,6 +42,19 @@ Review: all tasks are self-reviewed. The PO reviews the `dev → main` pull requ
 | Local development job | Backend healthy following the README steps |
 | Records check | OK |
 
+## Trial feedback round (T-309)
+
+After the first deployment the PO played Level 1 and reported issues. Each change was approved item by item and recorded as D-040 to D-044:
+
+| Area | Change |
+| --- | --- |
+| XP | A full pass through a level fills the bar: Easy 20, Medium 29, quick check 5, target 150 (D-040) |
+| Lesson | The quick check is stored and awards 5 XP once (D-041) |
+| Problems | Problems open in order at a score of 70; a graded problem reopens on its result with Back, Retry (confirmed), and Next; confetti at 100 (D-042) |
+| Time | The time bonus counts active working time from heartbeats; leaving pauses the clock; Continue or Start again on return; a muted clock and a note after the limit; Paused tag (D-043) |
+| Guidance | A scoring guide under the solve and test pages; the profile lists only levels the player can open (D-044) |
+| Interface | Round back button on every page, 24 px theme icon, "Coming soon" wording |
+
 ## Decisions and interpretations
 
 - **Hint quota window:** each hint comes back 5 hours after it was opened (a rolling window).

@@ -4,6 +4,7 @@
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
+  "order": 1,
   "title": "Second Largest Score",
   "statement": "Given an array of integer scores, return the second largest distinct score. If there are fewer than two distinct scores, return null.",
   "examples": [

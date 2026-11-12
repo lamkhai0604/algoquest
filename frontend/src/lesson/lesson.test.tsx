@@ -34,16 +34,30 @@ const LESSON: Lesson = {
       explanation: "Each item is visited once.",
     },
   ],
+  quickCheckDone: false,
 };
 
-function open() {
-  fakeApi({
+const CHECKED = {
+  correct: [true],
+  done: true,
+  xpGained: 5,
+  levelXp: 5,
+  levelTarget: 150,
+};
+
+function open(lesson: Lesson = LESSON) {
+  const fetchFn = fakeApi({
     "GET /api/v1/me": () => json(200, ME),
     "GET /api/v1/levels": () => json(200, LEVELS),
-    "GET /api/v1/levels/1/lesson": () => json(200, LESSON),
+    "GET /api/v1/levels/1/lesson": () => json(200, lesson),
+    "POST /api/v1/levels/1/quick-check": () => json(200, CHECKED),
   });
   renderSignedInAt("/levels/1/lesson");
+  return fetchFn;
 }
+
+const quickCheckPosts = (fetchFn: ReturnType<typeof fakeApi>) =>
+  fetchFn.mock.calls.filter(([url]) => String(url).endsWith("/quick-check"));
 
 describe("lesson page", () => {
   it("puts the walkthrough before the template code", async () => {
@@ -82,8 +96,8 @@ describe("lesson page", () => {
     expect(screen.getByText("Step 1 of 2")).toBeVisible();
   });
 
-  it("gives immediate quick-check feedback", async () => {
-    open();
+  it("gives immediate feedback and saves a finished quick check once", async () => {
+    const fetchFn = open();
     const question = (await screen.findByText(/Time of one pass/)).closest(
       "fieldset",
     ) as HTMLElement;
@@ -94,13 +108,33 @@ describe("lesson page", () => {
     expect(within(question).getByRole("status")).toHaveTextContent(
       "Not quite. Try another option.",
     );
+    expect(quickCheckPosts(fetchFn)).toHaveLength(0);
 
     await pick("O(n)");
     expect(within(question).getByRole("status")).toHaveTextContent(
       "Correct. Each item is visited once.",
     );
+    expect(await screen.findByText("+5 XP")).toBeVisible();
+    expect(screen.getByText("Quick check complete")).toBeVisible();
+    const [[, init]] = quickCheckPosts(fetchFn) as [[unknown, RequestInit]];
+    expect(JSON.parse(String(init.body))).toEqual({ answers: [1] });
+    expect(
+      within(question).getByRole("button", { name: "O(1)" }),
+    ).toBeDisabled();
     expect(
       screen.getByRole("link", { name: "Go to the problems" }),
     ).toHaveAttribute("href", "/levels/1");
+  });
+
+  it("shows a finished quick check as complete with no XP to earn", async () => {
+    const fetchFn = open({ ...LESSON, quickCheckDone: true });
+
+    expect(await screen.findByText("Quick check complete")).toBeVisible();
+    expect(screen.queryByText("+5 XP")).toBeNull();
+    expect(screen.getByRole("button", { name: "O(n)" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(quickCheckPosts(fetchFn)).toHaveLength(0);
   });
 });

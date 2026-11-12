@@ -106,7 +106,7 @@ class ProfileApiTest {
     solve("L1-max-value", GOOD);
     profile()
         .andExpect(jsonPath("$.currentStreak").value(1))
-        .andExpect(jsonPath("$.totalXp").value(25))
+        .andExpect(jsonPath("$.totalXp").value(20))
         .andExpect(jsonPath("$.solvedProblems").value(1));
 
     // Two hours later it is still Monday in Los Angeles: no change.

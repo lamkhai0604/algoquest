@@ -74,18 +74,18 @@ class PracticeApiTest {
 
   @Test
   void aPassingPracticeAttemptMarksDoneAndAddsTenXp() throws Exception {
-    solved("L1-max-value", 70);
+    solved("L1-max-value", 105);
 
     practice("L1-max-value", GOOD)
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.mode").value("practice"))
         .andExpect(jsonPath("$.solved").value(true))
         .andExpect(jsonPath("$.xpGained").value(10))
-        .andExpect(jsonPath("$.levelXp").value(80));
+        .andExpect(jsonPath("$.levelXp").value(115));
 
     mvc.perform(get("/api/v1/levels/1/problems").with(player))
         .andExpect(jsonPath("$[0].practiceDone").value(true))
-        .andExpect(jsonPath("$[0].xp").value(70));
+        .andExpect(jsonPath("$[0].xp").value(105));
     practice("L1-max-value", GOOD)
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.detail").value("This problem is already Done."));
@@ -93,18 +93,18 @@ class PracticeApiTest {
 
   @Test
   void doneNeverFillsPastTheBar() throws Exception {
-    solved("L1-max-value", 95);
+    solved("L1-max-value", 145);
 
     practice("L1-max-value", GOOD)
         .andExpect(jsonPath("$.xpGained").value(5))
-        .andExpect(jsonPath("$.levelXp").value(100));
+        .andExpect(jsonPath("$.levelXp").value(150));
     mvc.perform(get("/api/v1/levels").with(player))
         .andExpect(jsonPath("$[0].testOpen").value(true));
   }
 
   @Test
   void aLowScoreIsRecordedButNotDone() throws Exception {
-    solved("L1-max-value", 70);
+    solved("L1-max-value", 105);
 
     practice("L1-max-value", "Sort it.")
         .andExpect(status().isOk())
@@ -116,10 +116,10 @@ class PracticeApiTest {
 
   @Test
   void practiceNeedsSeventyPercentAndASolvedProblem() throws Exception {
-    solved("L1-max-value", 60);
+    solved("L1-max-value", 100);
     practice("L1-max-value", GOOD).andExpect(status().isForbidden());
 
-    solved("L1-max-value", 70);
+    solved("L1-max-value", 105);
     practice("L1-pair-max", GOOD)
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.detail").value("Solve this problem before practising it."));

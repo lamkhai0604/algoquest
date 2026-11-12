@@ -76,7 +76,10 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
   ).toBeVisible();
   await page.getByRole("button", { name: "Next step" }).click();
   await expect(page.getByText("Step 2 of 6")).toBeVisible();
-  await page.getByRole("button", { name: "O(n²)", exact: true }).first().click();
+  await page
+    .getByRole("button", { name: "O(n²)", exact: true })
+    .first()
+    .click();
   await expect(page.getByText("Correct.")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/lesson.png`, fullPage: true });
 
@@ -85,9 +88,7 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
   await expect(
     page.getByRole("heading", { name: "Problems", exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByText("Coming in a later version").first(),
-  ).toBeVisible();
+  await expect(page.getByText("Coming soon").first()).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/level.png`, fullPage: true });
 
   // Solve: a grader failure keeps the text and records nothing.
@@ -105,17 +106,40 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
     "If the array is empty I return null. Otherwise I keep the largest value " +
       "seen so far while walking through the array once. O(n) time, O(1) space.",
   );
-  // One hint: 25 XP becomes 20, and the header shows 2 hints left.
-  await page.getByRole("button", { name: "Show hint 1 of 3 (−20% XP)" }).click();
+  // One hint: 20 XP becomes 16, and the header shows 2 hints left.
+  await page
+    .getByRole("button", { name: "Show hint 1 of 3 (−20% XP)" })
+    .click();
   await expect(page.getByText("Hint 1.")).toBeVisible();
   await expect(page.getByTitle("Hints left")).toContainText("2");
-  await expect(page.getByText("Up to 20 XP")).toBeVisible();
+  await expect(page.getByText("Up to 16 XP")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/solve.png`, fullPage: true });
   await submit.click();
   await expect(page.getByText("Solved", { exact: true })).toBeVisible();
-  await expect(page.getByText("+20 XP")).toBeVisible();
-  await expect(page.getByTitle("Total XP")).toContainText("20");
+  await expect(page.getByText("+16 XP")).toBeVisible();
+  await expect(page.getByTitle("Total XP")).toContainText("16");
   await page.screenshot({ path: `${SHOTS}/feedback.png`, fullPage: true });
+
+  // A graded problem reopens on its result; Retry asks first (D-042).
+  await page.getByRole("link", { name: /Back to the problems/ }).click();
+  await page.getByRole("link", { name: /Max Temperature/ }).click();
+  await expect(page.getByText("Solved", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /Retry/ }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Retry this problem?" }),
+  ).toBeVisible();
+  await page.screenshot({ path: `${SHOTS}/retry-dialog.png` });
+  await page.getByRole("button", { name: "Keep my result" }).click();
+
+  // The next problem (Easy, order 2) opened when this one was solved.
+  await page.getByRole("link", { name: /Next problem/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "Count Passing Scores" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "How your answer is scored" }),
+  ).toBeVisible();
+  await page.screenshot({ path: `${SHOTS}/next-problem.png`, fullPage: true });
 
   // The level map now shows the XP and the solved problem.
   await page.getByRole("link", { name: "AlgoQuest" }).click();
