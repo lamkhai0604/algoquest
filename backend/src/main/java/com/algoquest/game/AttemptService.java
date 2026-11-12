@@ -48,6 +48,7 @@ public class AttemptService {
   public record AttemptResult(
       UUID attemptId,
       String mode,
+      String explanation,
       int pattern,
       int steps,
       int complexity,
@@ -65,6 +66,7 @@ public class AttemptService {
       return new AttemptResult(
           attempt.id(),
           attempt.mode(),
+          attempt.explanation(),
           result.pattern(),
           result.steps(),
           result.complexity(),
@@ -177,7 +179,13 @@ public class AttemptService {
                   false);
           StoredAttempt attempt =
               new StoredAttempt(
-                  request.attemptId(), userId, problem.id(), EXPLAIN, result, award.xpGained());
+                  request.attemptId(),
+                  userId,
+                  problem.id(),
+                  EXPLAIN,
+                  text,
+                  result,
+                  award.xpGained());
           boolean saved =
               attempts.insert(attempt, EXPLAIN, text, hintsUsed, seconds, grader.name(), gradingMs);
           if (!saved) {
@@ -210,7 +218,8 @@ public class AttemptService {
     boolean passed = result.total() >= XpRules.PASS_SCORE;
     int gained = passed ? LevelRules.practiceDoneXp(levelXp, problem.level()) : 0;
     StoredAttempt attempt =
-        new StoredAttempt(request.attemptId(), userId, problem.id(), PRACTICE, result, gained);
+        new StoredAttempt(
+            request.attemptId(), userId, problem.id(), PRACTICE, text, result, gained);
     if (!attempts.insert(attempt, PRACTICE, text, 0, seconds, grader.name(), gradingMs)) {
       return stored(attempts.find(request.attemptId()).orElseThrow(), userId, problem);
     }

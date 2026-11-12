@@ -17,7 +17,13 @@ public class AttemptStore {
 
   /** A stored attempt: who made it, for which problem, and what it earned. */
   public record StoredAttempt(
-      UUID id, UUID userId, String problemId, String mode, GradingResult result, int xpGained) {}
+      UUID id,
+      UUID userId,
+      String problemId,
+      String mode,
+      String explanation,
+      GradingResult result,
+      int xpGained) {}
 
   private final JdbcTemplate jdbc;
   private final Clock clock;
@@ -30,8 +36,8 @@ public class AttemptStore {
   public Optional<StoredAttempt> find(UUID attemptId) {
     return first(
         jdbc.query(
-            "select id, user_id, problem_id, mode, pattern, steps, complexity, edge_cases,"
-                + " feedback, xp_gained from attempt where id = ?",
+            "select id, user_id, problem_id, mode, explanation, pattern, steps, complexity,"
+                + " edge_cases, feedback, xp_gained from attempt where id = ?",
             AttemptStore::row,
             attemptId));
   }
@@ -40,8 +46,8 @@ public class AttemptStore {
   public Optional<StoredAttempt> latest(UUID userId, String problemId, String mode) {
     return first(
         jdbc.query(
-            "select id, user_id, problem_id, mode, pattern, steps, complexity, edge_cases,"
-                + " feedback, xp_gained from attempt"
+            "select id, user_id, problem_id, mode, explanation, pattern, steps, complexity,"
+                + " edge_cases, feedback, xp_gained from attempt"
                 + " where user_id = ? and problem_id = ? and mode = ?"
                 + " order by created_at desc limit 1",
             AttemptStore::row,
@@ -60,6 +66,7 @@ public class AttemptStore {
         rs.getObject("user_id", UUID.class),
         rs.getString("problem_id"),
         rs.getString("mode"),
+        rs.getString("explanation"),
         new GradingResult(
             rs.getInt("pattern"),
             rs.getInt("steps"),
