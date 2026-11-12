@@ -92,8 +92,9 @@ export function GraphBackground() {
 
     const build = () => {
       const ratio = window.devicePixelRatio || 1;
-      width = window.innerWidth;
-      height = window.innerHeight;
+      const box = canvas.getBoundingClientRect();
+      width = box.width || window.innerWidth;
+      height = box.height || window.innerHeight;
       canvas.width = width * ratio;
       canvas.height = height * ratio;
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
