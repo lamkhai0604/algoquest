@@ -3,6 +3,7 @@ import { Navigate, useSearchParams } from "react-router";
 import { API_URL, wakeServer } from "../api";
 import { Card } from "../components";
 import styles from "./Auth.module.css";
+import { GraphBackground } from "./GraphBackground";
 import { useAuth } from "./authContext";
 
 const ERRORS: Record<string, string> = {
@@ -29,6 +30,7 @@ export function SignInPage() {
 
   return (
     <div className={styles.page}>
+      <GraphBackground />
       <Card className={styles.card}>
         <h1 className={styles.title}>Sign in to AlgoQuest</h1>
         <p className={styles.lead}>Don&apos;t let Algorithm beat you.</p>

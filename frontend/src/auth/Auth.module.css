@@ -1,4 +1,6 @@
 .page {
+  position: relative;
+  overflow: hidden;
   display: grid;
   place-items: center;
   min-height: calc(100vh - 64px);
@@ -6,6 +8,9 @@
 }
 
 .card {
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(8px);
   display: grid;
   gap: var(--space-3);
   width: min(400px, 100%);

@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Sprint | Sprint 3 ([plan](../sprints/sprint-3.md)) |
-| Dates | 2026-11-09 |
+| Dates | 2026-11-09 to 2026-11-12 |
 | Goal | A player can finish Level 1 completely: use hints, do the practice round, pass the level-up test, and continue into Levels 2 and 3 |
-| Outcome | **Goal met in CI with the fake grader.** T-301 to T-306 and T-308 are implemented, verified, and merged. T-307 (first deployment) waits for a separate PO approval. Open: PO review of the Levels 2 and 3 content |
+| Outcome | **Goal met; sprint closed 2026-11-12.** T-301 to T-311 are done. The game runs on the live site (T-307), the PO played Level 1 there, and the feedback round (T-309 to T-311) is merged. Open: PO review of the Levels 2 and 3 content |
 
 ## Increment
 
@@ -27,8 +27,11 @@
 | T-304 Levels 2 and 3 content | Lessons and 18 problems with placeholders | Content validation in CI; hidden test answers computed by reference solutions | Yes; **PO content review open** |
 | T-305 Profile and streak | `streak`, profile endpoint and page, header streak, navigation | Streak rules, time-zone day boundaries | Yes |
 | T-306 Admin panel part 1 | Grading log, progress reset, admin page | Reset effects, audit entry, 403 for players | Yes |
-| T-307 First deployment | Not started | — | **Waiting for PO approval** (D-037, D-006) |
+| T-307 First deployment | Vercel, Render, Neon; production OAuth apps; [runbook](../DEPLOY.md) | Live health check; PO signed in and had an answer graded by Gemini on the live site | Yes |
 | T-308 Sprint report | This document | Records check | Yes |
+| T-309 Trial feedback round | XP rebalance, quick check XP, ordered problems, result page, active-time clock, scoring guide | Backend and frontend tests; smoke | Yes |
+| T-310 Solve page layout | Full-width answer; answer beside the result; no re-lock after an order change | Tests; smoke | Yes |
+| T-311 Sign-in background | Live graph search (D-045) | Frontend checks | Yes |
 
 Review: all tasks are self-reviewed. The PO reviews the `dev → main` pull request.
 
@@ -73,10 +76,9 @@ After the first deployment the PO played Level 1 and reported issues. Each chang
 
 ## Not done
 
-- **T-307 first deployment** — needs PO approval, accounts on Vercel and Render, and production OAuth apps.
 - **PO review of Levels 2 and 3 content.**
-- Real-grader check (NFR-04) and manual sign-in check, open since Sprints 1 and 2.
+- Real-grader latency check (NFR-04): the live site grades with Gemini; a measured run of `RealGraderCheck` is still open.
 
 ## Next sprint
 
-Sprint 4 — code answers for double XP (JavaScript in the browser, Java on Judge0), admin game config, and polish. The plan is proposed after the PO decides on T-307.
+Sprint 4 — code answers for double XP (JavaScript in the browser, Java on Judge0), admin game config, and polish. The plan is proposed next.

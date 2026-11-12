@@ -83,6 +83,7 @@ export const PROBLEM: ProblemDetail = {
 export const GRADED: AttemptResult = {
   attemptId: "a-1",
   mode: "explain",
+  explanation: "Walk the array once and keep the largest value so far.",
   pattern: 40,
   steps: 30,
   complexity: 20,

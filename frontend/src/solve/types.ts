@@ -28,6 +28,8 @@ export type AttemptMode = "explain" | "practice";
 export interface AttemptResult {
   attemptId: string;
   mode: AttemptMode;
+  /** The explanation that was graded. */
+  explanation: string;
   pattern: number;
   steps: number;
   complexity: number;

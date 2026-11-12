@@ -150,6 +150,20 @@ class PlayApiTest {
   }
 
   @Test
+  void aProblemWithProgressStaysOpenWhenTheOrderPutsItLater() throws Exception {
+    // Solved before the order existed; the first problem is still unsolved.
+    progress.lock(playerId, "L1-pair-max", 1);
+    progress.save(playerId, "L1-pair-max", new ProblemProgress(true, 20, false));
+
+    mvc.perform(get("/api/v1/levels/1/problems").with(player))
+        .andExpect(jsonPath("$[0].locked").value(false))
+        .andExpect(jsonPath("$[1].id").value("L1-pair-max"))
+        .andExpect(jsonPath("$[1].locked").value(false))
+        .andExpect(jsonPath("$[1].solved").value(true));
+    mvc.perform(get("/api/v1/problems/L1-pair-max").with(player)).andExpect(status().isOk());
+  }
+
+  @Test
   void problemListHasPracticeProblemsByDifficulty() throws Exception {
     mvc.perform(get("/api/v1/levels/1/problems").with(player))
         .andExpect(status().isOk())
