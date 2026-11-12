@@ -57,6 +57,17 @@ algoquest:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   # Signs the app's login tokens (D-036). When empty, a random key is used and tokens end at restart.
   jwt-secret: ${JWT_SECRET:}
+  code:
+    java:
+      # "judge0" (default) or "fake" (fixed rules, no network; tests and the smoke run).
+      provider: ${JAVA_RUNNER:judge0}
+      # Free plan: 50 submissions a day; the guard stops a little earlier (D-032).
+      daily-limit: ${JUDGE0_DAILY_LIMIT:45}
+      judge0:
+        base-url: https://judge0-ce.p.rapidapi.com
+        api-key: ${JUDGE0_API_KEY:}
+        # 62 = Java (OpenJDK 13) on Judge0 CE.
+        language-id: ${JUDGE0_JAVA_LANGUAGE_ID:62}
   grading:
     # "gemini" (default) or "fake" (fixed rules, no network; tests and the smoke run).
     provider: ${GRADING_PROVIDER:gemini}

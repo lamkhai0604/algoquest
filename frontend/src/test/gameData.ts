@@ -75,6 +75,10 @@ export const PROBLEM: ProblemDetail = {
   ],
   constraints: ["0 <= temps.length <= 10^5"],
   hintCount: 3,
+  starterCode: {
+    javascript: "function maxTemperature(temps) {\n}",
+    java: "class Solution {\n  Integer maxTemperature(int[] temps) {\n  }\n}",
+  },
   activeSeconds: 0,
   lastResult: null,
   nextProblemId: "L1-second-largest",

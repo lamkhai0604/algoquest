@@ -15,6 +15,8 @@ export interface ProblemDetail {
   examples: ProblemExample[];
   constraints: string[];
   hintCount: number;
+  /** Starter code per language for the code answer (FR-07). */
+  starterCode?: Record<string, string> | null;
   /** Active working time so far: the clock of the time bonus (D-043). */
   activeSeconds: number;
   /** The latest graded explanation, or null before the first one (D-042). */
