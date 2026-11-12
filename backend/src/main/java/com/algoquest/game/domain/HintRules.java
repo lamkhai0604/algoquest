@@ -18,16 +18,26 @@ public final class HintRules {
 
   /** Hints still available, from the times of the hints opened so far. */
   public static int remaining(List<Instant> openedAt, Instant now) {
-    return Math.max(0, PER_WINDOW - inWindow(openedAt, now).size());
+    return remaining(GameRules.DEFAULTS, openedAt, now);
+  }
+
+  public static int remaining(GameRules rules, List<Instant> openedAt, Instant now) {
+    return Math.max(0, rules.hintsPerWindow() - inWindow(rules, openedAt, now).size());
   }
 
   /** When the next hint comes back, or empty when none is in use. */
   public static Optional<Instant> nextRefill(List<Instant> openedAt, Instant now) {
-    return inWindow(openedAt, now).stream().min(Instant::compareTo).map(t -> t.plus(WINDOW));
+    return nextRefill(GameRules.DEFAULTS, openedAt, now);
   }
 
-  private static List<Instant> inWindow(List<Instant> openedAt, Instant now) {
-    Instant from = now.minus(WINDOW);
+  public static Optional<Instant> nextRefill(GameRules rules, List<Instant> openedAt, Instant now) {
+    return inWindow(rules, openedAt, now).stream()
+        .min(Instant::compareTo)
+        .map(t -> t.plus(rules.hintWindow()));
+  }
+
+  private static List<Instant> inWindow(GameRules rules, List<Instant> openedAt, Instant now) {
+    Instant from = now.minus(rules.hintWindow());
     return openedAt.stream().filter(t -> t.isAfter(from)).toList();
   }
 }

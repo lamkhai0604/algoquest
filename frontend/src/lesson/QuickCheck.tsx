@@ -2,7 +2,6 @@ import { useState } from "react";
 import { api } from "../api";
 import { Badge, Card, cx } from "../components";
 import { useGame } from "../game/gameContext";
-import { QUICK_CHECK_XP } from "../solve/rules";
 import styles from "./Lesson.module.css";
 import type { QuickCheckQuestion, QuickCheckResult } from "./types";
 
@@ -62,7 +61,7 @@ interface QuickCheckProps {
  * correctly is sent to the server once and earns 5 XP once per level (D-041).
  */
 export function QuickCheck({ level, questions, done }: QuickCheckProps) {
-  const { reloadLevels } = useGame();
+  const { reloadLevels, rules } = useGame();
   const [picks, setPicks] = useState<(number | null)[]>(() =>
     questions.map((question) => (done ? question.answer : null)),
   );
@@ -98,7 +97,7 @@ export function QuickCheck({ level, questions, done }: QuickCheckProps) {
     <Card heading="Quick check">
       <p className={styles.checkNote}>
         Answer every question correctly to finish the lesson and earn{" "}
-        {QUICK_CHECK_XP} XP once.
+        {rules.quickCheckXp} XP once.
       </p>
       {questions.map((question, index) => (
         <Question

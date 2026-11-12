@@ -6,7 +6,8 @@ import {
   Celebration,
   XpBar,
 } from "../components";
-import { CRITERIA, PASS_TOTAL } from "./rules";
+import { useGame } from "../game/gameContext";
+import { CRITERIA } from "./rules";
 import styles from "./Solve.module.css";
 import type { AttemptResult } from "./types";
 
@@ -20,6 +21,7 @@ interface Props {
  * A perfect score gets a short celebration (D-042).
  */
 export function FeedbackPanel({ result, level }: Props) {
+  const { rules } = useGame();
   return (
     <div className={styles.feedback}>
       {result.total === 100 && <Celebration />}
@@ -30,7 +32,9 @@ export function FeedbackPanel({ result, level }: Props) {
         <p className={styles.total} aria-label={`Score ${result.total} of 100`}>
           <strong>{result.total}</strong> / 100
         </p>
-        <p className={styles.muted}>{PASS_TOTAL} or more solves the problem.</p>
+        <p className={styles.muted}>
+          {rules.passScore} or more solves the problem.
+        </p>
       </Card>
       <Card heading="Score by criterion">
         <ul className={styles.criteria}>

@@ -1,6 +1,7 @@
 package com.algoquest.game;
 
 import com.algoquest.content.model.Problem;
+import com.algoquest.game.domain.GameRules;
 import com.algoquest.game.domain.HintRules;
 import com.algoquest.shared.web.ApiException;
 import java.sql.Timestamp;
@@ -29,11 +30,13 @@ public class HintService {
   private final GameService game;
   private final JdbcTemplate jdbc;
   private final Clock clock;
+  private final GameRulesService rules;
 
-  public HintService(GameService game, JdbcTemplate jdbc, Clock clock) {
+  public HintService(GameService game, JdbcTemplate jdbc, Clock clock, GameRulesService rules) {
     this.game = game;
     this.jdbc = jdbc;
     this.clock = clock;
+    this.rules = rules;
   }
 
   @Transactional(readOnly = true)
@@ -93,16 +96,17 @@ public class HintService {
   }
 
   private Quota quota(UUID userId, Instant now) {
+    GameRules current = rules.current();
     List<Timestamp> rows =
         jdbc.queryForList(
             "select used_at from hint_use where user_id = ? and used_at > ?",
             Timestamp.class,
             userId,
-            Timestamp.from(now.minus(HintRules.WINDOW)));
+            Timestamp.from(now.minus(current.hintWindow())));
     List<Instant> openedAt = rows.stream().map(Timestamp::toInstant).toList();
     return new Quota(
-        HintRules.remaining(openedAt, now),
-        HintRules.PER_WINDOW,
-        HintRules.nextRefill(openedAt, now).orElse(null));
+        HintRules.remaining(current, openedAt, now),
+        current.hintsPerWindow(),
+        HintRules.nextRefill(current, openedAt, now).orElse(null));
   }
 }

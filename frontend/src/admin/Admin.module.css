@@ -57,3 +57,51 @@
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
+
+/* Game rules editor (D-047) */
+.rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-3) var(--space-4);
+}
+
+.rule {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+}
+
+.rule > span:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ruleInput {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ruleInput input {
+  width: 96px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.ruleInput input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.saveRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}

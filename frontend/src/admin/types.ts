@@ -1,3 +1,5 @@
+import type { GameRules } from "../solve/rules";
+
 export interface LoggedAttempt {
   id: string;
   userEmail: string;
@@ -36,4 +38,19 @@ export interface LevelProgress {
 export interface ResetResult {
   before: LevelProgress;
   after: LevelProgress;
+}
+
+export interface RulesView {
+  current: GameRules;
+  defaults: GameRules;
+}
+
+export interface AuditEntry {
+  at: string;
+  actorEmail: string | null;
+  action: string;
+  target: string;
+  targetEmail: string | null;
+  before: string | null;
+  after: string | null;
 }

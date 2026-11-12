@@ -1,36 +1,78 @@
 import type { Difficulty } from "../game/types";
 
-/** Display values that mirror the XP rules (FR-08, D-040); the server decides. */
 export const MAX_LENGTH = 2000;
-export const PASS_TOTAL = 70;
 
-export const BASE_XP = 15;
-export const TIME_BONUS = 5;
-export const HINT_PENALTY_PERCENT = 20;
-export const QUICK_CHECK_XP = 5;
-export const DIFFICULTY_BONUS: Record<Difficulty, number> = {
-  Easy: 0,
-  Medium: 9,
-  Hard: 20,
+/** The game rules in force (D-047); the server decides, the pages explain. */
+export interface GameRules {
+  baseXp: number;
+  mediumBonus: number;
+  hardBonus: number;
+  timeBonus: number;
+  easyMinutes: number;
+  mediumMinutes: number;
+  hardMinutes: number;
+  hintPenaltyPercent: number;
+  hintsPerWindow: number;
+  hintWindowHours: number;
+  passScore: number;
+  practiceOpenPercent: number;
+  practiceDoneXp: number;
+  quickCheckXp: number;
+  levelTarget: number;
+}
+
+/** The defaults of D-040, used until the server's rules arrive. */
+export const DEFAULT_RULES: GameRules = {
+  baseXp: 15,
+  mediumBonus: 9,
+  hardBonus: 20,
+  timeBonus: 5,
+  easyMinutes: 15,
+  mediumMinutes: 25,
+  hardMinutes: 40,
+  hintPenaltyPercent: 20,
+  hintsPerWindow: 3,
+  hintWindowHours: 5,
+  passScore: 70,
+  practiceOpenPercent: 70,
+  practiceDoneXp: 10,
+  quickCheckXp: 5,
+  levelTarget: 150,
 };
-export const TIME_LIMIT_MINUTES: Record<Difficulty, number> = {
-  Easy: 15,
-  Medium: 25,
-  Hard: 40,
-};
 
-export const timeLimitSeconds = (difficulty: Difficulty) =>
-  TIME_LIMIT_MINUTES[difficulty] * 60;
+export function difficultyBonus(difficulty: Difficulty, rules = DEFAULT_RULES) {
+  if (difficulty === "Medium") return rules.mediumBonus;
+  if (difficulty === "Hard") return rules.hardBonus;
+  return 0;
+}
 
+export function timeLimitMinutes(
+  difficulty: Difficulty,
+  rules = DEFAULT_RULES,
+) {
+  if (difficulty === "Medium") return rules.mediumMinutes;
+  if (difficulty === "Hard") return rules.hardMinutes;
+  return rules.easyMinutes;
+}
+
+export const timeLimitSeconds = (
+  difficulty: Difficulty,
+  rules = DEFAULT_RULES,
+) => timeLimitMinutes(difficulty, rules) * 60;
+
+/** XP of a first solve right now: full XP for the difficulty, time bonus, hints. */
 export function maxXp(
   difficulty: Difficulty,
   seconds: number,
   hintsUsed = 0,
+  rules = DEFAULT_RULES,
 ): number {
-  const inTime = seconds <= timeLimitSeconds(difficulty);
-  const bonus = DIFFICULTY_BONUS[difficulty] + (inTime ? TIME_BONUS : 0);
-  const raw = BASE_XP + bonus;
-  const percent = Math.max(0, 100 - HINT_PENALTY_PERCENT * hintsUsed);
+  const inTime = seconds <= timeLimitSeconds(difficulty, rules);
+  const raw =
+    rules.baseXp +
+    difficultyBonus(difficulty, rules) +
+    (inTime ? rules.timeBonus : 0);
+  const percent = Math.max(0, 100 - rules.hintPenaltyPercent * hintsUsed);
   return Math.floor((raw * percent) / 100);
 }
 
