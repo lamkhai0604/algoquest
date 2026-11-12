@@ -6,6 +6,9 @@ import java.util.Map;
 /**
  * A problem file as stored in {@code content/}, including the answer key, hints, and hidden tests.
  * Only the backend reads this type; the API returns public views instead.
+ *
+ * <p>{@code order} places a practice problem within its difficulty (1 comes first); problems open
+ * in this order (D-042). Problems without it come after the numbered ones, by ID.
  */
 public record Problem(
     String id,
@@ -21,7 +24,8 @@ public record Problem(
     List<String> hints,
     List<TestCase> tests,
     Map<String, String> starterCode,
-    String similarLeetCode) {
+    String similarLeetCode,
+    Integer order) {
 
   public boolean isReady() {
     return "ready".equals(status);

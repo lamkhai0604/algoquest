@@ -41,7 +41,7 @@ describe("level map", () => {
     ).toHaveAttribute("href", "/levels/1");
     expect(within(path).getAllByRole("link")).toHaveLength(1);
     expect(within(path).getByText("Locked")).toBeVisible();
-    expect(within(path).getByText("Coming later")).toBeVisible();
+    expect(within(path).getByText("Coming soon")).toBeVisible();
   });
 
   it("offers a retry when the levels cannot be loaded", async () => {
@@ -65,7 +65,7 @@ describe("level page", () => {
 
     const solved = await screen.findByRole("link", { name: /Max Temperature/ });
     expect(solved).toHaveAttribute("href", "/problems/L1-max-temperature");
-    expect(solved).toHaveTextContent("Solved · +25 XP");
+    expect(solved).toHaveTextContent("Solved · +20 XP");
     expect(
       screen.getByRole("link", { name: /Second Largest Score/ }),
     ).toHaveTextContent("Not tried");
@@ -79,7 +79,7 @@ describe("level page", () => {
     renderSignedInAt("/levels/1");
 
     const hard = (await screen.findByText("Moving Median")).closest("li");
-    expect(hard).toHaveTextContent("Coming in a later version");
+    expect(hard).toHaveTextContent("Coming soon");
     expect(screen.queryByRole("link", { name: /Moving Median/ })).toBeNull();
   });
 });

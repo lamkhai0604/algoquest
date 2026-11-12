@@ -104,9 +104,9 @@ public class AdminGameService {
   }
 
   /**
-   * Starts a level over for one player: problem progress, hint use, start times, and level-up tests
-   * of that level are removed. The grading log keeps the attempts. Must run inside the caller's
-   * transaction, together with the audit entry.
+   * Starts a level over for one player: problem progress, hint use, working time, the quick check,
+   * and level-up tests of that level are removed. The grading log keeps the attempts. Must run
+   * inside the caller's transaction, together with the audit entry.
    */
   @Transactional(propagation = Propagation.MANDATORY)
   public LevelProgress resetLevel(UUID userId, int level) {
@@ -129,6 +129,7 @@ public class AdminGameService {
         userId,
         level);
     jdbc.update("delete from test_attempt where user_id = ? and level = ?", userId, level);
+    jdbc.update("delete from quick_check where user_id = ? and level = ?", userId, level);
     return before;
   }
 

@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 3,
   "title": "Longest Sunny Streak",
   "statement": "A weather log is a string of letters, one per day: 'S' for sunny and 'R' for rainy. Return the length of the longest run of consecutive sunny days.",
   "examples": [

@@ -17,4 +17,14 @@ export interface Lesson {
   markdown: string;
   walkthrough: WalkthroughStep[];
   quickCheck: QuickCheckQuestion[];
+  /** Whether this player has finished the quick check (D-041). */
+  quickCheckDone: boolean;
+}
+
+export interface QuickCheckResult {
+  correct: boolean[];
+  done: boolean;
+  xpGained: number;
+  levelXp: number;
+  levelTarget: number;
 }

@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 3,
   "title": "Merge Two Score Lists",
   "statement": "Two teams each have a list of scores sorted in ascending order. Return one list with all scores, still in ascending order, without sorting again.",
   "examples": [

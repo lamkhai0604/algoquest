@@ -1,12 +1,15 @@
 package com.algoquest.game;
 
 import com.algoquest.access.AuthenticatedUser;
-import com.algoquest.content.ContentViews.LessonView;
 import com.algoquest.game.AttemptService.AttemptRequest;
 import com.algoquest.game.AttemptService.AttemptResult;
+import com.algoquest.game.GameViews.ActiveTime;
+import com.algoquest.game.GameViews.LessonPage;
 import com.algoquest.game.GameViews.LevelView;
 import com.algoquest.game.GameViews.ProblemItem;
 import com.algoquest.game.GameViews.ProblemPage;
+import com.algoquest.game.GameViews.QuickCheckAnswers;
+import com.algoquest.game.GameViews.QuickCheckResult;
 import com.algoquest.game.HintService.Hints;
 import com.algoquest.game.HintService.Quota;
 import com.algoquest.game.ProfileService.Profile;
@@ -46,9 +49,17 @@ public class PlayController {
   }
 
   @GetMapping("/levels/{number}/lesson")
-  public LessonView lesson(
+  public LessonPage lesson(
       @AuthenticationPrincipal AuthenticatedUser user, @PathVariable int number) {
     return game.lesson(user.id(), number);
+  }
+
+  @PostMapping("/levels/{number}/quick-check")
+  public QuickCheckResult quickCheck(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable int number,
+      @RequestBody QuickCheckAnswers answers) {
+    return game.answerQuickCheck(user.id(), number, answers);
   }
 
   @GetMapping("/levels/{number}/problems")
@@ -61,6 +72,18 @@ public class PlayController {
   public ProblemPage problem(
       @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
     return game.problem(user.id(), id);
+  }
+
+  @PostMapping("/problems/{id}/heartbeat")
+  public ActiveTime heartbeat(
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
+    return game.beat(user.id(), id);
+  }
+
+  @PostMapping("/problems/{id}/restart")
+  public ActiveTime restart(
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
+    return game.restart(user.id(), id);
   }
 
   @PostMapping("/problems/{id}/attempts")

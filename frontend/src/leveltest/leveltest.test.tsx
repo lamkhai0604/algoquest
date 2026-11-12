@@ -68,7 +68,7 @@ describe("level-up test", () => {
     renderSignedInAt("/levels/1");
 
     expect(
-      await screen.findByText("Opens when the level bar is full (100 XP)."),
+      await screen.findByText("Opens when the level bar is full (150 XP)."),
     ).toBeVisible();
     expect(screen.queryByRole("button", { name: "Start the test" })).toBeNull();
     expect(screen.getByRole("button", { name: "Hard mode" })).toBeDisabled();

@@ -1,11 +1,18 @@
-import { Badge, Card, ErrorState, LoadingState, XpBar } from "../components";
+import {
+  BackButton,
+  Badge,
+  Card,
+  ErrorState,
+  LoadingState,
+  XpBar,
+} from "../components";
 import { useGame } from "../game/gameContext";
 import type { Level, Profile } from "../game/types";
 import game from "./Game.module.css";
 import styles from "./Pages.module.css";
 
 function stateText(level: Level): string {
-  if (!level.available) return "Coming later";
+  if (!level.available) return "Coming soon";
   if (level.state === "OPEN") return "Open";
   if (level.state === "EASY_ONLY") return "Easy only";
   return "Locked";
@@ -35,9 +42,12 @@ export function ProfilePage() {
   const { profile, reloadLevels } = useGame();
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>
-        {profile.status === "ready" ? profile.data.displayName : "Profile"}
-      </h1>
+      <div className={styles.topBar}>
+        <BackButton to="/" label="Back to the level map" />
+        <h1 className={styles.title}>
+          {profile.status === "ready" ? profile.data.displayName : "Profile"}
+        </h1>
+      </div>
       {profile.status === "loading" && (
         <LoadingState label="Loading profile…" />
       )}
@@ -50,7 +60,7 @@ export function ProfilePage() {
           <Card heading="Progress by level">
             <ul className={game.levelList}>
               {profile.data.levels
-                .filter((level) => level.available)
+                .filter((level) => level.available && level.state !== "LOCKED")
                 .map((level) => (
                   <li key={level.number} className={game.profileRow}>
                     <span className={game.rowTitle}>

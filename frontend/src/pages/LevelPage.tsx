@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router";
 import { useApiGet } from "../api/useApiGet";
 import {
+  BackButton,
   Badge,
   ButtonLink,
   Card,
@@ -16,13 +17,15 @@ import styles from "./Pages.module.css";
 
 function ProblemStatus({ problem }: { problem: ProblemItem }) {
   if (problem.status === "comingSoon") {
-    return <Badge tone="warning">Coming in a later version</Badge>;
+    return <Badge tone="warning">Coming soon</Badge>;
   }
   if (problem.locked) return <Badge>Locked</Badge>;
   if (problem.solved) {
     const done = problem.practiceDone ? " · Done" : "";
     return <Badge tone="success">{`Solved · +${problem.xp} XP${done}`}</Badge>;
   }
+  if (problem.tried) return <Badge tone="warning">Not solved yet</Badge>;
+  if (problem.paused) return null;
   return <Badge>Not tried</Badge>;
 }
 
@@ -34,6 +37,7 @@ function ProblemRow({ problem }: { problem: ProblemItem }) {
       </span>
       <span className={game.rowMeta}>
         <Badge tone="primary">{problem.difficulty}</Badge>
+        {problem.paused && <Badge tone="xp">⏸ Paused</Badge>}
         <ProblemStatus problem={problem} />
       </span>
     </>
@@ -111,9 +115,12 @@ export function LevelPage() {
 
   return (
     <div className={styles.page}>
-      <nav className={game.crumbs} aria-label="Breadcrumb">
-        <Link to="/">Level map</Link> / <span>{title}</span>
-      </nav>
+      <div className={styles.topBar}>
+        <BackButton to="/" label="Back to the level map" />
+        <nav className={game.crumbs} aria-label="Breadcrumb">
+          <Link to="/">Level map</Link> / <span>{title}</span>
+        </nav>
+      </div>
       <h1 className={styles.title}>{title}</h1>
       {level && (
         <Card>
@@ -132,6 +139,9 @@ export function LevelPage() {
       {level && <TestStartCard level={level} />}
       <section className={game.path}>
         <h2 className={game.sectionTitle}>Problems</h2>
+        <p className={game.note}>
+          Problems open in order: solve one (score 70 or more) to open the next.
+        </p>
         {problems.state.status === "loading" && (
           <LoadingState label="Loading problems…" />
         )}

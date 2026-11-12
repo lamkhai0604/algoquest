@@ -16,21 +16,21 @@ class XpRulesTest {
   @ParameterizedTest(name = "{0}, {1} min, {2} hints, code {3} -> {4} XP")
   @CsvSource({
     // difficulty, minutes, hints, code passed, expected XP
-    "EASY,    5, 0, false, 25", // 20 + 5 time bonus
-    "EASY,   15, 0, false, 25", // exactly at the time limit still earns the bonus
-    "EASY,   16, 0, false, 20",
-    "MEDIUM, 10, 0, false, 35", // 20 + 10 + 5
-    "MEDIUM, 26, 0, false, 30",
-    "HARD,   40, 0, false, 50", // 20 + 25 + 5
-    "HARD,   41, 0, false, 45",
-    "EASY,    5, 1, false, 20", // 25 x 0.8
-    "MEDIUM, 30, 1, false, 24", // 30 x 0.8
-    "MEDIUM, 10, 2, false, 21", // 35 x 0.6
-    "HARD,   50, 3, false, 18", // 45 x 0.4
+    "EASY,    5, 0, false, 20", // 15 + 5 time bonus
+    "EASY,   15, 0, false, 20", // exactly at the time limit still earns the bonus
+    "EASY,   16, 0, false, 15",
+    "MEDIUM, 10, 0, false, 29", // 15 + 9 + 5
+    "MEDIUM, 26, 0, false, 24",
+    "HARD,   40, 0, false, 40", // 15 + 20 + 5
+    "HARD,   41, 0, false, 35",
+    "EASY,    5, 1, false, 16", // 20 x 0.8
+    "MEDIUM, 30, 1, false, 19", // 24 x 0.8, rounded down
+    "MEDIUM, 10, 2, false, 17", // 29 x 0.6, rounded down
+    "HARD,   50, 3, false, 14", // 35 x 0.4
     "EASY,    5, 5, false,  0", // never below zero
     "EASY,    5, 7, false,  0",
-    "EASY,    5, 0, true,  50", // code doubles
-    "MEDIUM, 10, 2, true,  42",
+    "EASY,    5, 0, true,  40", // code doubles
+    "MEDIUM, 10, 2, true,  34",
   })
   void problemXpFollowsTheFormula(
       Difficulty difficulty, long minutes, int hints, boolean code, int expected) {
@@ -58,8 +58,8 @@ class XpRulesTest {
   void theFirstSolveEarnsProblemXp() {
     XpAward award = XpRules.award(ProblemProgress.NEW, 70, Difficulty.MEDIUM, FAST, 0, false);
 
-    assertThat(award.xpGained()).isEqualTo(35);
-    assertThat(award.after()).isEqualTo(new ProblemProgress(true, 35, false));
+    assertThat(award.xpGained()).isEqualTo(29);
+    assertThat(award.after()).isEqualTo(new ProblemProgress(true, 29, false));
   }
 
   @Test
@@ -89,14 +89,23 @@ class XpRulesTest {
     XpAward first = XpRules.award(ProblemProgress.NEW, 80, Difficulty.EASY, FAST, 0, true);
     XpAward again = XpRules.award(first.after(), 80, Difficulty.EASY, FAST, 0, true);
 
-    assertThat(first.xpGained()).isEqualTo(50);
+    assertThat(first.xpGained()).isEqualTo(40);
     assertThat(again.xpGained()).isZero();
   }
 
   @ParameterizedTest
-  @CsvSource({"1, 100", "2, 125", "3, 150", "17, 500"})
-  void levelTargetGrowsBy25(int level, int target) {
+  @CsvSource({"1, 150", "2, 150", "3, 150"})
+  void levelTargetIsOneFullPassOfTheLevel(int level, int target) {
     assertThat(XpRules.levelTarget(level)).isEqualTo(target);
+  }
+
+  @Test
+  void aFullPassOfThreeEasyAndThreeMediumProblemsAndTheQuickCheckFillsTheBar() {
+    int easy = XpRules.problemXp(Difficulty.EASY, FAST, 0, false);
+    int medium = XpRules.problemXp(Difficulty.MEDIUM, FAST, 0, false);
+
+    assertThat(3 * easy + 3 * medium + XpRules.QUICK_CHECK_XP)
+        .isGreaterThanOrEqualTo(XpRules.levelTarget(1));
   }
 
   @Test

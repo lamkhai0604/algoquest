@@ -32,7 +32,7 @@ export function UiKitPage() {
             <Badge tone="primary">Two pointers</Badge>
             <Badge tone="success">Passed</Badge>
             <Badge tone="xp">+40 XP</Badge>
-            <Badge tone="warning">Coming later</Badge>
+            <Badge tone="warning">Coming soon</Badge>
           </div>
           <div className={styles.row}>
             {["JavaScript", "Java"].map((name) => (

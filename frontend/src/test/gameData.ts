@@ -1,5 +1,5 @@
 import type { Level, ProblemItem } from "../game/types";
-import type { ProblemDetail } from "../solve/types";
+import type { AttemptResult, ProblemDetail } from "../solve/types";
 
 const level = (number: number, title: string, rest: Partial<Level>): Level => ({
   number,
@@ -9,7 +9,7 @@ const level = (number: number, title: string, rest: Partial<Level>): Level => ({
   available: true,
   state: "LOCKED",
   xp: 0,
-  target: 100 + 25 * (number - 1),
+  target: 150,
   practiceOpen: false,
   testOpen: false,
   problems: 0,
@@ -32,8 +32,10 @@ export const PROBLEMS: ProblemItem[] = [
     status: "ready",
     locked: false,
     solved: true,
-    xp: 25,
+    xp: 20,
     practiceDone: false,
+    tried: true,
+    paused: false,
   },
   {
     id: "L1-second-largest",
@@ -44,6 +46,8 @@ export const PROBLEMS: ProblemItem[] = [
     solved: false,
     xp: 0,
     practiceDone: false,
+    tried: false,
+    paused: false,
   },
   {
     id: "L1-moving-median",
@@ -54,6 +58,8 @@ export const PROBLEMS: ProblemItem[] = [
     solved: false,
     xp: 0,
     practiceDone: false,
+    tried: false,
+    paused: false,
   },
 ];
 
@@ -69,10 +75,12 @@ export const PROBLEM: ProblemDetail = {
   ],
   constraints: ["0 <= temps.length <= 10^5"],
   hintCount: 3,
-  openedAt: new Date().toISOString(),
+  activeSeconds: 0,
+  lastResult: null,
+  nextProblemId: "L1-second-largest",
 };
 
-export const GRADED = {
+export const GRADED: AttemptResult = {
   attemptId: "a-1",
   mode: "explain",
   pattern: 40,
@@ -82,7 +90,7 @@ export const GRADED = {
   total: 95,
   solved: true,
   feedback: "Clear approach. Say how the empty array is handled.",
-  xpGained: 25,
+  xpGained: 20,
   levelXp: 65,
-  levelTarget: 100,
+  levelTarget: 150,
 };

@@ -1,18 +1,19 @@
 import type { Difficulty } from "../game/types";
 
-/** Display values that mirror the XP rules (FR-08); the server decides. */
+/** Display values that mirror the XP rules (FR-08, D-040); the server decides. */
 export const MAX_LENGTH = 2000;
 export const PASS_TOTAL = 70;
 
-const BASE_XP = 20;
-const TIME_BONUS = 5;
-const HINT_PENALTY_PERCENT = 20;
-const DIFFICULTY_BONUS: Record<Difficulty, number> = {
+export const BASE_XP = 15;
+export const TIME_BONUS = 5;
+export const HINT_PENALTY_PERCENT = 20;
+export const QUICK_CHECK_XP = 5;
+export const DIFFICULTY_BONUS: Record<Difficulty, number> = {
   Easy: 0,
-  Medium: 10,
-  Hard: 25,
+  Medium: 9,
+  Hard: 20,
 };
-const TIME_LIMIT_MINUTES: Record<Difficulty, number> = {
+export const TIME_LIMIT_MINUTES: Record<Difficulty, number> = {
   Easy: 15,
   Medium: 25,
   Hard: 40,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Chip } from "../components";
+import { BackButton, Chip } from "../components";
 import pages from "../pages/Pages.module.css";
 import styles from "./Admin.module.css";
 import { GradingLog } from "./GradingLog";
@@ -12,7 +12,10 @@ export function AdminPage() {
   const [tab, setTab] = useState<Tab>("log");
   return (
     <div className={pages.page}>
-      <h1 className={pages.title}>Admin</h1>
+      <div className={pages.topBar}>
+        <BackButton to="/" label="Back to the level map" />
+        <h1 className={pages.title}>Admin</h1>
+      </div>
       <div className={styles.tabs}>
         <Chip selected={tab === "log"} onToggle={() => setTab("log")}>
           Grading log

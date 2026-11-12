@@ -15,7 +15,7 @@ describe("practice round", () => {
       "GET /api/v1/levels/1/problems": () => json(200, PROBLEMS),
     });
     renderSignedInAt("/levels/1");
-    const note = await screen.findByText(/practice round opens at 70 XP/);
+    const note = await screen.findByText(/practice round opens at 105 XP/);
     expect(note).toBeVisible();
   });
 

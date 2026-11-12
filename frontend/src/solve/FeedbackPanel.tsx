@@ -1,4 +1,11 @@
-import { Badge, Button, ButtonLink, Card, XpBar } from "../components";
+import {
+  Badge,
+  Button,
+  ButtonLink,
+  Card,
+  Celebration,
+  XpBar,
+} from "../components";
 import { CRITERIA, PASS_TOTAL } from "./rules";
 import styles from "./Solve.module.css";
 import type { AttemptResult } from "./types";
@@ -6,13 +13,25 @@ import type { AttemptResult } from "./types";
 interface Props {
   result: AttemptResult;
   level: number;
-  onTryAgain: () => void;
+  /** The next problem in the level, offered once this one is solved. */
+  nextProblemId?: string | null;
+  /** Asks to start the problem again (after a confirmation). */
+  onRetry?: () => void;
 }
 
-/** The graded result: total, criteria, feedback, and XP (FR-05.2, FR-08). */
-export function FeedbackPanel({ result, level, onTryAgain }: Props) {
+/**
+ * The graded result: total, criteria, feedback, and XP (FR-05.2, FR-08), with
+ * Back, Retry, and Next (D-042). A perfect score gets a short celebration.
+ */
+export function FeedbackPanel({
+  result,
+  level,
+  nextProblemId,
+  onRetry,
+}: Props) {
   return (
     <div className={styles.feedback}>
+      {result.total === 100 && <Celebration />}
       <Card className={styles.scoreCard}>
         <Badge tone={result.solved ? "success" : "warning"}>
           {result.solved ? "Solved" : "Not solved yet"}
@@ -63,12 +82,21 @@ export function FeedbackPanel({ result, level, onTryAgain }: Props) {
           max={result.levelTarget}
         />
       </Card>
-      <div className={styles.actions}>
-        <ButtonLink to={`/levels/${level}`}>Back to the problems</ButtonLink>
-        {!result.solved && result.mode === "explain" && (
-          <Button variant="secondary" onClick={onTryAgain}>
-            Try again
+      <div className={styles.resultActions}>
+        <ButtonLink to={`/levels/${level}`} variant="secondary">
+          ← Back to the problems
+        </ButtonLink>
+        {onRetry && result.mode === "explain" && (
+          <Button variant="secondary" onClick={onRetry}>
+            ↻ Retry
           </Button>
+        )}
+        {nextProblemId && result.solved && result.mode === "explain" ? (
+          <ButtonLink to={`/problems/${nextProblemId}`}>
+            Next problem →
+          </ButtonLink>
+        ) : (
+          <span aria-hidden="true" />
         )}
       </div>
     </div>

@@ -55,14 +55,15 @@ Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't (this release)**.
 ### FR-03 — Lessons (Must)
 1. Each level has one lesson following the 9-part template in [CONTENT-GUIDE.md](CONTENT-GUIDE.md).
 2. "How it works" is a step-by-step walkthrough with Next/Back controls.
-3. The quick check (2–3 multiple-choice questions) gives immediate feedback and awards no XP.
+3. The quick check (2–3 multiple-choice questions) gives immediate feedback. Answering every question correctly awards **5 XP once per level** and the finished state is kept when the learner leaves and returns (D-041).
 4. Lessons of Open and Easy-only levels can always be re-read.
 
 ### FR-04 — Problems and typed explanations (Must)
-1. The problem list shows each problem's title, difficulty (Easy/Medium/Hard), and status (not tried / solved / Done in practice). In an Easy-only level, Medium and Hard problems are visible but locked.
-2. The solve page shows the statement, examples, and constraints, a text box for the explanation (up to 2,000 characters), Submit, Hint, and a timer used for the time bonus.
+1. The problem list shows each problem's title, difficulty (Easy/Medium/Hard), and status (not tried / paused / solved / Done in practice). Problems open in order: the next one opens when the previous one is solved (D-042). In an Easy-only level, Medium and Hard problems are visible but locked.
+2. The solve page shows the statement, examples, and constraints, a text box for the explanation (up to 2,000 characters), Submit, Hint, a timer for the time bonus with a note on the limit and what happens after it (D-043), and the scoring guide (D-044).
 3. An empty submission or one over the limit is rejected before grading.
-4. **This release (D-024):** Hard problems are listed with the label "Coming in a later version" and cannot be opened; Easy and Medium problems are playable.
+4. A graded problem opens on its last result with Back, Retry (after a confirmation), and Next; a score of 100 shows a short celebration (D-042).
+5. **This release (D-024):** Hard problems are listed with the label "Coming in a later version" and cannot be opened; Easy and Medium problems are playable.
 
 ### FR-05 — AI grading (Must)
 1. The server sends the problem, its answer key, and the explanation to the grader; the answer key is never sent to the browser.
@@ -85,9 +86,9 @@ Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't (this release)**.
 4. If Judge0 is unavailable or its daily quota is used up, the learner sees a clear message and can still use JavaScript.
 
 ### FR-08 — XP and scoring (Must)
-1. Problem XP = (20 base + difficulty bonus [Medium +10, Hard +25] + time bonus [+5 within Easy 15 / Medium 25 / Hard 40 min]) × (1 − 0.2 × hints used, minimum 0) × (2 if code passed).
+1. Problem XP = (15 base + difficulty bonus [Medium +9, Hard +20] + time bonus [+5 within Easy 15 / Medium 25 / Hard 40 active minutes]) × (1 − 0.2 × hints used, minimum 0) × (2 if code passed) (D-040, D-043).
 2. XP is awarded the first time a problem is solved; later attempts can only add the code bonus.
-3. Level XP target = 100 + 25 × (level − 1). XP counts toward the level of the problem.
+3. Level XP target = 150 for Levels 1–3 (D-040). XP counts toward the level of the problem; the lesson's quick check adds 5 XP once (FR-03.3).
 4. Total XP is the sum over all levels.
 
 ### FR-09 — Practice round (Must)
@@ -109,7 +110,7 @@ Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't (this release)**.
 2. Each problem scoring 70+ adds +30 XP to the **next** level's bar.
 
 ### FR-12 — Profile (Should)
-Shows total XP, current and best streak, per-level progress, and the best test score per level.
+Shows total XP, current and best streak, per-level progress, and the best test score per level. Levels the learner cannot open yet are not listed (D-044).
 
 ### FR-13 — Streak (Should)
 +1 for each calendar day (learner's local time zone) with at least one solved problem; a missed day resets it to 0.

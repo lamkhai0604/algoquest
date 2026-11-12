@@ -91,6 +91,10 @@ class AttemptApiTest {
             .content(body));
   }
 
+  private ResultActions beat(String problem) throws Exception {
+    return mvc.perform(post("/api/v1/problems/" + problem + "/heartbeat").with(player));
+  }
+
   private int attemptCount() {
     return jdbc.queryForObject("select count(*) from attempt", Integer.class);
   }
@@ -110,39 +114,44 @@ class AttemptApiTest {
         .andExpect(jsonPath("$.total").value(95))
         .andExpect(jsonPath("$.solved").value(true))
         .andExpect(jsonPath("$.feedback").isNotEmpty())
-        .andExpect(jsonPath("$.xpGained").value(25))
-        .andExpect(jsonPath("$.levelXp").value(25))
-        .andExpect(jsonPath("$.levelTarget").value(100));
+        .andExpect(jsonPath("$.xpGained").value(20))
+        .andExpect(jsonPath("$.levelXp").value(20))
+        .andExpect(jsonPath("$.levelTarget").value(150));
 
     assertThat(attemptCount()).isEqualTo(1);
-    expectLevelXp(25);
+    expectLevelXp(20);
   }
 
   @Test
   void aSlowSolveGetsNoTimeBonusAndMediumEarnsMore() throws Exception {
     mvc.perform(get("/api/v1/problems/" + EASY).with(player))
-        .andExpect(jsonPath("$.openedAt").exists())
+        .andExpect(jsonPath("$.activeSeconds").value(0))
         .andExpect(jsonPath("$.title").value("Max Value"));
-    clock.advance(Duration.ofMinutes(16));
-    submit(player, EASY, UUID.randomUUID(), GOOD, 60).andExpect(jsonPath("$.xpGained").value(20));
+    // 16 minutes of active time: a heartbeat every 30 seconds (D-043).
+    for (int i = 0; i < 32; i++) {
+      beat(EASY);
+      clock.advance(Duration.ofSeconds(30));
+    }
+    beat(EASY).andExpect(jsonPath("$.activeSeconds").value(960));
+    submit(player, EASY, UUID.randomUUID(), GOOD, 60).andExpect(jsonPath("$.xpGained").value(15));
     submit(player, MEDIUM, UUID.randomUUID(), GOOD, 60)
-        .andExpect(jsonPath("$.xpGained").value(35))
-        .andExpect(jsonPath("$.levelXp").value(55));
+        .andExpect(jsonPath("$.xpGained").value(29))
+        .andExpect(jsonPath("$.levelXp").value(44));
   }
 
   @Test
   void repeatingAnAttemptIdReturnsTheStoredResultOnce() throws Exception {
     UUID attemptId = UUID.randomUUID();
-    submit(player, EASY, attemptId, GOOD, 60).andExpect(jsonPath("$.xpGained").value(25));
+    submit(player, EASY, attemptId, GOOD, 60).andExpect(jsonPath("$.xpGained").value(20));
 
     submit(player, EASY, attemptId, "a different text", 60)
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.total").value(95))
-        .andExpect(jsonPath("$.xpGained").value(25))
-        .andExpect(jsonPath("$.levelXp").value(25));
+        .andExpect(jsonPath("$.xpGained").value(20))
+        .andExpect(jsonPath("$.levelXp").value(20));
 
     assertThat(attemptCount()).isEqualTo(1);
-    expectLevelXp(25);
+    expectLevelXp(20);
   }
 
   @Test
@@ -152,7 +161,7 @@ class AttemptApiTest {
     submit(player, EASY, UUID.randomUUID(), GOOD, 60)
         .andExpect(jsonPath("$.solved").value(true))
         .andExpect(jsonPath("$.xpGained").value(0))
-        .andExpect(jsonPath("$.levelXp").value(25));
+        .andExpect(jsonPath("$.levelXp").value(20));
     assertThat(attemptCount()).isEqualTo(2);
   }
 
@@ -204,6 +213,58 @@ class AttemptApiTest {
 
     submit(as("other@example.com"), EASY, attemptId, GOOD, 60).andExpect(status().isConflict());
     assertThat(attemptCount()).isEqualTo(1);
+  }
+
+  @Test
+  void aLongGapBetweenHeartbeatsDoesNotCount() throws Exception {
+    beat(EASY).andExpect(jsonPath("$.activeSeconds").value(0));
+    clock.advance(Duration.ofSeconds(30));
+    beat(EASY).andExpect(jsonPath("$.activeSeconds").value(30));
+    clock.advance(Duration.ofHours(3)); // the page was closed
+    beat(EASY).andExpect(jsonPath("$.activeSeconds").value(30));
+    clock.advance(Duration.ofSeconds(20));
+    beat(EASY).andExpect(jsonPath("$.activeSeconds").value(50));
+
+    mvc.perform(post("/api/v1/problems/" + EASY + "/restart").with(player))
+        .andExpect(jsonPath("$.activeSeconds").value(0));
+    mvc.perform(get("/api/v1/problems/" + EASY).with(player))
+        .andExpect(jsonPath("$.activeSeconds").value(0));
+  }
+
+  @Test
+  void problemsOpenInOrderAndAGradedProblemShowsItsLastResult() throws Exception {
+    submit(player, MEDIUM, UUID.randomUUID(), GOOD, 60)
+        .andExpect(status().isForbidden())
+        .andExpect(jsonPath("$.detail").value("Solve the problem before this one first."));
+
+    beat(EASY);
+    clock.advance(Duration.ofSeconds(10));
+    beat(EASY);
+    mvc.perform(get("/api/v1/levels/1/problems").with(player))
+        .andExpect(jsonPath("$[0].paused").value(true))
+        .andExpect(jsonPath("$[0].tried").value(false));
+    mvc.perform(get("/api/v1/problems/" + EASY).with(player))
+        .andExpect(jsonPath("$.lastResult").doesNotExist())
+        .andExpect(jsonPath("$.nextProblemId").value(MEDIUM));
+
+    submit(player, EASY, UUID.randomUUID(), "Sort it.", 60);
+    mvc.perform(get("/api/v1/problems/" + EASY).with(player))
+        .andExpect(jsonPath("$.lastResult.total").value(35));
+    mvc.perform(get("/api/v1/levels/1/problems").with(player))
+        .andExpect(jsonPath("$[0].paused").value(false))
+        .andExpect(jsonPath("$[0].tried").value(true))
+        .andExpect(jsonPath("$[1].locked").value(true));
+
+    clock.advance(Duration.ofSeconds(1));
+    submit(player, EASY, UUID.randomUUID(), GOOD, 60);
+    mvc.perform(get("/api/v1/problems/" + EASY).with(player))
+        .andExpect(jsonPath("$.lastResult.total").value(95))
+        .andExpect(jsonPath("$.lastResult.solved").value(true));
+    mvc.perform(get("/api/v1/levels/1/problems").with(player))
+        .andExpect(jsonPath("$[1].locked").value(false));
+    mvc.perform(get("/api/v1/problems/" + MEDIUM).with(player))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.nextProblemId").doesNotExist());
   }
 
   @Test
