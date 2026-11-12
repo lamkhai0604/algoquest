@@ -190,13 +190,7 @@ export function RulesEditor() {
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}
-      {view && (
-        <Form
-          key={JSON.stringify(view.current)}
-          view={view}
-          onSaved={setSaved}
-        />
-      )}
+      {view && <Form view={view} onSaved={setSaved} />}
     </section>
   );
 }
