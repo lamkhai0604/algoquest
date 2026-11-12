@@ -123,8 +123,11 @@ class AdminGameApiTest {
         .andExpect(jsonPath("$.after.solved").value(0));
 
     mvc.perform(get("/api/v1/levels").with(player)).andExpect(jsonPath("$[0].xp").value(0));
-    mvc.perform(get("/api/v1/problems/L1-pair-max/hints").with(player))
-        .andExpect(jsonPath("$.opened.length()").value(0));
+    // The second problem is locked again after the reset; its hint use is gone.
+    Integer hintsUsed = jdbc.queryForObject("select count(*) from hint_use", Integer.class);
+    assertThat(hintsUsed).isZero();
+    mvc.perform(get("/api/v1/problems/L1-pair-max").with(player))
+        .andExpect(status().isForbidden());
     Integer attempts = jdbc.queryForObject("select count(*) from attempt", Integer.class);
     assertThat(attempts).isEqualTo(1);
 
