@@ -16,6 +16,7 @@ import type { Hints } from "../game/types";
 import { InlineText } from "../lesson/Markdown";
 import pages from "../pages/Pages.module.css";
 import { ExplainForm } from "./ExplainForm";
+import { CodePanel } from "../code/CodePanel";
 import { FeedbackPanel, ResultActions } from "./FeedbackPanel";
 import { HintPanel } from "./HintPanel";
 import { clock, maxXp, TIME_BONUS, timeLimitSeconds } from "./rules";
@@ -230,6 +231,12 @@ function Solve({ problem, mode }: SolveProps) {
             nextProblemId={problem.nextProblemId}
             onRetry={practice ? undefined : () => setAsking("retry")}
           />
+          {!practice && result.solved && problem.starterCode && (
+            <CodePanel
+              problemId={problem.id}
+              starterCode={problem.starterCode}
+            />
+          )}
         </>
       ) : (
         <div className={styles.answerRow}>
