@@ -4,6 +4,7 @@
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
+  "order": 2,
   "title": "Best Day to Sell",
   "statement": "You track the price of a game skin for several days. You may buy it on one day and sell it on a later day. Return the largest profit you can make, or 0 if no profit is possible.",
   "examples": [

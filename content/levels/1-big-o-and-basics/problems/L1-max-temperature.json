@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 1,
   "title": "Max Temperature",
   "statement": "You are given an array of daily temperatures (integers, may be negative). Return the highest temperature. If the array is empty, return null.",
   "examples": [

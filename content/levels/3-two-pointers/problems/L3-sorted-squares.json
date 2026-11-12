@@ -4,6 +4,7 @@
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
+  "order": 2,
   "title": "Sorted Squares",
   "statement": "Given integers sorted in ascending order (they may be negative), return the squares of the numbers, also in ascending order, in O(n) time.",
   "examples": [

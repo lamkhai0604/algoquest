@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 2,
   "title": "Class Vote",
   "statement": "Each student writes one name on a ballot. Given the ballots as an array of names, return the name with the most votes. If several names tie, return the one that comes first in alphabetical order. Return null if there are no ballots.",
   "examples": [

@@ -33,6 +33,7 @@ Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) pl
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 1,
   "title": "Duplicate Badge",
   "statement": "A door scanner logs badge IDs ...",
   "examples": [{ "input": "[4, 7, 1, 7]", "output": "true" }],
@@ -54,6 +55,7 @@ Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) pl
 
 - `use`: `practice`, `test`, or `hardTest`. Test problems never appear in lessons or practice.
 - `status`: `ready` or `comingSoon` (placeholder: only `id`, `level`, `difficulty`, `use`, `title`).
+- `order` (practice problems): position within the difficulty, starting at 1. Problems open in this order, one after another (D-042), so the first problem of each difficulty should be the gentlest.
 - `answerKey`, `tests`, and solutions stay on the server (NFR-02).
 - At least 8 hidden tests per problem, including every listed edge case.
 - The backend validates every file at startup and in CI; invalid content fails the build (D-033).

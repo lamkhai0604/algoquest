@@ -259,7 +259,7 @@ public class GameService {
     return "practice".equals(problem.use());
   }
 
-  /** The level's practice problems in play order: Easy, Medium, Hard, then by ID. */
+  /** The level's practice problems in play order: by difficulty, then content order, then ID. */
   private static List<Problem> inOrder(LevelContent level) {
     List<Problem> result = new ArrayList<>();
     for (Problem problem : level.problems()) {
@@ -290,6 +290,14 @@ public class GameService {
     int byDifficulty =
         Integer.compare(
             DIFFICULTY_ORDER.indexOf(a.difficulty()), DIFFICULTY_ORDER.indexOf(b.difficulty()));
-    return byDifficulty != 0 ? byDifficulty : a.id().compareTo(b.id());
+    if (byDifficulty != 0) {
+      return byDifficulty;
+    }
+    int byOrder = Integer.compare(orderOf(a), orderOf(b));
+    return byOrder != 0 ? byOrder : a.id().compareTo(b.id());
+  }
+
+  private static int orderOf(Problem problem) {
+    return problem.order() == null ? Integer.MAX_VALUE : problem.order();
   }
 }

@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 2,
   "title": "Count Passing Scores",
   "statement": "A class's quiz scores are stored in an array, and a pass mark is given. Return how many scores are greater than or equal to the pass mark.",
   "examples": [

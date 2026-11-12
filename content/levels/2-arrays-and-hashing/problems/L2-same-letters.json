@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "use": "practice",
   "status": "ready",
+  "order": 3,
   "title": "Same Letters",
   "statement": "Two words are made of lowercase letters. Return true if one word uses exactly the same letters as the other, the same number of times each (an anagram), otherwise false.",
   "examples": [
