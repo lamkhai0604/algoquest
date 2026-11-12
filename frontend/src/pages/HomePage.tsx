@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import {
   Badge,
+  Button,
   ButtonLink,
   Card,
   ErrorState,
@@ -117,6 +118,17 @@ export function HomePage() {
         <ErrorState message={levels.message} onRetry={reloadLevels} />
       )}
       {levels.status === "ready" && <LevelMap levels={levels.data} />}
+      <Card heading="Battle mode">
+        <p className={game.note}>
+          Race another player on the same problem: the better explanation wins
+          the round. <Badge tone="warning">Coming soon</Badge>
+        </p>
+        <div className={styles.row}>
+          <Button variant="secondary" disabled>
+            Find an opponent
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 }
