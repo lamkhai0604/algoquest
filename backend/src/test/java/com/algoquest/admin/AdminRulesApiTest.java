@@ -115,7 +115,8 @@ class AdminRulesApiTest {
 
     mvc.perform(get("/api/v1/admin/audit-log").with(owner))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[?(@.action=='config.update')].actorEmail").value("owner@example.com"))
+        .andExpect(
+            jsonPath("$[?(@.action=='config.update')].actorEmail").value("owner@example.com"))
         .andExpect(jsonPath("$[?(@.action=='config.update')].before").value("{\"baseXp\":\"15\"}"))
         .andExpect(jsonPath("$[?(@.action=='config.update')].after").value("{\"baseXp\":\"30\"}"));
     mvc.perform(get("/api/v1/admin/audit-log").with(player)).andExpect(status().isForbidden());
