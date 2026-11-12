@@ -126,8 +126,7 @@ class AdminGameApiTest {
     // The second problem is locked again after the reset; its hint use is gone.
     Integer hintsUsed = jdbc.queryForObject("select count(*) from hint_use", Integer.class);
     assertThat(hintsUsed).isZero();
-    mvc.perform(get("/api/v1/problems/L1-pair-max").with(player))
-        .andExpect(status().isForbidden());
+    mvc.perform(get("/api/v1/problems/L1-pair-max").with(player)).andExpect(status().isForbidden());
     Integer attempts = jdbc.queryForObject("select count(*) from attempt", Integer.class);
     assertThat(attempts).isEqualTo(1);
 

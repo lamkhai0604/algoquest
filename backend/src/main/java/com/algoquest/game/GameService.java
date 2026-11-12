@@ -103,14 +103,15 @@ public class GameService {
   }
 
   /**
-   * Checks the quick check answers. When every answer is correct the level gets 5 XP, once
-   * (D-041); answering again changes nothing.
+   * Checks the quick check answers. When every answer is correct the level gets 5 XP, once (D-041);
+   * answering again changes nothing.
    */
   @Transactional
   public QuickCheckResult answerQuickCheck(UUID userId, int number, QuickCheckAnswers answers) {
     LevelContent level = openLevel(userId, number);
     List<QuickCheckQuestion> questions = level.lesson().quickCheck();
-    List<Integer> given = answers == null || answers.answers() == null ? List.of() : answers.answers();
+    List<Integer> given =
+        answers == null || answers.answers() == null ? List.of() : answers.answers();
     if (given.size() != questions.size()) {
       throw new ApiException(
           HttpStatus.BAD_REQUEST,

@@ -53,7 +53,8 @@ public class ProblemTimeStore {
         jdbc.query(
             "select active_seconds, last_beat_at from problem_start"
                 + " where user_id = ? and problem_id = ?",
-            (rs, n) -> new Row(rs.getInt("active_seconds"), instant(rs.getTimestamp("last_beat_at"))),
+            (rs, n) ->
+                new Row(rs.getInt("active_seconds"), instant(rs.getTimestamp("last_beat_at"))),
             userId,
             problemId);
     if (rows.isEmpty()) {
