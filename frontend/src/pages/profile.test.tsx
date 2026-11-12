@@ -36,8 +36,13 @@ describe("profile", () => {
       .getByRole("heading", { name: "Progress by level" })
       .closest("section") as HTMLElement;
     expect(within(progress).getByText("Best test: 95 / 100")).toBeVisible();
-    expect(within(progress).getByText("No test yet")).toBeVisible();
+    // Only levels the player can open are listed (D-044).
+    expect(within(progress).getByText(/Big-O & Basics/)).toBeVisible();
+    expect(within(progress).queryByText(/Arrays & Hashing/)).toBeNull();
     expect(within(progress).queryByText(/Two Pointers/)).toBeNull();
+    expect(
+      screen.getByRole("link", { name: "Back to the level map" }),
+    ).toHaveAttribute("href", "/");
 
     const [, init] = fetchFn.mock.calls.find(([url]) =>
       String(url).endsWith("/profile"),

@@ -5,6 +5,7 @@ import { useApiGet } from "../api/useApiGet";
 import {
   Badge,
   Button,
+  BackButton,
   ButtonLink,
   Card,
   ErrorState,
@@ -212,15 +213,21 @@ export function LevelTestPage() {
 
   return (
     <div className={pages.page}>
-      <nav className={styles.crumbs} aria-label="Breadcrumb">
-        <Link to="/">Level map</Link>
-        {test && (
-          <>
-            {" / "}
-            <Link to={`/levels/${test.level}`}>Level {test.level}</Link>
-          </>
-        )}
-      </nav>
+      <div className={pages.topBar}>
+        <BackButton
+          to={test ? `/levels/${test.level}` : "/"}
+          label={test ? `Back to Level ${test.level}` : "Back to the level map"}
+        />
+        <nav className={styles.crumbs} aria-label="Breadcrumb">
+          <Link to="/">Level map</Link>
+          {test && (
+            <>
+              {" / "}
+              <Link to={`/levels/${test.level}`}>Level {test.level}</Link>
+            </>
+          )}
+        </nav>
+      </div>
       <h1 className={pages.title}>
         {test ? `Level ${test.level} test` : "Level-up test"}
       </h1>

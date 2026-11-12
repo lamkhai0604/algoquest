@@ -57,7 +57,7 @@ export function TestStartCard({ level }: { level: Level }) {
           <Button variant="secondary" disabled>
             Hard mode
           </Button>
-          <Badge tone="warning">Coming in a later version</Badge>
+          <Badge tone="warning">Coming soon</Badge>
         </span>
       </div>
     </Card>

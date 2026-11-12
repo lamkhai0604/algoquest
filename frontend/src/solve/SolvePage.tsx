@@ -2,7 +2,13 @@ import { useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
-import { Badge, Card, ErrorState, LoadingState } from "../components";
+import {
+  BackButton,
+  Badge,
+  Card,
+  ErrorState,
+  LoadingState,
+} from "../components";
 import { useGame } from "../game/gameContext";
 import type { Hints } from "../game/types";
 import { InlineText } from "../lesson/Markdown";
@@ -167,15 +173,21 @@ export function SolvePage() {
 
   return (
     <div className={pages.page}>
-      <nav className={styles.crumbs} aria-label="Breadcrumb">
-        <Link to="/">Level map</Link>
-        {level !== null && (
-          <>
-            {" / "}
-            <Link to={`/levels/${level}`}>Level {level}</Link>
-          </>
-        )}
-      </nav>
+      <div className={pages.topBar}>
+        <BackButton
+          to={level === null ? "/" : `/levels/${level}`}
+          label={level === null ? "Back to the level map" : `Back to Level ${level}`}
+        />
+        <nav className={styles.crumbs} aria-label="Breadcrumb">
+          <Link to="/">Level map</Link>
+          {level !== null && (
+            <>
+              {" / "}
+              <Link to={`/levels/${level}`}>Level {level}</Link>
+            </>
+          )}
+        </nav>
+      </div>
       {state.status === "loading" && <LoadingState label="Loading problem…" />}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />

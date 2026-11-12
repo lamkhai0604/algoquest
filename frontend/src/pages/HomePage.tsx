@@ -14,7 +14,7 @@ import game from "./Game.module.css";
 import styles from "./Pages.module.css";
 
 function stateLabel(level: Level): { text: string; tone: BadgeTone } {
-  if (!level.available) return { text: "Coming later", tone: "neutral" };
+  if (!level.available) return { text: "Coming soon", tone: "neutral" };
   if (level.state === "OPEN") return { text: "Open", tone: "success" };
   if (level.state === "EASY_ONLY") return { text: "Easy only", tone: "xp" };
   return { text: "Locked", tone: "neutral" };

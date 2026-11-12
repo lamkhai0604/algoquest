@@ -1,4 +1,4 @@
-import { Badge, Card } from "../components";
+import { BackButton, Badge, Card } from "../components";
 import styles from "./Pages.module.css";
 
 const PERKS = [
@@ -11,9 +11,12 @@ const PERKS = [
 export function VipPage() {
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>AlgoQuest VIP</h1>
+      <div className={styles.topBar}>
+        <BackButton to="/" label="Back to the level map" />
+        <h1 className={styles.title}>AlgoQuest VIP</h1>
+      </div>
       <Card>
-        <Badge tone="warning">Coming in a later version</Badge>
+        <Badge tone="warning">Coming soon</Badge>
         <p className={styles.lead}>
           A future monthly plan for players who want more help. Nothing on this
           page can be bought yet.

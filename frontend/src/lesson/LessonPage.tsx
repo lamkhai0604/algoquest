@@ -1,7 +1,13 @@
 import { useMemo } from "react";
 import { Link, useParams } from "react-router";
 import { useApiGet } from "../api/useApiGet";
-import { ButtonLink, cx, ErrorState, LoadingState } from "../components";
+import {
+  BackButton,
+  ButtonLink,
+  cx,
+  ErrorState,
+  LoadingState,
+} from "../components";
 import pages from "../pages/Pages.module.css";
 import styles from "./Lesson.module.css";
 import { MarkdownBlocks } from "./Markdown";
@@ -56,11 +62,14 @@ export function LessonPage() {
 
   return (
     <div className={cx(pages.page, styles.lessonPage)}>
-      <nav className={styles.crumbs} aria-label="Breadcrumb">
-        <Link to="/">Level map</Link> /{" "}
-        <Link to={`/levels/${number}`}>Level {number}</Link> /{" "}
-        <span>Lesson</span>
-      </nav>
+      <div className={pages.topBar}>
+        <BackButton to={`/levels/${number}`} label={`Back to Level ${number}`} />
+        <nav className={styles.crumbs} aria-label="Breadcrumb">
+          <Link to="/">Level map</Link> /{" "}
+          <Link to={`/levels/${number}`}>Level {number}</Link> /{" "}
+          <span>Lesson</span>
+        </nav>
+      </div>
       <h1 className={pages.title}>{title}</h1>
       {state.status === "loading" && <LoadingState label="Loading lesson…" />}
       {state.status === "error" && (

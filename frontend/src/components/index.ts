@@ -1,5 +1,6 @@
 export { AppHeader } from "./AppHeader";
 export type { HeaderAccount, HeaderStats } from "./AppHeader";
+export { BackButton } from "./BackButton";
 export { Badge } from "./Badge";
 export type { BadgeTone } from "./Badge";
 export { Button } from "./Button";

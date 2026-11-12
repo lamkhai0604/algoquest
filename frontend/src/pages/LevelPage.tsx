@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router";
 import { useApiGet } from "../api/useApiGet";
 import {
+  BackButton,
   Badge,
   ButtonLink,
   Card,
@@ -16,7 +17,7 @@ import styles from "./Pages.module.css";
 
 function ProblemStatus({ problem }: { problem: ProblemItem }) {
   if (problem.status === "comingSoon") {
-    return <Badge tone="warning">Coming in a later version</Badge>;
+    return <Badge tone="warning">Coming soon</Badge>;
   }
   if (problem.locked) return <Badge>Locked</Badge>;
   if (problem.solved) {
@@ -111,9 +112,12 @@ export function LevelPage() {
 
   return (
     <div className={styles.page}>
-      <nav className={game.crumbs} aria-label="Breadcrumb">
-        <Link to="/">Level map</Link> / <span>{title}</span>
-      </nav>
+      <div className={styles.topBar}>
+        <BackButton to="/" label="Back to the level map" />
+        <nav className={game.crumbs} aria-label="Breadcrumb">
+          <Link to="/">Level map</Link> / <span>{title}</span>
+        </nav>
+      </div>
       <h1 className={styles.title}>{title}</h1>
       {level && (
         <Card>
