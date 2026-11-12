@@ -15,13 +15,18 @@ function open(
   levels = () => json(200, LEVELS),
   problem: ProblemDetail = PROBLEM,
 ) {
+  // The server's clock: a restart sets it back to zero.
+  let active = problem.activeSeconds;
   const fetchFn = fakeApi({
     "GET /api/v1/me": () => json(200, ME),
     "GET /api/v1/levels": levels,
     "GET /api/v1/problems/L1-max-temperature": () => json(200, problem),
     "POST /api/v1/problems/L1-max-temperature/heartbeat": () =>
-      json(200, { activeSeconds: problem.activeSeconds }),
-    [RESTART]: () => json(200, { activeSeconds: 0 }),
+      json(200, { activeSeconds: active }),
+    [RESTART]: () => {
+      active = 0;
+      return json(200, { activeSeconds: 0 });
+    },
     [ATTEMPTS]: attempts,
   });
   renderSignedInAt("/problems/L1-max-temperature");

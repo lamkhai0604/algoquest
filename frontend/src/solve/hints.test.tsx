@@ -65,7 +65,8 @@ describe("hints", () => {
       screen.getByRole("button", { name: "Show hint 3 of 3 (−20% XP)" }),
     ).toBeVisible();
     const posts = fetchFn.mock.calls.filter(
-      ([, init]) => init?.method === "POST",
+      ([url, init]) =>
+        init?.method === "POST" && String(url).endsWith("/hints"),
     );
     expect(posts).toHaveLength(0);
   });
