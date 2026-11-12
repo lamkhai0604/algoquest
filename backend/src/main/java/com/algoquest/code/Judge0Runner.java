@@ -84,7 +84,8 @@ public class Judge0Runner implements JavaRunner {
       if (status != ACCEPTED) {
         // Time limit or a crash outside the tests: tests that printed nothing failed with it.
         String reason = result.at("/status/description").asString("Run failed");
-        outcomes.replaceAll(o -> "did not finish".equals(o.error()) ? TestOutcome.failed(reason) : o);
+        outcomes.replaceAll(
+            o -> "did not finish".equals(o.error()) ? TestOutcome.failed(reason) : o);
       }
       return new JavaRun(outcomes, null);
     } catch (RuntimeException e) {

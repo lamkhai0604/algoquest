@@ -19,7 +19,8 @@ import tools.jackson.databind.json.JsonMapper;
 public final class JavaHarness {
 
   private static final Pattern METHOD =
-      Pattern.compile("(?m)^\\s*(?:public\\s+|static\\s+)*([\\w<>\\[\\]]+)\\s+(\\w+)\\s*\\(([^)]*)\\)");
+      Pattern.compile(
+          "(?m)^\\s*(?:public\\s+|static\\s+)*([\\w<>\\[\\]]+)\\s+(\\w+)\\s*\\(([^)]*)\\)");
   private static final JsonMapper JSON = JsonMapper.builder().build();
   private static final SecureRandom RANDOM = new SecureRandom();
 

@@ -83,7 +83,9 @@ public class CodeService {
       boolean solved,
       boolean codeBonusAwarded) {}
 
-  /** A run of the player's code. For JavaScript, {@code outputs} and {@code errors} are required. */
+  /**
+   * A run of the player's code. For JavaScript, {@code outputs} and {@code errors} are required.
+   */
   public record CodeSubmission(
       String language, String code, List<Object> outputs, List<String> errors) {}
 
@@ -110,7 +112,8 @@ public class CodeService {
 
   public CodeSetup setup(UUID userId, String problemId) {
     Problem problem = game.playableProblem(userId, problemId);
-    ProblemProgress mine = progress.byProblem(userId).getOrDefault(problem.id(), ProblemProgress.NEW);
+    ProblemProgress mine =
+        progress.byProblem(userId).getOrDefault(problem.id(), ProblemProgress.NEW);
     List<List<Object>> inputs = new ArrayList<>();
     for (TestCase test : problem.tests()) {
       inputs.add(test.input());
@@ -137,7 +140,8 @@ public class CodeService {
           "Invalid code",
           "Write some code, up to " + MAX_CODE_LENGTH + " characters.");
     }
-    ProblemProgress mine = progress.byProblem(userId).getOrDefault(problem.id(), ProblemProgress.NEW);
+    ProblemProgress mine =
+        progress.byProblem(userId).getOrDefault(problem.id(), ProblemProgress.NEW);
     if (!mine.solved()) {
       throw new ApiException(
           HttpStatus.CONFLICT,
@@ -184,6 +188,8 @@ public class CodeService {
         firstFailure = i;
       }
     }
+    final List<TestOutcome> results = outcomes;
+    final String compileMessage = compileError;
     boolean allPassed = compileError == null && passed == tests.size();
     int total = tests.size();
     int finalPassed = compileError == null ? passed : 0;
@@ -220,17 +226,15 @@ public class CodeService {
               clock.instant());
           int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
           TestOutcome failed =
-              failedIndex >= 0 && failedIndex < outcomes.size() ? outcomes.get(failedIndex) : null;
+              failedIndex >= 0 && failedIndex < results.size() ? results.get(failedIndex) : null;
           return new CodeResult(
               language,
               finalPassed,
               total,
               failedIndex >= 0 ? tests.get(failedIndex).input() : null,
               failed == null || failed.output() == null ? null : failed.output().toString(),
-              failedIndex < 0
-                  ? null
-                  : failed == null ? "No output for this test" : failed.error(),
-              compileError,
+              failedIndex < 0 ? null : failed == null ? "No output for this test" : failed.error(),
+              compileMessage,
               gained,
               after.codeBonusAwarded(),
               LevelRules.barXp(levelXp, problem.level()),
