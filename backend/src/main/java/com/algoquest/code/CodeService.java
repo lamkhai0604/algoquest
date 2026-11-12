@@ -2,9 +2,11 @@ package com.algoquest.code;
 
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.TestCase;
+import com.algoquest.game.GameRulesService;
 import com.algoquest.game.GameService;
 import com.algoquest.game.ProgressStore;
 import com.algoquest.game.domain.Difficulty;
+import com.algoquest.game.domain.GameRules;
 import com.algoquest.game.domain.LevelRules;
 import com.algoquest.game.domain.ProblemProgress;
 import com.algoquest.game.domain.XpAward;
@@ -53,6 +55,7 @@ public class CodeService {
   private final Clock clock;
   private final TransactionTemplate transaction;
   private final int javaDailyLimit;
+  private final GameRulesService rules;
 
   public CodeService(
       GameService game,
@@ -61,6 +64,7 @@ public class CodeService {
       JavaRunner javaRunner,
       Clock clock,
       PlatformTransactionManager transactionManager,
+      GameRulesService rules,
       @Value("${algoquest.code.java.daily-limit:45}") int javaDailyLimit) {
     this.game = game;
     this.progress = progress;
@@ -69,6 +73,7 @@ public class CodeService {
     this.clock = clock;
     this.transaction = new TransactionTemplate(transactionManager);
     this.javaDailyLimit = javaDailyLimit;
+    this.rules = rules;
   }
 
   /**
@@ -197,13 +202,15 @@ public class CodeService {
     return transaction.execute(
         status -> {
           ProblemProgress before = progress.lock(userId, problem.id(), problem.level());
+          GameRules current = rules.current();
           int gained = 0;
           ProblemProgress after = before;
           if (allPassed) {
             XpAward award =
                 XpRules.award(
+                    current,
                     before,
-                    XpRules.PASS_SCORE,
+                    current.passScore(),
                     Difficulty.fromLabel(problem.difficulty()),
                     Duration.ZERO,
                     0,
@@ -237,8 +244,8 @@ public class CodeService {
               compileMessage,
               gained,
               after.codeBonusAwarded(),
-              LevelRules.barXp(levelXp, problem.level()),
-              XpRules.levelTarget(problem.level()),
+              LevelRules.barXp(current, levelXp, problem.level()),
+              XpRules.levelTarget(current, problem.level()),
               javaRunsLeft());
         });
   }

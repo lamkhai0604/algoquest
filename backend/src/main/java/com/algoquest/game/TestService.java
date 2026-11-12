@@ -67,6 +67,7 @@ public class TestService {
   private final Clock clock;
   private final Duration duration;
   private final TransactionTemplate transaction;
+  private final GameRulesService rules;
 
   public TestService(
       GameService game,
@@ -76,6 +77,7 @@ public class TestService {
       Grader grader,
       Clock clock,
       @Value("${algoquest.test.duration:PT2H}") Duration duration,
+      GameRulesService rules,
       PlatformTransactionManager transactionManager) {
     this.game = game;
     this.catalog = catalog;
@@ -84,6 +86,7 @@ public class TestService {
     this.grader = grader;
     this.clock = clock;
     this.duration = duration;
+    this.rules = rules;
     this.transaction = new TransactionTemplate(transactionManager);
   }
 
@@ -106,7 +109,7 @@ public class TestService {
             throw forbidden("This level is locked.");
           }
           int xp = progress.xpByLevel(userId).getOrDefault(level, 0);
-          if (!LevelRules.testOpen(xp, level)) {
+          if (!LevelRules.testOpen(rules.current(), xp, level)) {
             throw forbidden("The level-up test opens when the level bar is full.");
           }
           List<String> problemIds =

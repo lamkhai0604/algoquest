@@ -16,10 +16,16 @@ public final class LevelRules {
    * Best scores only go up, so a level that opened never closes again.
    */
   public static LevelState state(int level, OptionalInt bestPreviousTestScore) {
+    return state(GameRules.DEFAULTS, level, bestPreviousTestScore);
+  }
+
+  public static LevelState state(
+      GameRules rules, int level, OptionalInt bestPreviousTestScore) {
     if (level == 1) {
       return LevelState.OPEN;
     }
-    if (bestPreviousTestScore.isEmpty() || bestPreviousTestScore.getAsInt() < XpRules.PASS_SCORE) {
+    if (bestPreviousTestScore.isEmpty()
+        || bestPreviousTestScore.getAsInt() < rules.passScore()) {
       return LevelState.LOCKED;
     }
     return bestPreviousTestScore.getAsInt() >= 100 ? LevelState.OPEN : LevelState.EASY_ONLY;
@@ -35,22 +41,39 @@ public final class LevelRules {
 
   /** XP shown on the level bar: never more than the target. */
   public static int barXp(int levelXp, int level) {
-    return Math.min(levelXp, XpRules.levelTarget(level));
+    return barXp(GameRules.DEFAULTS, levelXp, level);
+  }
+
+  public static int barXp(GameRules rules, int levelXp, int level) {
+    return Math.min(levelXp, XpRules.levelTarget(rules, level));
   }
 
   /** The practice round opens at 70% of the level target (FR-09.1). */
   public static boolean practiceOpen(int levelXp, int level) {
-    return levelXp * 10 >= XpRules.levelTarget(level) * 7;
+    return practiceOpen(GameRules.DEFAULTS, levelXp, level);
+  }
+
+  public static boolean practiceOpen(GameRules rules, int levelXp, int level) {
+    return levelXp * 100 >= XpRules.levelTarget(rules, level) * rules.practiceOpenPercent();
   }
 
   /** The level-up test opens when the bar is full (FR-10.1). */
   public static boolean testOpen(int levelXp, int level) {
-    return levelXp >= XpRules.levelTarget(level);
+    return testOpen(GameRules.DEFAULTS, levelXp, level);
+  }
+
+  public static boolean testOpen(GameRules rules, int levelXp, int level) {
+    return levelXp >= XpRules.levelTarget(rules, level);
   }
 
   /** XP for marking a practice problem Done: +10, but never past a full bar (FR-09.2). */
   public static int practiceDoneXp(int levelXp, int level) {
-    return Math.max(0, Math.min(PRACTICE_DONE_XP, XpRules.levelTarget(level) - levelXp));
+    return practiceDoneXp(GameRules.DEFAULTS, levelXp, level);
+  }
+
+  public static int practiceDoneXp(GameRules rules, int levelXp, int level) {
+    return Math.max(
+        0, Math.min(rules.practiceDoneXp(), XpRules.levelTarget(rules, level) - levelXp));
   }
 
   /**
