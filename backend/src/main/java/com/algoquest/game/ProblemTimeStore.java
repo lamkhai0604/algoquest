@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class ProblemTimeStore {
 
   /** Adds the time since the last heartbeat (when close enough) and returns the active seconds. */
   public int beat(UUID userId, String problemId) {
-    Instant now = clock.instant();
+    Instant now = now();
     ensureRow(userId, problemId, now);
     Row row = lockRow(userId, problemId);
     int seconds = row.activeSeconds() + countable(row.lastBeatAt(), now);
@@ -61,7 +62,7 @@ public class ProblemTimeStore {
       return 0;
     }
     Row row = rows.get(0);
-    return row.activeSeconds() + countable(row.lastBeatAt(), clock.instant());
+    return row.activeSeconds() + countable(row.lastBeatAt(), now());
   }
 
   /** Starts the clock again from zero (Start again or Retry). */
@@ -100,6 +101,11 @@ public class ProblemTimeStore {
         (rs, n) -> new Row(rs.getInt("active_seconds"), instant(rs.getTimestamp("last_beat_at"))),
         userId,
         problemId);
+  }
+
+  /** The database keeps microseconds; the same precision here keeps gaps exact. */
+  private Instant now() {
+    return clock.instant().truncatedTo(ChronoUnit.MICROS);
   }
 
   private static int countable(Instant lastBeatAt, Instant now) {
