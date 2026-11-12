@@ -45,7 +45,7 @@ export function ProfilePage() {
       <div className={styles.topBar}>
         <BackButton to="/" label="Back to the level map" />
         <h1 className={styles.title}>
-            {profile.status === "ready" ? profile.data.displayName : "Profile"}
+          {profile.status === "ready" ? profile.data.displayName : "Profile"}
         </h1>
       </div>
       {profile.status === "loading" && (
@@ -60,9 +60,7 @@ export function ProfilePage() {
           <Card heading="Progress by level">
             <ul className={game.levelList}>
               {profile.data.levels
-                .filter(
-                  (level) => level.available && level.state !== "LOCKED",
-                )
+                .filter((level) => level.available && level.state !== "LOCKED")
                 .map((level) => (
                   <li key={level.number} className={game.profileRow}>
                     <span className={game.rowTitle}>
