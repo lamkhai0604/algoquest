@@ -152,6 +152,7 @@ class PlayApiTest {
   @Test
   void aProblemWithProgressStaysOpenWhenTheOrderPutsItLater() throws Exception {
     // Solved before the order existed; the first problem is still unsolved.
+    progress.lock(playerId, "L1-pair-max", 1);
     progress.save(playerId, "L1-pair-max", new ProblemProgress(true, 20, false));
 
     mvc.perform(get("/api/v1/levels/1/problems").with(player))
