@@ -25,6 +25,7 @@ function ProblemStatus({ problem }: { problem: ProblemItem }) {
     return <Badge tone="success">{`Solved · +${problem.xp} XP${done}`}</Badge>;
   }
   if (problem.tried) return <Badge tone="warning">Not solved yet</Badge>;
+  if (problem.paused) return null;
   return <Badge>Not tried</Badge>;
 }
 
