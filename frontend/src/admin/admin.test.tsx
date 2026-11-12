@@ -4,7 +4,8 @@ import { describe, expect, it } from "vitest";
 import { fakeApi, json, ME } from "../test/fakeApi";
 import { LEVELS } from "../test/gameData";
 import { renderSignedInAt } from "../test/renderApp";
-import type { AdminUser, LoggedAttempt } from "./types";
+import { DEFAULT_RULES } from "../solve/rules";
+import type { AdminUser, AuditEntry, LoggedAttempt } from "./types";
 
 const OWNER = {
   ...ME,
@@ -86,7 +87,9 @@ describe("admin panel", () => {
     });
     renderSignedInAt("/admin");
 
-    await userEvent.click(await screen.findByRole("button", { name: "Users" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Users and roles" }),
+    );
     await userEvent.click(
       await screen.findByRole("button", { name: "Reset…" }),
     );
@@ -103,5 +106,105 @@ describe("admin panel", () => {
       "Level 1 reset: 40 XP and 2 solved problems removed.",
     );
     expect(resets()).toHaveLength(1);
+  });
+
+  it("grants a role after confirmation", async () => {
+    const fetchFn = fakeApi({
+      "GET /api/v1/me": () => json(200, OWNER),
+      "GET /api/v1/levels": () => json(200, LEVELS),
+      "GET /api/v1/admin/attempts": () => json(200, []),
+      "GET /api/v1/admin/users": () => json(200, USERS),
+      "POST /api/v1/admin/users/u-2/roles": () =>
+        json(200, [{ ...USERS[0], roles: ["PLAYER", "ADMIN"] }]),
+    });
+    renderSignedInAt("/admin");
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Users and roles" }),
+    );
+    await userEvent.click(await screen.findByRole("button", { name: "ADMIN" }));
+    const dialog = await screen.findByRole("dialog", { name: "Grant ADMIN?" });
+    expect(dialog).toHaveTextContent("ann@example.com gets every permission");
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Grant" }),
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "ADMIN", pressed: true }),
+    ).toBeVisible();
+    const [[, init]] = fetchFn.mock.calls.filter(([url]) =>
+      String(url).endsWith("/roles"),
+    ) as [[unknown, RequestInit]];
+    expect(JSON.parse(String(init.body))).toEqual({ role: "ADMIN" });
+  });
+
+  it("edits the game rules and shows the effect before saving", async () => {
+    let saved: unknown = null;
+    fakeApi({
+      "GET /api/v1/me": () => json(200, OWNER),
+      "GET /api/v1/levels": () => json(200, LEVELS),
+      "GET /api/v1/admin/attempts": () => json(200, []),
+      "GET /api/v1/admin/game-rules": () =>
+        json(200, { current: DEFAULT_RULES, defaults: DEFAULT_RULES }),
+      "PUT /api/v1/admin/game-rules": () => {
+        saved = { ...DEFAULT_RULES, baseXp: 20 };
+        return json(200, { current: saved, defaults: DEFAULT_RULES });
+      },
+    });
+    renderSignedInAt("/admin");
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Game rules" }),
+    );
+    expect(
+      await screen.findByText(/A full pass through a level .* earns 152 XP/),
+    ).toBeVisible();
+    const base = screen.getByLabelText(/Base XP/);
+    await userEvent.clear(base);
+    await userEvent.type(base, "20");
+    expect(screen.getByText(/earns 182 XP/)).toBeVisible();
+    expect(screen.getByText("default 15")).toBeVisible();
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Save 1 change" }),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Change the game rules?",
+    });
+    expect(dialog).toHaveTextContent("baseXp: 15 → 20");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Saved. The new rules apply from the next request.",
+    );
+    expect(saved).toMatchObject({ baseXp: 20 });
+  });
+
+  it("lists audit entries with readable values", async () => {
+    const entry: AuditEntry = {
+      at: new Date().toISOString(),
+      actorEmail: "owner@example.com",
+      action: "config.update",
+      target: "game-rules",
+      targetEmail: null,
+      before: '{"baseXp": "15"}',
+      after: '{"baseXp": "20"}',
+    };
+    fakeApi({
+      "GET /api/v1/me": () => json(200, OWNER),
+      "GET /api/v1/levels": () => json(200, LEVELS),
+      "GET /api/v1/admin/attempts": () => json(200, []),
+      "GET /api/v1/admin/audit-log": () => json(200, [entry]),
+    });
+    renderSignedInAt("/admin");
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Audit log" }),
+    );
+    expect(await screen.findByText("config.update")).toBeVisible();
+    expect(screen.getByText("by owner@example.com")).toBeVisible();
+    expect(
+      screen.getByText("Before: baseXp: 15 · After: baseXp: 20"),
+    ).toBeVisible();
   });
 });

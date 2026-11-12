@@ -28,7 +28,10 @@ function currentLevel(levels: Level[]): Level | undefined {
 }
 
 function CurrentLevelCard({ level }: { level: Level }) {
-  const practiceAt = Math.ceil(level.target * 0.7);
+  const { rules } = useGame();
+  const practiceAt = Math.ceil(
+    (level.target * rules.practiceOpenPercent) / 100,
+  );
   return (
     <Card className={game.hero}>
       <span className={game.eyebrow}>Continue</span>
@@ -40,7 +43,7 @@ function CurrentLevelCard({ level }: { level: Level }) {
       <p className={game.note}>
         {level.practiceOpen
           ? "The practice round is open."
-          : `The practice round opens at ${practiceAt} XP (70%).`}{" "}
+          : `The practice round opens at ${practiceAt} XP (${rules.practiceOpenPercent}%).`}{" "}
         {level.solved} of {level.problems} problems solved.
       </p>
       <div className={styles.row}>

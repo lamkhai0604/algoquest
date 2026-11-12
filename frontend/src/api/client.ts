@@ -42,6 +42,8 @@ export interface ApiClientOptions {
 export interface ApiClient {
   get<T>(path: string): Promise<T>;
   post<T>(path: string, body?: unknown): Promise<T>;
+  put<T>(path: string, body?: unknown): Promise<T>;
+  delete<T>(path: string): Promise<T>;
   /** Subscribes to the "waking the server" state; returns an unsubscribe. */
   onWakingChange(listener: (waking: boolean) => void): () => void;
   isWaking(): boolean;
@@ -83,7 +85,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
   };
 
   async function request<T>(
-    method: "GET" | "POST",
+    method: "GET" | "POST" | "PUT" | "DELETE",
     path: string,
     body?: unknown,
   ): Promise<T> {
@@ -141,6 +143,12 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     },
     post<T>(path: string, body?: unknown) {
       return request<T>("POST", path, body);
+    },
+    put<T>(path: string, body?: unknown) {
+      return request<T>("PUT", path, body);
+    },
+    delete<T>(path: string) {
+      return request<T>("DELETE", path);
     },
     onWakingChange(listener) {
       listeners.add(listener);
