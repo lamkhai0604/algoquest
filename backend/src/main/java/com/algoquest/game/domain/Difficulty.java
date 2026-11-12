@@ -2,11 +2,11 @@ package com.algoquest.game.domain;
 
 import java.time.Duration;
 
-/** Problem difficulty with its XP bonus and time-bonus limit (D-015). */
+/** Problem difficulty with its XP bonus and time-bonus limit (D-015, D-040). */
 public enum Difficulty {
   EASY("Easy", 0, Duration.ofMinutes(15)),
-  MEDIUM("Medium", 10, Duration.ofMinutes(25)),
-  HARD("Hard", 25, Duration.ofMinutes(40));
+  MEDIUM("Medium", 9, Duration.ofMinutes(25)),
+  HARD("Hard", 20, Duration.ofMinutes(40));
 
   private final String label;
   private final int bonus;
@@ -23,7 +23,7 @@ public enum Difficulty {
     return bonus;
   }
 
-  /** Solving within this time earns the time bonus. */
+  /** Solving within this much active time earns the time bonus (D-043). */
   public Duration timeLimit() {
     return timeLimit;
   }

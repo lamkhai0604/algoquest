@@ -10,6 +10,7 @@ import com.algoquest.access.AccessService;
 import com.algoquest.access.AuthenticatedUser;
 import com.algoquest.access.SignInProfile;
 import com.algoquest.access.signin.MutableClock;
+import com.algoquest.game.domain.ProblemProgress;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -54,8 +55,10 @@ class HintApiTest {
   @Autowired private WebApplicationContext context;
   @Autowired private AccessService access;
   @Autowired private MutableClock clock;
+  @Autowired private ProgressStore progress;
 
   private MockMvc mvc;
+  private UUID playerId;
   private RequestPostProcessor player;
 
   @BeforeEach
@@ -65,10 +68,11 @@ class HintApiTest {
         MockMvcBuilders.webAppContextSetup(context)
             .apply(SecurityMockMvcConfigurers.springSecurity())
             .build();
-    UUID id = access.signIn(new SignInProfile("github", "h-1", "hints@example.com", "Player"));
+    playerId = access.signIn(new SignInProfile("github", "h-1", "hints@example.com", "Player"));
     player =
         authentication(
-            new UsernamePasswordAuthenticationToken(new AuthenticatedUser(id), null, List.of()));
+            new UsernamePasswordAuthenticationToken(
+                new AuthenticatedUser(playerId), null, List.of()));
   }
 
   private ResultActions open(String problem) throws Exception {
@@ -105,6 +109,9 @@ class HintApiTest {
     open("L1-max-value");
     clock.advance(Duration.ofHours(1));
     open("L1-max-value");
+    // The second problem opens once the first is solved (D-042).
+    progress.lock(playerId, "L1-max-value", 1);
+    progress.save(playerId, "L1-max-value", new ProblemProgress(true, 12, false));
     open("L1-pair-max");
 
     open("L1-pair-max")
@@ -141,7 +148,7 @@ class HintApiTest {
                     "{\"attemptId\":\"%s\",\"text\":\"%s\",\"secondsTaken\":60}"
                         .formatted(UUID.randomUUID(), GOOD)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.xpGained").value(15)); // 25 x 0.6
+        .andExpect(jsonPath("$.xpGained").value(12)); // 20 x 0.6
   }
 
   @Test

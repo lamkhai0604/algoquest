@@ -38,13 +38,12 @@ class LevelRulesTest {
   @ParameterizedTest(name = "level {1} with {0} XP: practice {2}, test {3}")
   @CsvSource({
     "0,   1, false, false",
-    "69,  1, false, false",
-    "70,  1, true,  false", // 70% of 100
-    "99,  1, true,  false",
-    "100, 1, true,  true",
-    "87,  2, false, false", // 70% of 125 is 87.5
-    "88,  2, true,  false",
-    "125, 2, true,  true",
+    "104, 1, false, false",
+    "105, 1, true,  false", // 70% of 150
+    "149, 1, true,  false",
+    "150, 1, true,  true",
+    "104, 3, false, false", // Levels 1-3 share the target (D-040)
+    "150, 3, true,  true",
   })
   void practiceOpensAt70PercentAndTestAtAFullBar(
       int xp, int level, boolean practice, boolean test) {
@@ -54,12 +53,12 @@ class LevelRulesTest {
 
   @Test
   void theBarNeverShowsMoreThanTheTarget() {
-    assertThat(LevelRules.barXp(130, 1)).isEqualTo(100);
+    assertThat(LevelRules.barXp(170, 1)).isEqualTo(150);
     assertThat(LevelRules.barXp(40, 1)).isEqualTo(40);
   }
 
   @ParameterizedTest(name = "{0} XP on level 1: Done adds {1}")
-  @CsvSource({"70, 10", "95, 5", "100, 0", "120, 0"})
+  @CsvSource({"105, 10", "145, 5", "150, 0", "170, 0"})
   void practiceDoneAddsTenUntilTheBarIsFull(int xp, int added) {
     assertThat(LevelRules.practiceDoneXp(xp, 1)).isEqualTo(added);
   }

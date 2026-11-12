@@ -38,15 +38,21 @@ public class ProgressStore {
     return result;
   }
 
-  /** XP per level: the sum of the XP awarded for that level's problems. */
+  /**
+   * XP per level: the XP awarded for that level's problems and practice round, plus its quick check
+   * (D-041).
+   */
   public Map<Integer, Integer> xpByLevel(UUID userId) {
     Map<Integer, Integer> result = new HashMap<>();
     jdbc.query(
-        "select level, sum(xp_awarded + practice_xp) as xp from problem_progress"
-            + " where user_id = ? group by level",
+        "select level, sum(xp) as xp from ("
+            + " select level, xp_awarded + practice_xp as xp from problem_progress where user_id = ?"
+            + " union all select level, xp from quick_check where user_id = ?) as earned"
+            + " group by level",
         rs -> {
           result.put(rs.getInt("level"), rs.getInt("xp"));
         },
+        userId,
         userId);
     return result;
   }

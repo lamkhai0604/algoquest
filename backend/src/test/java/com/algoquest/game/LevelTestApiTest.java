@@ -87,7 +87,7 @@ class LevelTestApiTest {
 
   private void fillTheBar() {
     progress.lock(playerId, "L1-max-value", 1);
-    progress.save(playerId, "L1-max-value", new ProblemProgress(true, 100, false));
+    progress.save(playerId, "L1-max-value", new ProblemProgress(true, 150, false));
   }
 
   private String start() throws Exception {

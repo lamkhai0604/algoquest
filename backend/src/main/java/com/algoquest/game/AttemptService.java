@@ -12,9 +12,7 @@ import com.algoquest.grading.Grader;
 import com.algoquest.grading.GraderUnavailableException;
 import com.algoquest.grading.GradingResult;
 import com.algoquest.shared.web.ApiException;
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.UUID;
@@ -59,7 +57,26 @@ public class AttemptService {
       String feedback,
       int xpGained,
       int levelXp,
-      int levelTarget) {}
+      int levelTarget) {
+
+    /** The view of a stored attempt, with the level bar as it is now. */
+    static AttemptResult of(StoredAttempt attempt, int levelXp, int level) {
+      GradingResult result = attempt.result();
+      return new AttemptResult(
+          attempt.id(),
+          attempt.mode(),
+          result.pattern(),
+          result.steps(),
+          result.complexity(),
+          result.edgeCases(),
+          result.total(),
+          result.total() >= XpRules.PASS_SCORE,
+          result.feedback(),
+          attempt.xpGained(),
+          LevelRules.barXp(levelXp, level),
+          XpRules.levelTarget(level));
+    }
+  }
 
   private final GameService game;
   private final HintService hints;
@@ -68,8 +85,7 @@ public class AttemptService {
   private final AttemptStore attempts;
   private final ProgressStore progress;
   private final TransactionTemplate transaction;
-  private final ProblemStartStore starts;
-  private final Clock clock;
+  private final ProblemTimeStore times;
   private final ProfileService profiles;
 
   public AttemptService(
@@ -79,8 +95,7 @@ public class AttemptService {
       Grader grader,
       AttemptStore attempts,
       ProgressStore progress,
-      ProblemStartStore starts,
-      Clock clock,
+      ProblemTimeStore times,
       ProfileService profiles,
       PlatformTransactionManager transactionManager) {
     this.game = game;
@@ -89,8 +104,7 @@ public class AttemptService {
     this.grader = grader;
     this.attempts = attempts;
     this.progress = progress;
-    this.starts = starts;
-    this.clock = clock;
+    this.times = times;
     this.profiles = profiles;
     this.transaction = new TransactionTemplate(transactionManager);
   }
@@ -135,9 +149,8 @@ public class AttemptService {
       throw e;
     }
     long gradingMs = (System.nanoTime() - started) / 1_000_000;
-    // The time bonus runs from the first opening of the problem, as recorded by the server.
-    Instant openedAt = starts.openedAt(userId, problem.id());
-    int seconds = seconds(Duration.between(openedAt, clock.instant()));
+    // The time bonus counts active working time, as recorded by the server (D-043).
+    int seconds = Math.min(times.activeSeconds(userId, problem.id()), NO_TIME_BONUS_SECONDS);
 
     if (mode.equals(PRACTICE)) {
       return transaction.execute(
@@ -234,25 +247,8 @@ public class AttemptService {
   }
 
   private AttemptResult view(StoredAttempt attempt, UUID userId, Problem problem) {
-    GradingResult result = attempt.result();
     int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
-    return new AttemptResult(
-        attempt.id(),
-        attempt.mode(),
-        result.pattern(),
-        result.steps(),
-        result.complexity(),
-        result.edgeCases(),
-        result.total(),
-        result.total() >= XpRules.PASS_SCORE,
-        result.feedback(),
-        attempt.xpGained(),
-        LevelRules.barXp(levelXp, problem.level()),
-        XpRules.levelTarget(problem.level()));
-  }
-
-  private static int seconds(Duration taken) {
-    return (int) Math.min(Math.max(taken.toSeconds(), 0), NO_TIME_BONUS_SECONDS);
+    return AttemptResult.of(attempt, levelXp, problem.level());
   }
 
   private static ApiException invalid(String detail) {
