@@ -63,7 +63,10 @@ export function LessonPage() {
   return (
     <div className={cx(pages.page, styles.lessonPage)}>
       <div className={pages.topBar}>
-        <BackButton to={`/levels/${number}`} label={`Back to Level ${number}`} />
+        <BackButton
+          to={`/levels/${number}`}
+          label={`Back to Level ${number}`}
+        />
         <nav className={styles.crumbs} aria-label="Breadcrumb">
           <Link to="/">Level map</Link> /{" "}
           <Link to={`/levels/${number}`}>Level {number}</Link> /{" "}

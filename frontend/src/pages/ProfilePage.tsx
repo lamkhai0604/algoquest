@@ -60,7 +60,9 @@ export function ProfilePage() {
           <Card heading="Progress by level">
             <ul className={game.levelList}>
               {profile.data.levels
-                .filter((level) => level.available && level.state !== "LOCKED")
+                .filter(
+                  (level) => level.available && level.state !== "LOCKED",
+                )
                 .map((level) => (
                   <li key={level.number} className={game.profileRow}>
                     <span className={game.rowTitle}>

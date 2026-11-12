@@ -176,7 +176,9 @@ export function SolvePage() {
       <div className={pages.topBar}>
         <BackButton
           to={level === null ? "/" : `/levels/${level}`}
-          label={level === null ? "Back to the level map" : `Back to Level ${level}`}
+          label={
+            level === null ? "Back to the level map" : `Back to Level ${level}`
+          }
         />
         <nav className={styles.crumbs} aria-label="Breadcrumb">
           <Link to="/">Level map</Link>
