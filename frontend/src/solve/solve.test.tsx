@@ -166,6 +166,13 @@ describe("solve page", () => {
     });
 
     expect(await screen.findByText("Not solved yet")).toBeVisible();
+    // The graded answer sits beside its result (T-310).
+    expect(screen.getByRole("heading", { name: "Your answer" })).toBeVisible();
+    expect(
+      screen.getByText(
+        "Walk the array once and keep the largest value so far.",
+      ),
+    ).toBeVisible();
     expect(screen.queryByLabelText("Your explanation")).toBeNull();
     expect(screen.queryByRole("link", { name: /Next problem/ })).toBeNull();
 

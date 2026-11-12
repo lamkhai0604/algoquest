@@ -149,7 +149,7 @@ public class GameService {
       boolean tried = byProblem.containsKey(problem.id());
       boolean locked =
           !LevelRules.canOpen(state, Difficulty.fromLabel(problem.difficulty()))
-              || !previousSolved(level, problem, byProblem);
+              || (!tried && !previousSolved(level, problem, byProblem));
       result.add(
           new ProblemItem(
               problem.id(),
@@ -222,7 +222,9 @@ public class GameService {
       throw forbidden("This problem is locked.");
     }
     LevelContent level = catalog.level(problem.level()).orElseThrow();
-    if (!previousSolved(level, problem, progress.byProblem(userId))) {
+    Map<String, ProblemProgress> byProblem = progress.byProblem(userId);
+    // A problem with progress stays open even if the order changed later (D-042).
+    if (!byProblem.containsKey(problem.id()) && !previousSolved(level, problem, byProblem)) {
       throw forbidden("Solve the problem before this one first.");
     }
     return problem;
@@ -273,7 +275,7 @@ public class GameService {
 
   /**
    * Problems open in order (D-042): the first one is open, and each later one opens when the one
-   * before it is solved.
+   * before it is solved. A problem the player already has progress on is never locked again.
    */
   private static boolean previousSolved(
       LevelContent level, Problem problem, Map<String, ProblemProgress> byProblem) {

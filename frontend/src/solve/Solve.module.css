@@ -245,3 +245,79 @@
 .wide {
   grid-column: 1 / -1;
 }
+
+/* Solve page layout (T-310): problem and hints on top, the answer full
+   width; after grading, the answer and the result side by side. */
+.topRow {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.topRow.single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.answerRow {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.answerRow .textarea {
+  min-height: 260px;
+}
+
+.resultRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.resultRow > * {
+  animation: settle 320ms ease both;
+}
+
+.resultRow > :last-child {
+  animation-delay: 80ms;
+}
+
+.answerCard {
+  position: sticky;
+  top: var(--space-4);
+}
+
+.answerText {
+  max-height: 480px;
+  margin: 0;
+  overflow: auto;
+  color: var(--color-text-2);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (max-width: 860px) {
+  .topRow,
+  .resultRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .answerCard {
+    position: static;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resultRow > * {
+    animation: none;
+  }
+}

@@ -1,4 +1,3 @@
-import { Card } from "../components";
 import type { Difficulty } from "../game/types";
 import {
   BASE_XP,
@@ -19,10 +18,17 @@ interface ScoringGuideProps {
   variant?: "problem" | "test";
 }
 
-/** How an explanation is scored and what it earns (D-044). */
+/**
+ * How an explanation is scored and what it earns (D-044). Collapsed by
+ * default so the page stays short; one click opens it.
+ */
 export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
   return (
-    <Card heading="How your answer is scored" className={styles.guide}>
+    <details className={styles.guide}>
+      <summary className={styles.summary}>
+        <h3 className={styles.title}>How your answer is scored</h3>
+        <span className={styles.toggle} aria-hidden="true" />
+      </summary>
       <div className={styles.columns}>
         <section>
           <h3 className={styles.heading}>Four criteria, 100 points</h3>
@@ -83,6 +89,6 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
           </section>
         )}
       </div>
-    </Card>
+    </details>
   );
 }

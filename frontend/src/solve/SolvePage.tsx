@@ -16,7 +16,7 @@ import type { Hints } from "../game/types";
 import { InlineText } from "../lesson/Markdown";
 import pages from "../pages/Pages.module.css";
 import { ExplainForm } from "./ExplainForm";
-import { FeedbackPanel } from "./FeedbackPanel";
+import { FeedbackPanel, ResultActions } from "./FeedbackPanel";
 import { HintPanel } from "./HintPanel";
 import { clock, maxXp, TIME_BONUS, timeLimitSeconds } from "./rules";
 import { ScoringGuide } from "./ScoringGuide";
@@ -199,55 +199,58 @@ function Solve({ problem, mode }: SolveProps) {
           </span>
         )}
       </div>
-      <div className={styles.columns}>
-        <div className={styles.stack}>
-          <ProblemText problem={problem} />
-          {practice && (
-            <p className={styles.muted}>
-              Explain the problem again without hints. A score of 70 or more
-              marks it Done and adds up to 10 XP.
-            </p>
-          )}
-          {!practice && currentHints && view === "work" && (
+      <div className={cx(styles.topRow, practice && styles.single)}>
+        <ProblemText problem={problem} />
+        {practice ? (
+          <p className={styles.muted}>
+            Explain the problem again without hints. A score of 70 or more marks
+            it Done and adds up to 10 XP.
+          </p>
+        ) : (
+          currentHints && (
             <HintPanel
               hints={currentHints}
               problemId={problem.id}
               onChange={changeHints}
             />
-          )}
-        </div>
-        {view === "result" && result ? (
-          <FeedbackPanel
+          )
+        )}
+      </div>
+      {view === "result" && result ? (
+        <>
+          <div className={styles.resultRow}>
+            <Card heading="Your answer" className={styles.answerCard}>
+              <p className={styles.answerText}>{result.explanation || text}</p>
+            </Card>
+            <FeedbackPanel result={result} level={problem.level} />
+          </div>
+          <ResultActions
             result={result}
             level={problem.level}
             nextProblemId={problem.nextProblemId}
             onRetry={practice ? undefined : () => setAsking("retry")}
           />
-        ) : (
-          <div className={styles.stack}>
-            {!practice && (
-              <TimeNote difficulty={problem.difficulty} seconds={seconds} />
-            )}
-            <ExplainForm
-              xpNote={
-                practice
-                  ? "Done adds up to 10 XP"
-                  : `Up to ${maxXp(problem.difficulty, seconds, hintsUsed)} XP`
-              }
-              text={text}
-              onTextChange={changeText}
-              submitting={submitting}
-              error={error}
-              onSubmit={submit}
-            />
-          </div>
-        )}
-        {!practice && (
-          <div className={styles.wide}>
-            <ScoringGuide />
-          </div>
-        )}
-      </div>
+        </>
+      ) : (
+        <div className={styles.answerRow}>
+          {!practice && (
+            <TimeNote difficulty={problem.difficulty} seconds={seconds} />
+          )}
+          <ExplainForm
+            xpNote={
+              practice
+                ? "Done adds up to 10 XP"
+                : `Up to ${maxXp(problem.difficulty, seconds, hintsUsed)} XP`
+            }
+            text={text}
+            onTextChange={changeText}
+            submitting={submitting}
+            error={error}
+            onSubmit={submit}
+          />
+        </div>
+      )}
+      {!practice && <ScoringGuide />}
       {asking === "resume" && (
         <ConfirmDialog
           title="Continue where you left off?"

@@ -249,7 +249,8 @@ class AttemptApiTest {
 
     submit(player, EASY, UUID.randomUUID(), "Sort it.", 60);
     mvc.perform(get("/api/v1/problems/" + EASY).with(player))
-        .andExpect(jsonPath("$.lastResult.total").value(35));
+        .andExpect(jsonPath("$.lastResult.total").value(35))
+        .andExpect(jsonPath("$.lastResult.explanation").value("Sort it."));
     mvc.perform(get("/api/v1/levels/1/problems").with(player))
         .andExpect(jsonPath("$[0].paused").value(false))
         .andExpect(jsonPath("$[0].tried").value(true))
