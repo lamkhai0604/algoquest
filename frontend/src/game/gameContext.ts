@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import type { GameRules } from "../solve/rules";
 import type { Loadable } from "../api/useApiGet";
 import type { HintQuota, Level, Profile } from "./types";
 
@@ -9,6 +10,8 @@ export interface GameContextValue {
   reloadLevels: () => void;
   hintQuota: Loadable<HintQuota>;
   reloadHintQuota: () => void;
+  /** The game rules in force (D-047); the defaults until loaded. */
+  rules: GameRules;
 }
 
 export const GameContext = createContext<GameContextValue | null>(null);

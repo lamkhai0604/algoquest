@@ -16,9 +16,11 @@ import type { Hints } from "../game/types";
 import { InlineText } from "../lesson/Markdown";
 import pages from "../pages/Pages.module.css";
 import { ExplainForm } from "./ExplainForm";
+import { CodePanel } from "../code/CodePanel";
 import { FeedbackPanel, ResultActions } from "./FeedbackPanel";
 import { HintPanel } from "./HintPanel";
-import { clock, maxXp, TIME_BONUS, timeLimitSeconds } from "./rules";
+import { clock, maxXp, timeLimitSeconds } from "./rules";
+import type { GameRules } from "./rules";
 import { ScoringGuide } from "./ScoringGuide";
 import styles from "./Solve.module.css";
 import type { AttemptMode, AttemptResult, ProblemDetail } from "./types";
@@ -63,22 +65,24 @@ type View = "work" | "result";
 function TimeNote({
   difficulty,
   seconds,
+  rules,
 }: {
   difficulty: ProblemDetail["difficulty"];
   seconds: number;
+  rules: GameRules;
 }) {
-  const limit = timeLimitSeconds(difficulty);
+  const limit = timeLimitSeconds(difficulty, rules);
   if (seconds > limit) {
     return (
       <p className={styles.timeNote} role="status">
         The time bonus is over. You can still solve this problem and earn its XP
-        without the +{TIME_BONUS} bonus.
+        without the +{rules.timeBonus} bonus.
       </p>
     );
   }
   return (
     <p className={styles.timeNote}>
-      Finish within {clock(limit)} of active time for +{TIME_BONUS} XP. The
+      Finish within {clock(limit)} of active time for +{rules.timeBonus} XP. The
       clock pauses when you leave this page.
     </p>
   );
@@ -86,7 +90,7 @@ function TimeNote({
 
 function Solve({ problem, mode }: SolveProps) {
   const practice = mode === "practice";
-  const { reloadLevels, reloadHintQuota } = useGame();
+  const { reloadLevels, reloadHintQuota, rules } = useGame();
   const hintState = useApiGet<Hints>(
     practice ? null : `/api/v1/problems/${problem.id}/hints`,
   );
@@ -124,7 +128,7 @@ function Solve({ problem, mode }: SolveProps) {
     problem.activeSeconds,
     timed,
   );
-  const limit = timeLimitSeconds(problem.difficulty);
+  const limit = timeLimitSeconds(problem.difficulty, rules);
   const over = seconds > limit;
 
   const changeText = (next: string) => {
@@ -203,8 +207,9 @@ function Solve({ problem, mode }: SolveProps) {
         <ProblemText problem={problem} />
         {practice ? (
           <p className={styles.muted}>
-            Explain the problem again without hints. A score of 70 or more marks
-            it Done and adds up to 10 XP.
+            Explain the problem again without hints. A score of{" "}
+            {rules.passScore} or more marks it Done and adds up to{" "}
+            {rules.practiceDoneXp} XP.
           </p>
         ) : (
           currentHints && (
@@ -230,17 +235,27 @@ function Solve({ problem, mode }: SolveProps) {
             nextProblemId={problem.nextProblemId}
             onRetry={practice ? undefined : () => setAsking("retry")}
           />
+          {!practice && result.solved && problem.starterCode && (
+            <CodePanel
+              problemId={problem.id}
+              starterCode={problem.starterCode}
+            />
+          )}
         </>
       ) : (
         <div className={styles.answerRow}>
           {!practice && (
-            <TimeNote difficulty={problem.difficulty} seconds={seconds} />
+            <TimeNote
+              difficulty={problem.difficulty}
+              seconds={seconds}
+              rules={rules}
+            />
           )}
           <ExplainForm
             xpNote={
               practice
-                ? "Done adds up to 10 XP"
-                : `Up to ${maxXp(problem.difficulty, seconds, hintsUsed)} XP`
+                ? `Done adds up to ${rules.practiceDoneXp} XP`
+                : `Up to ${maxXp(problem.difficulty, seconds, hintsUsed, rules)} XP`
             }
             text={text}
             onTextChange={changeText}

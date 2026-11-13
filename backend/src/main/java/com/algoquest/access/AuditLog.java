@@ -35,7 +35,8 @@ public class AuditLog {
       Map<String, String> after) {
     String beforeJson = toJson(before);
     String afterJson = toJson(after);
-    entries.save(
+    // Flushed at once, so SQL reads in the same transaction (the audit view) see the entry.
+    entries.saveAndFlush(
         new AuditLogEntry(
             UUID.randomUUID(), actorId, action, target, beforeJson, afterJson, Instant.now()));
   }

@@ -41,18 +41,21 @@ function useSecondsLeft(test: LevelTest): number {
 }
 
 function Result({ test }: { test: LevelTest }) {
+  const { rules } = useGame();
   const next = test.nextLevelState;
   const unlock =
     next === "OPEN"
       ? `Level ${test.level + 1} is open.`
       : next === "EASY_ONLY"
         ? `Level ${test.level + 1}: Easy problems are open. Score 100 to open the rest.`
-        : "Score 70 or more to open the next level. You can retake the test.";
+        : `Score ${rules.passScore} or more to open the next level. You can retake the test.`;
   return (
     <>
       <Card className={styles.score}>
-        <Badge tone={(test.score ?? 0) >= 70 ? "success" : "warning"}>
-          {(test.score ?? 0) >= 70 ? "Passed" : "Not passed yet"}
+        <Badge
+          tone={(test.score ?? 0) >= rules.passScore ? "success" : "warning"}
+        >
+          {(test.score ?? 0) >= rules.passScore ? "Passed" : "Not passed yet"}
         </Badge>
         <p className={styles.total}>
           <strong>{test.score}</strong> / 100

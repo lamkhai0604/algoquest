@@ -59,7 +59,7 @@ Claude's workspace may not reach package registries or external APIs, so install
 | Secret | Where it lives |
 | --- | --- |
 | `GEMINI_API_KEY` | Render env + GitHub Actions secret (for an optional real-grader check) |
-| `JUDGE0_RAPIDAPI_KEY` | Render env |
+| `JUDGE0_API_KEY` | Render env |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Render env; local `.env` |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | Render env; local `.env` |
 | `JWT_SECRET` | Render env; local `.env` |

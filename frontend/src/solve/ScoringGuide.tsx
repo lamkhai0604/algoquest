@@ -1,14 +1,6 @@
 import type { Difficulty } from "../game/types";
-import {
-  BASE_XP,
-  CRITERIA,
-  DIFFICULTY_BONUS,
-  HINT_PENALTY_PERCENT,
-  PASS_TOTAL,
-  QUICK_CHECK_XP,
-  TIME_BONUS,
-  TIME_LIMIT_MINUTES,
-} from "./rules";
+import { useGame } from "../game/gameContext";
+import { CRITERIA, difficultyBonus, timeLimitMinutes } from "./rules";
 import styles from "./ScoringGuide.module.css";
 
 const PLAYABLE: Difficulty[] = ["Easy", "Medium"];
@@ -23,6 +15,7 @@ interface ScoringGuideProps {
  * default so the page stays short; one click opens it.
  */
 export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
+  const { rules } = useGame();
   return (
     <details className={styles.guide}>
       <summary className={styles.summary}>
@@ -42,7 +35,7 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
           </ul>
           <p className={styles.note}>
             An AI grader compares your explanation with the teacher&apos;s
-            answer key. <strong>{PASS_TOTAL} or more</strong> solves the
+            answer key. <strong>{rules.passScore} or more</strong> solves the
             problem.
           </p>
         </section>
@@ -54,27 +47,30 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
                 <li key={difficulty}>
                   <span>{difficulty}</span>
                   <strong>
-                    {BASE_XP + DIFFICULTY_BONUS[difficulty] + TIME_BONUS} XP
+                    {rules.baseXp +
+                      difficultyBonus(difficulty, rules) +
+                      rules.timeBonus}{" "}
+                    XP
                   </strong>
                 </li>
               ))}
               <li>
                 <span>Lesson quick check</span>
-                <strong>{QUICK_CHECK_XP} XP</strong>
+                <strong>{rules.quickCheckXp} XP</strong>
               </li>
             </ul>
             <p className={styles.note}>
               Each problem includes a{" "}
-              <strong>+{TIME_BONUS} XP time bonus</strong> for finishing within{" "}
-              {TIME_LIMIT_MINUTES.Easy} minutes (Easy) or{" "}
-              {TIME_LIMIT_MINUTES.Medium} minutes (Medium) of active time. The
-              clock pauses when you leave the page. After the limit you can
-              still solve the problem, without the bonus.
+              <strong>+{rules.timeBonus} XP time bonus</strong> for finishing
+              within {timeLimitMinutes("Easy", rules)} minutes (Easy) or{" "}
+              {timeLimitMinutes("Medium", rules)} minutes (Medium) of active
+              time. The clock pauses when you leave the page. After the limit
+              you can still solve the problem, without the bonus.
             </p>
             <p className={styles.note}>
-              Each hint takes {HINT_PENALTY_PERCENT}% off the problem&apos;s XP.
-              XP is earned once, the first time you solve a problem; the next
-              problem opens when this one is solved.
+              Each hint takes {rules.hintPenaltyPercent}% off the problem&apos;s
+              XP. XP is earned once, the first time you solve a problem; the
+              next problem opens when this one is solved.
             </p>
           </section>
         ) : (
@@ -82,9 +78,9 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
             <h3 className={styles.heading}>Test score</h3>
             <p className={styles.note}>
               The test score is the average of the three problem scores, rounded
-              down. {PASS_TOTAL}–99 opens the Easy problems of the next level;
-              100 opens the whole level. Below {PASS_TOTAL}, you can take the
-              test again.
+              down. {rules.passScore}–99 opens the Easy problems of the next
+              level; 100 opens the whole level. Below {rules.passScore}, you can
+              take the test again.
             </p>
           </section>
         )}

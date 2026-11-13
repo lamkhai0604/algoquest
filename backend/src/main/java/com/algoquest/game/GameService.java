@@ -15,6 +15,7 @@ import com.algoquest.game.GameViews.ProblemPage;
 import com.algoquest.game.GameViews.QuickCheckAnswers;
 import com.algoquest.game.GameViews.QuickCheckResult;
 import com.algoquest.game.domain.Difficulty;
+import com.algoquest.game.domain.GameRules;
 import com.algoquest.game.domain.LevelRules;
 import com.algoquest.game.domain.LevelState;
 import com.algoquest.game.domain.ProblemProgress;
@@ -42,6 +43,7 @@ public class GameService {
   private final ProblemTimeStore times;
   private final QuickCheckStore quickChecks;
   private final AttemptStore attempts;
+  private final GameRulesService rules;
 
   public GameService(
       ContentCatalog catalog,
@@ -49,13 +51,15 @@ public class GameService {
       TestStore tests,
       ProblemTimeStore times,
       QuickCheckStore quickChecks,
-      AttemptStore attempts) {
+      AttemptStore attempts,
+      GameRulesService rules) {
     this.catalog = catalog;
     this.progress = progress;
     this.tests = tests;
     this.times = times;
     this.quickChecks = quickChecks;
     this.attempts = attempts;
+    this.rules = rules;
   }
 
   @Transactional(readOnly = true)
@@ -63,6 +67,7 @@ public class GameService {
     Map<Integer, Integer> xpByLevel = progress.xpByLevel(userId);
     Map<String, ProblemProgress> byProblem = progress.byProblem(userId);
     Map<Integer, Integer> best = tests.bestScores(userId);
+    GameRules current = rules.current();
     List<LevelView> result = new ArrayList<>();
     for (LevelContent level : catalog.levels()) {
       int number = level.info().number();
@@ -84,11 +89,11 @@ public class GameService {
               level.info().title(),
               level.info().summary(),
               level.available(),
-              LevelRules.state(number, optional(best.get(number - 1))),
-              LevelRules.barXp(xp, number),
-              XpRules.levelTarget(number),
-              LevelRules.practiceOpen(xp, number),
-              LevelRules.testOpen(xp, number),
+              LevelRules.state(current, number, optional(best.get(number - 1))),
+              LevelRules.barXp(current, xp, number),
+              XpRules.levelTarget(current, number),
+              LevelRules.practiceOpen(current, xp, number),
+              LevelRules.testOpen(current, xp, number),
               playable,
               solved,
               best.get(number)));
@@ -124,16 +129,17 @@ public class GameService {
     }
     boolean allCorrect = !correct.contains(false);
     int gained = 0;
-    if (allCorrect && quickChecks.complete(userId, number, XpRules.QUICK_CHECK_XP)) {
-      gained = XpRules.QUICK_CHECK_XP;
+    GameRules current = rules.current();
+    if (allCorrect && quickChecks.complete(userId, number, current.quickCheckXp())) {
+      gained = current.quickCheckXp();
     }
     int xp = progress.xpByLevel(userId).getOrDefault(number, 0);
     return new QuickCheckResult(
         correct,
         allCorrect || quickChecks.done(userId, number),
         gained,
-        LevelRules.barXp(xp, number),
-        XpRules.levelTarget(number));
+        LevelRules.barXp(current, xp, number),
+        XpRules.levelTarget(current, number));
   }
 
   @Transactional(readOnly = true)
@@ -176,7 +182,7 @@ public class GameService {
       last =
           attempts
               .latest(userId, problem.id(), AttemptService.EXPLAIN)
-              .map(a -> AttemptResult.of(a, levelXp, problem.level()))
+              .map(a -> AttemptResult.of(rules.current(), a, levelXp, problem.level()))
               .orElse(null);
     }
     LevelContent level = catalog.level(problem.level()).orElseThrow();
@@ -235,7 +241,8 @@ public class GameService {
     if (level == 1) {
       return LevelState.OPEN;
     }
-    return LevelRules.state(level, optional(tests.bestScores(userId).get(level - 1)));
+    return LevelRules.state(
+        rules.current(), level, optional(tests.bestScores(userId).get(level - 1)));
   }
 
   private static OptionalInt optional(Integer score) {

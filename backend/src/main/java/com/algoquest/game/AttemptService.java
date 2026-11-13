@@ -4,6 +4,7 @@ import com.algoquest.content.ContentCatalog;
 import com.algoquest.content.model.Problem;
 import com.algoquest.game.AttemptStore.StoredAttempt;
 import com.algoquest.game.domain.Difficulty;
+import com.algoquest.game.domain.GameRules;
 import com.algoquest.game.domain.LevelRules;
 import com.algoquest.game.domain.ProblemProgress;
 import com.algoquest.game.domain.XpAward;
@@ -61,7 +62,7 @@ public class AttemptService {
       int levelTarget) {
 
     /** The view of a stored attempt, with the level bar as it is now. */
-    static AttemptResult of(StoredAttempt attempt, int levelXp, int level) {
+    static AttemptResult of(GameRules rules, StoredAttempt attempt, int levelXp, int level) {
       GradingResult result = attempt.result();
       return new AttemptResult(
           attempt.id(),
@@ -72,11 +73,11 @@ public class AttemptService {
           result.complexity(),
           result.edgeCases(),
           result.total(),
-          result.total() >= XpRules.PASS_SCORE,
+          result.total() >= rules.passScore(),
           result.feedback(),
           attempt.xpGained(),
-          LevelRules.barXp(levelXp, level),
-          XpRules.levelTarget(level));
+          LevelRules.barXp(rules, levelXp, level),
+          XpRules.levelTarget(rules, level));
     }
   }
 
@@ -89,6 +90,7 @@ public class AttemptService {
   private final TransactionTemplate transaction;
   private final ProblemTimeStore times;
   private final ProfileService profiles;
+  private final GameRulesService rules;
 
   public AttemptService(
       GameService game,
@@ -99,6 +101,7 @@ public class AttemptService {
       ProgressStore progress,
       ProblemTimeStore times,
       ProfileService profiles,
+      GameRulesService rules,
       PlatformTransactionManager transactionManager) {
     this.game = game;
     this.hints = hints;
@@ -108,6 +111,7 @@ public class AttemptService {
     this.progress = progress;
     this.times = times;
     this.profiles = profiles;
+    this.rules = rules;
     this.transaction = new TransactionTemplate(transactionManager);
   }
 
@@ -169,8 +173,10 @@ public class AttemptService {
         status -> {
           ProblemProgress before = progress.lock(userId, problem.id(), problem.level());
           int hintsUsed = hints.usedFor(userId, problem.id());
+          GameRules current = rules.current();
           XpAward award =
               XpRules.award(
+                  current,
                   before,
                   result.total(),
                   Difficulty.fromLabel(problem.difficulty()),
@@ -193,7 +199,7 @@ public class AttemptService {
             return stored(attempts.find(request.attemptId()).orElseThrow(), userId, problem);
           }
           progress.save(userId, problem.id(), award.after());
-          if (result.total() >= XpRules.PASS_SCORE) {
+          if (result.total() >= current.passScore()) {
             profiles.recordSolve(userId, zone);
           }
           return view(attempt, userId, problem);
@@ -215,8 +221,9 @@ public class AttemptService {
     progress.lock(userId, problem.id(), problem.level());
     requirePracticeOpen(userId, problem);
     int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
-    boolean passed = result.total() >= XpRules.PASS_SCORE;
-    int gained = passed ? LevelRules.practiceDoneXp(levelXp, problem.level()) : 0;
+    GameRules current = rules.current();
+    boolean passed = result.total() >= current.passScore();
+    int gained = passed ? LevelRules.practiceDoneXp(current, levelXp, problem.level()) : 0;
     StoredAttempt attempt =
         new StoredAttempt(
             request.attemptId(), userId, problem.id(), PRACTICE, text, result, gained);
@@ -232,9 +239,12 @@ public class AttemptService {
   /** The practice round is open at 70% of the level bar, for solved problems not yet Done. */
   private void requirePracticeOpen(UUID userId, Problem problem) {
     int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
-    if (!LevelRules.practiceOpen(levelXp, problem.level())) {
+    GameRules current = rules.current();
+    if (!LevelRules.practiceOpen(current, levelXp, problem.level())) {
       throw new ApiException(
-          HttpStatus.FORBIDDEN, "Forbidden", "The practice round opens at 70% of the level bar.");
+          HttpStatus.FORBIDDEN,
+          "Forbidden",
+          "The practice round opens at " + current.practiceOpenPercent() + "% of the level bar.");
     }
     boolean solved =
         progress.byProblem(userId).getOrDefault(problem.id(), ProblemProgress.NEW).solved();
@@ -257,7 +267,7 @@ public class AttemptService {
 
   private AttemptResult view(StoredAttempt attempt, UUID userId, Problem problem) {
     int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
-    return AttemptResult.of(attempt, levelXp, problem.level());
+    return AttemptResult.of(rules.current(), attempt, levelXp, problem.level());
   }
 
   private static ApiException invalid(String detail) {

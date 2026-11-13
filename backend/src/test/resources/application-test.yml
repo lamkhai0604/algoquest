@@ -9,3 +9,6 @@ spring:
 algoquest:
   grading:
     provider: fake
+  code:
+    java:
+      provider: fake

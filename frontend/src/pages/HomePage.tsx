@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import {
   Badge,
+  Button,
   ButtonLink,
   Card,
   ErrorState,
@@ -28,7 +29,10 @@ function currentLevel(levels: Level[]): Level | undefined {
 }
 
 function CurrentLevelCard({ level }: { level: Level }) {
-  const practiceAt = Math.ceil(level.target * 0.7);
+  const { rules } = useGame();
+  const practiceAt = Math.ceil(
+    (level.target * rules.practiceOpenPercent) / 100,
+  );
   return (
     <Card className={game.hero}>
       <span className={game.eyebrow}>Continue</span>
@@ -40,7 +44,7 @@ function CurrentLevelCard({ level }: { level: Level }) {
       <p className={game.note}>
         {level.practiceOpen
           ? "The practice round is open."
-          : `The practice round opens at ${practiceAt} XP (70%).`}{" "}
+          : `The practice round opens at ${practiceAt} XP (${rules.practiceOpenPercent}%).`}{" "}
         {level.solved} of {level.problems} problems solved.
       </p>
       <div className={styles.row}>
@@ -114,6 +118,17 @@ export function HomePage() {
         <ErrorState message={levels.message} onRetry={reloadLevels} />
       )}
       {levels.status === "ready" && <LevelMap levels={levels.data} />}
+      <Card heading="Battle mode">
+        <p className={game.note}>
+          Race another player on the same problem: the better explanation wins
+          the round. <Badge tone="warning">Coming soon</Badge>
+        </p>
+        <div className={styles.row}>
+          <Button variant="secondary" disabled>
+            Find an opponent
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 }

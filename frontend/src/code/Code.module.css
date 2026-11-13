@@ -1,0 +1,149 @@
+.panel {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.languages {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Editor (D-046) */
+.editor {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  height: 320px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace);
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.editor:focus-within {
+  border-color: var(--color-primary);
+}
+
+.gutter {
+  display: grid;
+  align-content: start;
+  padding: 12px 10px 12px 14px;
+  overflow: hidden;
+  border-right: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  text-align: right;
+  user-select: none;
+  opacity: 0.7;
+}
+
+.surface {
+  position: relative;
+  min-width: 0;
+}
+
+.shadow,
+.area {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 12px 14px;
+  border: 0;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: 0;
+  tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+}
+
+.shadow {
+  color: var(--color-text);
+  pointer-events: none;
+  scrollbar-width: none;
+}
+
+.shadow::-webkit-scrollbar {
+  display: none;
+}
+
+.area {
+  resize: none;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--color-text);
+}
+
+.area::selection {
+  background: rgb(180 105 198 / 35%);
+  color: transparent;
+}
+
+.keyword {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.string {
+  color: var(--color-success, #3fb68b);
+}
+
+.number {
+  color: var(--color-xp);
+}
+
+.comment {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Result */
+.result {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+}
+
+.resultHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.detail {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  overflow: auto;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--color-surface-3);
+  font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace);
+  font-size: 13px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bonus {
+  color: var(--color-xp);
+  font-weight: 700;
+}

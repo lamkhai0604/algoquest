@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../api";
 import { Badge, Button, Card } from "../components";
+import { useGame } from "../game/gameContext";
 import type { Level } from "../game/types";
 import type { LevelTest } from "./types";
 import styles from "./LevelTest.module.css";
 
 /** The level-up test entry on the level page (FR-10, FR-11 placeholder). */
 export function TestStartCard({ level }: { level: Level }) {
+  const { rules } = useGame();
   const navigate = useNavigate();
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,9 +29,9 @@ export function TestStartCard({ level }: { level: Level }) {
   return (
     <Card heading="Level-up test">
       <p className={styles.muted}>
-        3 new problems, about 2 hours. A score of 70 to 99 opens the next
-        level&apos;s Easy problems; 100 opens the whole level. Retakes are
-        always allowed.
+        3 new problems, about 2 hours. A score of {rules.passScore} to 99 opens
+        the next level&apos;s Easy problems; 100 opens the whole level. Retakes
+        are always allowed.
       </p>
       {level.bestTestScore !== null && (
         <p className={styles.muted}>

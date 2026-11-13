@@ -120,6 +120,21 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
   await expect(page.getByTitle("Total XP")).toContainText("16");
   await page.screenshot({ path: `${SHOTS}/feedback.png`, fullPage: true });
 
+  // Code for 2x XP: real JavaScript in a real Web Worker (FR-07, D-035).
+  await page.getByRole("button", { name: "Write code" }).click();
+  await page
+    .getByLabel("Your JavaScript code")
+    .fill(
+      "function maxTemperature(temps) {\n  if (temps.length === 0) return null;\n  let best = temps[0];\n  for (const t of temps) if (t > best) best = t;\n  return best;\n}",
+    );
+  await page.getByRole("button", { name: "▶ Run tests" }).click();
+  await expect(page.getByText(/tests passed/)).toContainText(
+    /(\d+) \/ \1 tests passed/,
+  );
+  await expect(page.getByText("+16 XP · 2× XP earned")).toBeVisible();
+  await expect(page.getByTitle("Total XP")).toContainText("32");
+  await page.screenshot({ path: `${SHOTS}/code-passed.png`, fullPage: true });
+
   // A graded problem reopens on its result; Retry asks first (D-042).
   await page.getByRole("link", { name: /Back to the problems/ }).click();
   await page.getByRole("link", { name: /Max Temperature/ }).click();

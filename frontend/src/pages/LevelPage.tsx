@@ -61,20 +61,22 @@ function PracticeRound({
   level: Level;
   problems: ProblemItem[];
 }) {
+  const { rules } = useGame();
   const solved = problems.filter((problem) => problem.solved);
   if (!level.practiceOpen) {
-    const at = Math.ceil(level.target * 0.7);
+    const at = Math.ceil((level.target * rules.practiceOpenPercent) / 100);
     return (
       <p className={game.note}>
-        The practice round opens at {at} XP (70% of the bar).
+        The practice round opens at {at} XP ({rules.practiceOpenPercent}% of the
+        bar).
       </p>
     );
   }
   return (
     <Card heading="Practice round">
       <p className={game.note}>
-        Explain a solved problem again without hints. Each one marked Done adds
-        10 XP until the bar is full.
+        Explain a solved problem again without hints. Each one marked Done adds{" "}
+        {rules.practiceDoneXp} XP until the bar is full.
       </p>
       <ul className={game.levelList}>
         {solved.map((problem) =>
@@ -103,7 +105,7 @@ function PracticeRound({
 /** One level: XP bar, lesson, practice round, and problems (FR-04, FR-09). */
 export function LevelPage() {
   const number = Number(useParams().number);
-  const { levels } = useGame();
+  const { levels, rules } = useGame();
   const problems = useApiGet<ProblemItem[]>(
     `/api/v1/levels/${number}/problems`,
   );
@@ -140,7 +142,8 @@ export function LevelPage() {
       <section className={game.path}>
         <h2 className={game.sectionTitle}>Problems</h2>
         <p className={game.note}>
-          Problems open in order: solve one (score 70 or more) to open the next.
+          Problems open in order: solve one (score {rules.passScore} or more) to
+          open the next.
         </p>
         {problems.state.status === "loading" && (
           <LoadingState label="Loading problems…" />

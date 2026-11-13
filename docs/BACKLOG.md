@@ -72,15 +72,14 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-309 | Trial feedback round: XP rebalance and quick check XP, ordered problems, result page with Retry and Next, active-time timer with pause, scoring guide, back button, profile and wording fixes | FR-03, FR-04, FR-08, FR-12; D-040–D-044 | P1 | Done 2026-11-12 (backend 162 tests; frontend tests; smoke 5 passed, including the result page, Retry dialog, and Next) |
 | T-308 | Sprint 3 report | D-007 | P2 | Done 2026-11-09: [sprint-3-report.md](reports/sprint-3-report.md) |
 
-## Sprint 4 — Code and polish
+## Sprint 4 — Code and rules ([plan](sprints/sprint-4.md), approved 2026-11-12)
 
 | ID | Title | Req | Priority |
 | --- | --- | --- | --- |
-| T-401 | Code editor + JavaScript runner (inputs only to the browser, backend compares) | FR-07, D-035 | P1 |
+| T-401 | Code editor + JavaScript runner (inputs only to the browser, backend compares) | FR-07, D-035, D-046 | P1 |
 | T-402 | Java runner through Judge0 with daily quota guard | FR-07, D-032 | P2 |
-| T-403 | Leaderboard with labelled dummy players | FR-14 | P3 |
-| T-404 | Placeholders: VIP page, hard test mode option, battle mode (dummy) | FR-11, FR-15, FR-16 | P3 |
-| T-405 | Admin panel part 2: game config editor, users and roles, audit log view | FR-18.3–4, FR-17.6 | P2 |
+| T-404 | Placeholders: hard test mode option, battle mode (VIP page done in T-301) | FR-11, FR-16 | P3 |
+| T-405 | Admin panel part 2: game config editor, users and roles, audit log view | FR-18.3–4, FR-17.6, D-047 | P2 |
 | T-406 | Design pass: mockups first, PO selects, then apply | NFR-05, NFR-06 | P2 |
 | T-407 | Tune XP numbers from the trial results | OQ-03, D-015 | P2 |
 | T-408 | Sprint 4 report | D-007 | P2 |
@@ -89,6 +88,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 
 | ID | Title | Req |
 | --- | --- | --- |
+| T-403 | Leaderboard with labelled dummy players (moved from Sprint 4) | FR-14 |
 | T-501 | Hard problems and hard test mode for real | FR-11, D-024 |
 | T-502 | Levels 4–17 content, about 2 levels per sprint | SRS §6 |
 | T-503 | Organizations (admin invites 5 or 10 members) | FR-19, OQ-06 |
