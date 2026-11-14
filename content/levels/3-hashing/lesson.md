@@ -67,14 +67,19 @@ function onePassWithMap(items) {
 ```
 
 ```java
-void onePassWithMap(int[] items) {
-  Map<Integer, Integer> seen = new HashMap<>(); // value -> what we remember
-  for (int i = 0; i < items.length; i++) {
-    int x = items[i];
-    if (seen.containsKey(x)) {
-      // use what we remember about x
+import java.util.HashMap;
+import java.util.Map;
+
+class Solution {
+  public void onePassWithMap(int[] items) {
+    Map<Integer, Integer> seen = new HashMap<>(); // value -> what we remember
+    for (int i = 0; i < items.length; i++) {
+      int x = items[i];
+      if (seen.containsKey(x)) {
+        // use what we remember about x
+      }
+      seen.put(x, i); // record the current item after the check
     }
-    seen.put(x, i); // record the current item after the check
   }
 }
 ```
@@ -124,5 +129,22 @@ function twoTickets(prices, budget) {
     indexOf.set(prices[i], i);
   }
   return [-1, -1];
+}
+```
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+class Solution {
+  public int[] twoTickets(int[] prices, int budget) {
+    Map<Integer, Integer> indexOf = new HashMap<>();
+    for (int i = 0; i < prices.length; i++) {
+      int need = budget - prices[i];
+      if (indexOf.containsKey(need)) return new int[] {indexOf.get(need), i};
+      indexOf.put(prices[i], i);
+    }
+    return new int[] {-1, -1};
+  }
 }
 ```

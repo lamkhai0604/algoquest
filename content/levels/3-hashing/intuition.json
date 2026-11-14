@@ -1,0 +1,6 @@
+{
+  "question": "A hash set of badge IDs grows from 1,000 to 100,000 IDs. On average, how does the time to check \"have I seen this ID?\" change?",
+  "options": ["It stays about the same", "About 100 times longer", "About 10,000 times longer", "It depends on where the ID was added"],
+  "answer": 0,
+  "explanation": "The set turns the ID into a bucket index and jumps straight there, so the average check is O(1) however many IDs it holds. Only when many IDs collide in one bucket does it slow toward O(n), and a good hash function makes that rare."
+}

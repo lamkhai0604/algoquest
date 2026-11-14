@@ -25,6 +25,14 @@ const LESSON: Lesson = {
     "```javascript",
     "let best = items[0];",
     "```",
+    "",
+    "```java",
+    "int best = items[0];",
+    "```",
+    "",
+    "## Complexity",
+    "",
+    "One pass is O(n) time.",
   ].join("\n"),
   walkthrough: [
     {
@@ -62,6 +70,12 @@ const LESSON: Lesson = {
       explanation: "Each item is visited once.",
     },
   ],
+  intuition: {
+    question: "The list grows from 100 to 1,000 items. How many steps now?",
+    options: ["100", "About 1,000", "About 1,000,000"],
+    answer: 1,
+    explanation: "Ten times the items, ten times the steps.",
+  },
   quickCheckDone: false,
 };
 
@@ -111,6 +125,48 @@ describe("lesson page", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /Next: Check/ }));
     expect(tab("Step 4: Check")).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("asks an ungraded intuition question on the Understand step", async () => {
+    const fetchFn = open();
+
+    const question = await screen.findByRole("group", {
+      name: "Check your intuition",
+    });
+    expect(question).toHaveTextContent("How many steps now?");
+    expect(
+      within(question).queryByText(/Ten times the items/),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      within(question).getByRole("button", { name: "About 1,000,000" }),
+    );
+    expect(within(question).getByRole("status")).toHaveTextContent(
+      "Not quite. Ten times the items, ten times the steps.",
+    );
+    expect(quickCheckPosts(fetchFn)).toHaveLength(0);
+  });
+
+  it("shows Learn as collapsible sections with one code language at a time", async () => {
+    open(LESSON, 3);
+
+    const template = await screen.findByText("Template code");
+    expect(template.closest("details")).toHaveAttribute("open");
+    expect(
+      screen.getByText("Complexity").closest("details"),
+    ).not.toHaveAttribute("open");
+
+    expect(screen.getByText("let best = items[0];")).toBeVisible();
+    expect(screen.queryByText("int best = items[0];")).toBeNull();
+    expect(screen.getByRole("button", { name: "Copy" })).toBeVisible();
+
+    await userEvent.click(screen.getByRole("tab", { name: "Java" }));
+    expect(screen.getByText("int best = items[0];")).toBeVisible();
+    expect(screen.queryByText("let best = items[0];")).toBeNull();
+    expect(localStorage.getItem("algoquest.codeLanguage")).toBe("java");
+
+    await userEvent.click(screen.getByRole("tab", { name: "JavaScript" }));
+    expect(localStorage.getItem("algoquest.codeLanguage")).toBe("javascript");
   });
 
   it("steps through the walkthrough with Next, Back, keys, and Reset", async () => {

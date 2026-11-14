@@ -55,13 +55,15 @@ function singlePass(items) {
 ```
 
 ```java
-Integer singlePass(int[] items) {
-  if (items.length == 0) return null; // handle the empty input first
-  int best = items[0];                // state carried across the loop
-  for (int i = 1; i < items.length; i++) {
-    if (items[i] > best) best = items[i]; // update the state with one item
+class Solution {
+  public Integer singlePass(int[] items) {
+    if (items.length == 0) return null; // handle the empty input first
+    int best = items[0];                // state carried across the loop
+    for (int i = 1; i < items.length; i++) {
+      if (items[i] > best) best = items[i]; // update the state with one item
+    }
+    return best;
   }
-  return best;
 }
 ```
 
@@ -126,5 +128,23 @@ function secondLargest(scores) {
     }
   }
   return second;
+}
+```
+
+```java
+class Solution {
+  public Integer secondLargest(int[] scores) {
+    Integer first = null;
+    Integer second = null;
+    for (int s : scores) {
+      if (first == null || s > first) {
+        second = first;
+        first = s;
+      } else if (s < first && (second == null || s > second)) {
+        second = s;
+      }
+    }
+    return second;
+  }
 }
 ```
