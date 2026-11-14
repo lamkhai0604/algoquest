@@ -1,14 +1,16 @@
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { WalkthroughStep } from "./types";
 
 /** The real walkthroughs in content/, checked against reference algorithms. */
+const FILES = import.meta.glob<WalkthroughStep[]>(
+  "../../../content/levels/*/walkthrough.json",
+  { eager: true, import: "default" },
+);
+
 function walkthrough(folder: string): WalkthroughStep[] {
-  const url = new URL(
-    `../../../content/levels/${folder}/walkthrough.json`,
-    import.meta.url,
-  );
-  return JSON.parse(readFileSync(url, "utf8")) as WalkthroughStep[];
+  const steps = FILES[`../../../content/levels/${folder}/walkthrough.json`];
+  if (!steps) throw new Error(`no walkthrough for ${folder}`);
+  return steps;
 }
 
 const value = (step: WalkthroughStep, name: string) =>
