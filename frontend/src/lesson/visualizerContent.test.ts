@@ -56,7 +56,7 @@ describe("lesson visualizers match their reference algorithms", () => {
   it("Level 4: each swap turns the previous cells into the next, ending sorted", () => {
     const steps = walkthrough("4-sorting-fundamentals");
     const start = steps[0]!.visual!.cells.map(Number);
-    let cells = [...start];
+    const cells = [...start];
     let swaps = 0;
     for (const step of steps.slice(1)) {
       const swap = step.visual?.swap;

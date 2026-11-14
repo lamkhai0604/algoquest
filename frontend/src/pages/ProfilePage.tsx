@@ -31,7 +31,8 @@ function stateBadge(
 ): { text: string; tone: BadgeTone } {
   if (passed(level, passScore)) return { text: "Passed", tone: "success" };
   if (level.state === "OPEN") return { text: "Open", tone: "primary" };
-  if (level.state === "EASY_ONLY") return { text: "Easy only", tone: "warning" };
+  if (level.state === "EASY_ONLY")
+    return { text: "Easy only", tone: "warning" };
   return { text: "Locked", tone: "neutral" };
 }
 
