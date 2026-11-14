@@ -45,6 +45,8 @@ export interface Lesson {
   markdown: string;
   walkthrough: WalkthroughStep[];
   quickCheck: QuickCheckQuestion[];
+  /** An intuition question on the Understand step; answered for no XP. */
+  intuition?: Prediction | null;
   /** Whether this player has finished the quick check (D-041). */
   quickCheckDone: boolean;
 }

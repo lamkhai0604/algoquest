@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Button, Card, cx } from "../components";
 import styles from "./Lesson.module.css";
 import { CodeBlock, InlineText } from "./Markdown";
-import type { Prediction, Visual, WalkthroughStep } from "./types";
+import { Predict } from "./Predict";
+import type { Answer } from "./Predict";
+import type { Visual, WalkthroughStep } from "./types";
 
-/** A prediction is answered with an option index, or skipped with "shown". */
-type Answer = number | "shown";
 
 function Cells({ visual }: { visual: Visual }) {
   const labels = new Map<number, string[]>();
@@ -47,64 +47,6 @@ function Variables({ visual, hidden }: { visual: Visual; hidden: string[] }) {
         </div>
       ))}
     </dl>
-  );
-}
-
-function Predict({
-  predict,
-  answer,
-  onAnswer,
-}: {
-  predict: Prediction;
-  answer: Answer | undefined;
-  onAnswer: (answer: Answer) => void;
-}) {
-  const done = answer !== undefined;
-  return (
-    <fieldset className={styles.predict}>
-      <legend>Predict before you reveal</legend>
-      <p>
-        <InlineText text={predict.question} />
-      </p>
-      <div className={styles.predictOptions}>
-        {predict.options.map((option, index) => (
-          <button
-            key={index}
-            type="button"
-            className={cx(
-              styles.option,
-              done && index === predict.answer && styles.right,
-              answer === index && index !== predict.answer && styles.wrong,
-            )}
-            aria-pressed={answer === index}
-            disabled={done}
-            onClick={() => onAnswer(index)}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
-      {done ? (
-        <p className={styles.answer} role="status">
-          <strong>
-            {answer === predict.answer
-              ? "Correct."
-              : answer === "shown"
-                ? "Answer:"
-                : "Not quite."}
-          </strong>{" "}
-          <InlineText text={predict.explanation} />
-        </p>
-      ) : (
-        <button
-          type="button"
-          className={styles.linkButton}
-          onClick={() => onAnswer("shown")}
-        >
-          Show the answer
-        </button>
-      )}
-    </fieldset>
   );
 }
 

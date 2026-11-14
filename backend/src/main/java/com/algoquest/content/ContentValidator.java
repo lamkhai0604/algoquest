@@ -104,19 +104,25 @@ final class ContentValidator {
         problems.add(folder + "quick-check.json: needs 2 or 3 questions");
       }
       for (int i = 0; i < questions.size(); i++) {
-        QuickCheckQuestion q = questions.get(i);
-        String where = folder + "quick-check.json, question " + (i + 1);
-        if (blank(q.question()) || blank(q.explanation())) {
-          problems.add(where + ": question and explanation required");
-        }
-        if (q.options() == null || q.options().size() < 2) {
-          problems.add(where + ": needs at least 2 options");
-        } else if (q.answer() < 0 || q.answer() >= q.options().size()) {
-          problems.add(where + ": answer must be the index of one option");
-        }
+        checkQuestion(
+            problems, folder + "quick-check.json, question " + (i + 1), questions.get(i));
       }
     }
+    if (lesson.intuition() != null) {
+      checkQuestion(problems, folder + "intuition.json", lesson.intuition());
+    }
     return problems;
+  }
+
+  private static void checkQuestion(List<String> problems, String where, QuickCheckQuestion q) {
+    if (blank(q.question()) || blank(q.explanation())) {
+      problems.add(where + ": question and explanation required");
+    }
+    if (q.options() == null || q.options().size() < 2) {
+      problems.add(where + ": needs at least 2 options");
+    } else if (q.answer() < 0 || q.answer() >= q.options().size()) {
+      problems.add(where + ": answer must be the index of one option");
+    }
   }
 
   private static void checkVisual(List<String> problems, String where, Visual visual) {

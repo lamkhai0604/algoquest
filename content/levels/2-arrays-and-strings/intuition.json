@@ -1,0 +1,6 @@
+{
+  "question": "A playlist array holds 1,000 songs. You add a new song at the front (index 0). About how many songs have to move?",
+  "options": ["None", "One", "About 500", "About 1,000"],
+  "answer": 3,
+  "explanation": "Every song shifts one slot to the right to free index 0, so all 1,000 move. That is O(n). Adding at the end moves nothing, which is why appending is O(1) on average."
+}

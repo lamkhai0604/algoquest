@@ -79,7 +79,9 @@ final class ContentLoader {
         read(folder + "walkthrough.json", new TypeReference<List<WalkthroughStep>>() {});
     List<QuickCheckQuestion> quickCheck =
         read(folder + "quick-check.json", new TypeReference<List<QuickCheckQuestion>>() {});
-    Lesson lesson = new Lesson(markdown, walkthrough, quickCheck);
+    QuickCheckQuestion intuition =
+        read(folder + "intuition.json", new TypeReference<QuickCheckQuestion>() {});
+    Lesson lesson = new Lesson(markdown, walkthrough, quickCheck, intuition);
     problems.addAll(ContentValidator.checkLesson(folder, lesson));
 
     List<Problem> levelProblems = new ArrayList<>();
