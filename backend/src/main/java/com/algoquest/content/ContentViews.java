@@ -21,7 +21,8 @@ public final class ContentViews {
       String title,
       String markdown,
       List<WalkthroughStep> walkthrough,
-      List<QuickCheckQuestion> quickCheck) {
+      List<QuickCheckQuestion> quickCheck,
+      QuickCheckQuestion intuition) {
 
     public static LessonView of(LevelContent level) {
       return new LessonView(
@@ -29,7 +30,8 @@ public final class ContentViews {
           level.info().title(),
           level.lesson().markdown(),
           level.lesson().walkthrough(),
-          level.lesson().quickCheck());
+          level.lesson().quickCheck(),
+          level.lesson().intuition());
     }
   }
 

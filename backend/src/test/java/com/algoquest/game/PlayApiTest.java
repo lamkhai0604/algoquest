@@ -112,7 +112,8 @@ class PlayApiTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.markdown").value(containsString("Intuition")))
         .andExpect(jsonPath("$.walkthrough.length()").value(3))
-        .andExpect(jsonPath("$.quickCheck.length()").value(2));
+        .andExpect(jsonPath("$.quickCheck.length()").value(2))
+        .andExpect(jsonPath("$.intuition.options.length()").value(4));
     mvc.perform(get("/api/v1/levels/2/lesson").with(player)).andExpect(status().isNotFound());
     mvc.perform(get("/api/v1/levels/99/problems").with(player)).andExpect(status().isNotFound());
   }

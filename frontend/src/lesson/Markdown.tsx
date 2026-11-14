@@ -1,4 +1,6 @@
 import { createElement, useState } from "react";
+import { cx } from "../components";
+import { languageName, useCodeLanguage } from "./codeLanguage";
 import styles from "./Lesson.module.css";
 import { parseInline } from "./parseMarkdown";
 import type { Block } from "./parseMarkdown";
@@ -29,7 +31,7 @@ interface CodeBlockProps {
   language?: string;
 }
 
-export function CodeBlock({ code, language }: CodeBlockProps) {
+function CopyButton({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
@@ -41,15 +43,67 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
     }
   };
   return (
+    <button type="button" className={styles.copy} onClick={copy}>
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
+export function CodeBlock({ code, language }: CodeBlockProps) {
+  return (
     <figure className={styles.code}>
       <figcaption className={styles.codeHeader}>
-        <span>{language}</span>
-        <button type="button" className={styles.copy} onClick={copy}>
-          {copied ? "Copied" : "Copy"}
-        </button>
+        <span>{language ? languageName(language) : ""}</span>
+        <CopyButton code={code} />
       </figcaption>
       <pre>
         <code>{code}</code>
+      </pre>
+    </figure>
+  );
+}
+
+type CodeBlockData = Extract<Block, { type: "code" }>;
+
+/**
+ * The same code in several languages: one tab per language, one shown at a time. The choice is
+ * shared across the page when a CodeLanguageContext is present.
+ */
+function CodeTabs({ blocks }: { blocks: CodeBlockData[] }) {
+  const shared = useCodeLanguage();
+  const [local, setLocal] = useState(blocks[0]?.language ?? "");
+  const wanted = shared?.language ?? local;
+  const choose = shared?.setLanguage ?? setLocal;
+  const shown = blocks.find((block) => block.language === wanted) ?? blocks[0];
+  if (!shown) return null;
+  return (
+    <figure className={styles.code}>
+      <figcaption className={styles.codeHeader}>
+        <span
+          role="tablist"
+          aria-label="Code language"
+          className={styles.langTabs}
+        >
+          {blocks.map((block) => (
+            <button
+              key={block.language}
+              type="button"
+              role="tab"
+              aria-selected={block === shown}
+              className={cx(
+                styles.langTab,
+                block === shown && styles.langTabOn,
+              )}
+              onClick={() => choose(block.language)}
+            >
+              {languageName(block.language)}
+            </button>
+          ))}
+        </span>
+        <CopyButton code={shown.code} />
+      </figcaption>
+      <pre role="tabpanel" aria-label={`${languageName(shown.language)} code`}>
+        <code>{shown.code}</code>
       </pre>
     </figure>
   );
@@ -89,12 +143,44 @@ function BlockView({ block }: { block: Block }) {
   }
 }
 
+type Piece = { block: Block } | { tabs: CodeBlockData[] };
+
+/** Joins back-to-back code blocks in different languages into one switcher. */
+function groupCode(blocks: Block[]): Piece[] {
+  const pieces: Piece[] = [];
+  for (const block of blocks) {
+    const last = pieces[pieces.length - 1];
+    if (block.type === "code" && block.language) {
+      if (
+        last &&
+        "tabs" in last &&
+        !last.tabs.some((tab) => tab.language === block.language)
+      ) {
+        last.tabs.push(block);
+      } else {
+        pieces.push({ tabs: [block] });
+      }
+    } else {
+      pieces.push({ block });
+    }
+  }
+  return pieces;
+}
+
 export function MarkdownBlocks({ blocks }: { blocks: Block[] }) {
   return (
     <div className={styles.prose}>
-      {blocks.map((block, index) => (
-        <BlockView key={index} block={block} />
-      ))}
+      {groupCode(blocks).map((piece, index) => {
+        if ("block" in piece)
+          return <BlockView key={index} block={piece.block} />;
+        const [only] = piece.tabs;
+        if (only && piece.tabs.length === 1) {
+          return (
+            <CodeBlock key={index} code={only.code} language={only.language} />
+          );
+        }
+        return <CodeTabs key={index} blocks={piece.tabs} />;
+      })}
     </div>
   );
 }

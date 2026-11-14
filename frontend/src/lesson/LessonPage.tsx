@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import { useApiGet } from "../api/useApiGet";
 import {
@@ -13,8 +13,15 @@ import {
 import { useGame } from "../game/gameContext";
 import pages from "../pages/Pages.module.css";
 import styles from "./Lesson.module.css";
+import {
+  CodeLanguageContext,
+  saveLanguage,
+  savedLanguage,
+} from "./codeLanguage";
 import { MarkdownBlocks } from "./Markdown";
 import { parseMarkdown } from "./parseMarkdown";
+import { Predict } from "./Predict";
+import type { Answer } from "./Predict";
 import type { Block } from "./parseMarkdown";
 import { QuickCheck } from "./QuickCheck";
 import type { Lesson } from "./types";
@@ -30,6 +37,8 @@ const STEPS = [
 ] as const;
 
 const UNDERSTAND = ["Problem hook", "Intuition", "When to use"];
+/** The intuition question goes right before this section, after the examples. */
+const AFTER_INTUITION = "When to use";
 const OBJECTIVES = "Learning objectives";
 
 interface Sections {
@@ -56,6 +65,40 @@ function splitSections(markdown: string): Sections {
     target.push(block);
   }
   return sections;
+}
+
+/** The Learn step as one collapsible section per "##" heading; the first starts open. */
+function LearnSections({ blocks }: { blocks: Block[] }) {
+  const groups: { title: string; blocks: Block[] }[] = [];
+  for (const block of blocks) {
+    if (block.type === "heading" && block.level === 2) {
+      groups.push({ title: block.text, blocks: [] });
+    } else if (groups.length === 0) {
+      groups.push({ title: "", blocks: [block] });
+    } else {
+      groups[groups.length - 1]?.blocks.push(block);
+    }
+  }
+  return (
+    <div className={styles.learnSections}>
+      {groups.map((group, index) =>
+        group.title ? (
+          <details
+            key={group.title}
+            className={styles.learnSection}
+            open={index === 0}
+          >
+            <summary>{group.title}</summary>
+            <div className={styles.learnBody}>
+              <MarkdownBlocks blocks={group.blocks} />
+            </div>
+          </details>
+        ) : (
+          <MarkdownBlocks key={index} blocks={group.blocks} />
+        ),
+      )}
+    </div>
+  );
 }
 
 function StepTabs({
@@ -157,9 +200,25 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
   };
   const next = STEPS[current + 1];
   const previous = STEPS[current - 1];
+  const [intuitionAnswer, setIntuitionAnswer] = useState<Answer>();
+  const [language, setLanguage] = useState(savedLanguage);
+  const codeLanguage = useMemo(
+    () => ({
+      language,
+      setLanguage: (next: string) => {
+        setLanguage(next);
+        saveLanguage(next);
+      },
+    }),
+    [language],
+  );
+  const split = sections.understand.findIndex(
+    (block) => block.type === "heading" && block.text === AFTER_INTUITION,
+  );
+  const cut = split < 0 ? sections.understand.length : split;
 
   return (
-    <>
+    <CodeLanguageContext.Provider value={codeLanguage}>
       <StepTabs current={current} onSelect={select} />
       <p className={styles.stepCaption}>
         Step {current + 1} of {STEPS.length} · {STEPS[current]?.title}
@@ -173,7 +232,16 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
         {current === 0 && (
           <div className={styles.split}>
             <div className={styles.main}>
-              <MarkdownBlocks blocks={sections.understand} />
+              <MarkdownBlocks blocks={sections.understand.slice(0, cut)} />
+              {lesson.intuition && (
+                <Predict
+                  legend="Check your intuition"
+                  predict={lesson.intuition}
+                  answer={intuitionAnswer}
+                  onAnswer={setIntuitionAnswer}
+                />
+              )}
+              <MarkdownBlocks blocks={sections.understand.slice(cut)} />
             </div>
             {sections.objectives.length > 0 && (
               <Card heading="After this lesson you can" className={styles.side}>
@@ -185,7 +253,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
         {current === 1 && <Walkthrough steps={lesson.walkthrough} />}
         {current === 2 && (
           <div className={styles.reading}>
-            <MarkdownBlocks blocks={sections.learn} />
+            <LearnSections blocks={sections.learn} />
           </div>
         )}
         {current === 3 && (
@@ -211,7 +279,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
           </Button>
         )}
       </div>
-    </>
+    </CodeLanguageContext.Provider>
   );
 }
 

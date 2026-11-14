@@ -53,12 +53,16 @@ function keepInPlace(items, keep) {
 ```
 
 ```java
-int keepInPlace(int[] items, int removeValue) {
-  int w = 0;                          // where the next kept item goes
-  for (int i = 0; i < items.length; i++) {
-    if (items[i] != removeValue) items[w++] = items[i];
+import java.util.function.IntPredicate;
+
+class Solution {
+  public int keepInPlace(int[] items, IntPredicate keep) {
+    int w = 0;                          // where the next kept item goes
+    for (int i = 0; i < items.length; i++) {
+      if (keep.test(items[i])) items[w++] = items[i];
+    }
+    return w;                           // items[0..w-1] are the kept items
   }
-  return w;                           // items[0..w-1] are the kept items
 }
 ```
 
@@ -73,10 +77,12 @@ function buildString(chars) {
 ```
 
 ```java
-String buildString(char[] chars) {
-  StringBuilder out = new StringBuilder();
-  for (char ch : chars) out.append(ch);     // add pieces in O(1) each
-  return out.toString();                    // one copy at the end
+class Solution {
+  public String buildString(char[] chars) {
+    StringBuilder out = new StringBuilder();
+    for (char ch : chars) out.append(ch);     // add pieces in O(1) each
+    return out.toString();                    // one copy at the end
+  }
 }
 ```
 
@@ -130,5 +136,21 @@ function compress(message) {
     i = j;
   }
   return out.join("");
+}
+```
+
+```java
+class Solution {
+  public String compress(String message) {
+    StringBuilder out = new StringBuilder();
+    int i = 0;
+    while (i < message.length()) {
+      int j = i;
+      while (j < message.length() && message.charAt(j) == message.charAt(i)) j++;
+      out.append(message.charAt(i)).append(j - i);
+      i = j;
+    }
+    return out.toString();
+  }
 }
 ```

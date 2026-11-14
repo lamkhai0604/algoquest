@@ -1,0 +1,6 @@
+{
+  "question": "A list grows from 10 to 100 items. About how many steps does one pass over it take now?",
+  "options": ["10", "About 100", "About 1,000", "About 10,000"],
+  "answer": 1,
+  "explanation": "One pass does one step per item, so ten times the items means about ten times the steps."
+}

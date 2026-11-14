@@ -78,6 +78,7 @@ class ContentLoaderTest {
     assertThat(levels.get(1).info().phase()).isEqualTo(1);
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().predict().hides())
         .containsExactly("best");
+    assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
     assertThat(levels.get(2).available()).isFalse();
   }
 
@@ -91,6 +92,7 @@ class ContentLoaderTest {
   void everyProblemIsReportedWithItsFile() throws IOException {
     replace(level.resolve("lesson.md"), "## Worked example", "## Example");
     replace(level.resolve("quick-check.json"), "\"answer\": 1", "\"answer\": 5");
+    replace(level.resolve("intuition.json"), "\"answer\": 1", "\"answer\": 4");
     replace(level.resolve("problems/L1-pair-max.json"), "\"answerKey\"", "\"answerkey\"");
     Path maxValue = level.resolve("problems/L1-max-value.json");
     Files.writeString(level.resolve("problems/L1-renamed.json"), Files.readString(maxValue));
@@ -102,6 +104,7 @@ class ContentLoaderTest {
     assertThat(problems)
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Worked example"))
         .anyMatch(p -> p.contains("quick-check.json, question 1") && p.contains("index"))
+        .anyMatch(p -> p.contains("intuition.json") && p.contains("index"))
         .anyMatch(p -> p.contains("L1-pair-max.json") && p.contains("answerkey"))
         .anyMatch(p -> p.contains("L1-renamed.json") && p.contains("file name"))
         .anyMatch(p -> p.contains("9-stray/notes.md"));

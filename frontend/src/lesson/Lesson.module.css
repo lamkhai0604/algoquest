@@ -474,3 +474,72 @@
 .reading {
   max-width: 760px;
 }
+
+/* Code language switcher */
+.langTabs {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.langTab {
+  padding: 2px var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.langTab:hover {
+  color: var(--color-text);
+}
+
+.langTabOn {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Learn step: one collapsible section per topic */
+.learnSections {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.learnSection {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.learnSection > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  font: 600 var(--text-md) / 1.3 var(--font-display);
+  cursor: pointer;
+  list-style: none;
+}
+
+.learnSection > summary::-webkit-details-marker {
+  display: none;
+}
+
+.learnSection > summary::before {
+  content: "▸";
+  color: var(--color-text-muted);
+  transition: transform 0.15s;
+}
+
+.learnSection[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.learnBody {
+  padding: 0 var(--space-4) var(--space-4);
+}
