@@ -102,10 +102,10 @@ Carried from Sprint 4: the live Java check of T-402 (waits for `JUDGE0_API_KEY` 
 | --- | --- | --- | --- | --- |
 | T-415 | PO content review of Levels 1–3 (moved from Later) | FR-03, FR-04 | P1 | Proposed |
 | T-508 | Apply the Levels 1–3 review corrections | FR-03, FR-04 | P1 | Proposed |
-| T-509 | Visualizer: swap highlight | FR-03, D-049 | P1 | Proposed |
-| T-510 | Level 4 Sorting Fundamentals content | FR-03, FR-04, D-048 | P1 | Proposed |
+| T-509 | Visualizer: swap highlight | FR-03, D-049 | P1 | Done 2026-11-14 (content check for indices; frontend test replays the Level 4 swaps) |
+| T-510 | Level 4 Sorting Fundamentals content | FR-03, FR-04, D-048 | P1 | Done 2026-11-14: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles. PO content review in the pull request |
 | T-512 | Measure grading latency with `RealGraderCheck` | NFR-04 | P2 | Proposed |
-| T-414 | Profile page design pass (moved from Later) | NFR-05 | P2 | Proposed |
+| T-414 | Profile page design pass (moved from Later) | NFR-05, D-053 | P2 | Done 2026-11-14 (design chosen by Claude as delegated by the PO; frontend tests; screenshots) |
 | T-513 | Sprint 5 report | D-007 | P2 | Proposed |
 
 ## Later (unscheduled)
