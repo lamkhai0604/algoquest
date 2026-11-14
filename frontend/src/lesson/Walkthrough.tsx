@@ -15,7 +15,7 @@ function Cells({ visual }: { visual: Visual }) {
     ]);
   }
   if (visual.cells.length === 0) return null;
-  const swap = visual.swap ?? [];
+  const swap: number[] = visual.swap ?? [];
   return (
     <>
       <ol className={styles.cells} aria-label="Items">
