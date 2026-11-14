@@ -1,0 +1,101 @@
+[
+  {
+    "title": "The task",
+    "body": "Compress **\"aaabcc\"**. Index `i` marks where the current run starts, index `j` scans ahead to find where it ends, and `out` collects the pieces.",
+    "visual": {
+      "cells": ["a", "a", "a", "b", "c", "c"],
+      "markers": [],
+      "vars": [{ "name": "out", "value": "[ ]" }]
+    }
+  },
+  {
+    "title": "Start the first run",
+    "body": "The first run starts at index 0 with the character `a`. `j` starts at the same place.",
+    "code": "let i = 0;\nlet j = i;",
+    "visual": {
+      "cells": ["a", "a", "a", "b", "c", "c"],
+      "markers": [{ "index": 0, "label": "i, j" }],
+      "vars": [
+        { "name": "run char", "value": "a" },
+        { "name": "out", "value": "[ ]" }
+      ]
+    }
+  },
+  {
+    "title": "Find the end of the run",
+    "body": "`j` moves forward while it sees `a`, and stops at index 3, the first `b`. The run covers indexes 0 to 2, so its length is j - i = **3**.",
+    "code": "while (j < s.length && s[j] === s[i]) j++; // j = 3",
+    "visual": {
+      "cells": ["a", "a", "a", "b", "c", "c"],
+      "markers": [{ "index": 0, "label": "i" }, { "index": 3, "label": "j" }],
+      "vars": [
+        { "name": "run char", "value": "a" },
+        { "name": "run length", "value": "3" },
+        { "name": "out", "value": "[ ]" }
+      ],
+      "predict": {
+        "question": "`j` stopped at index 3 and `i` is 0. How long is the run of a's?",
+        "options": ["2", "3", "4"],
+        "answer": 1,
+        "explanation": "The run covers indexes 0, 1, and 2. The length is j - i = 3 - 0 = 3, because j points one past the last a.",
+        "hides": ["run length"]
+      }
+    }
+  },
+  {
+    "title": "Write the piece",
+    "body": "Add `a` and `3` to `out`, then start the next run where `j` stopped: `i = 3`. Pushing to an array is O(1); we do not build the string yet.",
+    "code": "out.push(s[i], String(j - i)); // out = [\"a\", \"3\"]\ni = j;",
+    "visual": {
+      "cells": ["a", "a", "a", "b", "c", "c"],
+      "markers": [{ "index": 3, "label": "i, j" }],
+      "vars": [
+        { "name": "run char", "value": "b" },
+        { "name": "out", "value": "[a, 3]" }
+      ]
+    }
+  },
+  {
+    "title": "A run of one",
+    "body": "`j` moves once and stops at the first `c`. The run of `b` has length 1, so we add `b` and `1`, and the next run starts at index 4.",
+    "code": "// j = 4, length 4 - 3 = 1\nout.push(\"b\", \"1\");\ni = 4;",
+    "visual": {
+      "cells": ["a", "a", "a", "b", "c", "c"],
+      "markers": [{ "index": 3, "label": "i" }, { "index": 4, "label": "j" }],
+      "vars": [
+        { "name": "run length", "value": "1" },
+        { "name": "out", "value": "[a, 3, b, 1]" }
+      ]
+    }
+  },
+  {
+    "title": "The last run",
+    "body": "`j` moves past both c's and reaches the end of the message (index 6). The run still has to be written: `c` and `2`.",
+    "code": "// j = 6 = s.length, length 6 - 4 = 2\nout.push(\"c\", \"2\");",
+    "visual": {
+      "cells": ["a", "a", "a", "b", "c", "c"],
+      "markers": [{ "index": 4, "label": "i" }, { "index": 5, "label": "j → end" }],
+      "vars": [
+        { "name": "run length", "value": "2" },
+        { "name": "out", "value": "[a, 3, b, 1, c, 2]" }
+      ],
+      "predict": {
+        "question": "`j` has reached the end of the message. What should happen to the run of c's?",
+        "options": ["Nothing, the loop is over", "Write c and 2", "Write c and 1"],
+        "answer": 1,
+        "explanation": "The end of the message also ends a run. Forgetting the last run is the most common bug in this problem.",
+        "hides": ["out"]
+      }
+    }
+  },
+  {
+    "title": "Join once",
+    "body": "Join the pieces into **\"a3b1c2\"**. Each character was visited once by `j`, so the work is **O(n) time**, and the pieces and result take **O(n) space**.",
+    "code": "return out.join(\"\"); // \"a3b1c2\"",
+    "visual": {
+      "cells": ["a", "a", "a", "b", "c", "c"],
+      "markers": [],
+      "vars": [{ "name": "result", "value": "\"a3b1c2\"" }]
+    }
+  }
+]

@@ -13,7 +13,7 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      await screen.findByRole("heading", { name: "Your quest" }),
+      await screen.findByRole("heading", { name: "Learning Path" }),
     ).toBeVisible();
     expect(screen.getByRole("link", { name: /AlgoQuest/ })).toBeVisible();
     expect(screen.getByTitle("Total XP")).toHaveTextContent("0");

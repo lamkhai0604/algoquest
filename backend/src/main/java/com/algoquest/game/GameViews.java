@@ -14,6 +14,7 @@ public final class GameViews {
   /**
    * One level on the map.
    *
+   * @param phase the Learning Path section: 1 Core, 2 Patterns, 3 Interview Mastery
    * @param available whether the level has content in this release
    * @param xp XP shown on the bar, never more than {@code target}
    * @param problems number of playable practice problems
@@ -25,6 +26,7 @@ public final class GameViews {
       String slug,
       String title,
       String summary,
+      int phase,
       boolean available,
       LevelState state,
       int xp,

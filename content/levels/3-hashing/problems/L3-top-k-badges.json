@@ -1,8 +1,8 @@
 {
-  "id": "L2-group-by-letters",
-  "level": 2,
+  "id": "L3-top-k-badges",
+  "level": 3,
   "difficulty": "Hard",
   "use": "practice",
   "status": "comingSoon",
-  "title": "Group by Letters"
+  "title": "Top K Badges"
 }

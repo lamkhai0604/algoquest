@@ -1,0 +1,317 @@
+{
+  "id": "L2-rotate-grid",
+  "level": 2,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Turn the Photo",
+  "statement": "A square photo is stored as an n × n grid of pixel values: grid[row][col]. Return a new grid that shows the photo turned 90 degrees clockwise.",
+  "examples": [
+    {
+      "input": "[[1, 2], [3, 4]]",
+      "output": "[[3, 1], [4, 2]]"
+    },
+    {
+      "input": "[[1, 2, 3], [4, 5, 6], [7, 8, 9]]",
+      "output": "[[7, 4, 1], [8, 5, 2], [9, 6, 3]]"
+    }
+  ],
+  "constraints": [
+    "0 <= n <= 100",
+    "grid is square: every row has n values"
+  ],
+  "answerKey": {
+    "pattern": "2D index mapping: the pixel at (r, c) moves to (c, n - 1 - r)",
+    "keyPoints": [
+      "Create an n × n result grid",
+      "For every row r and column c, copy grid[r][c] into result[c][n - 1 - r]",
+      "Check the formula on a corner: the top-left pixel goes to the top-right corner",
+      "Return the result"
+    ],
+    "timeComplexity": "O(n²), one step per pixel",
+    "spaceComplexity": "O(n²) for the new grid",
+    "edgeCases": [
+      "Empty grid returns []",
+      "1 × 1 grid stays the same",
+      "Mixing up rows and columns turns the photo the wrong way"
+    ],
+    "acceptableSlowerApproaches": [
+      "Transpose then reverse each row: also O(n²), an equally good answer and the usual in-place method"
+    ]
+  },
+  "hints": [
+    "Draw a 3 × 3 grid with numbers 1-9 and its turned version. Where does each corner go?",
+    "The first row of the photo becomes the last column. In general, the pixel at row r, column c ends up in row c.",
+    "Its new column is n - 1 - r. Copy every pixel with result[c][n - 1 - r] = grid[r][c]."
+  ],
+  "starterCode": {
+    "javascript": "function rotateGrid(grid) {\n  // return the grid turned 90 degrees clockwise\n}",
+    "java": "class Solution {\n  int[][] rotateGrid(int[][] grid) {\n    // return the grid turned 90 degrees clockwise\n  }\n}"
+  },
+  "similarLeetCode": "Rotate Image",
+  "tests": [
+    {
+      "input": [
+        [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ]
+        ]
+      ],
+      "expected": [
+        [
+          3,
+          1
+        ],
+        [
+          4,
+          2
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ]
+      ],
+      "expected": [
+        [
+          7,
+          4,
+          1
+        ],
+        [
+          8,
+          5,
+          2
+        ],
+        [
+          9,
+          6,
+          3
+        ]
+      ]
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          [
+            5
+          ]
+        ]
+      ],
+      "expected": [
+        [
+          5
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            5,
+            6,
+            7,
+            8
+          ],
+          [
+            9,
+            10,
+            11,
+            12
+          ],
+          [
+            13,
+            14,
+            15,
+            16
+          ]
+        ]
+      ],
+      "expected": [
+        [
+          13,
+          9,
+          5,
+          1
+        ],
+        [
+          14,
+          10,
+          6,
+          2
+        ],
+        [
+          15,
+          11,
+          7,
+          3
+        ],
+        [
+          16,
+          12,
+          8,
+          4
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            -1,
+            -2
+          ],
+          [
+            -3,
+            -4
+          ]
+        ]
+      ],
+      "expected": [
+        [
+          -3,
+          -1
+        ],
+        [
+          -4,
+          -2
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ]
+      ],
+      "expected": [
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            9,
+            8,
+            7
+          ],
+          [
+            6,
+            5,
+            4
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "expected": [
+        [
+          3,
+          6,
+          9
+        ],
+        [
+          2,
+          5,
+          8
+        ],
+        [
+          1,
+          4,
+          7
+        ]
+      ]
+    }
+  ]
+}

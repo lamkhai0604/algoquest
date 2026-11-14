@@ -1,0 +1,283 @@
+{
+  "id": "L2-spiral-walk",
+  "level": 2,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Spiral Walk",
+  "statement": "A robot visits every cell of a rectangular grid in a spiral: along the top row to the right, down the right column, along the bottom row to the left, up the left column, and then the same again one ring further in. Return the values in the order the robot visits them.",
+  "examples": [
+    {
+      "input": "[[1, 2, 3], [4, 5, 6], [7, 8, 9]]",
+      "output": "[1, 2, 3, 6, 9, 8, 7, 4, 5]"
+    },
+    {
+      "input": "[[1, 2, 3, 4], [5, 6, 7, 8]]",
+      "output": "[1, 2, 3, 4, 8, 7, 6, 5]"
+    }
+  ],
+  "constraints": [
+    "0 <= rows, cols <= 100",
+    "every row has the same length"
+  ],
+  "answerKey": {
+    "pattern": "Four boundaries (top, bottom, left, right) that move inward after each side of the ring is walked",
+    "keyPoints": [
+      "Return [] for an empty grid",
+      "Keep top, bottom, left, right boundaries",
+      "Walk the top row left to right, then the right column top to bottom, moving the boundary in after each side",
+      "Walk the bottom row and the left column only if the boundaries have not crossed, so a single row or column is not visited twice"
+    ],
+    "timeComplexity": "O(rows × cols)",
+    "spaceComplexity": "O(1) extra, plus the result",
+    "edgeCases": [
+      "Empty grid returns []",
+      "A single row",
+      "A single column",
+      "Rectangular grids where the last ring is one line"
+    ],
+    "acceptableSlowerApproaches": [
+      "Mark visited cells in a second grid and turn when the next cell is visited or outside: O(rows × cols) time and extra space"
+    ]
+  },
+  "hints": [
+    "Think of the grid as rings. After walking the outer ring, what is left is a smaller grid inside it.",
+    "Keep four numbers: the top and bottom rows and the left and right columns that are still unvisited. Move each one inward after walking that side.",
+    "Before walking the bottom row or left column, check that top <= bottom and left <= right; otherwise a single row or column gets visited twice."
+  ],
+  "starterCode": {
+    "javascript": "function spiralWalk(grid) {\n  // return the values in spiral order\n}",
+    "java": "class Solution {\n  int[] spiralWalk(int[][] grid) {\n    // return the values in spiral order\n  }\n}"
+  },
+  "similarLeetCode": "Spiral Matrix",
+  "tests": [
+    {
+      "input": [
+        [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        6,
+        9,
+        8,
+        7,
+        4,
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            5,
+            6,
+            7,
+            8
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        8,
+        7,
+        6,
+        5
+      ]
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          [
+            7
+          ]
+        ]
+      ],
+      "expected": [
+        7
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1,
+            2,
+            3
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            5,
+            6
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        4,
+        6,
+        5,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            5,
+            6,
+            7,
+            8
+          ],
+          [
+            9,
+            10,
+            11,
+            12
+          ],
+          [
+            13,
+            14,
+            15,
+            16
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        8,
+        12,
+        16,
+        15,
+        14,
+        13,
+        9,
+        5,
+        6,
+        7,
+        11,
+        10
+      ]
+    },
+    {
+      "input": [
+        [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            7,
+            8,
+            9
+          ],
+          [
+            10,
+            11,
+            12
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        6,
+        9,
+        12,
+        11,
+        10,
+        7,
+        4,
+        5,
+        8
+      ]
+    }
+  ]
+}

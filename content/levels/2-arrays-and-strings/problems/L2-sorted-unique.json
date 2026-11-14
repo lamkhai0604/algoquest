@@ -1,0 +1,184 @@
+{
+  "id": "L2-sorted-unique",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "One of Each",
+  "statement": "A sorted array of ticket numbers contains repeats. Remove the repeats in place, so that each number appears once at the front of the array in sorted order, without creating a second array. Return the unique numbers (the front part of the array).",
+  "examples": [
+    {
+      "input": "[1, 1, 2, 3, 3, 3]",
+      "output": "[1, 2, 3]"
+    },
+    {
+      "input": "[]",
+      "output": "[]"
+    }
+  ],
+  "constraints": [
+    "0 <= nums.length <= 10^5",
+    "nums is sorted in non-decreasing order"
+  ],
+  "answerKey": {
+    "pattern": "Overwrite in place with a write index; because the array is sorted, a repeat always equals the last value written",
+    "keyPoints": [
+      "Return [] for an empty array",
+      "Keep a write index w for the next unique value; the first value is always kept",
+      "For each value, write it only if it differs from the last value written (nums[w - 1])",
+      "Return the first w values"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1) extra space (not counting the returned copy)",
+    "edgeCases": [
+      "Empty array returns []",
+      "All values equal",
+      "No repeats",
+      "Negative numbers"
+    ],
+    "acceptableSlowerApproaches": [
+      "A hash set of seen values: O(n) time but O(n) extra space and ignores that the array is sorted",
+      "Deleting each repeat and shifting: O(n²)"
+    ]
+  },
+  "hints": [
+    "Because the array is sorted, where can a repeat of a value be?",
+    "Repeats sit right next to each other. Compare each value with the last value you kept, not with every earlier value.",
+    "Use a write index: when a value differs from nums[w - 1], copy it to nums[w] and move w forward."
+  ],
+  "starterCode": {
+    "javascript": "function sortedUnique(nums) {\n  // keep one of each number at the front and return them\n}",
+    "java": "class Solution {\n  int[] sortedUnique(int[] nums) {\n    // keep one of each number at the front and return them\n  }\n}"
+  },
+  "similarLeetCode": "Remove Duplicates from Sorted Array",
+  "tests": [
+    {
+      "input": [
+        [
+          1,
+          1,
+          2,
+          3,
+          3,
+          3
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          5
+        ]
+      ],
+      "expected": [
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          2,
+          2,
+          2
+        ]
+      ],
+      "expected": [
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          -3,
+          -3,
+          -1,
+          0,
+          0,
+          7
+        ]
+      ],
+      "expected": [
+        -3,
+        -1,
+        0,
+        7
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          0,
+          1,
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          -5,
+          -5
+        ]
+      ],
+      "expected": [
+        -5
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          1,
+          1,
+          2
+        ]
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    }
+  ]
+}

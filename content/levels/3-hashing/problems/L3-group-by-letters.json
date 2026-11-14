@@ -1,0 +1,243 @@
+{
+  "id": "L3-group-by-letters",
+  "level": 3,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Group by Letters",
+  "statement": "A word game gives you a list of lowercase words. Put words that use exactly the same letters, the same number of times, into one group. Return the groups in the order their first word appears in the list, and keep the words inside each group in their original order.",
+  "examples": [
+    {
+      "input": "[\"tea\", \"eat\", \"tan\", \"ate\", \"nat\", \"bat\"]",
+      "output": "[[\"tea\", \"eat\", \"ate\"], [\"tan\", \"nat\"], [\"bat\"]]"
+    },
+    {
+      "input": "[\"a\"]",
+      "output": "[[\"a\"]]"
+    }
+  ],
+  "constraints": [
+    "0 <= words.length <= 10^4",
+    "0 <= words[i].length <= 100",
+    "words[i] has only lowercase English letters"
+  ],
+  "answerKey": {
+    "pattern": "Hash map from a canonical key (sorted letters or a 26-letter count) to the list of words with that key",
+    "keyPoints": [
+      "Build a key for each word that is the same for all words with the same letters: the letters sorted, or the 26 letter counts joined",
+      "Use a hash map from key to a list of words; append each word to the list of its key",
+      "Keep the keys in first-seen order (an insertion-ordered map, or a separate list of keys) so the groups come out in order",
+      "Return the lists"
+    ],
+    "timeComplexity": "O(n · k log k) with sorted keys, or O(n · k) with letter counts, where k is the longest word",
+    "spaceComplexity": "O(n · k)",
+    "edgeCases": [
+      "Empty list returns []",
+      "Empty words group together",
+      "The same word twice goes into one group twice",
+      "Words of different lengths never share a group"
+    ],
+    "acceptableSlowerApproaches": [
+      "Compare every word with every group using sorted letters: O(n² · k)"
+    ]
+  },
+  "hints": [
+    "Two words belong together when they have the same letters. What could you compute from a word that is equal for both?",
+    "Sorting the letters of \"tea\" and \"eat\" gives the same string, \"aet\". That string can be a hash map key.",
+    "Map each key to a list of words. A map that remembers insertion order gives you the groups in first-seen order."
+  ],
+  "starterCode": {
+    "javascript": "function groupByLetters(words) {\n  // return an array of groups\n}",
+    "java": "class Solution {\n  String[][] groupByLetters(String[] words) {\n    // return an array of groups\n  }\n}"
+  },
+  "similarLeetCode": "Group Anagrams",
+  "tests": [
+    {
+      "input": [
+        [
+          "tea",
+          "eat",
+          "tan",
+          "ate",
+          "nat",
+          "bat"
+        ]
+      ],
+      "expected": [
+        [
+          "tea",
+          "eat",
+          "ate"
+        ],
+        [
+          "tan",
+          "nat"
+        ],
+        [
+          "bat"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "a"
+        ]
+      ],
+      "expected": [
+        [
+          "a"
+        ]
+      ]
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          "",
+          ""
+        ]
+      ],
+      "expected": [
+        [
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "abc",
+          "def",
+          "ghi"
+        ]
+      ],
+      "expected": [
+        [
+          "abc"
+        ],
+        [
+          "def"
+        ],
+        [
+          "ghi"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "stop",
+          "pots",
+          "tops",
+          "opts",
+          "spot"
+        ]
+      ],
+      "expected": [
+        [
+          "stop",
+          "pots",
+          "tops",
+          "opts",
+          "spot"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "ab",
+          "ba",
+          "abc",
+          "cab",
+          "a",
+          "b"
+        ]
+      ],
+      "expected": [
+        [
+          "ab",
+          "ba"
+        ],
+        [
+          "abc",
+          "cab"
+        ],
+        [
+          "a"
+        ],
+        [
+          "b"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "aab",
+          "aba",
+          "abb",
+          "bab"
+        ]
+      ],
+      "expected": [
+        [
+          "aab",
+          "aba"
+        ],
+        [
+          "abb",
+          "bab"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "listen",
+          "silent",
+          "enlist",
+          "google",
+          "gogole",
+          "inlets"
+        ]
+      ],
+      "expected": [
+        [
+          "listen",
+          "silent",
+          "enlist",
+          "inlets"
+        ],
+        [
+          "google",
+          "gogole"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "x",
+          "x",
+          "x"
+        ]
+      ],
+      "expected": [
+        [
+          "x",
+          "x",
+          "x"
+        ]
+      ]
+    }
+  ]
+}

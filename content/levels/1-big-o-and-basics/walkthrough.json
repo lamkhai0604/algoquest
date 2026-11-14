@@ -1,31 +1,177 @@
 [
   {
     "title": "The task",
-    "body": "Find the highest temperature in **[3, -2, 9, 4]**. We will read the list once and keep one variable, `best`."
+    "body": "Find the highest temperature in **[3, -2, 9, 4]**. We will read the list once and keep one variable, `best`.",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [],
+      "vars": []
+    }
   },
   {
     "title": "Handle the empty list",
     "body": "The list has values, so we can start. If it were empty, we would return null right away instead of reading `temps[0]`.",
-    "code": "if (temps.length === 0) return null;"
+    "code": "if (temps.length === 0) return null;",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [],
+      "vars": []
+    }
   },
   {
     "title": "Start from the first value",
     "body": "Set `best = 3`. Starting from the first element, not from 0, keeps the answer right when every temperature is negative.",
-    "code": "let best = temps[0]; // 3"
+    "code": "let best = temps[0]; // 3",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "current",
+          "value": "3"
+        },
+        {
+          "name": "best",
+          "value": "3"
+        }
+      ]
+    }
   },
   {
     "title": "Visit -2",
     "body": "-2 is not bigger than 3, so `best` stays 3. One comparison, no extra memory.",
-    "code": "if (-2 > best) ... // no change, best = 3"
+    "code": "if (-2 > best) ... // no change, best = 3",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "current",
+          "value": "-2"
+        },
+        {
+          "name": "best",
+          "value": "3"
+        }
+      ],
+      "predict": {
+        "question": "best is 3 and the current value is -2. What is best after this step?",
+        "options": [
+          "-2",
+          "3",
+          "1"
+        ],
+        "answer": 1,
+        "explanation": "-2 is not bigger than 3, so best does not change.",
+        "hides": [
+          "best"
+        ]
+      }
+    }
   },
   {
     "title": "Visit 9",
     "body": "9 is bigger than 3, so `best` becomes 9.",
-    "code": "if (9 > best) best = 9; // best = 9"
+    "code": "if (9 > best) best = 9; // best = 9",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "current",
+          "value": "9"
+        },
+        {
+          "name": "best",
+          "value": "9"
+        }
+      ],
+      "predict": {
+        "question": "best is 3 and the current value is 9. What is best after this step?",
+        "options": [
+          "3",
+          "9",
+          "12"
+        ],
+        "answer": 1,
+        "explanation": "9 is bigger than 3, so best becomes 9. We keep the larger value; we never add them.",
+        "hides": [
+          "best"
+        ]
+      }
+    }
   },
   {
     "title": "Visit 4 and finish",
     "body": "4 is not bigger than 9. The loop ends and we return **9**. We did one comparison per element: **O(n) time**, and kept one variable: **O(1) space**.",
-    "code": "return best; // 9"
+    "code": "return best; // 9",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "current",
+          "value": "4"
+        },
+        {
+          "name": "best",
+          "value": "9"
+        },
+        {
+          "name": "result",
+          "value": "9"
+        }
+      ]
+    }
   }
 ]

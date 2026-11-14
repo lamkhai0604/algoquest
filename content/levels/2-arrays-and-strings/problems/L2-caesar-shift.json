@@ -1,0 +1,128 @@
+{
+  "id": "L2-caesar-shift",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Secret Note",
+  "statement": "Two friends hide notes by shifting every lowercase letter k places forward in the alphabet, wrapping from z back to a. Every other character (spaces, digits, punctuation, capital letters) stays the same. Given the note and k, return the hidden note.",
+  "examples": [
+    {
+      "input": "text = \"abc xyz\", k = 2",
+      "output": "\"cde zab\""
+    },
+    {
+      "input": "text = \"Hi, bob!\", k = 27",
+      "output": "\"Hj, cpc!\""
+    }
+  ],
+  "constraints": [
+    "0 <= text.length <= 10^5",
+    "0 <= k <= 10^9"
+  ],
+  "answerKey": {
+    "pattern": "Character codes with modulo 26, building the result with an array or a string builder",
+    "keyPoints": [
+      "Reduce k with k % 26",
+      "For each character: if it is between 'a' and 'z', turn it into a number 0-25, add k, take % 26, and turn it back into a letter",
+      "Leave every other character unchanged",
+      "Collect the characters in an array or StringBuilder and join once at the end"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n) for the result",
+    "edgeCases": [
+      "Empty text returns \"\"",
+      "k = 0 or k = 26 changes nothing",
+      "Capital letters and punctuation stay the same",
+      "Wrapping past z",
+      "Very large k"
+    ],
+    "acceptableSlowerApproaches": [
+      "Concatenating strings in a loop: may be O(n²) because each + copies the string",
+      "Shift one step at a time, k times: O(n · k)"
+    ]
+  },
+  "hints": [
+    "Letters have number codes: 'a' is 97 and 'z' is 122. How could you turn a letter into a position 0-25 and back?",
+    "position = code - 97. The new position is (position + k) % 26. Reduce k first so the numbers stay small.",
+    "Strings cannot be changed in place, and += in a loop can copy the whole string each time. Push characters into an array (or a StringBuilder in Java) and join once."
+  ],
+  "starterCode": {
+    "javascript": "function caesarShift(text, k) {\n  // return the shifted text\n}",
+    "java": "class Solution {\n  String caesarShift(String text, int k) {\n    // return the shifted text\n  }\n}"
+  },
+  "similarLeetCode": "Shifting Letters",
+  "tests": [
+    {
+      "input": [
+        "abc xyz",
+        2
+      ],
+      "expected": "cde zab"
+    },
+    {
+      "input": [
+        "Hi, bob!",
+        27
+      ],
+      "expected": "Hj, cpc!"
+    },
+    {
+      "input": [
+        "",
+        5
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "hello",
+        0
+      ],
+      "expected": "hello"
+    },
+    {
+      "input": [
+        "hello",
+        26
+      ],
+      "expected": "hello"
+    },
+    {
+      "input": [
+        "zzz",
+        1
+      ],
+      "expected": "aaa"
+    },
+    {
+      "input": [
+        "a1b2c3",
+        1000000000
+      ],
+      "expected": "m1n2o3"
+    },
+    {
+      "input": [
+        "The quick brown fox.",
+        13
+      ],
+      "expected": "Tur dhvpx oebja sbk."
+    },
+    {
+      "input": [
+        "   ",
+        4
+      ],
+      "expected": "   "
+    },
+    {
+      "input": [
+        "az",
+        25
+      ],
+      "expected": "zy"
+    }
+  ]
+}

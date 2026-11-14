@@ -1,10 +1,10 @@
 {
-  "id": "L2-longest-run",
-  "level": 2,
+  "id": "L3-longest-run",
+  "level": 3,
   "difficulty": "Medium",
   "use": "practice",
   "status": "ready",
-  "order": 2,
+  "order": 3,
   "title": "Longest Run of Numbers",
   "statement": "Raffle tickets are numbered with integers, in no particular order. Return the length of the longest run of consecutive numbers you hold (for example 4, 5, 6, 7). Duplicates count once. Try to do better than sorting.",
   "examples": [
