@@ -190,6 +190,23 @@ describe("lesson page", () => {
     expect(screen.getByText("Step 1 of 2")).toBeVisible();
   });
 
+  it("marks the two cells a step swapped", async () => {
+    const swapped = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Swap",
+          body: "9 moves to the front.",
+          visual: { cells: ["9", "3"], swap: [0, 1] as [number, number] },
+        },
+      ],
+    };
+    open(swapped, 2);
+
+    expect(await screen.findByText("Swapped [0] and [1]")).toBeVisible();
+    expect(screen.getAllByText("⇄")).toHaveLength(2);
+  });
+
   it("asks for a prediction before showing the step", async () => {
     open(LESSON, 2);
     await userEvent.click(

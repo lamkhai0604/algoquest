@@ -1,0 +1,115 @@
+{
+  "id": "L4-sort-by-count",
+  "level": 4,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Most Used Letters First",
+  "statement": "A sign maker wants to know which letters to order the most of. Given a word, return a new string with the same letters arranged so the most frequent letter comes first, all copies of a letter stay together, and letters used equally often are in alphabetical order. The word uses only lowercase letters.",
+  "examples": [
+    {
+      "input": "word = \"banana\"",
+      "output": "\"aaannb\""
+    },
+    {
+      "input": "word = \"tree\"",
+      "output": "\"eert\""
+    }
+  ],
+  "constraints": [
+    "0 <= word.length <= 10^5",
+    "word contains only a–z"
+  ],
+  "answerKey": {
+    "pattern": "Count each letter (hash map or array of 26), sort the distinct letters by count descending then alphabetically, and build the string",
+    "keyPoints": [
+      "Count how often each letter appears",
+      "Sort the distinct letters with a comparator: higher count first, then alphabetical",
+      "Append each letter count times, using an array or StringBuilder",
+      "There are at most 26 distinct letters, so the sort itself is tiny"
+    ],
+    "timeComplexity": "O(n) to count and build, plus sorting at most 26 letters",
+    "spaceComplexity": "O(n) for the result, O(1) for 26 counts",
+    "edgeCases": [
+      "Empty word",
+      "One letter",
+      "All letters equally frequent: plain alphabetical order",
+      "One letter repeated"
+    ],
+    "acceptableSlowerApproaches": [
+      "Sorting all n characters with a comparator that looks up counts: O(n log n)"
+    ]
+  },
+  "hints": [
+    "Before you can sort by 'how often', you need to know how often. What structure from Level 3 counts things?",
+    "Count the letters, then sort only the distinct letters: by count, largest first, and by letter when counts tie.",
+    "Build the answer by repeating each letter its count times, in that sorted order. Use an array join or a StringBuilder."
+  ],
+  "starterCode": {
+    "javascript": "function mostUsedFirst(word) {\n  // return the letters, most frequent first\n}",
+    "java": "class Solution {\n  String mostUsedFirst(String word) {\n    // return the letters, most frequent first\n  }\n}"
+  },
+  "similarLeetCode": "Sort Characters By Frequency",
+  "tests": [
+    {
+      "input": [
+        "banana"
+      ],
+      "expected": "aaannb"
+    },
+    {
+      "input": [
+        "tree"
+      ],
+      "expected": "eert"
+    },
+    {
+      "input": [
+        ""
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "z"
+      ],
+      "expected": "z"
+    },
+    {
+      "input": [
+        "abc"
+      ],
+      "expected": "abc"
+    },
+    {
+      "input": [
+        "zzzz"
+      ],
+      "expected": "zzzz"
+    },
+    {
+      "input": [
+        "mississippi"
+      ],
+      "expected": "iiiissssppm"
+    },
+    {
+      "input": [
+        "aabbcc"
+      ],
+      "expected": "aabbcc"
+    },
+    {
+      "input": [
+        "cbacba"
+      ],
+      "expected": "aabbcc"
+    },
+    {
+      "input": [
+        "thequickbrownfoxjumpsoverthelazydog"
+      ],
+      "expected": "ooooeeehhrrttuuabcdfgijklmnpqsvwxyz"
+    }
+  ]
+}

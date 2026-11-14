@@ -1,0 +1,209 @@
+{
+  "id": "L4-sort-by-distance",
+  "level": 4,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Nearest Bus Stops",
+  "statement": "Bus stops sit along one straight road, each at a whole-number position. You stand at position home. Return the stop positions ordered from nearest to farthest. When two stops are equally far away, the one with the smaller position comes first.",
+  "examples": [
+    {
+      "input": "stops = [10, 2, 7, 4], home = 5",
+      "output": "[4, 7, 2, 10]"
+    },
+    {
+      "input": "stops = [3, 7], home = 5",
+      "output": "[3, 7]"
+    }
+  ],
+  "constraints": [
+    "0 <= stops.length <= 10^5",
+    "-10^6 <= stops[i], home <= 10^6",
+    "Positions may repeat"
+  ],
+  "answerKey": {
+    "pattern": "Sort with a comparator on a computed key: distance |stop - home|, then the position itself",
+    "keyPoints": [
+      "The key for each stop is its distance, Math.abs(stop - home)",
+      "Compare distances first; if equal, compare positions",
+      "Sort a copy so the caller's array is not changed",
+      "In Java, sort boxed Integers (or pairs) to use a comparator, and use Integer.compare to avoid overflow"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n) for the copy",
+    "edgeCases": [
+      "No stops",
+      "Two stops at the same distance on both sides",
+      "A stop exactly at home (distance 0)",
+      "Repeated positions"
+    ],
+    "acceptableSlowerApproaches": [
+      "Repeatedly picking the nearest remaining stop: O(n²)"
+    ]
+  },
+  "hints": [
+    "You are not sorting by the stop's position. What number decides which stop comes first?",
+    "Sort by distance, Math.abs(stop - home). Two stops can have the same distance; then the smaller position wins.",
+    "Comparator: if the distances differ, compare distances; otherwise compare the positions. In Java, Arrays.sort on int[] has no comparator, so sort an Integer[] copy."
+  ],
+  "starterCode": {
+    "javascript": "function nearestStops(stops, home) {\n  // return the stops from nearest to farthest\n}",
+    "java": "class Solution {\n  int[] nearestStops(int[] stops, int home) {\n    // return the stops from nearest to farthest\n  }\n}"
+  },
+  "similarLeetCode": "Find K Closest Elements",
+  "tests": [
+    {
+      "input": [
+        [
+          10,
+          2,
+          7,
+          4
+        ],
+        5
+      ],
+      "expected": [
+        4,
+        7,
+        2,
+        10
+      ]
+    },
+    {
+      "input": [
+        [
+          3,
+          7
+        ],
+        5
+      ],
+      "expected": [
+        3,
+        7
+      ]
+    },
+    {
+      "input": [
+        [],
+        0
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          5
+        ],
+        5
+      ],
+      "expected": [
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        3
+      ],
+      "expected": [
+        3,
+        2,
+        4,
+        1,
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          -4,
+          4,
+          0
+        ],
+        0
+      ],
+      "expected": [
+        0,
+        -4,
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          100,
+          -100,
+          50,
+          -50
+        ],
+        1
+      ],
+      "expected": [
+        50,
+        -50,
+        100,
+        -100
+      ]
+    },
+    {
+      "input": [
+        [
+          6,
+          6,
+          4,
+          4,
+          5
+        ],
+        5
+      ],
+      "expected": [
+        5,
+        4,
+        4,
+        6,
+        6
+      ]
+    },
+    {
+      "input": [
+        [
+          1000000,
+          -1000000
+        ],
+        0
+      ],
+      "expected": [
+        -1000000,
+        1000000
+      ]
+    },
+    {
+      "input": [
+        [
+          9,
+          1,
+          8,
+          2,
+          7,
+          3
+        ],
+        -10
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        7,
+        8,
+        9
+      ]
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "id": "L4-largest-gap",
+  "level": 4,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Quietest Stretch",
+  "statement": "A park ranger logs the minute of each bird call during a morning, but the log is not in time order. Return the longest stretch of minutes between two calls that come one after the other in time, that is, the largest difference between neighbors once the minutes are in order. With fewer than two calls, return 0.",
+  "examples": [
+    {
+      "input": "minutes = [30, 5, 12, 50]",
+      "output": "20"
+    },
+    {
+      "input": "minutes = [8]",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "0 <= minutes.length <= 10^5",
+    "0 <= minutes[i] <= 10^6",
+    "Minutes may repeat"
+  ],
+  "answerKey": {
+    "pattern": "Sort, then scan neighbors and keep the largest difference",
+    "keyPoints": [
+      "Sort the minutes in increasing numeric order",
+      "For each i from 1, compute minutes[i] - minutes[i - 1]",
+      "Keep the largest difference; start from 0",
+      "Fewer than two calls means no gap: return 0"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n) for a sorted copy, or O(1) extra in place",
+    "edgeCases": [
+      "Empty or one call: 0",
+      "Repeated minutes give a gap of 0",
+      "Already sorted input"
+    ],
+    "acceptableSlowerApproaches": [
+      "For each call, searching for the next later call: O(n²)"
+    ]
+  },
+  "hints": [
+    "Which two calls are 'one after the other in time'? It is hard to tell while the log is mixed up.",
+    "Sort the minutes. Then the calls next to each other in the array are next to each other in time.",
+    "Loop from i = 1 and track the biggest minutes[i] - minutes[i - 1]. Return 0 when there are fewer than two calls."
+  ],
+  "starterCode": {
+    "javascript": "function quietestStretch(minutes) {\n  // return the largest gap\n}",
+    "java": "class Solution {\n  int quietestStretch(int[] minutes) {\n    // return the largest gap\n  }\n}"
+  },
+  "similarLeetCode": "Maximum Gap",
+  "tests": [
+    {
+      "input": [
+        [
+          30,
+          5,
+          12,
+          50
+        ]
+      ],
+      "expected": 20
+    },
+    {
+      "input": [
+        [
+          8
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          10,
+          10,
+          10
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          100,
+          1
+        ]
+      ],
+      "expected": 99
+    },
+    {
+      "input": [
+        [
+          0,
+          1000000
+        ]
+      ],
+      "expected": 1000000
+    },
+    {
+      "input": [
+        [
+          9,
+          3,
+          1,
+          15,
+          7
+        ]
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        [
+          60,
+          45,
+          30,
+          15,
+          0
+        ]
+      ],
+      "expected": 15
+    },
+    {
+      "input": [
+        [
+          2,
+          90,
+          3,
+          91,
+          4,
+          300
+        ]
+      ],
+      "expected": 209
+    }
+  ]
+}

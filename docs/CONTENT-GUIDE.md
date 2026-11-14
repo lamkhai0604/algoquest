@@ -22,7 +22,7 @@ How lessons and problems are written (D-020). Status: **Approved** — PO, 2026-
 | 8 | Worked example | One problem solved: the spoken explanation, then the code |
 | 9 | Quick check | 2–3 multiple-choice questions with explanations |
 
-Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) plus `walkthrough.json` (part 4 steps), `quick-check.json` (part 9), and `intuition.json` (one ungraded question shown after the Intuition section: `question`, `options`, `answer` index, `explanation`). The frontend renders them; no MDX build step (D-033).
+Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) plus `walkthrough.json` (part 4 steps), `quick-check.json` (part 9), and `intuition.json` (one ungraded question shown after the Intuition section: `question`, `options`, `answer` index, `explanation`). Lesson Markdown may use pipe tables with a header row. A walkthrough step that exchanges two items sets `visual.swap` to their two indices. The frontend renders them; no MDX build step (D-033).
 
 ## 3. Problem file (JSON, `content/levels/<n>-<slug>/problems/<id>.json`)
 

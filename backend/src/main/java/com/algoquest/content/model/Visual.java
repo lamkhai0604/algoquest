@@ -4,11 +4,16 @@ import java.util.List;
 
 /**
  * The state the visualizer draws for one walkthrough step: a row of cells (array items or
- * characters), labelled markers on cells, variable values, and an optional prediction asked before
- * the step is revealed. Everything except {@code cells} is optional.
+ * characters), labelled markers on cells, variable values, an optional prediction asked before the
+ * step is revealed, and an optional swap: the indices of two cells whose values this step
+ * exchanged. Everything except {@code cells} is optional.
  */
 public record Visual(
-    List<String> cells, List<Marker> markers, List<Variable> vars, Prediction predict) {
+    List<String> cells,
+    List<Marker> markers,
+    List<Variable> vars,
+    Prediction predict,
+    List<Integer> swap) {
 
   /** A label drawn on one cell, such as {@code i} for the current index. */
   public record Marker(int index, String label) {}

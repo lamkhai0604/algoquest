@@ -50,6 +50,38 @@ describe("parseMarkdown", () => {
   });
 });
 
+describe("parseMarkdown tables", () => {
+  it("reads a pipe table with a header row", () => {
+    const blocks = parseMarkdown(
+      [
+        "| Sort | Time |",
+        "| --- | --- |",
+        "| Insertion | O(n²) |",
+        "| Merge | O(n log n) |",
+        "",
+        "After.",
+      ].join("\n"),
+    );
+    expect(blocks).toEqual([
+      {
+        type: "table",
+        header: ["Sort", "Time"],
+        rows: [
+          ["Insertion", "O(n²)"],
+          ["Merge", "O(n log n)"],
+        ],
+      },
+      { type: "paragraph", text: "After." },
+    ]);
+  });
+
+  it("keeps a lone pipe line as a paragraph", () => {
+    expect(parseMarkdown("| not a table |")).toEqual([
+      { type: "paragraph", text: "| not a table |" },
+    ]);
+  });
+});
+
 describe("parseInline", () => {
   it("reads bold, italic, and code", () => {
     expect(parseInline("Use **one** pass, *not* two: `O(n)`.")).toEqual([

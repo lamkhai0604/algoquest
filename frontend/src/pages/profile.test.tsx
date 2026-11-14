@@ -35,7 +35,16 @@ describe("profile", () => {
     const progress = screen
       .getByRole("heading", { name: "Progress by level" })
       .closest("section") as HTMLElement;
-    expect(within(progress).getByText("Best test: 95 / 100")).toBeVisible();
+    expect(within(progress).getByText(/Best test: 95 \/ 100/)).toBeVisible();
+    expect(within(progress).getByText("Passed")).toBeVisible();
+    expect(screen.getByText("Levels passed").previousSibling).toHaveTextContent(
+      "1",
+    );
+    expect(screen.getByText(/4 days in a row/)).toBeVisible();
+    expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
+      "href",
+      "/levels/1",
+    );
     // Only levels the player can open are listed (D-044).
     expect(within(progress).getByText(/Big-O & Basics/)).toBeVisible();
     expect(within(progress).queryByText(/Arrays & Hashing/)).toBeNull();

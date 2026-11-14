@@ -1,0 +1,164 @@
+{
+  "id": "L4-pair-gloves",
+  "level": 4,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Pair the Gloves",
+  "statement": "A lost-and-found box holds single gloves, each labeled with a size number. Two gloves make a pair when they have the same size, and each glove can be in at most one pair. Return the largest number of pairs you can make.",
+  "examples": [
+    {
+      "input": "sizes = [7, 8, 7, 7, 8, 9]",
+      "output": "2"
+    },
+    {
+      "input": "sizes = [5]",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "0 <= sizes.length <= 10^5",
+    "1 <= sizes[i] <= 10^4"
+  ],
+  "answerKey": {
+    "pattern": "Sort so equal sizes sit together, then walk and pair neighbors (or count each size and add count / 2)",
+    "keyPoints": [
+      "After sorting, gloves of the same size are next to each other",
+      "Walk from the left: if a glove and the next one match, count a pair and skip both",
+      "Otherwise move on by one glove",
+      "A hash map of counts with count / 2 per size is also correct"
+    ],
+    "timeComplexity": "O(n log n) with sorting, O(n) with a count map",
+    "spaceComplexity": "O(1) extra after an in-place sort, or O(k) for k sizes",
+    "edgeCases": [
+      "Empty box",
+      "One glove",
+      "An odd number of gloves of one size",
+      "All the same size"
+    ],
+    "acceptableSlowerApproaches": [
+      "Searching for a partner for each glove: O(n²)"
+    ]
+  },
+  "hints": [
+    "Which gloves can pair up? Where would they be if the sizes were in order?",
+    "Sort the sizes. Now any matching gloves are neighbors.",
+    "Walk with an index i: if sizes[i] equals sizes[i + 1], count a pair and jump by 2; otherwise step by 1."
+  ],
+  "starterCode": {
+    "javascript": "function pairGloves(sizes) {\n  // return the number of pairs\n}",
+    "java": "class Solution {\n  int pairGloves(int[] sizes) {\n    // return the number of pairs\n  }\n}"
+  },
+  "similarLeetCode": "Maximum Number of Pairs in Array",
+  "tests": [
+    {
+      "input": [
+        [
+          7,
+          8,
+          7,
+          7,
+          8,
+          9
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          5
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          3,
+          3
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          9,
+          1,
+          9,
+          1,
+          9,
+          1
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          4,
+          4,
+          4,
+          4
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          10000,
+          1,
+          10000,
+          1,
+          5
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          6,
+          5,
+          6,
+          5,
+          6,
+          5,
+          6
+        ]
+      ],
+      "expected": 3
+    }
+  ]
+}

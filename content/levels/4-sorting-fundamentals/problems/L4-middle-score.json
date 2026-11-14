@@ -1,0 +1,167 @@
+{
+  "id": "L4-middle-score",
+  "level": 4,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Middle Score",
+  "statement": "A judge panel always has an odd number of judges. To ignore unusually high or low scores, the final score is the one in the middle position once all scores are put in increasing order. Return that middle score.",
+  "examples": [
+    {
+      "input": "scores = [7, 2, 9]",
+      "output": "7"
+    },
+    {
+      "input": "scores = [5, 1, 5, 8, 3]",
+      "output": "5"
+    }
+  ],
+  "constraints": [
+    "1 <= scores.length <= 10^5 and scores.length is odd",
+    "-10^6 <= scores[i] <= 10^6"
+  ],
+  "answerKey": {
+    "pattern": "Sort a copy of the scores and return the item at index n / 2 (rounded down)",
+    "keyPoints": [
+      "Sort the scores in increasing numeric order",
+      "With n odd, the middle index is Math.floor(n / 2) (n / 2 in Java integer division)",
+      "In JavaScript, pass a numeric comparator; the default sort compares as text"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n) for a sorted copy, or O(1) extra when sorting in place",
+    "edgeCases": [
+      "One score",
+      "Repeated scores",
+      "Negative scores"
+    ],
+    "acceptableSlowerApproaches": [
+      "Repeatedly removing the smallest and largest: O(n²)",
+      "Quickselect finds it in O(n) on average (not needed here)"
+    ]
+  },
+  "hints": [
+    "Where does the middle score sit once the scores are in order?",
+    "Sort, then pick the item in the middle position. With 5 scores that is index 2.",
+    "In JavaScript, [10, 9, 1].sort() gives [1, 10, 9]. Use sort((a, b) => a - b)."
+  ],
+  "starterCode": {
+    "javascript": "function middleScore(scores) {\n  // return the middle score\n}",
+    "java": "class Solution {\n  int middleScore(int[] scores) {\n    // return the middle score\n  }\n}"
+  },
+  "similarLeetCode": "Find Median from Data Stream (simpler version)",
+  "tests": [
+    {
+      "input": [
+        [
+          7,
+          2,
+          9
+        ]
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        [
+          5,
+          1,
+          5,
+          8,
+          3
+        ]
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        [
+          4
+        ]
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        [
+          10,
+          9,
+          1
+        ]
+      ],
+      "expected": 9
+    },
+    {
+      "input": [
+        [
+          -3,
+          -1,
+          -2
+        ]
+      ],
+      "expected": -2
+    },
+    {
+      "input": [
+        [
+          100,
+          20,
+          3
+        ]
+      ],
+      "expected": 20
+    },
+    {
+      "input": [
+        [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          1000000,
+          -1000000,
+          0
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        [
+          1,
+          100,
+          2,
+          99,
+          3,
+          98,
+          50
+        ]
+      ],
+      "expected": 50
+    }
+  ]
+}
