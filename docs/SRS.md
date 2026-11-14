@@ -164,9 +164,15 @@ Future model (D-022): an organization, for example a study group or class, has a
 - **Gemini API**: one structured-JSON request per grading.
 - **Judge0 CE (RapidAPI)**: submit Java source + test input, read output.
 
-## 6. Level List (D-012, content order)
+## 6. Level List (D-012, D-048, content order)
 
-1 Big-O & Basics · 2 Arrays & Hashing · 3 Two Pointers · 4 Sliding Window · 5 Stack · 6 Binary Search · 7 Linked List · 8 Trees · 9 Tries · 10 Heap / Priority Queue · 11 Backtracking · 12 Graphs · 13 Advanced Graphs · 14 Greedy & Intervals · 15 1D Dynamic Programming · 16 2D Dynamic Programming · 17 Bit Manipulation & Math (extra).
+**Phase 1 — Core Foundations:** 1 Big-O & Algorithm Basics · 2 Arrays & Strings · 3 Hashing: HashMap & HashSet · 4 Sorting Fundamentals · 5 Linked Lists · 6 Stack, Queue & Deque · 7 Recursion & Divide and Conquer · 8 Trees & Binary Search Trees · 9 Heap & Priority Queue · 10 Graph Fundamentals · 11 Bit Manipulation & Basic Math.
+
+**Phase 2 — Problem-Solving Patterns:** 12 Two Pointers · 13 Sliding Window · 14 Prefix Sum & Range Queries · 15 Binary Search · 16 Fast & Slow Pointers · 17 Monotonic Stack · 18 DFS & BFS Patterns · 19 Backtracking · 20 Greedy & Intervals · 21 Dynamic Programming Fundamentals.
+
+**Phase 3 — Interview Mastery:** 22 Mixed Pattern Problems · 23 1D & 2D Dynamic Programming · 24 Graph & Grid Problem Solving · 25 Shortest Path & Topological Sort · 26 Tries · 27 Interview Practice.
+
+`content/levels.json` is the source of truth for titles and order.
 
 Each level: about 3 Easy, 3 Medium, 2 Hard practice problems (levels 1–2 may skip Hard) plus 3 test problems (5 more for hard mode).
 

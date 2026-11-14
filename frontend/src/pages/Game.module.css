@@ -354,3 +354,9 @@ a.tile:focus-visible {
     padding: 0 var(--space-4) var(--space-4);
   }
 }
+
+/* Level page intro: XP bar, summary, and the lesson button, evenly spaced. */
+.levelIntro {
+  display: grid;
+  gap: var(--space-3);
+}

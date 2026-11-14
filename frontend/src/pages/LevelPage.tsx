@@ -126,12 +126,14 @@ export function LevelPage() {
       <h1 className={styles.title}>{title}</h1>
       {level && (
         <Card>
-          <XpBar label="Level XP" value={level.xp} max={level.target} />
-          <p className={game.note}>{level.summary}</p>
-          <div className={styles.row}>
-            <ButtonLink to={`/levels/${number}/lesson`} variant="secondary">
-              Read lesson
-            </ButtonLink>
+          <div className={game.levelIntro}>
+            <XpBar label="Level XP" value={level.xp} max={level.target} />
+            <p className={game.note}>{level.summary}</p>
+            <div className={styles.row}>
+              <ButtonLink to={`/levels/${number}/lesson`} variant="secondary">
+                Read lesson
+              </ButtonLink>
+            </div>
           </div>
         </Card>
       )}

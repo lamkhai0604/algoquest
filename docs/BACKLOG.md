@@ -72,17 +72,27 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-309 | Trial feedback round: XP rebalance and quick check XP, ordered problems, result page with Retry and Next, active-time timer with pause, scoring guide, back button, profile and wording fixes | FR-03, FR-04, FR-08, FR-12; D-040–D-044 | P1 | Done 2026-11-12 (backend 162 tests; frontend tests; smoke 5 passed, including the result page, Retry dialog, and Next) |
 | T-308 | Sprint 3 report | D-007 | P2 | Done 2026-11-09: [sprint-3-report.md](reports/sprint-3-report.md) |
 
-## Sprint 4 — Code and rules ([plan](sprints/sprint-4.md), approved 2026-11-12)
+## Sprint 4 — Code and rules ([plan](sprints/sprint-4.md), approved 2026-11-12, closed 2026-11-14; [report](reports/sprint-4-report.md))
 
-| ID | Title | Req | Priority |
-| --- | --- | --- | --- |
-| T-401 | Code editor + JavaScript runner (inputs only to the browser, backend compares) | FR-07, D-035, D-046 | P1 |
-| T-402 | Java runner through Judge0 with daily quota guard | FR-07, D-032 | P2 |
-| T-404 | Placeholders: hard test mode option, battle mode (VIP page done in T-301) | FR-11, FR-16 | P3 |
-| T-405 | Admin panel part 2: game config editor, users and roles, audit log view | FR-18.3–4, FR-17.6, D-047 | P2 |
-| T-406 | Design pass: mockups first, PO selects, then apply | NFR-05, NFR-06 | P2 |
-| T-407 | Tune XP numbers from the trial results | OQ-03, D-015 | P2 |
-| T-408 | Sprint 4 report | D-007 | P2 |
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-401 | Code editor + JavaScript runner (inputs only to the browser, backend compares) | FR-07, D-035, D-046 | P1 | Done 2026-11-12 (backend and frontend tests; smoke runs real JavaScript for the code bonus) |
+| T-402 | Java runner through Judge0 with daily quota guard | FR-07, D-032 | P2 | Implemented and verified with a fake runner 2026-11-12. Live check open: waits for `JUDGE0_API_KEY` on Render (PO); carried to the next sprint |
+| T-404 | Placeholders: hard test mode option, battle mode (VIP page done in T-301) | FR-11, FR-16 | P3 | Done 2026-11-12 |
+| T-405 | Admin panel part 2: game config editor, users and roles, audit log view | FR-18.3–4, FR-17.6, D-047 | P2 | Done 2026-11-12 (audit entries with before and after values; 403 for players) |
+| T-406 | Design pass: mockups first, PO selects, then apply | NFR-05, NFR-06 | P2 | Done 2026-11-14 for the level map (layout B, D-049), lesson, and phone layouts. Profile mockups moved to T-414 |
+| T-407 | Tune XP numbers from the trial results | OQ-03, D-015 | P2 | Done 2026-11-12: values stay at D-040; the PO tunes them on the game rules page, which rejects values that break the rules |
+| T-408 | Sprint 4 report | D-007 | P2 | Done 2026-11-14: [sprint-4-report.md](reports/sprint-4-report.md) |
+
+## Side Sprint S-1 — Beginner-friendly Levels 1–3 (run inside Sprint 4, 2026-11-13 to 2026-11-14)
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-409 | Curriculum of 27 levels in three phases; Levels 2 and 3 reordered; migration V13 | FR-02, D-048 | P1 | Done 2026-11-13 (content check for phases; backend tests) |
+| T-410 | Learning Path page and five-step lessons with the step visualizer | FR-02, FR-03, D-049 | P1 | Done 2026-11-13 (frontend tests check each walkthrough against a reference run; smoke covers the five steps) |
+| T-411 | Levels 1–3 content: Level 1 extended, Level 2 Arrays & Strings (new), Level 3 Hashing | FR-03, FR-04, D-048 | P1 | Done 2026-11-13: hidden test answers computed by JavaScript and Java reference solutions. **PO content review open (T-415)** |
+| T-412 | Review fixes: locked phases and upcoming tiles, Back button, button spacing, code Copy button, site footer | FR-02, D-050 | P2 | Done 2026-11-14 |
+| T-413 | Intuition question, collapsible Learn sections, JavaScript/Java switch, complete Java samples | FR-03, D-051, D-052 | P2 | Done 2026-11-14 (every Java block compiles and matches the JavaScript results on the lesson examples) |
 
 ## Later (unscheduled)
 
@@ -90,7 +100,9 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | --- | --- | --- |
 | T-403 | Leaderboard with labelled dummy players (moved from Sprint 4) | FR-14 |
 | T-501 | Hard problems and hard test mode for real | FR-11, D-024 |
-| T-502 | Levels 4–17 content, about 2 levels per sprint | SRS §6 |
+| T-502 | Levels 4–27 content, about 2 levels per sprint | SRS §6, D-048 |
+| T-414 | Profile page design pass: mockups first, PO selects (moved from T-406) | NFR-05 |
+| T-415 | PO content review of Levels 1–3 lessons, intuition questions, and problems | FR-03, FR-04 |
 | T-503 | Organizations (admin invites 5 or 10 members) | FR-19, OQ-06 |
 | T-504 | Withdrawn | — |
 | T-505 | Move JavaScript checking to Judge0 or a server sandbox before graded organization use | D-035 |
