@@ -98,19 +98,27 @@ function ContinueCard({ level }: { level: Level }) {
 
 function LevelTile({ level }: { level: Level }) {
   const label = stateLabel(level);
+  if (!level.available) {
+    return (
+      <li className={cx(game.tile, game.tileSoon)}>
+        <span className={game.tileTitle}>{level.title}</span>
+        <Badge>{label.text}</Badge>
+      </li>
+    );
+  }
   const percent =
     level.target > 0 ? Math.min(100, (level.xp / level.target) * 100) : 0;
   const body = (
     <>
-      <span className={game.tileNumber}>
-        {level.available ? `Level ${level.number}` : "Next"}
-      </span>
+      <span className={game.tileNumber}>Level {level.number}</span>
       <span className={game.tileTitle}>{level.title}</span>
       <span className={game.tileBar} aria-hidden="true">
         <i style={{ width: `${percent}%` }} />
       </span>
       <span className={game.tileMeta}>
-        <span>{level.available ? `${level.xp} / ${level.target} XP` : ""}</span>
+        <span>
+          {level.xp} / {level.target} XP
+        </span>
         <Badge tone={label.tone}>{label.text}</Badge>
       </span>
     </>

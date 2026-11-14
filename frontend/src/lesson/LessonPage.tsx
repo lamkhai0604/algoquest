@@ -161,6 +161,9 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
   return (
     <>
       <StepTabs current={current} onSelect={select} />
+      <p className={styles.stepCaption}>
+        Step {current + 1} of {STEPS.length} · {STEPS[current]?.title}
+      </p>
       <div
         id="lesson-step"
         role="tabpanel"
