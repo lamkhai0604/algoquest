@@ -94,6 +94,20 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-412 | Review fixes: locked phases and upcoming tiles, Back button, button spacing, code Copy button, site footer | FR-02, D-050 | P2 | Done 2026-11-14 |
 | T-413 | Intuition question, collapsible Learn sections, JavaScript/Java switch, complete Java samples | FR-03, D-051, D-052 | P2 | Done 2026-11-14 (every Java block compiles and matches the JavaScript results on the lesson examples) |
 
+## Sprint 5 — Level 4 and the profile page ([plan](sprints/sprint-5.md), approved 2026-11-14)
+
+Carried from Sprint 4: the live Java check of T-402 (waits for `JUDGE0_API_KEY` on Render).
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-415 | PO content review of Levels 1–3 (moved from Later) | FR-03, FR-04 | P1 | Proposed |
+| T-508 | Apply the Levels 1–3 review corrections | FR-03, FR-04 | P1 | Proposed |
+| T-509 | Visualizer: swap highlight | FR-03, D-049 | P1 | Proposed |
+| T-510 | Level 4 Sorting Fundamentals content | FR-03, FR-04, D-048 | P1 | Proposed |
+| T-512 | Measure grading latency with `RealGraderCheck` | NFR-04 | P2 | Proposed |
+| T-414 | Profile page design pass (moved from Later) | NFR-05 | P2 | Proposed |
+| T-513 | Sprint 5 report | D-007 | P2 | Proposed |
+
 ## Later (unscheduled)
 
 | ID | Title | Req |
@@ -101,8 +115,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | T-403 | Leaderboard with labelled dummy players (moved from Sprint 4) | FR-14 |
 | T-501 | Hard problems and hard test mode for real | FR-11, D-024 |
 | T-502 | Levels 4–27 content, about 2 levels per sprint | SRS §6, D-048 |
-| T-414 | Profile page design pass: mockups first, PO selects (moved from T-406) | NFR-05 |
-| T-415 | PO content review of Levels 1–3 lessons, intuition questions, and problems | FR-03, FR-04 |
+| T-511 | Level 5 Linked Lists content, with a linked-node visualizer and list arguments in both code harnesses (deferred from Sprint 5) | FR-03, FR-04, FR-07, D-048 |
 | T-503 | Organizations (admin invites 5 or 10 members) | FR-19, OQ-06 |
 | T-504 | Withdrawn | — |
 | T-505 | Move JavaScript checking to Judge0 or a server sandbox before graded organization use | D-035 |
