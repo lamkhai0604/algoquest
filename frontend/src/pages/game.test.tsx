@@ -45,16 +45,16 @@ describe("learning path", () => {
     expect(within(core).getAllByRole("link")).toHaveLength(1);
     expect(within(core).getByText("Locked")).toBeVisible();
 
-    const patterns = screen.getByRole("list", { name: "Phase 2 levels" });
-    expect(within(patterns).getByText("Two Pointers")).toBeVisible();
-    expect(within(patterns).getByText("Coming soon")).toBeVisible();
+    // A phase with no open level shows only its header: no expand, no level names.
+    expect(screen.queryByRole("list", { name: "Phase 2 levels" })).toBeNull();
+    expect(screen.queryByText("Two Pointers")).toBeNull();
+    expect(screen.getByText("Phase 2 · Problem-Solving Patterns")).toBeVisible();
+    expect(screen.getByText("Phase 3 · Interview Mastery")).toBeVisible();
 
     const phases = screen.getAllByRole("group");
-    expect(phases).toHaveLength(3);
+    expect(phases).toHaveLength(1);
     expect(phases[0]).toHaveAttribute("open");
-    expect(phases[1]).toHaveAttribute("open");
-    expect(phases[2]).not.toHaveAttribute("open");
-    expect(phases[2]).toHaveTextContent("Phase 3 · Interview Mastery");
+    expect(phases[0]).toHaveTextContent("Phase 1 · Core Foundations");
   });
 
   it("offers a retry when the levels cannot be loaded", async () => {
