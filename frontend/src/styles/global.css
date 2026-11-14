@@ -18,6 +18,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Keep the footer at the bottom on short pages. */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 h1,
 h2,
 h3 {

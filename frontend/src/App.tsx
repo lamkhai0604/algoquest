@@ -8,7 +8,7 @@ import {
   SignInPage,
   useAuth,
 } from "./auth";
-import { AppHeader, WakingServer } from "./components";
+import { AppFooter, AppHeader, WakingServer } from "./components";
 import type { HeaderAccount } from "./components";
 import { hintsLeft, streakDays, totalXp, useGame } from "./game/gameContext";
 import { GameProvider } from "./game/GameProvider";
@@ -110,6 +110,7 @@ export function AppRoutes() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+      <AppFooter />
     </>
   );
 }
