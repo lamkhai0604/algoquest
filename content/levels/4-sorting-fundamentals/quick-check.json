@@ -1,0 +1,35 @@
+[
+  {
+    "question": "In JavaScript, why does [10, 9, 1].sort() return [1, 10, 9]?",
+    "options": [
+      "Without a comparator, sort compares the items as text, and \"10\" comes before \"9\"",
+      "The built-in sort is not stable",
+      "sort() only sorts the first two items",
+      "Numbers above 9 are not allowed in arrays"
+    ],
+    "answer": 0,
+    "explanation": "The default sort turns items into strings and compares them character by character. For numbers, pass a comparator: sort((a, b) => a - b)."
+  },
+  {
+    "question": "Which input makes insertion sort finish fastest?",
+    "options": [
+      "A list in reverse order",
+      "A shuffled list",
+      "A list that is already sorted",
+      "Every input takes the same time"
+    ],
+    "answer": 2,
+    "explanation": "On a sorted list, each new item is compared once with its left neighbor and stays put, so the sort takes O(n). Reverse order is the worst case: every item moves all the way left, O(n²)."
+  },
+  {
+    "question": "Ana and Ben both scored 90. Ana is before Ben in the original list. You sort by score with a stable sort. Where do they end up?",
+    "options": [
+      "Ana is still before Ben",
+      "Ben is before Ana",
+      "It changes from run to run",
+      "They are removed as duplicates"
+    ],
+    "answer": 0,
+    "explanation": "A stable sort keeps items with equal keys in their original order. That is why you can sort by one key and then a second without losing the first order."
+  }
+]

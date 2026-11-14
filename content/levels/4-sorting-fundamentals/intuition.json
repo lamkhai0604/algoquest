@@ -1,0 +1,6 @@
+{
+  "question": "Insertion sort needs about 1,000,000 steps to sort 1,000 shuffled numbers. About how many steps does it need for 2,000 shuffled numbers?",
+  "options": ["About 2,000,000", "About 4,000,000", "About 1,000,000", "About 1,000,000,000"],
+  "answer": 1,
+  "explanation": "Insertion sort is O(n²): each new item may be compared with every item before it. Doubling n multiplies n² by 2 × 2 = 4, so about 4,000,000 steps. An O(n log n) sort would only a little more than double."
+}

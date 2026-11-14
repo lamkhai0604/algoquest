@@ -53,11 +53,37 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(last, "result")).toBe("true");
   });
 
+  it("Level 4: each swap turns the previous cells into the next, ending sorted", () => {
+    const steps = walkthrough("4-sorting-fundamentals");
+    const start = steps[0]!.visual!.cells.map(Number);
+    let cells = [...start];
+    let swaps = 0;
+    for (const step of steps.slice(1)) {
+      const swap = step.visual?.swap;
+      if (swap) {
+        const [a, b] = swap;
+        [cells[a], cells[b]] = [cells[b]!, cells[a]!];
+        swaps++;
+      }
+      expect(step.visual!.cells.map(Number)).toEqual(cells);
+    }
+    expect(cells).toEqual([...start].sort((a, b) => a - b));
+    // Insertion sort swaps once per out-of-order pair.
+    let pairs = 0;
+    start.forEach((x, i) =>
+      start.slice(i + 1).forEach((y) => (pairs += y < x ? 1 : 0)),
+    );
+    expect(pairs).toBeGreaterThan(0);
+    expect(swaps).toBe(pairs);
+    expect(value(steps.at(-1)!, "swaps")).toBe(String(pairs));
+  });
+
   it("every prediction's answer is one of its options", () => {
     for (const folder of [
       "1-big-o-and-basics",
       "2-arrays-and-strings",
       "3-hashing",
+      "4-sorting-fundamentals",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

@@ -140,6 +140,33 @@ function BlockView({ block }: { block: Block }) {
       );
     case "code":
       return <CodeBlock code={block.code} language={block.language} />;
+    case "table":
+      return (
+        <div className={styles.tableWrap}>
+          <table className={styles.stateTable}>
+            <thead>
+              <tr>
+                {block.header.map((cell, index) => (
+                  <th key={index} scope="col">
+                    <InlineText text={cell} />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {block.rows.map((row, r) => (
+                <tr key={r}>
+                  {row.map((cell, index) => (
+                    <td key={index}>
+                      <InlineText text={cell} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
   }
 }
 
