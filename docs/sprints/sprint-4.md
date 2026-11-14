@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Approved — PO, 2026-11-12** |
+| Status | **Closed 2026-11-14** (approved by the PO 2026-11-12); [report](../reports/sprint-4-report.md) |
 | Goal | After a passing explanation, a player can write code in JavaScript or Java and double the problem's XP; the Owner can tune the game rules without a deployment; the rules and code flow are finished as the template for later levels. |
 | Duration | About 1 to 2 weeks from approval |
 | Tasks | T-401, T-402, T-404 to T-408 ([BACKLOG.md](../BACKLOG.md)); T-403 moves to Later |

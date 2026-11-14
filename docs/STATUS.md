@@ -2,12 +2,12 @@
 
 | Field | Value |
 | --- | --- |
-| Updated | 2026-11-09 |
-| Sprint | Sprint 4 — Code and rules: approved 2026-11-12 ([plan](sprints/sprint-4.md)); Sprint 3 closed ([report](reports/sprint-3-report.md)) |
+| Updated | 2026-11-14 |
+| Sprint | Sprint 4 — Code and rules: closed 2026-11-14 ([report](reports/sprint-4-report.md)), including Side Sprint S-1 (T-409 to T-413). Sprint 5 not yet planned |
 | Repository | `lamkhai0604/algoquest` (public, D-039); branches `main` (protected by ruleset) and `dev` |
-| Active work | T-401 code editor and JavaScript runner |
+| Active work | None; Sprint 5 proposal next |
 | Source revision | `dev` (see `git log dev`) |
-| Outstanding changes | None |
-| Verification | GitHub Actions on 2026-11-12: backend 162 tests, 0 failed; frontend lint, format, typecheck, tests, build; smoke 5 passed; records check |
+| Outstanding changes | Sprint 4 report and records, and the level page spacing fix, in the `dev → main` pull request |
+| Verification | GitHub Actions on 2026-11-14: backend 178 tests, 0 failed; frontend lint, format, typecheck, tests, build; smoke 5 passed; records check |
 | Blockers | None |
-| Next action | PO: add `JUDGE0_API_KEY` to Render before the live Java check (T-402) |
+| Next action | PO: merge the pull request; review the Levels 1–3 content (T-415); add `JUDGE0_API_KEY` to Render for the live Java check (T-402) |
