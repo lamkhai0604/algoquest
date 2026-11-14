@@ -1,5 +1,4 @@
-import { useState } from "react";
-import type { KeyboardEvent } from "react";
+import { useEffect, useState } from "react";
 import { Button, Card, cx } from "../components";
 import styles from "./Lesson.module.css";
 import { CodeBlock, InlineText } from "./Markdown";
@@ -180,6 +179,28 @@ function StateTable({
 export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, Answer>>({});
+  const count = steps.length;
+
+  // Arrow keys step and R resets while the walkthrough is on screen, unless
+  // the learner is typing somewhere.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable]")) return;
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === "ArrowRight") {
+        setIndex((i) => Math.min(count - 1, i + 1));
+      } else if (event.key === "ArrowLeft") {
+        setIndex((i) => Math.max(0, i - 1));
+      } else if (event.key === "r" || event.key === "R") {
+        setIndex(0);
+        setAnswers({});
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [count]);
+
   const step = steps[index];
   if (!step) return null;
 
@@ -196,22 +217,10 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
     setIndex(0);
     setAnswers({});
   };
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (
-      event.target instanceof HTMLElement &&
-      event.target.closest("textarea, input")
-    )
-      return;
-    if (event.key === "ArrowRight") go(index + 1);
-    else if (event.key === "ArrowLeft") go(index - 1);
-    else if (event.key === "r" || event.key === "R") reset();
-    else return;
-    event.preventDefault();
-  };
 
   return (
     <div className={styles.visualizer}>
-      <Card heading="Step by step" onKeyDown={onKeyDown}>
+      <Card heading="Step by step">
         <span className={styles.stepCount}>
           Step {index + 1} of {steps.length}
         </span>

@@ -19,7 +19,7 @@ describe("learning path", () => {
       await screen.findByRole("heading", { name: "Learning Path" }),
     ).toBeVisible();
     expect(
-      screen.getByRole("heading", { name: "Level 1 · Big-O & Basics" }),
+      await screen.findByRole("heading", { name: "Level 1 · Big-O & Basics" }),
     ).toBeVisible();
     expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
       "href",
