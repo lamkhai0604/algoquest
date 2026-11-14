@@ -1,15 +1,25 @@
 [
   {
     "question": "What is the average time to check whether a value is in a hash set?",
-    "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+    "options": [
+      "O(1)",
+      "O(log n)",
+      "O(n)",
+      "O(n²)"
+    ],
     "answer": 0,
     "explanation": "A hash set jumps straight to where the value would be stored, so a lookup is O(1) on average."
   },
   {
-    "question": "You store every badge ID you have seen in a set. How much extra space can that use?",
-    "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
-    "answer": 2,
-    "explanation": "In the worst case every ID is different and all of them are stored: O(n) space."
+    "question": "A table has 10 buckets and uses key % 10. You add 11, then 21. What happens?",
+    "options": [
+      "21 replaces 11",
+      "Both go to bucket 1: a collision the table must handle",
+      "21 goes to bucket 2",
+      "The table throws an error"
+    ],
+    "answer": 1,
+    "explanation": "11 % 10 and 21 % 10 are both 1. That is a collision: with chaining both keys share bucket 1's list, and with open addressing 21 moves on to the next free bucket. Neither key is lost."
   },
   {
     "question": "In \"two prices that add up to the budget\", why look up the needed price before storing the current one?",

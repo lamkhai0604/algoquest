@@ -6,7 +6,38 @@
   {
     "title": "Scan",
     "body": "Compare each value.",
-    "code": "if (x > best) best = x;"
+    "code": "if (x > best) best = x;",
+    "visual": {
+      "cells": [
+        "3",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "best",
+          "value": "9"
+        }
+      ],
+      "predict": {
+        "question": "What is best after this step?",
+        "options": [
+          "3",
+          "9"
+        ],
+        "answer": 1,
+        "explanation": "9 is bigger than 3.",
+        "hides": [
+          "best"
+        ]
+      }
+    }
   },
   {
     "title": "Finish",

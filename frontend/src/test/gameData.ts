@@ -6,6 +6,7 @@ const level = (number: number, title: string, rest: Partial<Level>): Level => ({
   slug: `level-${number}`,
   title,
   summary: `Summary of ${title}.`,
+  phase: 1,
   available: true,
   state: "LOCKED",
   xp: 0,
@@ -21,7 +22,7 @@ const level = (number: number, title: string, rest: Partial<Level>): Level => ({
 export const LEVELS: Level[] = [
   level(1, "Big-O & Basics", { state: "OPEN", xp: 40, problems: 6, solved: 1 }),
   level(2, "Arrays & Hashing", {}),
-  level(3, "Two Pointers", { available: false }),
+  level(3, "Two Pointers", { available: false, phase: 2 }),
 ];
 
 export const PROBLEMS: ProblemItem[] = [

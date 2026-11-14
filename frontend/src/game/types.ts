@@ -5,6 +5,8 @@ export interface Level {
   slug: string;
   title: string;
   summary: string;
+  /** Learning Path section: 1 Core Foundations, 2 Problem-Solving Patterns, 3 Interview Mastery. */
+  phase: number;
   available: boolean;
   state: LevelState;
   xp: number;

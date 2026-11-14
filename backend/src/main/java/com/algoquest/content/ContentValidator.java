@@ -6,6 +6,7 @@ import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelInfo;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.QuickCheckQuestion;
+import com.algoquest.content.model.Visual;
 import com.algoquest.content.model.WalkthroughStep;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,12 +21,14 @@ final class ContentValidator {
 
   static final List<String> LESSON_HEADINGS =
       List.of(
+          "## Learning objectives",
           "## Problem hook",
           "## Intuition",
           "## When to use",
           "## Template code",
           "## Complexity",
           "## Common mistakes",
+          "## Edge cases",
           "## Worked example");
 
   static final int MIN_TESTS = 8;
@@ -58,6 +61,11 @@ final class ContentValidator {
       if (blank(level.summary())) {
         problems.add(where + ": summary is missing");
       }
+      if (level.phase() < 1 || level.phase() > 3) {
+        problems.add(where + ": phase must be 1, 2, or 3");
+      } else if (i > 0 && level.phase() < levels.get(i - 1).phase()) {
+        problems.add(where + ": phase must not go back (levels are listed phase by phase)");
+      }
     }
     return problems;
   }
@@ -84,6 +92,9 @@ final class ContentValidator {
         if (blank(steps.get(i).title()) || blank(steps.get(i).body())) {
           problems.add(folder + "walkthrough.json, step " + (i + 1) + ": title and body required");
         }
+        if (steps.get(i).visual() != null) {
+          checkVisual(problems, folder + "walkthrough.json, step " + (i + 1), steps.get(i).visual());
+        }
       }
     }
     List<QuickCheckQuestion> questions = lesson.quickCheck();
@@ -105,6 +116,44 @@ final class ContentValidator {
       }
     }
     return problems;
+  }
+
+  private static void checkVisual(List<String> problems, String where, Visual visual) {
+    if (visual.cells() == null) {
+      problems.add(where + ": visual needs cells (use [] for none)");
+      return;
+    }
+    if (visual.markers() != null) {
+      for (Visual.Marker marker : visual.markers()) {
+        if (marker.index() < 0 || marker.index() >= visual.cells().size() || blank(marker.label())) {
+          problems.add(where + ": each marker needs a label and the index of a cell");
+        }
+      }
+    }
+    Set<String> names = new HashSet<>();
+    if (visual.vars() != null) {
+      for (Visual.Variable variable : visual.vars()) {
+        if (blank(variable.name()) || variable.value() == null) {
+          problems.add(where + ": each variable needs a name and a value");
+        } else {
+          names.add(variable.name());
+        }
+      }
+    }
+    Visual.Prediction predict = visual.predict();
+    if (predict != null) {
+      if (blank(predict.question()) || blank(predict.explanation())) {
+        problems.add(where + ": prediction needs a question and an explanation");
+      }
+      if (predict.options() == null || predict.options().size() < 2) {
+        problems.add(where + ": prediction needs at least 2 options");
+      } else if (predict.answer() < 0 || predict.answer() >= predict.options().size()) {
+        problems.add(where + ": prediction answer must be the index of one option");
+      }
+      if (predict.hides() != null && !names.containsAll(predict.hides())) {
+        problems.add(where + ": prediction hides a variable the step does not have");
+      }
+    }
   }
 
   static List<String> checkProblem(String path, int level, Problem p) {

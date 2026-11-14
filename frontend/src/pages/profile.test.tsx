@@ -41,7 +41,7 @@ describe("profile", () => {
     expect(within(progress).queryByText(/Arrays & Hashing/)).toBeNull();
     expect(within(progress).queryByText(/Two Pointers/)).toBeNull();
     expect(
-      screen.getByRole("link", { name: "Back to the level map" }),
+      screen.getByRole("link", { name: "Back to the Learning Path" }),
     ).toHaveAttribute("href", "/");
 
     const [, init] = fetchFn.mock.calls.find(([url]) =>

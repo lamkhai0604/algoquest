@@ -1,0 +1,137 @@
+{
+  "id": "L2-common-start",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Common Start",
+  "statement": "A search box wants to suggest the longest text that every saved search starts with. Given a list of words, return the longest string that is a prefix of every word. Return \"\" if the list is empty or the words share no prefix.",
+  "examples": [
+    {
+      "input": "[\"flower\", \"flow\", \"flight\"]",
+      "output": "\"fl\""
+    },
+    {
+      "input": "[\"dog\", \"cat\"]",
+      "output": "\"\""
+    }
+  ],
+  "constraints": [
+    "0 <= words.length <= 200",
+    "0 <= words[i].length <= 200"
+  ],
+  "answerKey": {
+    "pattern": "Compare characters column by column across all words, stopping at the first mismatch or the end of the shortest word",
+    "keyPoints": [
+      "Return \"\" for an empty list",
+      "Check position 0, 1, 2, ... of the first word against the same position in every other word",
+      "Stop when a word is too short or has a different character there",
+      "Return the first word cut at that position"
+    ],
+    "timeComplexity": "O(total number of characters)",
+    "spaceComplexity": "O(1) extra, plus the returned string",
+    "edgeCases": [
+      "Empty list returns \"\"",
+      "One word returns that word",
+      "An empty word makes the answer \"\"",
+      "One word is a prefix of another"
+    ],
+    "acceptableSlowerApproaches": [
+      "Sort the words and compare only the first and last: O(n log n · k)"
+    ]
+  },
+  "hints": [
+    "The answer can never be longer than the shortest word.",
+    "Check one position at a time: is character i the same in every word?",
+    "Stop at the first position where some word is too short or differs, and return the first word cut there."
+  ],
+  "starterCode": {
+    "javascript": "function commonStart(words) {\n  // return the longest common prefix\n}",
+    "java": "class Solution {\n  String commonStart(String[] words) {\n    // return the longest common prefix\n  }\n}"
+  },
+  "similarLeetCode": "Longest Common Prefix",
+  "tests": [
+    {
+      "input": [
+        [
+          "flower",
+          "flow",
+          "flight"
+        ]
+      ],
+      "expected": "fl"
+    },
+    {
+      "input": [
+        [
+          "dog",
+          "cat"
+        ]
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        [
+          "alone"
+        ]
+      ],
+      "expected": "alone"
+    },
+    {
+      "input": [
+        [
+          "",
+          "abc"
+        ]
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        [
+          "abc",
+          "abc",
+          "abc"
+        ]
+      ],
+      "expected": "abc"
+    },
+    {
+      "input": [
+        [
+          "inter",
+          "internet",
+          "interval"
+        ]
+      ],
+      "expected": "inter"
+    },
+    {
+      "input": [
+        [
+          "ab",
+          "a"
+        ]
+      ],
+      "expected": "a"
+    },
+    {
+      "input": [
+        [
+          "prefix",
+          "pre",
+          "presto",
+          "prey"
+        ]
+      ],
+      "expected": "pre"
+    }
+  ]
+}

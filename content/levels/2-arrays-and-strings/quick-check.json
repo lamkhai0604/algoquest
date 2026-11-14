@@ -1,0 +1,25 @@
+[
+  {
+    "question": "A playlist array holds n songs. What does it cost to insert a song at the front?",
+    "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+    "answer": 2,
+    "explanation": "Every song already in the array has to move one slot to the right to make room, so the work grows with n: O(n). Appending at the end would be O(1) on average."
+  },
+  {
+    "question": "Why is building a long string with `result = result + ch` inside a loop slow?",
+    "options": [
+      "Strings cannot hold more than 1,000 characters",
+      "Each + creates a new string and copies every character so far",
+      "The loop runs twice",
+      "Characters are compared one by one"
+    ],
+    "answer": 1,
+    "explanation": "Strings cannot be changed, so each + copies the whole string built so far. The copies add up to O(n²). Collecting pieces in an array or StringBuilder and joining once is O(n)."
+  },
+  {
+    "question": "An array has 5 items. After rotating it right by k = 12, where does the item at index 4 end up?",
+    "options": ["Index 0", "Index 1", "Index 3", "Index 16"],
+    "answer": 1,
+    "explanation": "The new index is (4 + 12) % 5 = 16 % 5 = 1. Taking % n keeps the position inside the array, however large k is."
+  }
+]

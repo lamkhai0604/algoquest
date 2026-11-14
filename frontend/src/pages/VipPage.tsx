@@ -12,7 +12,7 @@ export function VipPage() {
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
-        <BackButton to="/" label="Back to the level map" />
+        <BackButton to="/" label="Back to the Learning Path" />
         <h1 className={styles.title}>AlgoQuest VIP</h1>
       </div>
       <Card>

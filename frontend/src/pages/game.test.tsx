@@ -10,13 +10,16 @@ const routes = {
   "GET /api/v1/levels/1/problems": () => json(200, PROBLEMS),
 };
 
-describe("level map", () => {
-  it("shows the current level and the total XP", async () => {
+describe("learning path", () => {
+  it("shows the level to continue and the total XP", async () => {
     fakeApi(routes);
     renderSignedInAt("/");
 
     expect(
-      await screen.findByRole("heading", { name: "Level 1 · Big-O & Basics" }),
+      await screen.findByRole("heading", { name: "Learning Path" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "Level 1 · Big-O & Basics" }),
     ).toBeVisible();
     expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
       "href",
@@ -30,18 +33,28 @@ describe("level map", () => {
     expect(screen.getByTitle("Total XP")).toHaveTextContent("40");
   });
 
-  it("links only the levels the player can enter", async () => {
+  it("groups levels by phase and links only the levels the player can enter", async () => {
     fakeApi(routes);
     renderSignedInAt("/");
 
-    const path = await screen.findByRole("list");
-    expect(within(path).getAllByRole("listitem")).toHaveLength(3);
+    const core = await screen.findByRole("list", { name: "Phase 1 levels" });
+    expect(within(core).getAllByRole("listitem")).toHaveLength(2);
     expect(
-      within(path).getByRole("link", { name: "Level 1: Big-O & Basics" }),
+      within(core).getByRole("link", { name: "Level 1: Big-O & Basics" }),
     ).toHaveAttribute("href", "/levels/1");
-    expect(within(path).getAllByRole("link")).toHaveLength(1);
-    expect(within(path).getByText("Locked")).toBeVisible();
-    expect(within(path).getByText("Coming soon")).toBeVisible();
+    expect(within(core).getAllByRole("link")).toHaveLength(1);
+    expect(within(core).getByText("Locked")).toBeVisible();
+
+    const patterns = screen.getByRole("list", { name: "Phase 2 levels" });
+    expect(within(patterns).getByText("Two Pointers")).toBeVisible();
+    expect(within(patterns).getByText("Coming soon")).toBeVisible();
+
+    const phases = screen.getAllByRole("group");
+    expect(phases).toHaveLength(3);
+    expect(phases[0]).toHaveAttribute("open");
+    expect(phases[1]).toHaveAttribute("open");
+    expect(phases[2]).not.toHaveAttribute("open");
+    expect(phases[2]).toHaveTextContent("Phase 3 · Interview Mastery");
   });
 
   it("offers a retry when the levels cannot be loaded", async () => {

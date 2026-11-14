@@ -2,103 +2,190 @@
   {
     "number": 1,
     "slug": "big-o-and-basics",
-    "title": "Big-O & Basics",
-    "summary": "Measure how fast code grows and solve problems with one pass over the data."
+    "title": "Big-O & Algorithm Basics",
+    "summary": "Measure how fast code grows and solve problems with one pass over the data.",
+    "phase": 1
   },
   {
     "number": 2,
-    "slug": "arrays-and-hashing",
-    "title": "Arrays & Hashing",
-    "summary": "Use hash sets and maps to remember what you have seen and count things in one pass."
+    "slug": "arrays-and-strings",
+    "title": "Arrays & Strings",
+    "summary": "Index, shift, rotate, and build arrays and strings without wasted copies.",
+    "phase": 1
   },
   {
     "number": 3,
-    "slug": "two-pointers",
-    "title": "Two Pointers",
-    "summary": "Walk two indexes toward each other or side by side to avoid nested loops."
+    "slug": "hashing",
+    "title": "Hashing: HashMap & HashSet",
+    "summary": "Use hash sets and maps to remember what you have seen and count things in one pass.",
+    "phase": 1
   },
   {
     "number": 4,
-    "slug": "sliding-window",
-    "title": "Sliding Window",
-    "summary": "Keep a moving range over an array or string and update it instead of recomputing."
+    "slug": "sorting-fundamentals",
+    "title": "Sorting Fundamentals",
+    "summary": "How common sorts work, what they cost, and when sorting first makes a problem easy.",
+    "phase": 1
   },
   {
     "number": 5,
-    "slug": "stack",
-    "title": "Stack",
-    "summary": "Use last-in, first-out order for matching brackets, undo steps, and next-greater problems."
+    "slug": "linked-lists",
+    "title": "Linked Lists",
+    "summary": "Rewire nodes with pointers: insert, delete, reverse, and merge.",
+    "phase": 1
   },
   {
     "number": 6,
-    "slug": "binary-search",
-    "title": "Binary Search",
-    "summary": "Halve the search space each step on sorted data or on the answer itself."
+    "slug": "stack-queue-deque",
+    "title": "Stack, Queue & Deque",
+    "summary": "Last-in first-out and first-in first-out order for matching, undo, and scheduling.",
+    "phase": 1
   },
   {
     "number": 7,
-    "slug": "linked-list",
-    "title": "Linked List",
-    "summary": "Rewire nodes with pointers: reverse, merge, and detect cycles."
+    "slug": "recursion-divide-and-conquer",
+    "title": "Recursion & Divide and Conquer",
+    "summary": "Solve a problem by solving smaller copies of it and combining the answers.",
+    "phase": 1
   },
   {
     "number": 8,
-    "slug": "trees",
-    "title": "Trees",
-    "summary": "Traverse binary trees with depth-first and breadth-first search."
+    "slug": "trees-and-bst",
+    "title": "Trees & Binary Search Trees",
+    "summary": "Traverse trees and keep data ordered for fast search, insert, and delete.",
+    "phase": 1
   },
   {
     "number": 9,
-    "slug": "tries",
-    "title": "Tries",
-    "summary": "Store words letter by letter to answer prefix questions quickly."
+    "slug": "heap-priority-queue",
+    "title": "Heap & Priority Queue",
+    "summary": "Keep the smallest or largest items at hand for top-k and scheduling problems.",
+    "phase": 1
   },
   {
     "number": 10,
-    "slug": "heap-priority-queue",
-    "title": "Heap / Priority Queue",
-    "summary": "Keep the smallest or largest items at hand for top-k and scheduling problems."
+    "slug": "graph-fundamentals",
+    "title": "Graph Fundamentals",
+    "summary": "Represent connections with adjacency lists and matrices and visit every vertex.",
+    "phase": 1
   },
   {
     "number": 11,
-    "slug": "backtracking",
-    "title": "Backtracking",
-    "summary": "Build answers step by step and undo choices to explore every option."
+    "slug": "bit-manipulation-and-math",
+    "title": "Bit Manipulation & Basic Math",
+    "summary": "Use binary operations and number facts for compact, fast solutions.",
+    "phase": 1
   },
   {
     "number": 12,
-    "slug": "graphs",
-    "title": "Graphs",
-    "summary": "Model connections as graphs and explore them with BFS and DFS."
+    "slug": "two-pointers",
+    "title": "Two Pointers",
+    "summary": "Walk two indexes toward each other or side by side to avoid nested loops.",
+    "phase": 2
   },
   {
     "number": 13,
-    "slug": "advanced-graphs",
-    "title": "Advanced Graphs",
-    "summary": "Shortest paths, minimum spanning trees, and topological order."
+    "slug": "sliding-window",
+    "title": "Sliding Window",
+    "summary": "Keep a moving range over an array or string and update it instead of recomputing.",
+    "phase": 2
   },
   {
     "number": 14,
-    "slug": "greedy-and-intervals",
-    "title": "Greedy & Intervals",
-    "summary": "Make the best local choice and reason about overlapping ranges."
+    "slug": "prefix-sum",
+    "title": "Prefix Sum & Range Queries",
+    "summary": "Precompute running totals to answer range questions in constant time.",
+    "phase": 2
   },
   {
     "number": 15,
-    "slug": "1d-dynamic-programming",
-    "title": "1D Dynamic Programming",
-    "summary": "Break a problem into smaller ones along one dimension and reuse their answers."
+    "slug": "binary-search",
+    "title": "Binary Search",
+    "summary": "Halve the search space each step on sorted data or on the answer itself.",
+    "phase": 2
   },
   {
     "number": 16,
-    "slug": "2d-dynamic-programming",
-    "title": "2D Dynamic Programming",
-    "summary": "Fill a grid of subproblems for strings, paths, and knapsack-style choices."
+    "slug": "fast-and-slow-pointers",
+    "title": "Fast & Slow Pointers",
+    "summary": "Move two pointers at different speeds to find cycles and middles.",
+    "phase": 2
   },
   {
     "number": 17,
-    "slug": "bit-manipulation-and-math",
-    "title": "Bit Manipulation & Math",
-    "summary": "Use binary operations and number facts for compact, fast solutions."
+    "slug": "monotonic-stack",
+    "title": "Monotonic Stack",
+    "summary": "Keep a stack in sorted order to find the next greater or smaller item.",
+    "phase": 2
+  },
+  {
+    "number": 18,
+    "slug": "dfs-and-bfs-patterns",
+    "title": "DFS & BFS Patterns",
+    "summary": "Choose depth-first or breadth-first search for paths, islands, and levels.",
+    "phase": 2
+  },
+  {
+    "number": 19,
+    "slug": "backtracking",
+    "title": "Backtracking",
+    "summary": "Build answers step by step and undo choices to explore every option.",
+    "phase": 2
+  },
+  {
+    "number": 20,
+    "slug": "greedy-and-intervals",
+    "title": "Greedy & Intervals",
+    "summary": "Make the best local choice and reason about overlapping ranges.",
+    "phase": 2
+  },
+  {
+    "number": 21,
+    "slug": "dynamic-programming-fundamentals",
+    "title": "Dynamic Programming Fundamentals",
+    "summary": "Break a problem into overlapping subproblems and reuse their answers.",
+    "phase": 2
+  },
+  {
+    "number": 22,
+    "slug": "mixed-pattern-problems",
+    "title": "Mixed Pattern Problems",
+    "summary": "Solve problems without being told which pattern to use.",
+    "phase": 3
+  },
+  {
+    "number": 23,
+    "slug": "dynamic-programming-1d-and-2d",
+    "title": "1D & 2D Dynamic Programming",
+    "summary": "Fill tables of subproblems for sequences, strings, grids, and knapsack choices.",
+    "phase": 3
+  },
+  {
+    "number": 24,
+    "slug": "graph-and-grid-problems",
+    "title": "Graph & Grid Problem Solving",
+    "summary": "Model grids and networks as graphs and pick the right search.",
+    "phase": 3
+  },
+  {
+    "number": 25,
+    "slug": "shortest-path-and-topological-sort",
+    "title": "Shortest Path & Topological Sort",
+    "summary": "Find cheapest routes and order tasks that depend on each other.",
+    "phase": 3
+  },
+  {
+    "number": 26,
+    "slug": "tries",
+    "title": "Tries",
+    "summary": "Store words letter by letter to answer prefix questions quickly.",
+    "phase": 3
+  },
+  {
+    "number": 27,
+    "slug": "interview-practice",
+    "title": "Interview Practice",
+    "summary": "Timed challenges, trade-offs, edge cases, and explaining your solution out loud.",
+    "phase": 3
   }
 ]

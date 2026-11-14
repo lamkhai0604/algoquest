@@ -118,9 +118,9 @@ export function LevelPage() {
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
-        <BackButton to="/" label="Back to the level map" />
+        <BackButton to="/" label="Back to the Learning Path" />
         <nav className={game.crumbs} aria-label="Breadcrumb">
-          <Link to="/">Level map</Link> / <span>{title}</span>
+          <Link to="/">Learning Path</Link> / <span>{title}</span>
         </nav>
       </div>
       <h1 className={styles.title}>{title}</h1>

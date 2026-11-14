@@ -1,0 +1,115 @@
+{
+  "id": "L2-compress-message",
+  "level": 2,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Compress the Message",
+  "statement": "A radio link is slow, so messages are shortened: every run of the same character in a row is written as that character followed by the length of the run. \"aaabcc\" becomes \"a3b1c2\". Return the compressed message. Characters can be any letter, digit, or symbol except the null character.",
+  "examples": [
+    {
+      "input": "\"aaabcc\"",
+      "output": "\"a3b1c2\""
+    },
+    {
+      "input": "\"zzzzzzzzzzzz\"",
+      "output": "\"z12\""
+    }
+  ],
+  "constraints": [
+    "0 <= message.length <= 10^5"
+  ],
+  "answerKey": {
+    "pattern": "One pass that tracks the current run (its character and length) and appends to a string builder when the run ends",
+    "keyPoints": [
+      "Return \"\" for an empty message",
+      "Keep the character of the current run and a counter",
+      "When the next character is different (or the message ends), append the character and the counter to the result, then start a new run",
+      "Build the result with an array or StringBuilder and join once"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n) for the result",
+    "edgeCases": [
+      "Empty message returns \"\"",
+      "One character returns it with 1",
+      "Runs of 10 or more need all their digits",
+      "The last run must also be written"
+    ],
+    "acceptableSlowerApproaches": [
+      "Concatenating with += in a loop: can be O(n²) in Java"
+    ]
+  },
+  "hints": [
+    "Walk through the message once. What two things do you need to remember about the run you are in?",
+    "Remember the run's character and how long it is so far. A run ends when the next character is different.",
+    "Forgetting the last run is the most common bug: after the loop ends, write it out too (or treat the end of the message as a change)."
+  ],
+  "starterCode": {
+    "javascript": "function compress(message) {\n  // return the compressed message\n}",
+    "java": "class Solution {\n  String compress(String message) {\n    // return the compressed message\n  }\n}"
+  },
+  "similarLeetCode": "String Compression",
+  "tests": [
+    {
+      "input": [
+        "aaabcc"
+      ],
+      "expected": "a3b1c2"
+    },
+    {
+      "input": [
+        "zzzzzzzzzzzz"
+      ],
+      "expected": "z12"
+    },
+    {
+      "input": [
+        ""
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "a"
+      ],
+      "expected": "a1"
+    },
+    {
+      "input": [
+        "abc"
+      ],
+      "expected": "a1b1c1"
+    },
+    {
+      "input": [
+        "aabbaa"
+      ],
+      "expected": "a2b2a2"
+    },
+    {
+      "input": [
+        "111222333"
+      ],
+      "expected": "132333"
+    },
+    {
+      "input": [
+        "  !!"
+      ],
+      "expected": " 2!2"
+    },
+    {
+      "input": [
+        "aaaaaaaaaab"
+      ],
+      "expected": "a10b1"
+    },
+    {
+      "input": [
+        "abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbc"
+      ],
+      "expected": "a1b120c1"
+    }
+  ]
+}

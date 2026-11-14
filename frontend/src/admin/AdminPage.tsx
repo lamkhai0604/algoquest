@@ -22,7 +22,7 @@ export function AdminPage() {
   return (
     <div className={pages.page}>
       <div className={pages.topBar}>
-        <BackButton to="/" label="Back to the level map" />
+        <BackButton to="/" label="Back to the Learning Path" />
         <h1 className={pages.title}>Admin</h1>
       </div>
       <div className={styles.tabs}>

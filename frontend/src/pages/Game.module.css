@@ -136,3 +136,191 @@ li.levelRow {
 .profileRow > :last-child {
   grid-column: 1 / -1;
 }
+
+/* Learning Path: continue card */
+.hero {
+  grid-template-columns: 1.3fr 1fr;
+  align-items: center;
+  gap: var(--space-5);
+  background: linear-gradient(135deg, var(--color-primary-soft), var(--color-surface));
+}
+
+.heroText {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.heroStats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.heroNumbers {
+  display: grid;
+  flex: 1;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ring {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: conic-gradient(var(--color-xp) 0 var(--ring), var(--color-surface-3) var(--ring) 100%);
+  font-weight: 800;
+}
+
+.ring span {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* Learning Path: phases */
+.phase {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-2);
+}
+
+.phaseSummary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+  list-style: none;
+}
+
+.phaseSummary::-webkit-details-marker {
+  display: none;
+}
+
+.phaseSummary:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: -3px;
+  border-radius: var(--radius-lg);
+}
+
+.chevron {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.phase[open] .chevron {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chevron {
+    transition: transform 0.15s ease;
+  }
+}
+
+.phaseText {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+}
+
+.phaseTitle {
+  font-weight: 700;
+}
+
+.phaseGoal {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0 var(--space-5) var(--space-5);
+  list-style: none;
+}
+
+.tile {
+  display: grid;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+a.tile:hover,
+a.tile:focus-visible {
+  border-color: var(--color-primary);
+}
+
+.tileLocked {
+  opacity: 0.55;
+}
+
+.tileNumber {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tileTitle {
+  font-weight: 700;
+}
+
+.tileBar {
+  display: block;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-3);
+  overflow: hidden;
+}
+
+.tileBar i {
+  display: block;
+  height: 100%;
+  background: var(--color-xp);
+}
+
+.tileMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 720px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .phaseSummary {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .tiles {
+    padding: 0 var(--space-4) var(--space-4);
+  }
+}

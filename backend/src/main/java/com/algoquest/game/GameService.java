@@ -88,6 +88,7 @@ public class GameService {
               level.info().slug(),
               level.info().title(),
               level.info().summary(),
+              level.info().phase(),
               level.available(),
               LevelRules.state(current, number, optional(best.get(number - 1))),
               LevelRules.barXp(current, xp, number),

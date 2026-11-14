@@ -1,5 +1,9 @@
 # Basics
 
+## Learning objectives
+
+- Find the largest value in one pass.
+
 ## Problem hook
 
 Find the largest number.
@@ -25,6 +29,10 @@ O(n) time, O(1) space.
 ## Common mistakes
 
 Forgetting the empty array.
+
+## Edge cases
+
+An empty array has no largest value.
 
 ## Worked example
 
