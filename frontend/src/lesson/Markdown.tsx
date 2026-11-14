@@ -1,4 +1,4 @@
-import { createElement } from "react";
+import { createElement, useState } from "react";
 import styles from "./Lesson.module.css";
 import { parseInline } from "./parseMarkdown";
 import type { Block } from "./parseMarkdown";
@@ -30,9 +30,24 @@ interface CodeBlockProps {
 }
 
 export function CodeBlock({ code, language }: CodeBlockProps) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  };
   return (
     <figure className={styles.code}>
-      {language && <figcaption>{language}</figcaption>}
+      <figcaption className={styles.codeHeader}>
+        <span>{language}</span>
+        <button type="button" className={styles.copy} onClick={copy}>
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </figcaption>
       <pre>
         <code>{code}</code>
       </pre>
