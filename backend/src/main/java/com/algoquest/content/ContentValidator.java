@@ -104,8 +104,7 @@ final class ContentValidator {
         problems.add(folder + "quick-check.json: needs 2 or 3 questions");
       }
       for (int i = 0; i < questions.size(); i++) {
-        checkQuestion(
-            problems, folder + "quick-check.json, question " + (i + 1), questions.get(i));
+        checkQuestion(problems, folder + "quick-check.json, question " + (i + 1), questions.get(i));
       }
     }
     if (lesson.intuition() != null) {

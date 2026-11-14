@@ -6,7 +6,6 @@ import { Predict } from "./Predict";
 import type { Answer } from "./Predict";
 import type { Visual, WalkthroughStep } from "./types";
 
-
 function Cells({ visual }: { visual: Visual }) {
   const labels = new Map<number, string[]>();
   for (const marker of visual.markers ?? []) {

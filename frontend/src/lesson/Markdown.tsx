@@ -74,20 +74,26 @@ function CodeTabs({ blocks }: { blocks: CodeBlockData[] }) {
   const [local, setLocal] = useState(blocks[0]?.language ?? "");
   const wanted = shared?.language ?? local;
   const choose = shared?.setLanguage ?? setLocal;
-  const shown =
-    blocks.find((block) => block.language === wanted) ?? blocks[0];
+  const shown = blocks.find((block) => block.language === wanted) ?? blocks[0];
   if (!shown) return null;
   return (
     <figure className={styles.code}>
       <figcaption className={styles.codeHeader}>
-        <span role="tablist" aria-label="Code language" className={styles.langTabs}>
+        <span
+          role="tablist"
+          aria-label="Code language"
+          className={styles.langTabs}
+        >
           {blocks.map((block) => (
             <button
               key={block.language}
               type="button"
               role="tab"
               aria-selected={block === shown}
-              className={cx(styles.langTab, block === shown && styles.langTabOn)}
+              className={cx(
+                styles.langTab,
+                block === shown && styles.langTabOn,
+              )}
               onClick={() => choose(block.language)}
             >
               {languageName(block.language)}
@@ -165,7 +171,8 @@ export function MarkdownBlocks({ blocks }: { blocks: Block[] }) {
   return (
     <div className={styles.prose}>
       {groupCode(blocks).map((piece, index) => {
-        if ("block" in piece) return <BlockView key={index} block={piece.block} />;
+        if ("block" in piece)
+          return <BlockView key={index} block={piece.block} />;
         const [only] = piece.tabs;
         if (only && piece.tabs.length === 1) {
           return (

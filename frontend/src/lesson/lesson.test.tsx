@@ -152,9 +152,9 @@ describe("lesson page", () => {
 
     const template = await screen.findByText("Template code");
     expect(template.closest("details")).toHaveAttribute("open");
-    expect(screen.getByText("Complexity").closest("details")).not.toHaveAttribute(
-      "open",
-    );
+    expect(
+      screen.getByText("Complexity").closest("details"),
+    ).not.toHaveAttribute("open");
 
     expect(screen.getByText("let best = items[0];")).toBeVisible();
     expect(screen.queryByText("int best = items[0];")).toBeNull();
