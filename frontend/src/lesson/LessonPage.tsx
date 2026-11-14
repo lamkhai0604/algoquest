@@ -21,7 +21,7 @@ import type { Lesson } from "./types";
 import { Walkthrough } from "./Walkthrough";
 
 /** The five learner steps; the lesson text's sections are shared among them. */
-export const STEPS = [
+const STEPS = [
   { key: "understand", title: "Understand", hint: "Hook & intuition" },
   { key: "visualize", title: "Visualize", hint: "Step through it" },
   { key: "learn", title: "Learn", hint: "Code & complexity" },
@@ -112,9 +112,9 @@ function PracticeStep({ level }: { level: number }) {
     <Card heading="Practice">
       <div className={styles.prose}>
         <p>
-          Solve the problems in order and explain your approach in words. The
-          AI grades your reasoning; passing code in JavaScript or Java earns
-          double XP.
+          Solve the problems in order and explain your approach in words. The AI
+          grades your reasoning; passing code in JavaScript or Java earns double
+          XP.
         </p>
         {info && (
           <ul>

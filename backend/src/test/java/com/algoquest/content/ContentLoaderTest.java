@@ -145,7 +145,8 @@ class ContentLoaderTest {
 
     List<String> problems = problemsAfterLoad();
 
-    assertThat(problems).anyMatch(p -> p.contains("entry 2") && p.contains("phase must not go back"));
+    assertThat(problems)
+        .anyMatch(p -> p.contains("entry 2") && p.contains("phase must not go back"));
   }
 
   @Test

@@ -93,7 +93,8 @@ final class ContentValidator {
           problems.add(folder + "walkthrough.json, step " + (i + 1) + ": title and body required");
         }
         if (steps.get(i).visual() != null) {
-          checkVisual(problems, folder + "walkthrough.json, step " + (i + 1), steps.get(i).visual());
+          checkVisual(
+              problems, folder + "walkthrough.json, step " + (i + 1), steps.get(i).visual());
         }
       }
     }
@@ -125,7 +126,9 @@ final class ContentValidator {
     }
     if (visual.markers() != null) {
       for (Visual.Marker marker : visual.markers()) {
-        if (marker.index() < 0 || marker.index() >= visual.cells().size() || blank(marker.label())) {
+        if (marker.index() < 0
+            || marker.index() >= visual.cells().size()
+            || blank(marker.label())) {
           problems.add(where + ": each marker needs a label and the index of a cell");
         }
       }

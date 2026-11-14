@@ -188,7 +188,9 @@ describe("lesson page", () => {
       within(question).getByRole("button", { name: "O(1)" }),
     ).toBeDisabled();
 
-    await userEvent.click(screen.getByRole("button", { name: /Next: Practice/ }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /Next: Practice/ }),
+    );
     expect(
       screen.getByRole("link", { name: "Go to the problems" }),
     ).toHaveAttribute("href", "/levels/1");

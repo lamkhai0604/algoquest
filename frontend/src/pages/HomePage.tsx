@@ -17,7 +17,7 @@ import game from "./Game.module.css";
 import styles from "./Pages.module.css";
 
 /** The three sections of the Learning Path, in order. */
-export const PHASES = [
+const PHASES = [
   {
     number: 1,
     title: "Core Foundations",
@@ -69,10 +69,7 @@ function ContinueCard({ level }: { level: Level }) {
         <p className={styles.lead}>{level.summary}</p>
         <div className={styles.row}>
           <ButtonLink to={`/levels/${level.number}`}>Continue</ButtonLink>
-          <ButtonLink
-            to={`/levels/${level.number}/lesson`}
-            variant="secondary"
-          >
+          <ButtonLink to={`/levels/${level.number}/lesson`} variant="secondary">
             Read lesson
           </ButtonLink>
         </div>
@@ -196,7 +193,9 @@ function LearningPath({ levels }: { levels: Level[] }) {
           key={phase.number}
           phase={phase}
           levels={byPhase[i] ?? []}
-          open={firstPlayable >= 0 && i >= firstPlayable && i <= lastPlayable + 1}
+          open={
+            firstPlayable >= 0 && i >= firstPlayable && i <= lastPlayable + 1
+          }
         />
       ))}
     </>

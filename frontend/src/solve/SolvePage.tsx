@@ -312,7 +312,9 @@ export function SolvePage() {
         <BackButton
           to={level === null ? "/" : `/levels/${level}`}
           label={
-            level === null ? "Back to the Learning Path" : `Back to Level ${level}`
+            level === null
+              ? "Back to the Learning Path"
+              : `Back to Level ${level}`
           }
         />
         <nav className={styles.crumbs} aria-label="Breadcrumb">

@@ -11,7 +11,10 @@ type Answer = number | "shown";
 function Cells({ visual }: { visual: Visual }) {
   const labels = new Map<number, string[]>();
   for (const marker of visual.markers ?? []) {
-    labels.set(marker.index, [...(labels.get(marker.index) ?? []), marker.label]);
+    labels.set(marker.index, [
+      ...(labels.get(marker.index) ?? []),
+      marker.label,
+    ]);
   }
   if (visual.cells.length === 0) return null;
   return (
@@ -194,7 +197,11 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
     setAnswers({});
   };
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.target instanceof HTMLElement && event.target.closest("textarea, input")) return;
+    if (
+      event.target instanceof HTMLElement &&
+      event.target.closest("textarea, input")
+    )
+      return;
     if (event.key === "ArrowRight") go(index + 1);
     else if (event.key === "ArrowLeft") go(index - 1);
     else if (event.key === "r" || event.key === "R") reset();

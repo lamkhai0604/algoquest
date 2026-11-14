@@ -220,7 +220,9 @@ export function LevelTestPage() {
       <div className={pages.topBar}>
         <BackButton
           to={test ? `/levels/${test.level}` : "/"}
-          label={test ? `Back to Level ${test.level}` : "Back to the Learning Path"}
+          label={
+            test ? `Back to Level ${test.level}` : "Back to the Learning Path"
+          }
         />
         <nav className={styles.crumbs} aria-label="Breadcrumb">
           <Link to="/">Learning Path</Link>

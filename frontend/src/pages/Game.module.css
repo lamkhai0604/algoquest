@@ -142,7 +142,11 @@ li.levelRow {
   grid-template-columns: 1.3fr 1fr;
   align-items: center;
   gap: var(--space-5);
-  background: linear-gradient(135deg, var(--color-primary-soft), var(--color-surface));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-soft),
+    var(--color-surface)
+  );
 }
 
 .heroText {
@@ -170,7 +174,10 @@ li.levelRow {
   width: 92px;
   height: 92px;
   border-radius: 50%;
-  background: conic-gradient(var(--color-xp) 0 var(--ring), var(--color-surface-3) var(--ring) 100%);
+  background: conic-gradient(
+    var(--color-xp) 0 var(--ring),
+    var(--color-surface-3) var(--ring) 100%
+  );
   font-weight: 800;
 }
 
