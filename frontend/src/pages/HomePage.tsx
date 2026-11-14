@@ -101,6 +101,7 @@ function LevelTile({ level }: { level: Level }) {
   if (!level.available) {
     return (
       <li className={cx(game.tile, game.tileSoon)}>
+        <span className={game.tileNumber}>Level {level.number}</span>
         <span className={game.tileTitle}>{level.title}</span>
         <Badge>{label.text}</Badge>
       </li>
@@ -154,6 +155,22 @@ function PhaseSection({
     (level) =>
       level.bestTestScore !== null && level.bestTestScore >= rules.passScore,
   ).length;
+  if (playable.length === 0) {
+    // Nothing open yet: show the phase header only, no expand, no level list.
+    return (
+      <section className={cx(game.phase, game.phaseLocked)}>
+        <div className={game.phaseSummary}>
+          <span className={game.phaseText}>
+            <span className={game.phaseTitle}>
+              Phase {phase.number} · {phase.title}
+            </span>
+            <span className={game.phaseGoal}>{phase.goal}</span>
+          </span>
+          <Badge>Coming soon</Badge>
+        </div>
+      </section>
+    );
+  }
   return (
     <details className={game.phase} open={open}>
       <summary className={game.phaseSummary}>
@@ -166,13 +183,9 @@ function PhaseSection({
           </span>
           <span className={game.phaseGoal}>{phase.goal}</span>
         </span>
-        {playable.length > 0 ? (
-          <Badge tone="xp">
-            {done} of {playable.length} levels done
-          </Badge>
-        ) : (
-          <Badge>Coming soon</Badge>
-        )}
+        <Badge tone="xp">
+          {done} of {playable.length} levels done
+        </Badge>
       </summary>
       <ol className={game.tiles} aria-label={`Phase ${phase.number} levels`}>
         {levels.map((level) => (

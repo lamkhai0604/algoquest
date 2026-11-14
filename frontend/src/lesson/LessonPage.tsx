@@ -135,7 +135,7 @@ function PracticeStep({ level }: { level: number }) {
           </ul>
         )}
       </div>
-      <div className={pages.row}>
+      <div className={`${pages.row} ${styles.practiceAction}`}>
         <ButtonLink to={`/levels/${level}`}>Go to the problems</ButtonLink>
       </div>
     </Card>
@@ -200,7 +200,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
       <div className={styles.stepNav}>
         {previous ? (
           <Button variant="secondary" onClick={() => select(current - 1)}>
-            ← {previous.title}
+            ← Back
           </Button>
         ) : (
           <span />

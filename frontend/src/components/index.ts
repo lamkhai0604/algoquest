@@ -1,3 +1,4 @@
+export { AppFooter } from "./AppFooter";
 export { AppHeader } from "./AppHeader";
 export type { HeaderAccount, HeaderStats } from "./AppHeader";
 export { BackButton } from "./BackButton";
