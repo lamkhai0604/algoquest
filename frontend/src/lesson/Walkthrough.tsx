@@ -15,23 +15,38 @@ function Cells({ visual }: { visual: Visual }) {
     ]);
   }
   if (visual.cells.length === 0) return null;
+  const swap = visual.swap ?? [];
   return (
-    <ol className={styles.cells} aria-label="Items">
-      {visual.cells.map((cell, index) => {
-        const marks = labels.get(index);
-        return (
-          <li
-            key={index}
-            className={cx(styles.cell, marks && styles.cellCurrent)}
-            aria-current={marks ? "true" : undefined}
-          >
-            <span className={styles.cellIndex}>[{index}]</span>
-            <span className={styles.cellValue}>{cell}</span>
-            <span className={styles.cellMarker}>{marks?.join(", ") ?? ""}</span>
-          </li>
-        );
-      })}
-    </ol>
+    <>
+      <ol className={styles.cells} aria-label="Items">
+        {visual.cells.map((cell, index) => {
+          const marks = labels.get(index);
+          const swapped = swap.includes(index);
+          return (
+            <li
+              key={index}
+              className={cx(
+                styles.cell,
+                marks && styles.cellCurrent,
+                swapped && styles.cellSwapped,
+              )}
+              aria-current={marks ? "true" : undefined}
+            >
+              <span className={styles.cellIndex}>[{index}]</span>
+              <span className={styles.cellValue}>{cell}</span>
+              <span className={styles.cellMarker}>
+                {marks?.join(", ") ?? (swapped ? "⇄" : "")}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      {swap.length === 2 && (
+        <p className={styles.swapNote}>
+          Swapped [{swap[0]}] and [{swap[1]}]
+        </p>
+      )}
+    </>
   );
 }
 

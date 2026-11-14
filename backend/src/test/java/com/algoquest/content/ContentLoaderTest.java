@@ -78,6 +78,7 @@ class ContentLoaderTest {
     assertThat(levels.get(1).info().phase()).isEqualTo(1);
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().predict().hides())
         .containsExactly("best");
+    assertThat(levels.get(1).lesson().walkthrough().get(1).visual().swap()).containsExactly(0, 2);
     assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
     assertThat(levels.get(2).available()).isFalse();
   }
@@ -156,6 +157,7 @@ class ContentLoaderTest {
   void visualRulesAreChecked() throws IOException {
     Path walkthrough = level.resolve("walkthrough.json");
     replace(walkthrough, "\"index\": 1", "\"index\": 7");
+    replace(walkthrough, "0,\n        2\n      ]", "0,\n        0\n      ]");
     replace(walkthrough, "\"answer\": 1", "\"answer\": 4");
     replace(walkthrough, "\"hides\": [\n          \"best\"", "\"hides\": [\n          \"worst\"");
     replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
@@ -166,6 +168,7 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("step 2") && p.contains("marker"))
         .anyMatch(p -> p.contains("step 2") && p.contains("prediction answer"))
         .anyMatch(p -> p.contains("step 2") && p.contains("hides"))
+        .anyMatch(p -> p.contains("step 2") && p.contains("swap"))
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Edge cases"));
   }
 }
