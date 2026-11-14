@@ -48,7 +48,9 @@ describe("learning path", () => {
     // A phase with no open level shows only its header: no expand, no level names.
     expect(screen.queryByRole("list", { name: "Phase 2 levels" })).toBeNull();
     expect(screen.queryByText("Two Pointers")).toBeNull();
-    expect(screen.getByText("Phase 2 · Problem-Solving Patterns")).toBeVisible();
+    expect(
+      screen.getByText("Phase 2 · Problem-Solving Patterns"),
+    ).toBeVisible();
     expect(screen.getByText("Phase 3 · Interview Mastery")).toBeVisible();
 
     const phases = screen.getAllByRole("group");
