@@ -45,7 +45,7 @@ describe("sign-in", () => {
     renderAt("/auth/callback?code=abc");
 
     expect(
-      await screen.findByRole("heading", { name: "Your quest" }),
+      await screen.findByRole("heading", { name: "Learning Path" }),
     ).toBeVisible();
     expect(screen.getByText("Ann")).toBeVisible();
     expect(getToken()).toBe("jwt-1");
@@ -72,7 +72,7 @@ describe("sign-in", () => {
     setSession({ token: "jwt-1", expiresAt: inFourHours() });
 
     renderAt("/");
-    await screen.findByRole("heading", { name: "Your quest" });
+    await screen.findByRole("heading", { name: "Learning Path" });
     await userEvent.click(screen.getByRole("button", { name: "Sign out" }));
 
     expect(

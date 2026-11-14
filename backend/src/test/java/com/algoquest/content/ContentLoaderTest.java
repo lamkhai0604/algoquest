@@ -75,6 +75,9 @@ class ContentLoaderTest {
     assertThat(levels.get(1).available()).isTrue();
     assertThat(levels.get(1).problems()).hasSize(6);
     assertThat(levels.get(1).lesson().walkthrough()).hasSize(3);
+    assertThat(levels.get(1).info().phase()).isEqualTo(1);
+    assertThat(levels.get(1).lesson().walkthrough().get(1).visual().predict().hides())
+        .containsExactly("best");
     assertThat(levels.get(2).available()).isFalse();
   }
 
@@ -134,5 +137,32 @@ class ContentLoaderTest {
     assertThat(problems)
         .anyMatch(p -> p.contains("entry 2") && p.contains("number must be 2"))
         .anyMatch(p -> p.contains("entry 2") && p.contains("slug"));
+  }
+
+  @Test
+  void phasesMustBeValidAndInOrder() throws IOException {
+    replace(dir.resolve("levels.json"), "\"phase\": 1", "\"phase\": 3");
+
+    List<String> problems = problemsAfterLoad();
+
+    assertThat(problems)
+        .anyMatch(p -> p.contains("entry 2") && p.contains("phase must not go back"));
+  }
+
+  @Test
+  void visualRulesAreChecked() throws IOException {
+    Path walkthrough = level.resolve("walkthrough.json");
+    replace(walkthrough, "\"index\": 1", "\"index\": 7");
+    replace(walkthrough, "\"answer\": 1", "\"answer\": 4");
+    replace(walkthrough, "\"hides\": [\n          \"best\"", "\"hides\": [\n          \"worst\"");
+    replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
+
+    List<String> problems = problemsAfterLoad();
+
+    assertThat(problems)
+        .anyMatch(p -> p.contains("step 2") && p.contains("marker"))
+        .anyMatch(p -> p.contains("step 2") && p.contains("prediction answer"))
+        .anyMatch(p -> p.contains("step 2") && p.contains("hides"))
+        .anyMatch(p -> p.contains("lesson.md") && p.contains("Edge cases"));
   }
 }

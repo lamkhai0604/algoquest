@@ -43,7 +43,7 @@ export function ProfilePage() {
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
-        <BackButton to="/" label="Back to the level map" />
+        <BackButton to="/" label="Back to the Learning Path" />
         <h1 className={styles.title}>
           {profile.status === "ready" ? profile.data.displayName : "Profile"}
         </h1>

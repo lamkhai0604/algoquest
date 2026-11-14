@@ -3,12 +3,14 @@
     "number": 1,
     "slug": "basics",
     "title": "Basics",
-    "summary": "First level."
+    "summary": "First level.",
+    "phase": 1
   },
   {
     "number": 2,
     "slug": "later",
     "title": "Later",
-    "summary": "No content yet."
+    "summary": "No content yet.",
+    "phase": 2
   }
 ]

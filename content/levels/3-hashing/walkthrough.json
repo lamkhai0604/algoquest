@@ -1,0 +1,61 @@
+[
+  {
+    "title": "The task",
+    "body": "Does **[4, 7, 1, 7]** contain a duplicate? We keep a set called `seen` and read the list once.",
+    "visual": {
+      "cells": ["4", "7", "1", "7"],
+      "markers": [],
+      "vars": [{ "name": "seen", "value": "{ }" }]
+    }
+  },
+  {
+    "title": "Read 4",
+    "body": "`seen` is empty, so 4 is new. Add it.",
+    "code": "seen.add(4); // seen = {4}",
+    "visual": {
+      "cells": ["4", "7", "1", "7"],
+      "markers": [{ "index": 0, "label": "i" }],
+      "vars": [{ "name": "seen", "value": "{4}" }]
+    }
+  },
+  {
+    "title": "Read 7",
+    "body": "7 is not in `seen`. Add it.",
+    "code": "seen.add(7); // seen = {4, 7}",
+    "visual": {
+      "cells": ["4", "7", "1", "7"],
+      "markers": [{ "index": 1, "label": "i" }],
+      "vars": [{ "name": "seen", "value": "{4, 7}" }]
+    }
+  },
+  {
+    "title": "Read 1",
+    "body": "1 is not in `seen`. Add it.",
+    "code": "seen.add(1); // seen = {4, 7, 1}",
+    "visual": {
+      "cells": ["4", "7", "1", "7"],
+      "markers": [{ "index": 2, "label": "i" }],
+      "vars": [{ "name": "seen", "value": "{4, 7, 1}" }]
+    }
+  },
+  {
+    "title": "Read 7 again",
+    "body": "7 **is** in `seen`: we found a duplicate and return true right away, without reading further. Each check took O(1) time on average, so the whole pass is **O(n) time**, and the set used **O(n) space**.",
+    "code": "if (seen.has(7)) return true;",
+    "visual": {
+      "cells": ["4", "7", "1", "7"],
+      "markers": [{ "index": 3, "label": "i" }],
+      "vars": [
+        { "name": "seen", "value": "{4, 7, 1}" },
+        { "name": "result", "value": "true" }
+      ],
+      "predict": {
+        "question": "`seen` is {4, 7, 1} and the next value is 7. What happens now?",
+        "options": ["Add 7 and keep reading", "Return true", "Return false"],
+        "answer": 1,
+        "explanation": "7 is already in the set, so the list has a duplicate. We can stop and return true.",
+        "hides": ["result"]
+      }
+    }
+  }
+]

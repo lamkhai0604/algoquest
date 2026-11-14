@@ -1,4 +1,11 @@
-# Big-O & Basics
+# Big-O & Algorithm Basics
+
+## Learning objectives
+
+- Describe how the work of an algorithm grows with the input size, using O(1), O(log n), O(n), and O(n²).
+- Find the Big-O of simple code by counting loops.
+- Solve "largest, smallest, count, or total" problems with a single pass and a little state.
+- Say the time and the extra space of your solution, and why.
 
 ## Problem hook
 
@@ -65,6 +72,22 @@ Integer singlePass(int[] items) {
 
 Compare: sorting first and taking the last element is O(n log n) time. It works, but it does more than the question asks.
 
+### Finding the Big-O of code
+
+Count how many times the innermost line runs, as a function of n, then keep only the biggest term:
+
+- **Steps one after another add up.** A loop of n steps followed by a loop of 1,000 steps is n + 1,000, which is O(n).
+- **Loops inside loops multiply.** An outer loop of n steps with an inner loop of n / 2 steps runs n × n / 2 times. Dropping the constant ½ leaves O(n²).
+- **A loop that doubles or halves its counter is O(log n).** `for (i = 1; i <= n; i *= 2)` runs about log₂ n times: 1, 2, 4, 8, ... reaches n after log₂ n doublings.
+
+The usual growth rates, from slowest-growing to fastest: O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ).
+
+### What Big-O predicts
+
+Big-O tells you how the running time scales. If an O(n²) program takes 1 minute for 5,000 items, then 25,000 items (5 times as many) take about 5² = 25 minutes. An O(n) program would take about 5 minutes.
+
+It does not give exact times. Two O(n) programs can differ in speed because of the machine, the language, or how data is stored in memory, which is why real programs are also measured. Big-O is for comparing approaches before you write them.
+
 ## Common mistakes
 
 - **Empty input.** Reading `items[0]` on an empty list fails. Decide what to return (often null or 0) before the loop.
@@ -72,6 +95,13 @@ Compare: sorting first and taking the last element is O(n log n) time. It works,
 - **Off-by-one loops.** If the state starts from `items[0]`, the loop can start at index 1. If you compare neighbours, stop one element early.
 - **Duplicates.** "Second largest" usually means second largest *distinct* value. Equal values need a strict comparison.
 - **Saying O(n) for nested loops.** Two loops over the same list, one inside the other, are O(n²) even if the inner loop looks short.
+
+## Edge cases
+
+- An empty list: there is no first element to start from.
+- A single element: the loop body may never run.
+- All values negative, or all values equal.
+- Very large inputs, where an O(n²) idea becomes too slow.
 
 ## Worked example
 

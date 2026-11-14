@@ -1,0 +1,115 @@
+{
+  "id": "L2-reverse-words",
+  "level": 2,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Backwards Headline",
+  "statement": "A news ticker shows a headline with its words in reverse order. Words are separated by one or more spaces, and the headline may start or end with spaces. Return the words in reverse order, joined by exactly one space, with no space at the start or end.",
+  "examples": [
+    {
+      "input": "\"cats chase mice\"",
+      "output": "\"mice chase cats\""
+    },
+    {
+      "input": "\"  big   news  \"",
+      "output": "\"news big\""
+    }
+  ],
+  "constraints": [
+    "0 <= headline.length <= 10^5",
+    "headline has letters, digits, punctuation, and spaces"
+  ],
+  "answerKey": {
+    "pattern": "Split the string into words while skipping extra spaces, then join the words from last to first",
+    "keyPoints": [
+      "Collect the words: walk the string, skip spaces, and cut out each run of non-space characters (or split on spaces and drop empty pieces)",
+      "Go through the words from the last to the first",
+      "Join them with a single space using an array join or StringBuilder"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Empty or all-space headline returns \"\"",
+      "One word",
+      "Several spaces between words",
+      "Spaces at the start or end"
+    ],
+    "acceptableSlowerApproaches": [
+      "Repeatedly inserting each word at the front of a string: O(n²)"
+    ]
+  },
+  "hints": [
+    "Break the problem in two: first find the words, then put them back together in reverse.",
+    "Splitting on a single space gives empty pieces when there are several spaces in a row. Skip those empty pieces.",
+    "Join the words from last to first with exactly one space. An array join (or StringBuilder) avoids copying the string over and over."
+  ],
+  "starterCode": {
+    "javascript": "function reverseWords(headline) {\n  // return the words in reverse order\n}",
+    "java": "class Solution {\n  String reverseWords(String headline) {\n    // return the words in reverse order\n  }\n}"
+  },
+  "similarLeetCode": "Reverse Words in a String",
+  "tests": [
+    {
+      "input": [
+        "cats chase mice"
+      ],
+      "expected": "mice chase cats"
+    },
+    {
+      "input": [
+        "  big   news  "
+      ],
+      "expected": "news big"
+    },
+    {
+      "input": [
+        ""
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "     "
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "hello"
+      ],
+      "expected": "hello"
+    },
+    {
+      "input": [
+        "a b c d"
+      ],
+      "expected": "d c b a"
+    },
+    {
+      "input": [
+        "  one"
+      ],
+      "expected": "one"
+    },
+    {
+      "input": [
+        "two  "
+      ],
+      "expected": "two"
+    },
+    {
+      "input": [
+        "Rain, then sun!"
+      ],
+      "expected": "sun! then Rain,"
+    },
+    {
+      "input": [
+        "x  y   z    w"
+      ],
+      "expected": "w z y x"
+    }
+  ]
+}

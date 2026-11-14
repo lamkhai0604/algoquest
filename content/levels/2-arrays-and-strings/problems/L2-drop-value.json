@@ -1,0 +1,185 @@
+{
+  "id": "L2-drop-value",
+  "level": 2,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Drop the Bad Readings",
+  "statement": "A sensor writes readings into an array, and the value val marks a failed reading. Remove every val from the array in place: move the good readings to the front, keeping their order, without creating a second array. Return the good readings (the front part of the array).",
+  "examples": [
+    {
+      "input": "nums = [3, -1, 4, -1, 5], val = -1",
+      "output": "[3, 4, 5]"
+    },
+    {
+      "input": "nums = [2, 2], val = 2",
+      "output": "[]"
+    }
+  ],
+  "constraints": [
+    "0 <= nums.length <= 10^5",
+    "-10^9 <= nums[i], val <= 10^9"
+  ],
+  "answerKey": {
+    "pattern": "Overwrite in place with a write index that only moves forward for kept items",
+    "keyPoints": [
+      "Keep a write index w, starting at 0",
+      "Read every item in order; when it is not val, copy it to nums[w] and increase w",
+      "Items equal to val are skipped, so the kept items end up in nums[0..w-1] in their original order",
+      "Return the first w items"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1) extra space (not counting the returned copy)",
+    "edgeCases": [
+      "Empty array returns []",
+      "Every item equals val returns []",
+      "No item equals val returns the same array",
+      "val at the start or the end"
+    ],
+    "acceptableSlowerApproaches": [
+      "Delete each val with splice/remove, shifting the rest every time: O(n²)",
+      "Build a new array of kept items: O(n) time but O(n) extra space, which ignores the in-place rule"
+    ]
+  },
+  "hints": [
+    "Deleting an item from the middle of an array shifts everything after it. Doing that for every bad reading can cost O(n²). Can you avoid deleting?",
+    "Instead of deleting, overwrite. Keep a second index that says where the next good reading should be written.",
+    "Read with i, write with w. When nums[i] is good, set nums[w] = nums[i] and move w forward. At the end, the first w items are the answer."
+  ],
+  "starterCode": {
+    "javascript": "function dropValue(nums, val) {\n  // move the kept readings to the front and return them\n}",
+    "java": "class Solution {\n  int[] dropValue(int[] nums, int val) {\n    // move the kept readings to the front and return them\n  }\n}"
+  },
+  "similarLeetCode": "Remove Element",
+  "tests": [
+    {
+      "input": [
+        [
+          3,
+          -1,
+          4,
+          -1,
+          5
+        ],
+        -1
+      ],
+      "expected": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          2
+        ],
+        2
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [],
+        0
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3
+        ],
+        9
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          1,
+          0,
+          2,
+          0
+        ],
+        0
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          7
+        ],
+        7
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          7
+        ],
+        8
+      ],
+      "expected": [
+        7
+      ]
+    },
+    {
+      "input": [
+        [
+          5,
+          5,
+          1,
+          5,
+          2,
+          5
+        ],
+        5
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          -3,
+          4,
+          -3,
+          -3
+        ],
+        -3
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          1000000000,
+          -1000000000
+        ],
+        1000000000
+      ],
+      "expected": [
+        -1000000000
+      ]
+    }
+  ]
+}

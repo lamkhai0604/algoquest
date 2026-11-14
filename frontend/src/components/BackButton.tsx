@@ -4,7 +4,7 @@ import styles from "./BackButton.module.css";
 interface BackButtonProps {
   /** Where the button leads. */
   to: string;
-  /** What the button does, for example "Back to the level map". */
+  /** What the button does, for example "Back to the Learning Path". */
   label: string;
 }
 
