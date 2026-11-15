@@ -138,6 +138,14 @@ final class ContentValidator {
         }
       }
     }
+    List<Integer> swap = visual.swap();
+    if (swap != null
+        && (swap.size() != 2
+            || swap.contains(null)
+            || swap.get(0).equals(swap.get(1))
+            || swap.stream().anyMatch(i -> i < 0 || i >= visual.cells().size()))) {
+      problems.add(where + ": swap needs the indices of two different cells");
+    }
     Set<String> names = new HashSet<>();
     if (visual.vars() != null) {
       for (Visual.Variable variable : visual.vars()) {

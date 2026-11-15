@@ -1,0 +1,165 @@
+{
+  "id": "L4-missing-ticket",
+  "level": 4,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Missing Ticket",
+  "statement": "A raffle sold tickets numbered 1 to n + 1, and the box now holds n tickets in no particular order. Exactly one ticket is missing. Return its number.",
+  "examples": [
+    {
+      "input": "tickets = [3, 1, 4]",
+      "output": "2"
+    },
+    {
+      "input": "tickets = [1, 2]",
+      "output": "3"
+    }
+  ],
+  "constraints": [
+    "0 <= tickets.length <= 10^5",
+    "The tickets are distinct numbers from 1 to tickets.length + 1"
+  ],
+  "answerKey": {
+    "pattern": "Sort, then scan for the first position i where the ticket is not i + 1",
+    "keyPoints": [
+      "After sorting, a full set would read 1, 2, 3, … so tickets[i] should equal i + 1",
+      "The first i where tickets[i] != i + 1 means i + 1 is missing",
+      "If no position breaks the rule, the missing ticket is the last one, n + 1"
+    ],
+    "timeComplexity": "O(n log n) for the sort",
+    "spaceComplexity": "O(1) extra if sorting in place (the sort itself may use O(log n) to O(n))",
+    "edgeCases": [
+      "Empty box: the missing ticket is 1",
+      "The missing ticket is 1",
+      "The missing ticket is the largest, n + 1"
+    ],
+    "acceptableSlowerApproaches": [
+      "Checking each number 1..n+1 with a linear search: O(n²)",
+      "A faster O(n) answer: the expected sum minus the actual sum, or a hash set"
+    ]
+  },
+  "hints": [
+    "Imagine the tickets lined up in order. What would a complete row look like?",
+    "After sorting, position 0 should hold 1, position 1 should hold 2, and so on. Look for the first place that breaks this.",
+    "If every position matches, nothing is missing in the middle: the missing ticket is the one after the last, n + 1."
+  ],
+  "starterCode": {
+    "javascript": "function missingTicket(tickets) {\n  // return the missing ticket number\n}",
+    "java": "class Solution {\n  int missingTicket(int[] tickets) {\n    // return the missing ticket number\n  }\n}"
+  },
+  "similarLeetCode": "Missing Number",
+  "tests": [
+    {
+      "input": [
+        [
+          3,
+          1,
+          4
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ]
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          2
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          5,
+          4,
+          3,
+          1
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          7,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        [
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          1
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          2,
+          1,
+          4,
+          3,
+          6,
+          5,
+          8,
+          7,
+          10,
+          9,
+          11
+        ]
+      ],
+      "expected": 12
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+[
+  {
+    "title": "The task",
+    "body": "Sort **[5, 2, 4, 1]** with insertion sort. The left part of the array is the sorted part. Each round takes the next item, `j`, and swaps it left while its left neighbor is bigger, like sliding a new card into a sorted hand.",
+    "visual": {
+      "cells": [
+        "5",
+        "2",
+        "4",
+        "1"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "sorted"
+        }
+      ],
+      "vars": [
+        {
+          "name": "sorted part",
+          "value": "[5]"
+        },
+        {
+          "name": "swaps",
+          "value": "0"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Place 2",
+    "body": "`j` points at 2. Its left neighbor 5 is bigger, so they swap. Now 2 is at the front and nothing is left of it: this round is done.",
+    "code": "while (j > 0 && a[j - 1] > a[j]) {\n  [a[j - 1], a[j]] = [a[j], a[j - 1]];\n  j--;\n}",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "4",
+        "1"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "j"
+        }
+      ],
+      "vars": [
+        {
+          "name": "sorted part",
+          "value": "[2, 5]"
+        },
+        {
+          "name": "swaps",
+          "value": "1"
+        }
+      ],
+      "swap": [
+        0,
+        1
+      ]
+    }
+  },
+  {
+    "title": "Place 4",
+    "body": "`j` points at 4. Its neighbor 5 is bigger, so they swap. Next to 4 is now 2, which is smaller, so 4 stops. The sorted part is [2, 4, 5].",
+    "code": "// 5 > 4: swap. 2 > 4? No: stop.",
+    "visual": {
+      "cells": [
+        "2",
+        "4",
+        "5",
+        "1"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "j"
+        }
+      ],
+      "vars": [
+        {
+          "name": "sorted part",
+          "value": "[2, 4, 5]"
+        },
+        {
+          "name": "swaps",
+          "value": "2"
+        }
+      ],
+      "swap": [
+        1,
+        2
+      ],
+      "predict": {
+        "question": "4 swaps past 5. Does it also swap past 2?",
+        "options": [
+          "Yes, 4 always goes to the front",
+          "No, 2 is smaller than 4, so 4 stops"
+        ],
+        "answer": 1,
+        "explanation": "Insertion sort stops as soon as the left neighbor is not bigger. 2 < 4, so 4 stays at index 1.",
+        "hides": [
+          "sorted part"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Place 1: first swap",
+    "body": "The last item, 1, is smaller than everything in the sorted part, so it has the longest trip. First it swaps with 5.",
+    "visual": {
+      "cells": [
+        "2",
+        "4",
+        "1",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "j"
+        }
+      ],
+      "vars": [
+        {
+          "name": "sorted part",
+          "value": "[2, 4, 5] + 1 moving"
+        },
+        {
+          "name": "swaps",
+          "value": "3"
+        }
+      ],
+      "swap": [
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "title": "Place 1: second swap",
+    "body": "4 is bigger than 1, so they swap.",
+    "visual": {
+      "cells": [
+        "2",
+        "1",
+        "4",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "j"
+        }
+      ],
+      "vars": [
+        {
+          "name": "sorted part",
+          "value": "[2, 4, 5] + 1 moving"
+        },
+        {
+          "name": "swaps",
+          "value": "4"
+        }
+      ],
+      "swap": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "title": "Place 1: third swap",
+    "body": "2 is bigger than 1, so they swap. 1 reaches index 0, where nothing is left of it, and the round ends.",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "4",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "j"
+        }
+      ],
+      "vars": [
+        {
+          "name": "sorted part",
+          "value": "[1, 2, 4, 5]"
+        },
+        {
+          "name": "swaps",
+          "value": "5"
+        }
+      ],
+      "swap": [
+        0,
+        1
+      ],
+      "predict": {
+        "question": "How many swaps did the whole sort make?",
+        "options": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "answer": 2,
+        "explanation": "1 swap for 2, 1 for 4, and 3 for 1: 5 in total. Each swap fixes one pair that was out of order, and [5, 2, 4, 1] had 5 such pairs.",
+        "hides": [
+          "swaps"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Done",
+    "body": "The array is sorted: **[1, 2, 4, 5]**. In the worst case (reverse order) every item swaps past all the items before it: 0 + 1 + 2 + … + (n − 1) = n(n − 1)/2 swaps, which is O(n²). On an already sorted array no item moves: O(n).",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "4",
+        "5"
+      ],
+      "markers": [],
+      "vars": [
+        {
+          "name": "result",
+          "value": "[1, 2, 4, 5]"
+        },
+        {
+          "name": "swaps",
+          "value": "5"
+        }
+      ]
+    }
+  }
+]

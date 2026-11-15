@@ -23,6 +23,8 @@ export interface Visual {
   markers?: VisualMarker[] | null;
   vars?: VisualVariable[] | null;
   predict?: Prediction | null;
+  /** Indices of the two cells whose values this step exchanged. */
+  swap?: [number, number] | null;
 }
 
 export interface WalkthroughStep {

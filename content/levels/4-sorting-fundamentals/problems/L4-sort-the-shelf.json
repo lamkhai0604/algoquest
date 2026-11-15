@@ -1,0 +1,248 @@
+{
+  "id": "L4-sort-the-shelf",
+  "level": 4,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Sort the Shelf",
+  "statement": "A librarian puts books on a shelf from the thinnest to the thickest. You get the book titles and, at the same positions, their page counts. Return the titles in shelf order: fewer pages first, and when two books have the same number of pages, the title that comes first alphabetically goes first. Titles are unique and use only lowercase letters and spaces.",
+  "examples": [
+    {
+      "input": "titles = [\"tides\", \"atlas\", \"maps\"], pages = [300, 120, 120]",
+      "output": "[\"atlas\", \"maps\", \"tides\"]"
+    },
+    {
+      "input": "titles = [\"one\"], pages = [50]",
+      "output": "[\"one\"]"
+    }
+  ],
+  "constraints": [
+    "1 <= titles.length == pages.length <= 10^4",
+    "1 <= pages[i] <= 10^4"
+  ],
+  "answerKey": {
+    "pattern": "Sort the indices (or title–pages pairs) with a comparator: by pages, then by title",
+    "keyPoints": [
+      "Keep each title together with its page count, for example by sorting indices or pairs",
+      "The comparator compares pages first",
+      "When pages are equal, it compares titles alphabetically",
+      "Return the titles in the sorted order"
+    ],
+    "timeComplexity": "O(n log n) comparisons (each title comparison is short)",
+    "spaceComplexity": "O(n) for the pairs or indices",
+    "edgeCases": [
+      "One book",
+      "All books with the same page count: order by title only",
+      "Already in shelf order"
+    ],
+    "acceptableSlowerApproaches": [
+      "Insertion sort with the same rule: O(n²), fine for small shelves"
+    ]
+  },
+  "hints": [
+    "If you sort the titles alone, you lose which page count belongs to which title. What can you sort instead?",
+    "Sort the positions 0..n-1 (or title–pages pairs). The rule for 'who goes first' looks at pages, then titles.",
+    "In the comparator: if the page counts differ, return pages[a] - pages[b]; otherwise compare the two titles."
+  ],
+  "starterCode": {
+    "javascript": "function sortShelf(titles, pages) {\n  // return the titles in shelf order\n}",
+    "java": "class Solution {\n  String[] sortShelf(String[] titles, int[] pages) {\n    // return the titles in shelf order\n  }\n}"
+  },
+  "similarLeetCode": "Sort the People",
+  "tests": [
+    {
+      "input": [
+        [
+          "tides",
+          "atlas",
+          "maps"
+        ],
+        [
+          300,
+          120,
+          120
+        ]
+      ],
+      "expected": [
+        "atlas",
+        "maps",
+        "tides"
+      ]
+    },
+    {
+      "input": [
+        [
+          "one"
+        ],
+        [
+          50
+        ]
+      ],
+      "expected": [
+        "one"
+      ]
+    },
+    {
+      "input": [
+        [
+          "c",
+          "b",
+          "a"
+        ],
+        [
+          10,
+          10,
+          10
+        ]
+      ],
+      "expected": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "input": [
+        [
+          "a",
+          "b",
+          "c"
+        ],
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "input": [
+        [
+          "deep sea",
+          "sky",
+          "river",
+          "stone"
+        ],
+        [
+          400,
+          90,
+          250,
+          90
+        ]
+      ],
+      "expected": [
+        "sky",
+        "stone",
+        "river",
+        "deep sea"
+      ]
+    },
+    {
+      "input": [
+        [
+          "z",
+          "y"
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      "expected": [
+        "y",
+        "z"
+      ]
+    },
+    {
+      "input": [
+        [
+          "bee",
+          "ant",
+          "cat",
+          "dog",
+          "eel"
+        ],
+        [
+          5,
+          5,
+          3,
+          9,
+          3
+        ]
+      ],
+      "expected": [
+        "cat",
+        "eel",
+        "ant",
+        "bee",
+        "dog"
+      ]
+    },
+    {
+      "input": [
+        [
+          "long story"
+        ],
+        [
+          10000
+        ]
+      ],
+      "expected": [
+        "long story"
+      ]
+    },
+    {
+      "input": [
+        [
+          "m",
+          "l",
+          "k",
+          "j",
+          "i",
+          "h"
+        ],
+        [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": [
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m"
+      ]
+    },
+    {
+      "input": [
+        [
+          "alpha",
+          "alp",
+          "al"
+        ],
+        [
+          7,
+          7,
+          7
+        ]
+      ],
+      "expected": [
+        "al",
+        "alp",
+        "alpha"
+      ]
+    }
+  ]
+}

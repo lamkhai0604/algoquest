@@ -1,0 +1,241 @@
+{
+  "id": "L4-merge-queues",
+  "level": 4,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Merge Two Queues",
+  "statement": "Two ticket counters each keep their customers' arrival times in increasing order. The counters are joining into one line. Return all arrival times in one increasing list. Do not just join the lists and sort again: use the fact that each list is already sorted.",
+  "examples": [
+    {
+      "input": "a = [1, 4, 9], b = [2, 3, 10]",
+      "output": "[1, 2, 3, 4, 9, 10]"
+    },
+    {
+      "input": "a = [], b = [5]",
+      "output": "[5]"
+    }
+  ],
+  "constraints": [
+    "0 <= a.length, b.length <= 10^5",
+    "a and b are sorted in increasing order (repeats allowed)",
+    "-10^9 <= a[i], b[i] <= 10^9"
+  ],
+  "answerKey": {
+    "pattern": "Two-finger merge, the merge step of merge sort",
+    "keyPoints": [
+      "Keep one index into each list, both starting at 0",
+      "Repeatedly take the smaller of the two front items and move that index forward",
+      "When one list runs out, copy the rest of the other list",
+      "Each item is taken once, so the merge is linear"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n + m) for the result",
+    "edgeCases": [
+      "One or both lists empty",
+      "Equal values in both lists",
+      "All of one list comes before the other"
+    ],
+    "acceptableSlowerApproaches": [
+      "Concatenate and sort: O((n + m) log(n + m)); correct but ignores that the lists are sorted"
+    ]
+  },
+  "hints": [
+    "The smallest time overall is at the front of one of the two lists. Which one?",
+    "Keep a finger on the front of each list. Take the smaller front item, then move that finger forward.",
+    "When one list is used up, the rest of the other list is already in order: copy it to the end."
+  ],
+  "starterCode": {
+    "javascript": "function mergeQueues(a, b) {\n  // return one sorted list of all times\n}",
+    "java": "class Solution {\n  int[] mergeQueues(int[] a, int[] b) {\n    // return one sorted list of all times\n  }\n}"
+  },
+  "similarLeetCode": "Merge Sorted Array",
+  "tests": [
+    {
+      "input": [
+        [
+          1,
+          4,
+          9
+        ],
+        [
+          2,
+          3,
+          10
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        9,
+        10
+      ]
+    },
+    {
+      "input": [
+        [],
+        [
+          5
+        ]
+      ],
+      "expected": [
+        5
+      ]
+    },
+    {
+      "input": [
+        [],
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          7
+        ],
+        []
+      ],
+      "expected": [
+        7
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "input": [
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          2
+        ]
+      ],
+      "expected": [
+        1,
+        1,
+        1,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          -5,
+          0,
+          5
+        ],
+        [
+          -10,
+          10
+        ]
+      ],
+      "expected": [
+        -10,
+        -5,
+        0,
+        5,
+        10
+      ]
+    },
+    {
+      "input": [
+        [
+          1000000000
+        ],
+        [
+          -1000000000
+        ]
+      ],
+      "expected": [
+        -1000000000,
+        1000000000
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          4,
+          6,
+          8,
+          10
+        ],
+        [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13
+      ]
+    }
+  ]
+}

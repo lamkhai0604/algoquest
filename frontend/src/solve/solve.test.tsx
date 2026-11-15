@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { fakeApi, json, ME } from "../test/fakeApi";
@@ -73,7 +73,9 @@ describe("solve page", () => {
       screen.getByRole("link", { name: "Back to Level 1" }),
     ).toHaveAttribute("href", "/levels/1");
     // The clock reports to the server while the page is open (D-043).
-    expect(calls(fetchFn, "/heartbeat").length).toBeGreaterThan(0);
+    await waitFor(() =>
+      expect(calls(fetchFn, "/heartbeat").length).toBeGreaterThan(0),
+    );
   });
 
   it("rejects an empty or too-long explanation before grading", async () => {

@@ -321,6 +321,31 @@
   }
 }
 
+.cellSwapped {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.swapNote {
+  margin: 0 0 var(--space-2);
+  color: var(--color-primary-soft-text);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cellSwapped .cellValue {
+    animation: swap-in 0.35s ease;
+  }
+
+  @keyframes swap-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+}
+
 .cellIndex {
   color: var(--color-text-muted);
   font-size: var(--text-xs);
