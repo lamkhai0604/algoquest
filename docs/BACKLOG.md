@@ -77,7 +77,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
 | T-401 | Code editor + JavaScript runner (inputs only to the browser, backend compares) | FR-07, D-035, D-046 | P1 | Done 2026-11-12 (backend and frontend tests; smoke runs real JavaScript for the code bonus) |
-| T-402 | Java runner through Judge0 with daily quota guard | FR-07, D-032 | P2 | Implemented and verified with a fake runner 2026-11-12. Live check open: waits for `JUDGE0_API_KEY` on Render (PO); carried to the next sprint |
+| T-402 | Java runner through Judge0 with daily quota guard | FR-07, D-032, D-054 | P2 | Implemented and verified with a fake runner 2026-11-12. Live check paused (D-054): no free Judge0 plan; Java runs off until a key is set |
 | T-404 | Placeholders: hard test mode option, battle mode (VIP page done in T-301) | FR-11, FR-16 | P3 | Done 2026-11-12 |
 | T-405 | Admin panel part 2: game config editor, users and roles, audit log view | FR-18.3–4, FR-17.6, D-047 | P2 | Done 2026-11-12 (audit entries with before and after values; 403 for players) |
 | T-406 | Design pass: mockups first, PO selects, then apply | NFR-05, NFR-06 | P2 | Done 2026-11-14 for the level map (layout B, D-049), lesson, and phone layouts. Profile mockups moved to T-414 |
@@ -96,7 +96,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 
 ## Sprint 5 — Level 4 and the profile page ([plan](sprints/sprint-5.md), approved 2026-11-14)
 
-Carried from Sprint 4: the live Java check of T-402 (waits for `JUDGE0_API_KEY` on Render).
+T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, so Java runs stay off until a key is set. JavaScript-only editor done 2026-11-14.
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |

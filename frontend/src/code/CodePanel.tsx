@@ -95,6 +95,9 @@ function CodeRunner({
 }: CodeRunnerProps) {
   const { reloadLevels } = useGame();
   const [language, setLanguage] = useState<CodeLanguage>("javascript");
+  const languages = LANGUAGES.filter(
+    (item) => item.id !== "java" || setup.javaAvailable,
+  );
   const [codes, setCodes] = useState<Record<CodeLanguage, string>>(() => ({
     javascript:
       readDraft(problemId, "javascript") ?? starterCode.javascript ?? "",
@@ -150,7 +153,7 @@ function CodeRunner({
     <div className={styles.panel}>
       <div className={styles.toolbar}>
         <div className={styles.languages} role="group" aria-label="Language">
-          {LANGUAGES.map((item) => (
+          {languages.map((item) => (
             <Chip
               key={item.id}
               selected={language === item.id}
@@ -167,7 +170,9 @@ function CodeRunner({
         <p className={styles.note}>
           {language === "java"
             ? `Java runs on a server: ${javaLeft} of ${setup.javaDailyLimit} runs left today.`
-            : "JavaScript runs in your browser, up to 5 seconds."}
+            : setup.javaAvailable
+              ? "JavaScript runs in your browser, up to 5 seconds."
+              : "JavaScript runs in your browser, up to 5 seconds. Java runs are coming soon."}
         </p>
       </div>
       <CodeEditor
@@ -227,7 +232,7 @@ export function CodePanel({
       {!open ? (
         <div className={styles.toolbar}>
           <p className={styles.note}>
-            Write the solution in JavaScript or Java. Passing every hidden test
+            Write the solution as code. Passing every hidden test
             doubles the XP of this problem, once.
           </p>
           <Button onClick={() => setOpen(true)}>Write code</Button>

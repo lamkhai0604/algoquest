@@ -11,4 +11,9 @@ public interface JavaRunner {
    * @throws RunnerUnavailableException when the runner cannot be reached or refuses the run
    */
   JavaRun run(Problem problem, String code);
+
+  /** Whether this runner can run code at all, for example because its key is set. */
+  default boolean available() {
+    return true;
+  }
 }

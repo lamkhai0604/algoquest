@@ -4,6 +4,8 @@ export type CodeLanguage = "javascript" | "java";
 export interface CodeSetup {
   functionName: string | null;
   inputs: unknown[][];
+  /** False when the site has no Java runner; the editor then offers JavaScript only. */
+  javaAvailable: boolean;
   javaRunsLeft: number;
   javaDailyLimit: number;
   solved: boolean;
