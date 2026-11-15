@@ -232,8 +232,8 @@ export function CodePanel({
       {!open ? (
         <div className={styles.toolbar}>
           <p className={styles.note}>
-            Write the solution as code. Passing every hidden test
-            doubles the XP of this problem, once.
+            Write the solution as code. Passing every hidden test doubles the XP
+            of this problem, once.
           </p>
           <Button onClick={() => setOpen(true)}>Write code</Button>
         </div>
