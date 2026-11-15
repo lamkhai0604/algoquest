@@ -156,7 +156,7 @@ function PracticeStep({ level }: { level: number }) {
       <div className={styles.prose}>
         <p>
           Solve the problems in order and explain your approach in words. The AI
-          grades your reasoning; passing code in JavaScript or Java earns double
+          grades your reasoning; code that passes every hidden test earns double
           XP.
         </p>
         {info && (

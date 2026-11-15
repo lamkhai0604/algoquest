@@ -45,6 +45,11 @@ public class Judge0Runner implements JavaRunner {
   }
 
   @Override
+  public boolean available() {
+    return !apiKey.isBlank();
+  }
+
+  @Override
   public JavaRun run(Problem problem, String code) {
     if (apiKey.isBlank()) {
       throw new RunnerUnavailableException("JUDGE0_API_KEY is not set");

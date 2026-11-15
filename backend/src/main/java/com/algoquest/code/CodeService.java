@@ -78,11 +78,12 @@ public class CodeService {
 
   /**
    * What the code panel needs: the JavaScript function to call, the hidden test inputs (never the
-   * expected outputs), and the Java runs left today.
+   * expected outputs), whether Java can run here at all, and the Java runs left today.
    */
   public record CodeSetup(
       String functionName,
       List<List<Object>> inputs,
+      boolean javaAvailable,
       int javaRunsLeft,
       int javaDailyLimit,
       boolean solved,
@@ -126,6 +127,7 @@ public class CodeService {
     return new CodeSetup(
         jsFunctionName(problem),
         inputs,
+        javaRunner.available(),
         javaRunsLeft(),
         javaDailyLimit,
         mine.solved(),
@@ -159,6 +161,12 @@ public class CodeService {
     if (JAVASCRIPT.equals(language)) {
       outcomes = javascriptOutcomes(submission, tests.size());
     } else {
+      if (!javaRunner.available()) {
+        throw new ApiException(
+            HttpStatus.SERVICE_UNAVAILABLE,
+            "Java not available",
+            "Java runs are not available on this site yet. Use JavaScript for the code bonus.");
+      }
       if (javaRunsLeft() <= 0) {
         throw new ApiException(
             HttpStatus.TOO_MANY_REQUESTS,
