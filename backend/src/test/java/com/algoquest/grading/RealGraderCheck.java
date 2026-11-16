@@ -83,7 +83,7 @@ class RealGraderCheck {
               .findFirst()
               .orElseThrow();
       long started = System.nanoTime();
-      GradingResult result = grader.grade(problem, "Big-O & Basics", sample.text());
+      GradingResult result = grader.grade(problem, "Big-O & Algorithm Basics", sample.text());
       long ms = (System.nanoTime() - started) / 1_000_000;
       latencies.add(ms);
       System.out.printf(
