@@ -80,7 +80,7 @@ Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't (this release)**.
 4. A "Get more hints with VIP" link opens the VIP placeholder (FR-15).
 
 ### FR-07 — Optional code for double XP (Should)
-1. After a passing explanation, the learner may write code in **JavaScript or Java**.
+1. After a passing explanation, the learner may write code in **JavaScript or Java**. Java is offered only when a Java runner is configured (D-054).
 2. Code runs against the problem's hidden tests. JavaScript: the browser receives only the test inputs, runs the code in a Web Worker (stopped after 5 s), and sends the outputs to the backend, which compares them with the expected outputs (D-035). Java: the backend runs it on Judge0 (D-032).
 3. All tests passing doubles the problem's XP (once per problem). The result shows passed/total tests and, for failures, the first failing input.
 4. If Judge0 is unavailable or its daily quota is used up, the learner sees a clear message and can still use JavaScript.

@@ -10,6 +10,7 @@ import type { CodeResult, CodeSetup } from "./types";
 const SETUP: CodeSetup = {
   functionName: "maxTemperature",
   inputs: [[[3, -2, 9]], [[]]],
+  javaAvailable: true,
   javaRunsLeft: 45,
   javaDailyLimit: 45,
   solved: true,
@@ -54,13 +55,13 @@ describe("tokenize", () => {
 });
 
 describe("code panel", () => {
-  function open(run: () => Response) {
+  function open(run: () => Response, setup: CodeSetup = SETUP) {
     const fetchFn = fakeApi({
       "GET /api/v1/me": () => json(200, ME),
       "GET /api/v1/levels": () => json(200, LEVELS),
       "GET /api/v1/problems/L1-max-temperature": () =>
         json(200, { ...PROBLEM, lastResult: GRADED }),
-      "GET /api/v1/problems/L1-max-temperature/code": () => json(200, SETUP),
+      "GET /api/v1/problems/L1-max-temperature/code": () => json(200, setup),
       "POST /api/v1/problems/L1-max-temperature/code": run,
     });
     renderSignedInAt("/problems/L1-max-temperature");
@@ -94,6 +95,17 @@ describe("code panel", () => {
       "class Solution {\n  Integer maxTemperature(int[] temps) {\n  }\n}",
     );
     expect(screen.getByText(/45 of 45 runs left today/)).toBeVisible();
+  });
+
+  it("offers JavaScript only when the site has no Java runner", async () => {
+    open(() => json(200, PASSED), { ...SETUP, javaAvailable: false });
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Write code" }),
+    );
+
+    expect(await screen.findByLabelText("Your JavaScript code")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Java" })).toBeNull();
+    expect(screen.getByText(/Java runs are coming soon/)).toBeVisible();
   });
 
   it("runs JavaScript in the browser and sends only the outputs", async () => {

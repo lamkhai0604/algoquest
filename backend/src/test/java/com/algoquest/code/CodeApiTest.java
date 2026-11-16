@@ -107,6 +107,7 @@ class CodeApiTest {
         .andExpect(jsonPath("$.inputs.length()").value(8))
         .andExpect(jsonPath("$.inputs[0][0][1]").value(1))
         .andExpect(jsonPath("$.solved").value(false))
+        .andExpect(jsonPath("$.javaAvailable").value(true))
         .andExpect(jsonPath("$.javaRunsLeft").value(3))
         .andExpect(content().string(Matchers.not(Matchers.containsString("expected"))));
   }
