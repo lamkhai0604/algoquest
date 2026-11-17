@@ -30,7 +30,11 @@ import { Walkthrough } from "./Walkthrough";
 
 /** The five learner steps; the lesson text's sections are shared among them. */
 const STEPS = [
-  { key: "understand", title: "lesson.understand", hint: "lesson.hookIntuition" },
+  {
+    key: "understand",
+    title: "lesson.understand",
+    hint: "lesson.hookIntuition",
+  },
   { key: "visualize", title: "lesson.visualize", hint: "lesson.stepThrough" },
   { key: "learn", title: "lesson.learn", hint: "lesson.codeComplexity" },
   { key: "check", title: "lesson.check", hint: "lesson.quickCheck" },
@@ -157,14 +161,12 @@ function PracticeStep({ level }: { level: number }) {
   return (
     <Card heading={t("lesson.practice")}>
       <div className={styles.prose}>
-        <p>
-          {t("lessonMore.practiceIntro")}
-        </p>
+        <p>{t("lessonMore.practiceIntro")}</p>
         {info && (
           <ul>
             <li>
-              {info.solved} of {info.problems} {t("lessonMore.problemsSolved")} {info.xp} /{" "}
-              {info.target} XP.
+              {info.solved} of {info.problems} {t("lessonMore.problemsSolved")}{" "}
+              {info.xp} / {info.target} XP.
             </li>
             <li>
               {info.practiceOpen
@@ -180,7 +182,9 @@ function PracticeStep({ level }: { level: number }) {
         )}
       </div>
       <div className={`${pages.row} ${styles.practiceAction}`}>
-        <ButtonLink to={`/levels/${level}`}>{t("lessonMore.goProblems")}</ButtonLink>
+        <ButtonLink to={`/levels/${level}`}>
+          {t("lessonMore.goProblems")}
+        </ButtonLink>
       </div>
     </Card>
   );
@@ -223,7 +227,8 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
     <CodeLanguageContext.Provider value={codeLanguage}>
       <StepTabs current={current} onSelect={select} />
       <p className={styles.stepCaption}>
-        {t("lesson.step")} {current + 1} {t("lesson.stepOf")} {STEPS.length} · {t(STEPS[current]?.title ?? "lesson.understand")}
+        {t("lesson.step")} {current + 1} {t("lesson.stepOf")} {STEPS.length} ·{" "}
+        {t(STEPS[current]?.title ?? "lesson.understand")}
       </p>
       <div
         id="lesson-step"
@@ -246,7 +251,10 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
               <MarkdownBlocks blocks={sections.understand.slice(cut)} />
             </div>
             {sections.objectives.length > 0 && (
-              <Card heading={t("lessonMore.objectives")} className={styles.side}>
+              <Card
+                heading={t("lessonMore.objectives")}
+                className={styles.side}
+              >
                 <MarkdownBlocks blocks={sections.objectives} />
               </Card>
             )}

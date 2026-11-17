@@ -28,7 +28,9 @@ export function HintPanel({ hints, problemId, onChange }: HintPanelProps) {
       .post<Hints>(`/api/v1/problems/${problemId}/hints`)
       .then(onChange)
       .catch((failure: unknown) =>
-        setError(failure instanceof Error ? failure.message : t("common.retry")),
+        setError(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        ),
       )
       .finally(() => setOpening(false));
   };
@@ -37,12 +39,16 @@ export function HintPanel({ hints, problemId, onChange }: HintPanelProps) {
     <Card heading={t("solveMore.hints")}>
       {opened.map((hint, index) => (
         <p key={index} className={styles.hint}>
-          <strong>{t("solveMore.hint")} {index + 1}.</strong> {hint}
+          <strong>
+            {t("solveMore.hint")} {index + 1}.
+          </strong>{" "}
+          {hint}
         </p>
       ))}
       <p className={styles.muted}>
         {quota.remaining} of {quota.perWindow} {t("solveMore.hintsLeft")}
-        {quota.refillsAt && ` · ${t("solveMore.nextRefill")} ${refillIn(quota.refillsAt)}`}
+        {quota.refillsAt &&
+          ` · ${t("solveMore.nextRefill")} ${refillIn(quota.refillsAt)}`}
       </p>
       {error && (
         <p className={styles.error} role="alert">

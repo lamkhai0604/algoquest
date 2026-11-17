@@ -23,7 +23,9 @@ export function TestStartCard({ level }: { level: Level }) {
       .post<LevelTest>(`/api/v1/levels/${level.number}/tests`)
       .then((test) => navigate(`/tests/${test.id}`))
       .catch((failure: unknown) => {
-        setError(failure instanceof Error ? failure.message : t("common.retry"));
+        setError(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        );
         setStarting(false);
       });
   };

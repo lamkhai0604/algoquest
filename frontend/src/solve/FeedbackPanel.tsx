@@ -69,9 +69,7 @@ export function FeedbackPanel({ result, level }: Props) {
         {result.mode === "explain" &&
           result.solved &&
           result.xpGained === 0 && (
-            <p className={styles.muted}>
-              {t("solveMore.xpOnce")}
-            </p>
+            <p className={styles.muted}>{t("solveMore.xpOnce")}</p>
           )}
         <XpBar
           label={`Level ${level} XP`}

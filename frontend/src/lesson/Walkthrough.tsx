@@ -45,7 +45,8 @@ function Cells({ visual }: { visual: Visual }) {
       </ol>
       {swap.length === 2 && (
         <p className={styles.swapNote}>
-          {t("lessonMore.swapped")} [{swap[0]}] {t("lessonMore.and")} [{swap[1]}]
+          {t("lessonMore.swapped")} [{swap[0]}] {t("lessonMore.and")} [{swap[1]}
+          ]
         </p>
       )}
     </>
@@ -182,7 +183,8 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
     <div className={styles.visualizer}>
       <Card heading={t("lessonMore.stepByStep")}>
         <span className={styles.stepCount}>
-          {t("walkthrough.step")} {index + 1} {t("lesson.stepOf")} {steps.length}
+          {t("walkthrough.step")} {index + 1} {t("lesson.stepOf")}{" "}
+          {steps.length}
         </span>
         {visual && <Cells visual={visual} />}
         {visual && <Variables visual={visual} hidden={hidden} />}
@@ -196,9 +198,7 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
         <div className={styles.step} aria-live="polite">
           <h3 className={styles.stepTitle}>{step.title}</h3>
           {waiting ? (
-            <p className={styles.stepHidden}>
-              {t("lessonMore.answerFirst")}
-            </p>
+            <p className={styles.stepHidden}>{t("lessonMore.answerFirst")}</p>
           ) : (
             <>
               <p>

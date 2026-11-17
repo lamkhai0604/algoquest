@@ -37,7 +37,9 @@ function ResetLevel({ user }: { user: AdminUser }) {
         reloadLevels();
       })
       .catch((failure: unknown) =>
-        setMessage(failure instanceof Error ? failure.message : t("common.retry")),
+        setMessage(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        ),
       );
   };
 
@@ -122,7 +124,9 @@ function RoleEditor({
         onChanged(users);
       })
       .catch((failure: unknown) =>
-        setMessage(failure instanceof Error ? failure.message : t("common.retry")),
+        setMessage(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        ),
       )
       .finally(() => {
         setBusy(false);
@@ -181,7 +185,9 @@ export function UsersPanel() {
   const users = changed ?? (state.status === "ready" ? state.data : []);
   return (
     <section className={styles.section}>
-      {state.status === "loading" && <LoadingState label={t("admin.loadingUsers")} />}
+      {state.status === "loading" && (
+        <LoadingState label={t("admin.loadingUsers")} />
+      )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}

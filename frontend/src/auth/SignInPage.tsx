@@ -11,11 +11,12 @@ export function SignInPage() {
   const { t } = useTranslation();
   const [params] = useSearchParams();
   const { state } = useAuth();
-  const error = params.get("error") === "email-not-verified"
-    ? t("auth.verify")
-    : params.get("error")
-      ? t("auth.error")
-      : null;
+  const error =
+    params.get("error") === "email-not-verified"
+      ? t("auth.verify")
+      : params.get("error")
+        ? t("auth.error")
+        : null;
   useEffect(() => {
     wakeServer();
   }, []);

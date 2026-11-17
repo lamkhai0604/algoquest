@@ -35,7 +35,9 @@ export function GradingLog() {
           {t("admin.filter")}
         </Button>
       </form>
-      {state.status === "loading" && <LoadingState label={t("admin.loadingAttempts")} />}
+      {state.status === "loading" && (
+        <LoadingState label={t("admin.loadingAttempts")} />
+      )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}
@@ -50,7 +52,9 @@ export function GradingLog() {
               <Badge tone={attempt.total >= 70 ? "success" : "warning"}>
                 {attempt.total} / 100
               </Badge>
-              {attempt.mode === "practice" && <Badge tone="xp">{t("level.practice")}</Badge>}
+              {attempt.mode === "practice" && (
+                <Badge tone="xp">{t("level.practice")}</Badge>
+              )}
               <span className={styles.muted}>
                 {attempt.userEmail} ·{" "}
                 {new Date(attempt.createdAt).toLocaleString()}
@@ -58,8 +62,9 @@ export function GradingLog() {
             </div>
             <p className={styles.explanation}>{attempt.explanation}</p>
             <p className={styles.muted}>
-              {t("admin.pattern")} {attempt.pattern} · {t("admin.steps")} {attempt.steps} · {t("admin.complexity")}{" "}
-              {attempt.complexity} · {t("admin.edgeCases")} {attempt.edgeCases} · {t("admin.hints")}{" "}
+              {t("admin.pattern")} {attempt.pattern} · {t("admin.steps")}{" "}
+              {attempt.steps} · {t("admin.complexity")} {attempt.complexity} ·{" "}
+              {t("admin.edgeCases")} {attempt.edgeCases} · {t("admin.hints")}{" "}
               {attempt.hintsUsed} · +{attempt.xpGained} XP · {attempt.grader} ·{" "}
               {attempt.gradingMs} ms
             </p>

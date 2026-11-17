@@ -13,13 +13,13 @@ export function VipPage() {
       </div>
       <Card>
         <Badge tone="warning">{t("common.comingSoon")}</Badge>
-        <p className={styles.lead}>
-          {t("misc.vipLead")}
-        </p>
+        <p className={styles.lead}>{t("misc.vipLead")}</p>
         <ul>
-          {(["misc.vipHints", "misc.vipHard", "misc.vipReport"] as const).map((key) => (
-            <li key={key}>{t(key)}</li>
-          ))}
+          {(["misc.vipHints", "misc.vipHard", "misc.vipReport"] as const).map(
+            (key) => (
+              <li key={key}>{t(key)}</li>
+            ),
+          )}
         </ul>
       </Card>
     </div>

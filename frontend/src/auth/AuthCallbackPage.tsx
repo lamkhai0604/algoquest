@@ -34,10 +34,7 @@ export function AuthCallbackPage() {
   if (failed) {
     return (
       <>
-        <ErrorState
-          title={t("auth.notFinished")}
-          message={t("auth.expired")}
-        />
+        <ErrorState title={t("auth.notFinished")} message={t("auth.expired")} />
         <p style={{ textAlign: "center" }}>
           <Link to="/sign-in">{t("auth.again")}</Link>
         </p>

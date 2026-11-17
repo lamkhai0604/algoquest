@@ -27,9 +27,7 @@ export function ExplainForm({
   const tooLong = length > MAX_LENGTH;
   return (
     <Card heading={t("solveMore.explain")}>
-      <p className={styles.muted}>
-        {t("solveMore.interview")}
-      </p>
+      <p className={styles.muted}>{t("solveMore.interview")}</p>
       <div className={styles.rubric}>
         {CRITERIA.map((criterion) => (
           <Badge key={criterion.key} tone="primary">

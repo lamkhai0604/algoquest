@@ -47,7 +47,8 @@ export function AuditLogPanel() {
               </span>
             </div>
             <p className={styles.muted}>
-              {t("admin.before")} {values(entry.before)} · {t("admin.after")} {values(entry.after)}
+              {t("admin.before")} {values(entry.before)} · {t("admin.after")}{" "}
+              {values(entry.after)}
             </p>
           </Card>
         ))}

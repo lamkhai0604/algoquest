@@ -32,8 +32,10 @@ function stateBadge(
   passScore: number,
   locale: Locale,
 ): { text: string; tone: BadgeTone } {
-  if (passed(level, passScore)) return { text: translate(locale, "profileMore.passed"), tone: "success" };
-  if (level.state === "OPEN") return { text: translate(locale, "home.open"), tone: "primary" };
+  if (passed(level, passScore))
+    return { text: translate(locale, "profileMore.passed"), tone: "success" };
+  if (level.state === "OPEN")
+    return { text: translate(locale, "home.open"), tone: "primary" };
   if (level.state === "EASY_ONLY")
     return { text: translate(locale, "home.easyOnly"), tone: "warning" };
   return { text: translate(locale, "home.locked"), tone: "neutral" };

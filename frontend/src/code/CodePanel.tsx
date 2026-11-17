@@ -62,9 +62,7 @@ function RunResult({ result }: { result: CodeResult }) {
           </span>
         )}
         {all && result.xpGained === 0 && result.codeBonusAwarded && (
-          <span className={styles.note}>
-            {t("codeMore.bonusAlready")}
-          </span>
+          <span className={styles.note}>{t("codeMore.bonusAlready")}</span>
         )}
       </div>
       {result.compileError && (
@@ -141,11 +139,7 @@ function CodeRunner({
       if (answer.codeBonusAwarded) setEarned(true);
       if (answer.xpGained > 0) reloadLevels();
     } catch (failure: unknown) {
-      setError(
-        failure instanceof Error
-          ? failure.message
-          : t("common.error"),
-      );
+      setError(failure instanceof Error ? failure.message : t("common.error"));
     } finally {
       setRunning(false);
     }
@@ -155,7 +149,11 @@ function CodeRunner({
   return (
     <div className={styles.panel}>
       <div className={styles.toolbar}>
-        <div className={styles.languages} role="group" aria-label={t("codeMore.lang")}>
+        <div
+          className={styles.languages}
+          role="group"
+          aria-label={t("codeMore.lang")}
+        >
           {languages.map((item) => (
             <Chip
               key={item.id}
@@ -235,9 +233,7 @@ export function CodePanel({
     <Card heading={t("codeMore.heading")}>
       {!open ? (
         <div className={styles.toolbar}>
-          <p className={styles.note}>
-            {t("codeMore.desc")}
-          </p>
+          <p className={styles.note}>{t("codeMore.desc")}</p>
           <Button onClick={() => setOpen(true)}>{t("codeMore.write")}</Button>
         </div>
       ) : setup.state.status === "loading" ? (

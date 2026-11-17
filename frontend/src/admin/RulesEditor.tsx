@@ -90,7 +90,9 @@ function Form({
         reloadLevels();
       })
       .catch((failure: unknown) =>
-        setMessage(failure instanceof Error ? failure.message : t("common.retry")),
+        setMessage(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        ),
       )
       .finally(() => {
         setSaving(false);
@@ -108,7 +110,9 @@ function Form({
                 <span>
                   {localizeLabel(locale, field.label)}
                   {draft[field.key] !== view.defaults[field.key] && (
-                    <Badge tone="xp">{t("admin.defaultLabel")} {view.defaults[field.key]}</Badge>
+                    <Badge tone="xp">
+                      {t("admin.defaultLabel")} {view.defaults[field.key]}
+                    </Badge>
                   )}
                 </span>
                 <span className={styles.ruleInput}>
@@ -123,7 +127,9 @@ function Form({
                       })
                     }
                   />
-                  <span className={styles.muted}>{localizeLabel(locale, field.unit)}</span>
+                  <span className={styles.muted}>
+                    {localizeLabel(locale, field.unit)}
+                  </span>
                 </span>
               </label>
             ))}
@@ -188,7 +194,9 @@ export function RulesEditor() {
   const view = saved ?? (state.status === "ready" ? state.data : null);
   return (
     <section className={styles.section}>
-      {state.status === "loading" && <LoadingState label={t("admin.loadingRules")} />}
+      {state.status === "loading" && (
+        <LoadingState label={t("admin.loadingRules")} />
+      )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}

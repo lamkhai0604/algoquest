@@ -43,7 +43,9 @@ function Question({
       ))}
       {picked !== null && (
         <p className={styles.answer} role="status">
-          <strong>{correct ? t("lessonMore.correct") : t("lessonMore.incorrect")}</strong>{" "}
+          <strong>
+            {correct ? t("lessonMore.correct") : t("lessonMore.incorrect")}
+          </strong>{" "}
           {correct ? question.explanation : t("lessonMore.tryAnother")}
         </p>
       )}
@@ -99,7 +101,8 @@ export function QuickCheck({ level, questions, done }: QuickCheckProps) {
   return (
     <Card heading={t("lesson.quickCheck")}>
       <p className={styles.checkNote}>
-        {t("lessonMore.quickCheckNote")} {rules.quickCheckXp} {t("lessonMore.quickCheckOnce")}
+        {t("lessonMore.quickCheckNote")} {rules.quickCheckXp}{" "}
+        {t("lessonMore.quickCheckOnce")}
       </p>
       {questions.map((question, index) => (
         <Question

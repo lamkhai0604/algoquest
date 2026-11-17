@@ -25,7 +25,9 @@ function ProblemStatus({ problem }: { problem: ProblemItem }) {
   if (problem.locked) return <Badge>{t("level.locked")}</Badge>;
   if (problem.solved) {
     const done = problem.practiceDone ? ` · ${t("level.done")}` : "";
-    return <Badge tone="success">{`${t("levelExtra.solved")} · +${problem.xp} XP${done}`}</Badge>;
+    return (
+      <Badge tone="success">{`${t("levelExtra.solved")} · +${problem.xp} XP${done}`}</Badge>
+    );
   }
   if (problem.tried)
     return <Badge tone="warning">{t("level.notSolved")}</Badge>;
@@ -73,14 +75,16 @@ function PracticeRound({
     const at = Math.ceil((level.target * rules.practiceOpenPercent) / 100);
     return (
       <p className={game.note}>
-        {t("levelExtra.practicePrefix")} {at} XP ({rules.practiceOpenPercent}% {t("levelExtra.practiceSuffix")}
+        {t("levelExtra.practicePrefix")} {at} XP ({rules.practiceOpenPercent}%{" "}
+        {t("levelExtra.practiceSuffix")}
       </p>
     );
   }
   return (
     <Card heading={t("levelExtra.practiceRound")}>
       <p className={game.note}>
-        {t("levelExtra.practiceDesc")} {rules.practiceDoneXp} {t("levelExtra.practiceDescEnd")}
+        {t("levelExtra.practiceDesc")} {rules.practiceDoneXp}{" "}
+        {t("levelExtra.practiceDescEnd")}
       </p>
       <ul className={game.levelList}>
         {solved.map((problem) =>
@@ -153,7 +157,8 @@ export function LevelPage() {
       <section className={game.path}>
         <h2 className={game.sectionTitle}>{t("level.problems")}</h2>
         <p className={game.note}>
-          {t("levelExtra.unlockPrefix")} {rules.passScore} {t("levelExtra.unlockSuffix")}
+          {t("levelExtra.unlockPrefix")} {rules.passScore}{" "}
+          {t("levelExtra.unlockSuffix")}
         </p>
         {problems.state.status === "loading" && (
           <LoadingState label={t("level.loading")} />

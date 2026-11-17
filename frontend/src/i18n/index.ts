@@ -90,5 +90,8 @@ export function useTranslation() {
   return { locale, t: (key: TranslationKey) => translate(locale, key) };
 }
 export function localizeLabel(locale: Locale, source: string): string {
-  return translations[locale].adminLabels[source as keyof typeof en.adminLabels] ?? source;
+  return (
+    translations[locale].adminLabels[source as keyof typeof en.adminLabels] ??
+    source
+  );
 }

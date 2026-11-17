@@ -84,7 +84,8 @@ function TimeNote({
   }
   return (
     <p className={styles.timeNote}>
-      {t("solveMore.finishWithin")} {clock(limit)} {t("solveMore.activeTime")} +{rules.timeBonus} {t("solveMore.clockPauses")}
+      {t("solveMore.finishWithin")} {clock(limit)} {t("solveMore.activeTime")} +
+      {rules.timeBonus} {t("solveMore.clockPauses")}
     </p>
   );
 }
@@ -153,9 +154,7 @@ function Solve({ problem, mode }: SolveProps) {
       })
       .catch((failure: unknown) => {
         setError(
-          failure instanceof Error
-            ? failure.message
-            : t("common.error"),
+          failure instanceof Error ? failure.message : t("common.error"),
         );
         setAsking(null);
       })
@@ -181,9 +180,7 @@ function Solve({ problem, mode }: SolveProps) {
       })
       .catch((failure: unknown) => {
         setError(
-          failure instanceof Error
-            ? failure.message
-            : t("common.error"),
+          failure instanceof Error ? failure.message : t("common.error"),
         );
       })
       .finally(() => setSubmitting(false));
@@ -211,7 +208,8 @@ function Solve({ problem, mode }: SolveProps) {
         <ProblemText problem={problem} />
         {practice ? (
           <p className={styles.muted}>
-            {t("solveMore.practiceIntro")} {rules.passScore} {t("solveMore.practiceEnd")} {rules.practiceDoneXp} XP.
+            {t("solveMore.practiceIntro")} {rules.passScore}{" "}
+            {t("solveMore.practiceEnd")} {rules.practiceDoneXp} XP.
           </p>
         ) : (
           currentHints && (
@@ -226,7 +224,10 @@ function Solve({ problem, mode }: SolveProps) {
       {view === "result" && result ? (
         <>
           <div className={styles.resultRow}>
-            <Card heading={t("solveMore.yourAnswer")} className={styles.answerCard}>
+            <Card
+              heading={t("solveMore.yourAnswer")}
+              className={styles.answerCard}
+            >
               <p className={styles.answerText}>{result.explanation || text}</p>
             </Card>
             <FeedbackPanel result={result} level={problem.level} />
@@ -277,7 +278,8 @@ function Solve({ problem, mode }: SolveProps) {
           onConfirm={() => setAsking(null)}
           onCancel={startAgain}
         >
-          {t("solveMore.resumeInfo")} {clock(problem.activeSeconds)} {t("solveMore.resumeInfoTail")}
+          {t("solveMore.resumeInfo")} {clock(problem.activeSeconds)}{" "}
+          {t("solveMore.resumeInfoTail")}
         </ConfirmDialog>
       )}
       {asking === "retry" && (
@@ -327,7 +329,9 @@ export function SolvePage() {
           )}
         </nav>
       </div>
-      {state.status === "loading" && <LoadingState label={t("solve.loading")} />}
+      {state.status === "loading" && (
+        <LoadingState label={t("solve.loading")} />
+      )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}

@@ -57,7 +57,9 @@ function Result({ test }: { test: LevelTest }) {
         <Badge
           tone={(test.score ?? 0) >= rules.passScore ? "success" : "warning"}
         >
-          {(test.score ?? 0) >= rules.passScore ? t("testMore.passed") : t("testMore.notPassed")}
+          {(test.score ?? 0) >= rules.passScore
+            ? t("testMore.passed")
+            : t("testMore.notPassed")}
         </Badge>
         <p className={styles.total}>
           <strong>{test.score}</strong> / 100
@@ -77,7 +79,9 @@ function Result({ test }: { test: LevelTest }) {
         </Card>
       ))}
       <div className={styles.actions}>
-        <ButtonLink to={`/levels/${test.level}`}>{t("testMore.backLevel")}</ButtonLink>
+        <ButtonLink to={`/levels/${test.level}`}>
+          {t("testMore.backLevel")}
+        </ButtonLink>
       </div>
     </>
   );
@@ -153,7 +157,11 @@ function RunningTest({
       {test.problems.map(({ problem }, index) => {
         const text = answers[problem.id] ?? "";
         const state =
-          text === saved[problem.id] ? (text ? t("testMore.saved") : "") : t("testMore.saving");
+          text === saved[problem.id]
+            ? text
+              ? t("testMore.saved")
+              : ""
+            : t("testMore.saving");
         return (
           <Card key={problem.id}>
             <h2 className={styles.problemTitle}>
@@ -225,7 +233,9 @@ export function LevelTestPage() {
         <BackButton
           to={test ? `/levels/${test.level}` : "/"}
           label={
-            test ? `${t("lesson.backToLevel")} ${test.level}` : t("profile.back")
+            test
+              ? `${t("lesson.backToLevel")} ${test.level}`
+              : t("profile.back")
           }
         />
         <nav className={styles.crumbs} aria-label={t("level.breadcrumb")}>

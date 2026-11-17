@@ -16,7 +16,9 @@ export function ErrorState({
   const { t } = useTranslation();
   return (
     <div className={styles.state} role="alert">
-      <strong className={styles.title}>{title === "Something went wrong" ? t("common.errorTitle") : title}</strong>
+      <strong className={styles.title}>
+        {title === "Something went wrong" ? t("common.errorTitle") : title}
+      </strong>
       <span>{message}</span>
       {onRetry && (
         <Button variant="secondary" size="sm" onClick={onRetry}>
