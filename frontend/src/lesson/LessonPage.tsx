@@ -308,9 +308,13 @@ export function LessonPage() {
         </nav>
       </div>
       <h1 className={pages.title}>
-        {state.status === "ready" ? `${t("lesson.lesson")}: ${state.data.title}` : t("lesson.lesson")}
+        {state.status === "ready"
+          ? `${t("lesson.lesson")}: ${state.data.title}`
+          : t("lesson.lesson")}
       </h1>
-      {state.status === "loading" && <LoadingState label={t("lesson.loading")} />}
+      {state.status === "loading" && (
+        <LoadingState label={t("lesson.loading")} />
+      )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}
