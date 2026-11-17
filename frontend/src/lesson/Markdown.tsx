@@ -1,5 +1,6 @@
 import { createElement, useState } from "react";
 import { cx } from "../components";
+import { useTranslation } from "../i18n";
 import { languageName, useCodeLanguage } from "./codeLanguage";
 import styles from "./Lesson.module.css";
 import { parseInline } from "./parseMarkdown";
@@ -32,6 +33,7 @@ interface CodeBlockProps {
 }
 
 function CopyButton({ code }: { code: string }) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
@@ -44,7 +46,7 @@ function CopyButton({ code }: { code: string }) {
   };
   return (
     <button type="button" className={styles.copy} onClick={copy}>
-      {copied ? "Copied" : "Copy"}
+      {copied ? t("common.copied") : t("common.copy")}
     </button>
   );
 }
@@ -70,6 +72,7 @@ type CodeBlockData = Extract<Block, { type: "code" }>;
  * shared across the page when a CodeLanguageContext is present.
  */
 function CodeTabs({ blocks }: { blocks: CodeBlockData[] }) {
+  const { t } = useTranslation();
   const shared = useCodeLanguage();
   const [local, setLocal] = useState(blocks[0]?.language ?? "");
   const wanted = shared?.language ?? local;
@@ -81,7 +84,7 @@ function CodeTabs({ blocks }: { blocks: CodeBlockData[] }) {
       <figcaption className={styles.codeHeader}>
         <span
           role="tablist"
-          aria-label="Code language"
+          aria-label={t("lesson.codeLanguage")}
           className={styles.langTabs}
         >
           {blocks.map((block) => (
