@@ -78,8 +78,7 @@ class OwnerAccessApiTest {
         .andExpect(jsonPath("$[1].id").value("L1-pair-max"))
         .andExpect(jsonPath("$[1].locked").value(false));
     mvc.perform(get("/api/v1/problems/L1-pair-max").with(owner)).andExpect(status().isOk());
-    mvc.perform(get("/api/v1/problems/L1-pair-max").with(player))
-        .andExpect(status().isForbidden());
+    mvc.perform(get("/api/v1/problems/L1-pair-max").with(player)).andExpect(status().isForbidden());
   }
 
   @Test
