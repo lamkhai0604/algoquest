@@ -1,0 +1,36 @@
+name: temporary i18n formatter
+on:
+  push:
+    branches: [feat/i18n-foundation]
+    paths:
+      - "frontend/src/**"
+      - ".github/workflows/i18n-format-temp.yml"
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+      - name: Format changed frontend source files
+        run: npx prettier --write src
+        working-directory: frontend
+      - name: Push formatted source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/src
+          if ! git diff --cached --quiet; then
+            git commit -m "style(i18n): apply project Prettier formatting"
+            git push origin HEAD:feat/i18n-foundation
+          fi
