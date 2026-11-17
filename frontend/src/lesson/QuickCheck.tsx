@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "../i18n";
 import { api } from "../api";
 import { Badge, Card, cx } from "../components";
 import { useGame } from "../game/gameContext";
@@ -18,6 +19,7 @@ function Question({
   locked: boolean;
   onPick: (index: number) => void;
 }) {
+  const { t } = useTranslation();
   const correct = picked === question.answer;
   return (
     <fieldset className={styles.question}>
@@ -41,8 +43,10 @@ function Question({
       ))}
       {picked !== null && (
         <p className={styles.answer} role="status">
-          <strong>{correct ? "Correct." : "Not quite."}</strong>{" "}
-          {correct ? question.explanation : "Try another option."}
+          <strong>
+            {correct ? t("lessonMore.correct") : t("lessonMore.incorrect")}
+          </strong>{" "}
+          {correct ? question.explanation : t("lessonMore.tryAnother")}
         </p>
       )}
     </fieldset>
@@ -62,6 +66,7 @@ interface QuickCheckProps {
  */
 export function QuickCheck({ level, questions, done }: QuickCheckProps) {
   const { reloadLevels, rules } = useGame();
+  const { t } = useTranslation();
   const [picks, setPicks] = useState<(number | null)[]>(() =>
     questions.map((question) => (done ? question.answer : null)),
   );
@@ -89,15 +94,15 @@ export function QuickCheck({ level, questions, done }: QuickCheckProps) {
       })
       .catch(() => {
         setFinished(false);
-        setError("Your result was not saved. Answer again to retry.");
+        setError(t("lessonMore.quickCheckError"));
       });
   };
 
   return (
-    <Card heading="Quick check">
+    <Card heading={t("lesson.quickCheck")}>
       <p className={styles.checkNote}>
-        Answer every question correctly to finish the lesson and earn{" "}
-        {rules.quickCheckXp} XP once.
+        {t("lessonMore.quickCheckNote")} {rules.quickCheckXp}{" "}
+        {t("lessonMore.quickCheckOnce")}
       </p>
       {questions.map((question, index) => (
         <Question
@@ -111,7 +116,7 @@ export function QuickCheck({ level, questions, done }: QuickCheckProps) {
       ))}
       {finished && (
         <p className={styles.checkDone} role="status">
-          <Badge tone="success">Quick check complete</Badge>
+          <Badge tone="success">{t("lessonMore.quickCheckDone")}</Badge>
           {gained > 0 && <strong> +{gained} XP</strong>}
         </p>
       )}

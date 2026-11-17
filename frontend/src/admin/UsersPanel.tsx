@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "../i18n";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
 import {
@@ -15,6 +16,7 @@ import styles from "./Admin.module.css";
 import type { AdminUser, ResetResult } from "./types";
 
 function ResetLevel({ user }: { user: AdminUser }) {
+  const { t } = useTranslation();
   const { levels, reloadLevels } = useGame();
   const [level, setLevel] = useState(1);
   const [confirming, setConfirming] = useState(false);
@@ -35,13 +37,15 @@ function ResetLevel({ user }: { user: AdminUser }) {
         reloadLevels();
       })
       .catch((failure: unknown) =>
-        setMessage(failure instanceof Error ? failure.message : "Try again."),
+        setMessage(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        ),
       );
   };
 
   return (
     <div className={styles.reset}>
-      <label htmlFor={`level-${user.id}`}>Reset level</label>
+      <label htmlFor={`level-${user.id}`}>{t("admin.resetLevel")}</label>
       <select
         id={`level-${user.id}`}
         value={level}
@@ -59,14 +63,14 @@ function ResetLevel({ user }: { user: AdminUser }) {
       {confirming ? (
         <>
           <Button size="sm" onClick={reset}>
-            Confirm reset of level {level}
+            {t("admin.confirmReset")} {level}
           </Button>
           <Button
             size="sm"
             variant="ghost"
             onClick={() => setConfirming(false)}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
         </>
       ) : (
@@ -75,7 +79,7 @@ function ResetLevel({ user }: { user: AdminUser }) {
           variant="secondary"
           onClick={() => setConfirming(true)}
         >
-          Reset…
+          {t("admin.reset")}
         </Button>
       )}
       {message && (
@@ -97,6 +101,7 @@ function RoleEditor({
   user: AdminUser;
   onChanged: (users: AdminUser[]) => void;
 }) {
+  const { t } = useTranslation();
   const [asking, setAsking] = useState<{ role: string; grant: boolean } | null>(
     null,
   );
@@ -119,7 +124,9 @@ function RoleEditor({
         onChanged(users);
       })
       .catch((failure: unknown) =>
-        setMessage(failure instanceof Error ? failure.message : "Try again."),
+        setMessage(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        ),
       )
       .finally(() => {
         setBusy(false);
@@ -129,7 +136,7 @@ function RoleEditor({
 
   return (
     <div className={styles.reset}>
-      <span>Roles</span>
+      <span>{t("admin.roles")}</span>
       {ROLES.map((role) => {
         const has = user.roles.includes(role);
         return (
@@ -150,18 +157,20 @@ function RoleEditor({
       {asking && (
         <ConfirmDialog
           title={
-            asking.grant ? `Grant ${asking.role}?` : `Remove ${asking.role}?`
+            asking.grant
+              ? `${t("admin.grant")} ${asking.role}?`
+              : `${t("admin.remove")} ${asking.role}?`
           }
-          confirmLabel={asking.grant ? "Grant" : "Remove"}
-          cancelLabel="Cancel"
+          confirmLabel={asking.grant ? t("admin.grant") : t("admin.remove")}
+          cancelLabel={t("common.cancel")}
           busy={busy}
           onConfirm={apply}
           onCancel={() => setAsking(null)}
         >
           {asking.grant
-            ? `${user.email} gets every permission of ${asking.role}.`
-            : `${user.email} loses the ${asking.role} role.`}{" "}
-          The change is written to the audit log.
+            ? `${user.email} ${t("admin.grantInfo")} ${asking.role}.`
+            : `${user.email} ${t("admin.removeInfo")} ${asking.role} ${t("admin.role")}`}{" "}
+          {t("admin.auditNotice")}
         </ConfirmDialog>
       )}
     </div>
@@ -170,12 +179,15 @@ function RoleEditor({
 
 /** Users with their roles and a progress reset per level (FR-18.2, FR-18.4). */
 export function UsersPanel() {
+  const { t } = useTranslation();
   const { state, reload } = useApiGet<AdminUser[]>("/api/v1/admin/users");
   const [changed, setChanged] = useState<AdminUser[] | null>(null);
   const users = changed ?? (state.status === "ready" ? state.data : []);
   return (
     <section className={styles.section}>
-      {state.status === "loading" && <LoadingState label="Loading users…" />}
+      {state.status === "loading" && (
+        <LoadingState label={t("admin.loadingUsers")} />
+      )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}

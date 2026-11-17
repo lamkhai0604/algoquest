@@ -15,7 +15,8 @@ import {
 import game from "../pages/Game.module.css";
 import pages from "../pages/Pages.module.css";
 import styles from "./Pattern.module.css";
-import { LABEL_TEXT, LABEL_TONE } from "./types";
+import { LABEL_TONE } from "./types";
+import { useTranslation } from "../i18n";
 import type { AnswerResult, ChallengeView, Choice } from "./types";
 
 const MIN_REASON = 10;
@@ -27,25 +28,26 @@ function Verdict({
   result: AnswerResult;
   choices: Choice[];
 }) {
+  const { t } = useTranslation();
   const mine = result.comparison.find((a) => a.id === result.approach);
   const best = result.comparison.find((a) => a.id === result.bestApproach);
   const name = (id: string) => choices.find((c) => c.id === id)?.name ?? id;
   return (
     <div className={cx(styles.verdict, styles[result.label])}>
-      <strong>{LABEL_TEXT[result.label]}</strong>
+      <strong>{t(`pattern.${result.label}`)}</strong>
       <p>
         {result.label === "best" && <>{mine?.why}</>}
         {result.label === "valid" && (
           <>
-            It works. {mine?.why} A faster choice here is{" "}
+            {t("pattern.itWorks")} {mine?.why} {t("pattern.faster")}{" "}
             <strong>{name(result.bestApproach)}</strong> ({best?.time}).
           </>
         )}
         {result.label === "unsuitable" && (
           <>
-            This approach does not solve this problem. {mine?.why} Try{" "}
-            <strong>{name(result.bestApproach)}</strong> or another valid
-            approach.
+            {t("pattern.notSuitable")} {mine?.why} {t("pattern.try")}{" "}
+            <strong>{name(result.bestApproach)}</strong>{" "}
+            {t("pattern.otherValid")}
           </>
         )}
       </p>
@@ -60,28 +62,29 @@ function Result({
   result: AnswerResult;
   choices: Choice[];
 }) {
+  const { t } = useTranslation();
   return (
     <Card>
       <div className={styles.result} aria-live="polite">
         <Verdict result={result} choices={choices} />
         <div className={styles.score}>
-          <span>Reasoning</span>
+          <span>{t("pattern.reasoning")}</span>
           <span className={styles.meter}>
             <span style={{ width: `${result.reasonScore}%` }} />
           </span>
           <strong>{result.reasonScore}/100</strong>
         </div>
         {result.feedback && <p className={game.note}>{result.feedback}</p>}
-        <h2 className={game.sectionTitle}>How the approaches compare</h2>
+        <h2 className={game.sectionTitle}>{t("pattern.compare")}</h2>
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
               <tr>
-                <th scope="col">Approach</th>
-                <th scope="col">Verdict</th>
-                <th scope="col">Time</th>
-                <th scope="col">Space</th>
-                <th scope="col">Why</th>
+                <th scope="col">{t("pattern.approach")}</th>
+                <th scope="col">{t("pattern.verdict")}</th>
+                <th scope="col">{t("pattern.time")}</th>
+                <th scope="col">{t("pattern.space")}</th>
+                <th scope="col">{t("pattern.why")}</th>
               </tr>
             </thead>
             <tbody>
@@ -92,17 +95,17 @@ function Result({
                 >
                   <td>
                     {a.name}
-                    {a.id === result.approach ? " (yours)" : ""}
+                    {a.id === result.approach ? ` ${t("pattern.yours")}` : ""}
                   </td>
                   <td>
                     <Badge tone={LABEL_TONE[a.label]}>
-                      {LABEL_TEXT[a.label]}
+                      {t(`pattern.${a.label}`)}
                     </Badge>
                   </td>
-                  <td data-k="Time">
+                  <td data-k={t("pattern.time")}>
                     <code>{a.time}</code>
                   </td>
-                  <td data-k="Space">
+                  <td data-k={t("pattern.space")}>
                     <code>{a.space}</code>
                   </td>
                   <td>{a.why}</td>
@@ -112,9 +115,8 @@ function Result({
           </table>
         </div>
         <p className={game.note}>
-          Pilot: no XP. Your answer is saved so the reviewer can check the AI
-          feedback. {result.answersLeftToday} answers left today for this
-          challenge.
+          {t("pattern.noXpNote")} {result.answersLeftToday}{" "}
+          {t("pattern.answersLeft")}
         </p>
       </div>
     </Card>
@@ -122,6 +124,7 @@ function Result({
 }
 
 function Challenge({ challenge }: { challenge: ChallengeView }) {
+  const { t } = useTranslation();
   const [choice, setChoice] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const [sending, setSending] = useState(false);
@@ -145,11 +148,7 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
       setResult(answer);
       setLeft(answer.answersLeftToday);
     } catch (failure: unknown) {
-      setError(
-        failure instanceof Error
-          ? failure.message
-          : "Something went wrong. Please try again.",
-      );
+      setError(failure instanceof Error ? failure.message : t("pattern.error"));
     } finally {
       setSending(false);
     }
@@ -181,7 +180,7 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
             className={styles.fieldset}
             disabled={result !== null || sending}
           >
-            <legend>Which approach would you use?</legend>
+            <legend>{t("pattern.whichApproach")}</legend>
             <div className={styles.options}>
               {challenge.approaches.map((a) => (
                 <label
@@ -205,7 +204,7 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
             </div>
           </fieldset>
           <label className={styles.label} htmlFor="pattern-reason">
-            Why this approach?
+            {t("pattern.whyApproach")}
           </label>
           <textarea
             id="pattern-reason"
@@ -213,7 +212,7 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
             value={reason}
             maxLength={1000}
             disabled={result !== null || sending}
-            placeholder="Say what the approach does here, and its time complexity."
+            placeholder={t("pattern.reasonPlaceholder")}
             onChange={(event) => setReason(event.target.value)}
           />
           {error && (
@@ -229,19 +228,19 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
                 onClick={again}
                 disabled={left <= 0}
               >
-                Try another approach
+                {t("pattern.tryAnother")}
               </Button>
             ) : (
               <Button type="submit" disabled={!ready || sending}>
-                {sending ? "Checking…" : "Check my choice"}
+                {sending ? t("pattern.checking") : t("pattern.checkChoice")}
               </Button>
             )}
             <span className={game.note}>
               {left <= 0
-                ? "No answers left today for this challenge."
+                ? t("pattern.noAnswers")
                 : result
                   ? ""
-                  : "Pick an approach and write at least a sentence."}
+                  : t("pattern.writeSentence")}
             </span>
           </div>
         </form>
@@ -253,6 +252,7 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
 
 /** One Pattern Recognition challenge (D-057). */
 export function PatternPage() {
+  const { t } = useTranslation();
   const id = useParams().id ?? "";
   const view = useApiGet<ChallengeView>(`/api/v1/patterns/${id}`);
   const challenge = view.state.status === "ready" ? view.state.data : null;
@@ -261,26 +261,26 @@ export function PatternPage() {
       <div className={pages.topBar}>
         <BackButton
           to={challenge ? `/levels/${challenge.level}` : "/"}
-          label="Back to the level"
+          label={t("pattern.backLevel")}
         />
         {challenge && (
-          <nav className={game.crumbs} aria-label="Breadcrumb">
-            <Link to="/">Learning Path</Link> /{" "}
+          <nav className={game.crumbs} aria-label={t("level.breadcrumb")}>
+            <Link to="/">{t("nav.map")}</Link> /{" "}
             <Link to={`/levels/${challenge.level}`}>
               Level {challenge.level}
             </Link>{" "}
-            / <span>Pattern challenge</span>
+            / <span>{t("pattern.challenge")}</span>
           </nav>
         )}
       </div>
       <div className={styles.head}>
         <h1 className={pages.title}>
-          {challenge?.title ?? "Pattern challenge"}
+          {challenge?.title ?? t("pattern.challenge")}
         </h1>
-        <Badge tone="primary">Pilot · no XP</Badge>
+        <Badge tone="primary">{t("pattern.pilot")}</Badge>
       </div>
       {view.state.status === "loading" && (
-        <LoadingState label="Loading challenge…" />
+        <LoadingState label={t("pattern.loading")} />
       )}
       {view.state.status === "error" && (
         <ErrorState message={view.state.message} onRetry={view.reload} />
