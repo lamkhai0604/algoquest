@@ -1,0 +1,34 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "retry": "Try again",
+    "back": "Back",
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "nav": {
+    "map": "Map",
+    "profile": "Profile",
+    "admin": "Admin",
+    "signOut": "Sign out"
+  },
+  "game": {
+    "dayStreak": "day streak",
+    "xp": "XP",
+    "hints": "hints",
+    "hintsLeft": "Hints left"
+  },
+  "lesson": {
+    "start": "Start learning",
+    "quickCheck": "Quick Check",
+    "practice": "Practice",
+    "next": "Next",
+    "previous": "Previous",
+    "reset": "Reset"
+  },
+  "language": {
+    "english": "English",
+    "vietnamese": "Tiếng Việt"
+  }
+}

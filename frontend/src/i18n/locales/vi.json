@@ -1,0 +1,34 @@
+{
+  "common": {
+    "loading": "Đang tải...",
+    "retry": "Thử lại",
+    "back": "Quay lại",
+    "continue": "Tiếp tục",
+    "cancel": "Hủy",
+    "save": "Lưu"
+  },
+  "nav": {
+    "map": "Bản đồ học tập",
+    "profile": "Hồ sơ",
+    "admin": "Quản trị",
+    "signOut": "Đăng xuất"
+  },
+  "game": {
+    "dayStreak": "ngày liên tiếp",
+    "xp": "XP",
+    "hints": "gợi ý",
+    "hintsLeft": "Gợi ý còn lại"
+  },
+  "lesson": {
+    "start": "Bắt đầu học",
+    "quickCheck": "Kiểm tra nhanh",
+    "practice": "Luyện tập",
+    "next": "Tiếp theo",
+    "previous": "Quay lại",
+    "reset": "Đặt lại"
+  },
+  "language": {
+    "english": "English",
+    "vietnamese": "Tiếng Việt"
+  }
+}
