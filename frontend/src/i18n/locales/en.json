@@ -116,5 +116,44 @@
   "footer": {
     "tagline": "Learn algorithms step by step, one level at a time.",
     "navigation": "Footer"
+  },
+  "level": {
+    "comingSoon": "Coming soon",
+    "locked": "Locked",
+    "notSolved": "Not solved yet",
+    "notTried": "Not tried",
+    "done": "Done",
+    "practice": "Practice",
+    "problems": "Problems",
+    "loading": "Loading problems…",
+    "breadcrumb": "Breadcrumb"
+  },
+  "profileExtra": {
+    "totals": "Totals",
+    "totalXp": "Total XP",
+    "continue": "Continue"
+  },
+  "solve": {
+    "examples": "Examples",
+    "constraints": "Constraints",
+    "practiceRound": "Practice round",
+    "activeTime": "Active time on this problem",
+    "resume": "Continue where you left off?",
+    "retry": "Retry this problem?",
+    "loading": "Loading problem…",
+    "score": "Score",
+    "markedDone": "Marked Done in the practice round.",
+    "hint": "Hint",
+    "scoring": "How your answer is scored",
+    "criteria": "Four criteria, 100 points",
+    "firstSolve": "XP for the first solve",
+    "quickCheck": "Lesson quick check",
+    "testScore": "Test score"
+  },
+  "walkthrough": {
+    "items": "Items",
+    "state": "State after each step",
+    "step": "Step",
+    "keyboard": "Keyboard: ← and → to step, R to reset."
   }
 }
