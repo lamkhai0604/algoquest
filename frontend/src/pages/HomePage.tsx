@@ -100,7 +100,7 @@ function ContinueCard({ level }: { level: Level }) {
 }
 
 function LevelTile({ level }: { level: Level }) {
-  const { locale, t } = useTranslation();
+  const { locale } = useTranslation();
   const label = stateLabel(level, locale);
   if (!level.available) {
     return (
