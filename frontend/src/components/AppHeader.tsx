@@ -58,7 +58,16 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
               💡 <strong>{stats.hintsLeft}</strong>
               <span className={styles.unit}>hints</span>
             </span>
-            <span className={styles.name}>{account.name}</span>
+            <Link
+              to="/profile"
+              className={styles.account}
+              aria-label={`${account.name}: your profile`}
+            >
+              <span className={styles.avatar} aria-hidden="true">
+                {account.name.trim().charAt(0).toUpperCase() || "?"}
+              </span>
+              <span className={styles.name}>{account.name}</span>
+            </Link>
             <Button variant="ghost" size="sm" onClick={account.onSignOut}>
               Sign out
             </Button>
