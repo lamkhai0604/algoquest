@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n";
 import type { Difficulty } from "../game/types";
 import { useGame } from "../game/gameContext";
 import { CRITERIA, difficultyBonus, timeLimitMinutes } from "./rules";
@@ -15,16 +16,17 @@ interface ScoringGuideProps {
  * default so the page stays short; one click opens it.
  */
 export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
+  const { t } = useTranslation();
   const { rules } = useGame();
   return (
     <details className={styles.guide}>
       <summary className={styles.summary}>
-        <h3 className={styles.title}>How your answer is scored</h3>
+        <h3 className={styles.title}>{t("solve.scoring")}</h3>
         <span className={styles.toggle} aria-hidden="true" />
       </summary>
       <div className={styles.columns}>
         <section>
-          <h3 className={styles.heading}>Four criteria, 100 points</h3>
+          <h3 className={styles.heading}>{t("solve.criteria")}</h3>
           <ul className={styles.list}>
             {CRITERIA.map((criterion) => (
               <li key={criterion.key}>
@@ -41,7 +43,7 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
         </section>
         {variant === "problem" ? (
           <section>
-            <h3 className={styles.heading}>XP for the first solve</h3>
+            <h3 className={styles.heading}>{t("solve.firstSolve")}</h3>
             <ul className={styles.list}>
               {PLAYABLE.map((difficulty) => (
                 <li key={difficulty}>
@@ -55,7 +57,7 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
                 </li>
               ))}
               <li>
-                <span>Lesson quick check</span>
+                <span>{t("solve.quickCheck")}</span>
                 <strong>{rules.quickCheckXp} XP</strong>
               </li>
             </ul>
@@ -75,7 +77,7 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
           </section>
         ) : (
           <section>
-            <h3 className={styles.heading}>Test score</h3>
+            <h3 className={styles.heading}>{t("solve.testScore")}</h3>
             <p className={styles.note}>
               The test score is the average of the three problem scores, rounded
               down. {rules.passScore}–99 opens the Easy problems of the next
