@@ -83,7 +83,13 @@ class RealGraderCheck {
               .findFirst()
               .orElseThrow();
       long started = System.nanoTime();
-      GradingResult result = grader.grade(problem, "Big-O & Algorithm Basics", sample.text());
+      GradingResult result;
+      try {
+        result = grader.grade(problem, "Big-O & Algorithm Basics", sample.text());
+      } catch (GraderUnavailableException e) {
+        // The player only sees a fixed message; the check prints the cause (never the key).
+        throw new AssertionError("Grader unavailable: " + e.reason(), e);
+      }
       long ms = (System.nanoTime() - started) / 1_000_000;
       latencies.add(ms);
       System.out.printf(
