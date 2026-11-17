@@ -1,0 +1,147 @@
+[
+  {
+    "id": "P4-close-times",
+    "level": 4,
+    "title": "Closest Race Times",
+    "statement": "Runners' finishing times are given in seconds, in no particular order. Return the smallest gap between any two finishing times.",
+    "examples": [
+      "times = [312, 290, 305, 340] → 7",
+      "times = [60, 60] → 0"
+    ],
+    "constraints": [
+      "2 to 100,000 runners"
+    ],
+    "approaches": [
+      {
+        "id": "sort",
+        "name": "Sort, then scan",
+        "hint": "Put items in order first",
+        "label": "best",
+        "time": "O(n log n)",
+        "space": "O(1) to O(n)",
+        "why": "After sorting, the closest pair must be neighbors, so one scan over neighbors finds it."
+      },
+      {
+        "id": "nested",
+        "name": "Nested loops",
+        "hint": "Compare every pair",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Checks every pair. Correct, but slow for 100,000 runners."
+      },
+      {
+        "id": "hash",
+        "name": "HashMap / HashSet",
+        "hint": "Remember what you have seen",
+        "label": "unsuitable",
+        "time": "—",
+        "space": "O(n)",
+        "why": "A set finds equal values fast, but not the nearest different value."
+      },
+      {
+        "id": "pass",
+        "name": "Single pass",
+        "hint": "One loop with a running value",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "In the original order the closest times can be far apart, so one pass cannot compare them."
+      }
+    ]
+  },
+  {
+    "id": "P4-runner-up",
+    "level": 4,
+    "title": "Runner-Up Score",
+    "statement": "Given the scores of a contest, return the second-highest distinct score, or null if every score is the same.",
+    "examples": [
+      "scores = [70, 95, 88, 95] → 88",
+      "scores = [50, 50] → null"
+    ],
+    "constraints": [
+      "1 to 100,000 scores"
+    ],
+    "approaches": [
+      {
+        "id": "pass",
+        "name": "Single pass",
+        "hint": "One loop with a running value",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Keep the highest and second-highest distinct values while scanning once."
+      },
+      {
+        "id": "sort",
+        "name": "Sort, then scan",
+        "hint": "Put items in order first",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(1) to O(n)",
+        "why": "Sort, then walk down from the top until a smaller value appears. Correct, but sorting does more work than needed."
+      },
+      {
+        "id": "nested",
+        "name": "Nested loops",
+        "hint": "Compare every pair",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "For each score, check whether exactly one distinct score is bigger. Correct, but slow."
+      }
+    ]
+  },
+  {
+    "id": "P4-merge-lines",
+    "level": 4,
+    "title": "Join Two Sorted Lines",
+    "statement": "Two ticket counters each keep their customers' arrival times in increasing order. Return all arrival times as one increasing list.",
+    "examples": [
+      "a = [1, 4, 9], b = [2, 3, 10] → [1, 2, 3, 4, 9, 10]",
+      "a = [], b = [5] → [5]"
+    ],
+    "constraints": [
+      "Up to 100,000 times in each line",
+      "Times may repeat"
+    ],
+    "approaches": [
+      {
+        "id": "merge",
+        "name": "Merge with two fingers",
+        "hint": "Walk both lines together",
+        "label": "best",
+        "time": "O(n + m)",
+        "space": "O(n + m) for the result",
+        "why": "Take the smaller front item each step; each time is moved once because both lines are already sorted."
+      },
+      {
+        "id": "sort",
+        "name": "Join, then sort",
+        "hint": "Put everything together first",
+        "label": "valid",
+        "time": "O((n + m) log(n + m))",
+        "space": "O(n + m)",
+        "why": "Join the lines, then sort. Correct, but ignores that each line is already in order."
+      },
+      {
+        "id": "insert",
+        "name": "Insert one by one",
+        "hint": "Slide each time into place",
+        "label": "valid",
+        "time": "O(n · m)",
+        "space": "O(n + m)",
+        "why": "Inserting each time of one line into the other keeps order, but each insert can shift many items."
+      },
+      {
+        "id": "hash",
+        "name": "HashMap / HashSet",
+        "hint": "Remember what you have seen",
+        "label": "unsuitable",
+        "time": "O(n + m)",
+        "space": "O(n + m)",
+        "why": "A hash set loses the order and drops repeated times."
+      }
+    ]
+  }
+]

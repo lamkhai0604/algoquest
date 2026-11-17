@@ -249,6 +249,13 @@ public class GameService {
     return problem;
   }
 
+  /** Throws 403 unless the player has unlocked this level (any state but locked). */
+  public void requireUnlocked(UUID userId, int level) {
+    if (state(userId, level) == LevelState.LOCKED) {
+      throw forbidden("This level is locked.");
+    }
+  }
+
   /** The player's state for a level, from the best test score of the level before it. */
   LevelState state(UUID userId, int level) {
     if (level == 1 || allLevels(userId)) {

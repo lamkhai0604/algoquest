@@ -1,5 +1,7 @@
 package com.algoquest.admin;
 
+import com.algoquest.pattern.PatternStore;
+import com.algoquest.pattern.PatternStore.StoredAnswer;
 import com.algoquest.access.AccessService;
 import com.algoquest.access.AuditLog;
 import com.algoquest.access.AuthenticatedUser;
@@ -31,10 +33,13 @@ public class AdminGameController {
   public record ResetResult(LevelProgress before, LevelProgress after) {}
 
   private final AdminGameService game;
+  private final PatternStore patterns;
   private final AccessService access;
   private final AuditLog auditLog;
 
-  public AdminGameController(AdminGameService game, AccessService access, AuditLog auditLog) {
+  public AdminGameController(
+      AdminGameService game, AccessService access, AuditLog auditLog, PatternStore patterns) {
+    this.patterns = patterns;
     this.game = game;
     this.access = access;
     this.auditLog = auditLog;
@@ -46,6 +51,13 @@ public class AdminGameController {
       @RequestParam(required = false) String problemId,
       @RequestParam(defaultValue = "100") int limit) {
     return game.gradingLog(problemId, limit);
+  }
+
+  /** Pattern Recognition answers for the Owner's review of the AI feedback (D-057). */
+  @GetMapping("/pattern-answers")
+  @PreAuthorize("hasPermission(null, 'admin.gradingLog.view')")
+  public List<StoredAnswer> patternAnswers(@RequestParam(defaultValue = "100") int limit) {
+    return patterns.recent(Math.min(Math.max(limit, 1), 500));
   }
 
   @PostMapping("/users/{id}/progress-reset")

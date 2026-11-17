@@ -3,6 +3,7 @@ package com.algoquest.content;
 import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.LevelInfo;
+import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.QuickCheckQuestion;
 import com.algoquest.content.model.WalkthroughStep;
@@ -72,7 +73,7 @@ final class ContentLoader {
   private LevelContent loadLevel(LevelInfo info, Map<String, Resource> files) {
     String folder = folder(info);
     if (files.keySet().stream().noneMatch(p -> p.startsWith(folder))) {
-      return new LevelContent(info, null, List.of());
+      return new LevelContent(info, null, List.of(), List.of());
     }
     String markdown = readText(folder + "lesson.md");
     List<WalkthroughStep> walkthrough =
@@ -94,7 +95,16 @@ final class ContentLoader {
         }
       }
     }
-    return new LevelContent(info, lesson, List.copyOf(levelProblems));
+    List<PatternChallenge> patterns = List.of();
+    if (files.containsKey(folder + "patterns.json")) {
+      List<PatternChallenge> read =
+          read(folder + "patterns.json", new TypeReference<List<PatternChallenge>>() {});
+      if (read != null) {
+        problems.addAll(ContentValidator.checkPatterns(folder, info.number(), read));
+        patterns = List.copyOf(read);
+      }
+    }
+    return new LevelContent(info, lesson, List.copyOf(levelProblems), patterns);
   }
 
   static String folder(LevelInfo info) {

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 import com.algoquest.content.model.LevelContent;
+import com.algoquest.content.model.PatternChallenge;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -80,6 +81,10 @@ class ContentLoaderTest {
         .containsExactly("best");
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().swap()).containsExactly(0, 2);
     assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
+    PatternChallenge challenge = levels.get(1).patterns().getFirst();
+    assertThat(challenge.best().id()).isEqualTo("hash");
+    assertThat(challenge.approach("nested").correct()).isTrue();
+    assertThat(challenge.approach("pass").correct()).isFalse();
     assertThat(levels.get(2).available()).isFalse();
   }
 
@@ -141,6 +146,19 @@ class ContentLoaderTest {
     assertThat(problems)
         .anyMatch(p -> p.contains("entry 2") && p.contains("number must be 2"))
         .anyMatch(p -> p.contains("entry 2") && p.contains("slug"));
+  }
+
+  @Test
+  void patternChallengesNeedOneBestApproachAndCompleteFields() throws IOException {
+    Path patterns = level.resolve("patterns.json");
+    replace(patterns, "\"label\": \"valid\"", "\"label\": \"best\"");
+    replace(patterns, "\"id\": \"P1-repeat\"", "\"id\": \"P2-repeat\"");
+    replace(patterns, "\"why\": \"Cannot remember every value.\"", "\"why\": \"\"");
+
+    assertThat(problemsAfterLoad())
+        .anyMatch(p -> p.contains("patterns.json") && p.contains("exactly one approach"))
+        .anyMatch(p -> p.contains("patterns.json") && p.contains("P1-some-name"))
+        .anyMatch(p -> p.contains("approach pass") && p.contains("required"));
   }
 
   @Test
