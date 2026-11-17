@@ -116,5 +116,44 @@
   "footer": {
     "tagline": "Học thuật toán từng bước, chinh phục từng cấp độ.",
     "navigation": "Chân trang"
+  },
+  "level": {
+    "comingSoon": "Sắp ra mắt",
+    "locked": "Đã khóa",
+    "notSolved": "Chưa giải xong",
+    "notTried": "Chưa thử",
+    "done": "Hoàn thành",
+    "practice": "Luyện tập",
+    "problems": "Bài tập",
+    "loading": "Đang tải bài tập…",
+    "breadcrumb": "Đường dẫn"
+  },
+  "profileExtra": {
+    "totals": "Tổng quan",
+    "totalXp": "Tổng XP",
+    "continue": "Tiếp tục"
+  },
+  "solve": {
+    "examples": "Ví dụ",
+    "constraints": "Giới hạn",
+    "practiceRound": "Lượt luyện tập",
+    "activeTime": "Thời gian làm bài",
+    "resume": "Tiếp tục bài đang làm?",
+    "retry": "Thử lại bài này?",
+    "loading": "Đang tải bài toán…",
+    "score": "Điểm",
+    "markedDone": "Đã đánh dấu hoàn thành trong lượt luyện tập.",
+    "hint": "Gợi ý",
+    "scoring": "Cách chấm điểm câu trả lời",
+    "criteria": "Bốn tiêu chí, 100 điểm",
+    "firstSolve": "XP khi giải lần đầu",
+    "quickCheck": "Kiểm tra nhanh bài học",
+    "testScore": "Điểm bài kiểm tra"
+  },
+  "walkthrough": {
+    "items": "Các phần tử",
+    "state": "Trạng thái sau từng bước",
+    "step": "Bước",
+    "keyboard": "Bàn phím: ← và → để chuyển bước, R để đặt lại."
   }
 }
