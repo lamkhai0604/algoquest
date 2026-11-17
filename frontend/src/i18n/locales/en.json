@@ -1,5 +1,17 @@
 {
   "common": {
+    "loading": "Loading...",
+    "retry": "Try again",
+    "back": "Back",
+    "next": "Next",
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "copy": "Copy",
+    "comingSoon": "Coming soon",
+    "level": "Level",
+    "phase": "Phase",
+    "copied": "Copied",
     "error": "Something went wrong. Please try again.",
     "errorTitle": "Something went wrong",
     "loadingEllipsis": "Loading…",

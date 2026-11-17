@@ -1,5 +1,17 @@
 {
   "common": {
+    "loading": "Đang tải...",
+    "retry": "Thử lại",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "continue": "Tiếp tục",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "copy": "Sao chép",
+    "comingSoon": "Sắp ra mắt",
+    "level": "Cấp độ",
+    "phase": "Giai đoạn",
+    "copied": "Đã sao chép",
     "error": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "errorTitle": "Đã xảy ra lỗi",
     "loadingEllipsis": "Đang tải…",
