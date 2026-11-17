@@ -1,38 +1,40 @@
 # AlgoQuest i18n Foundation (EN/VI)
 
-Status: foundation only; integration requires PO approval.
+Status: implementation PR for review; do not merge or deploy without PO approval.
 
-## Scope and ownership
+## Scope
 
-Branch: `feat/i18n-foundation`. This work adds isolated translation dictionaries and a pure TypeScript lookup helper. It intentionally does **not** edit shared pages, lesson components, backend, existing curriculum, XP rules, or deployment configuration. Claude's v0.3 Hybrid work should avoid modifying `frontend/src/i18n/` until coordinated integration.
+This branch is rebased onto main including Pattern Recognition pilot PR #22. It introduces a lightweight, dependency-free locale store with `useSyncExternalStore`, persisted EN/VI selection, and English fallback. A language selector is available in the app header.
 
-## Structure
+Translated UI includes header/footer, Pattern Recognition pilot controls and verdict labels, Learning Path headings and coming-soon/battle/test-access notices, profile navigation, and lesson Back/Next navigation.
 
-- `frontend/src/i18n/locales/en.json` — canonical English UI strings.
-- `frontend/src/i18n/locales/vi.json` — reviewed Vietnamese UI strings.
-- `frontend/src/i18n/index.ts` — locale types, supported locales, fallback lookup.
+The original lesson and challenge content returned by the backend stays in English in this phase. In particular, **do not change** `content/levels/`, `patterns.json`, problem statements, answer keys, code samples, hidden tests, XP or grading rules. Server-supplied AI feedback remains in its original language.
 
-## Example (future integration)
+## Files
+
+- `frontend/src/i18n/locales/en.json`: English source strings.
+- `frontend/src/i18n/locales/vi.json`: Vietnamese translations with matching keys.
+- `frontend/src/i18n/index.ts`: locale state, persistence, typed key lookup, hooks and fallback.
+- `frontend/src/i18n/i18n.test.ts`: dictionary parity and locale tests.
+
+## Usage
 
 ```tsx
-import { translate } from "../i18n";
-const locale = "vi"; // eventually sourced from language preference state
-const label = translate(locale, "nav.profile");
+import { useTranslation } from "../i18n";
+const { t } = useTranslation();
+return <h1>{t("home.title")}</h1>;
 ```
 
-## Content localization (future phase)
+## Review checklist
 
-Keep English Markdown/JSON as canonical. Consider sibling `lesson.vi.md` and localized question/walkthrough files, but first audit backend content loader, schemas and validation. Keep IDs, correct answer indices, grading rubrics, code, hidden tests and XP rules unchanged. Do not ship Vietnamese content until verified for correctness and complete fallback.
+- Verify EN remains the default and existing tests are unchanged in English.
+- Toggle EN/VI and reload: choice should persist.
+- Verify the document `lang` attribute updates.
+- Verify UI controls are translated but API-provided lesson and pattern content remains English.
+- Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` in `frontend/`.
+- Review the main/dev branch divergence before merging into dev.
+- Later: translate Level 1 after backend content loader and schema audit.
 
-## Integration acceptance criteria
+## Coordination
 
-1. User can switch EN/VI, selection persists, HTML language matches.
-2. Missing translations fall back to English; no missing-key strings shown.
-3. Existing game and grading behavior unchanged.
-4. English and Vietnamese content use stable identifiers, never display text as IDs.
-5. Translation parity and locale switching have automated tests.
-6. English/Vietnamese reasoning receive equivalent rubric evaluation (requires separate AI grading tests).
-
-## Next steps
-
-Review dictionary terminology; after Claude's v0.3 lesson structure stabilizes, integrate language state and selector, then translate Level 1 as a pilot. No main merge or deploy without PO approval.
+Claude owns curriculum/lesson structure; i18n owns localization. Any overlap requires PO review. This PR must target `dev`, not `main`.
