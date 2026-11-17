@@ -23,7 +23,8 @@
     "dayStreak": "ngày liên tiếp",
     "xp": "XP",
     "hints": "gợi ý",
-    "hintsLeft": "Gợi ý còn lại"
+    "hintsLeft": "Gợi ý còn lại",
+    "dayStreakTitle": "Chuỗi ngày học"
   },
   "lesson": {
     "start": "Bắt đầu học",
