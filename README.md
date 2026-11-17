@@ -77,6 +77,7 @@ To stop the database: `docker compose down` (add `-v` to delete its data).
 | [Workflow](docs/WORKFLOW.md) | Branching, reviews, engineering profile |
 | [Tools](docs/TOOLS.md) | Services, free-tier limits, dev tools |
 | [Content guide](docs/CONTENT-GUIDE.md) | How lessons and problems are written |
+| [Curriculum map](docs/CURRICULUM-MAP.md) | How the original 17 levels map to the 27-level curriculum; fixed level numbers |
 | [Deployment](docs/DEPLOY.md) | Hosting setup, live smoke check, rollback |
 
 ## Grading test
