@@ -12,6 +12,7 @@ import {
 } from "../components";
 import { useGame } from "../game/gameContext";
 import pages from "../pages/Pages.module.css";
+import { useTranslation } from "../i18n";
 import styles from "./Lesson.module.css";
 import {
   CodeLanguageContext,
@@ -108,12 +109,13 @@ function StepTabs({
   current: number;
   onSelect: (step: number) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       id="lesson-steps"
       className={styles.steps}
       role="tablist"
-      aria-label="Lesson steps"
+      aria-label={t("lesson.steps")}
     >
       {STEPS.map((step, i) => (
         <button
@@ -186,6 +188,7 @@ function PracticeStep({ level }: { level: number }) {
 }
 
 function LessonBody({ lesson }: { lesson: Lesson }) {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const sections = useMemo(
     () => splitSections(lesson.markdown),
@@ -268,14 +271,14 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
       <div className={styles.stepNav}>
         {previous ? (
           <Button variant="secondary" onClick={() => select(current - 1)}>
-            ← Back
+            ← {t("lesson.previous")}
           </Button>
         ) : (
           <span />
         )}
         {next && (
           <Button onClick={() => select(current + 1)}>
-            Next: {next.title} →
+            {t("lesson.next")}: {next.title} →
           </Button>
         )}
       </div>
@@ -285,6 +288,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
 
 /** Lesson page (FR-03): the lesson in five steps, from hook to practice. */
 export function LessonPage() {
+  const { t } = useTranslation();
   const number = Number(useParams().number);
   const { state, reload } = useApiGet<Lesson>(
     `/api/v1/levels/${number}/lesson`,
@@ -295,18 +299,18 @@ export function LessonPage() {
       <div className={pages.topBar}>
         <BackButton
           to={`/levels/${number}`}
-          label={`Back to Level ${number}`}
+          label={`${t("lesson.backToLevel")} ${number}`}
         />
         <nav className={styles.crumbs} aria-label="Breadcrumb">
-          <Link to="/">Learning Path</Link> /{" "}
+          <Link to="/">{t("nav.map")}</Link> /{" "}
           <Link to={`/levels/${number}`}>Level {number}</Link> /{" "}
-          <span>Lesson</span>
+          <span>{t("lesson.lesson")}</span>
         </nav>
       </div>
       <h1 className={pages.title}>
-        {state.status === "ready" ? `Lesson: ${state.data.title}` : "Lesson"}
+        {state.status === "ready" ? `${t("lesson.lesson")}: ${state.data.title}` : t("lesson.lesson")}
       </h1>
-      {state.status === "loading" && <LoadingState label="Loading lesson…" />}
+      {state.status === "loading" && <LoadingState label={t("lesson.loading")} />}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}
