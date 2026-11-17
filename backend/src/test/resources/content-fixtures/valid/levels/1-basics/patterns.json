@@ -1,0 +1,15 @@
+[
+  {
+    "id": "P1-repeat",
+    "level": 1,
+    "title": "Any Repeat",
+    "statement": "Return true if any value appears twice.",
+    "examples": ["[1, 2, 1] → true"],
+    "constraints": ["Up to 1,000 values"],
+    "approaches": [
+      { "id": "hash", "name": "HashSet", "hint": "Remember values", "label": "best", "time": "O(n)", "space": "O(n)", "why": "One pass with a set." },
+      { "id": "nested", "name": "Nested loops", "hint": "Every pair", "label": "valid", "time": "O(n²)", "space": "O(1)", "why": "Correct but slow." },
+      { "id": "pass", "name": "Single pass", "hint": "Running value", "label": "unsuitable", "time": "O(n)", "space": "O(1)", "why": "Cannot remember every value." }
+    ]
+  }
+]

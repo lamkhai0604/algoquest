@@ -1,6 +1,7 @@
 package com.algoquest.content;
 
 import com.algoquest.content.model.LevelContent;
+import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class ContentCatalog {
 
   private final Map<Integer, LevelContent> levels;
   private final Map<String, Problem> problemsById = new HashMap<>();
+  private final Map<String, PatternChallenge> patternsById = new HashMap<>();
 
   public ContentCatalog(
       ResourceLoader resourceLoader,
@@ -33,6 +35,9 @@ public class ContentCatalog {
         if (problemsById.putIfAbsent(problem.id(), problem) != null) {
           duplicates.add("problem id " + problem.id() + " is used by more than one file");
         }
+      }
+      for (PatternChallenge challenge : level.patterns()) {
+        patternsById.putIfAbsent(challenge.id(), challenge);
       }
     }
     if (!duplicates.isEmpty()) {
@@ -47,6 +52,11 @@ public class ContentCatalog {
 
   public Optional<LevelContent> level(int number) {
     return Optional.ofNullable(levels.get(number));
+  }
+
+  /** The full challenge, including its labels. Send labels only after an answer (D-057). */
+  public Optional<PatternChallenge> pattern(String id) {
+    return Optional.ofNullable(patternsById.get(id));
   }
 
   /** The full problem, including its answer key and hidden tests. Never send it to a client. */

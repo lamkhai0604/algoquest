@@ -4,6 +4,7 @@ import com.algoquest.content.model.AnswerKey;
 import com.algoquest.content.model.Example;
 import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelInfo;
+import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.QuickCheckQuestion;
 import com.algoquest.content.model.Visual;
@@ -170,6 +171,64 @@ final class ContentValidator {
         problems.add(where + ": prediction hides a variable the step does not have");
       }
     }
+  }
+
+  private static final Set<String> APPROACH_LABELS = Set.of("best", "valid", "unsuitable");
+  private static final Pattern PATTERN_ID = Pattern.compile("P(\\d+)-[a-z0-9]+(-[a-z0-9]+)*");
+
+  /** Pattern challenges (D-057): one best approach, three or four choices, every field filled. */
+  static List<String> checkPatterns(String folder, int level, List<PatternChallenge> challenges) {
+    List<String> problems = new ArrayList<>();
+    Set<String> ids = new HashSet<>();
+    for (int i = 0; i < challenges.size(); i++) {
+      PatternChallenge c = challenges.get(i);
+      String where = folder + "patterns.json, challenge " + (i + 1);
+      var id = c.id() == null ? null : PATTERN_ID.matcher(c.id());
+      if (id == null || !id.matches() || Integer.parseInt(id.group(1)) != level) {
+        problems.add(where + ": id must look like P" + level + "-some-name");
+      } else if (!ids.add(c.id())) {
+        problems.add(where + ": id " + c.id() + " is used twice");
+      }
+      if (c.level() != level) {
+        problems.add(where + ": level must be " + level);
+      }
+      if (blank(c.title()) || blank(c.statement())) {
+        problems.add(where + ": title and statement required");
+      }
+      if (c.examples() == null || c.examples().isEmpty()) {
+        problems.add(where + ": at least one example required");
+      }
+      List<PatternChallenge.Approach> approaches =
+          c.approaches() == null ? List.of() : c.approaches();
+      if (approaches.size() < 3 || approaches.size() > 4) {
+        problems.add(where + ": needs 3 or 4 approaches");
+      }
+      Set<String> approachIds = new HashSet<>();
+      long best = 0;
+      for (PatternChallenge.Approach a : approaches) {
+        String at = where + ", approach " + a.id();
+        if (blank(a.id()) || !approachIds.add(a.id())) {
+          problems.add(at + ": approach ids must be present and different");
+        }
+        if (!APPROACH_LABELS.contains(a.label())) {
+          problems.add(at + ": label must be best, valid, or unsuitable");
+        }
+        if ("best".equals(a.label())) {
+          best++;
+        }
+        if (blank(a.name())
+            || blank(a.hint())
+            || blank(a.time())
+            || blank(a.space())
+            || blank(a.why())) {
+          problems.add(at + ": name, hint, time, space, and why required");
+        }
+      }
+      if (best != 1) {
+        problems.add(where + ": exactly one approach must be labelled best");
+      }
+    }
+    return problems;
   }
 
   static List<String> checkProblem(String path, int level, Problem p) {
