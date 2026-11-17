@@ -5,7 +5,6 @@ import game from "../pages/Game.module.css";
 import { LABEL_TEXT, LABEL_TONE } from "./types";
 import type { ChallengeSummary } from "./types";
 
-
 /**
  * The level page's Pattern challenges section (D-057): shown only when the level has challenges.
  * A failed load hides the section; it is an optional pilot and must not block the level page.
