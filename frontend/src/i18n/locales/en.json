@@ -20,10 +20,11 @@
     "signOut": "Sign out"
   },
   "game": {
-    "dayStreak": "Day streak",
+    "dayStreak": "day streak",
     "xp": "Total XP",
     "hints": "hints",
-    "hintsLeft": "Hints left"
+    "hintsLeft": "Hints left",
+    "dayStreakTitle": "Day streak"
   },
   "lesson": {
     "start": "Start learning",
