@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "../i18n";
 import { Button, Card, cx } from "../components";
 import styles from "./Lesson.module.css";
 import { CodeBlock, InlineText } from "./Markdown";
@@ -7,6 +8,7 @@ import type { Answer } from "./Predict";
 import type { Visual, WalkthroughStep } from "./types";
 
 function Cells({ visual }: { visual: Visual }) {
+  const { t } = useTranslation();
   const labels = new Map<number, string[]>();
   for (const marker of visual.markers ?? []) {
     labels.set(marker.index, [
@@ -18,7 +20,7 @@ function Cells({ visual }: { visual: Visual }) {
   const swap: number[] = visual.swap ?? [];
   return (
     <>
-      <ol className={styles.cells} aria-label="Items">
+      <ol className={styles.cells} aria-label={t("walkthrough.items")}>
         {visual.cells.map((cell, index) => {
           const marks = labels.get(index);
           const swapped = swap.includes(index);
@@ -43,7 +45,7 @@ function Cells({ visual }: { visual: Visual }) {
       </ol>
       {swap.length === 2 && (
         <p className={styles.swapNote}>
-          Swapped [{swap[0]}] and [{swap[1]}]
+          {t("lessonMore.swapped")} [{swap[0]}] {t("lessonMore.and")} [{swap[1]}]
         </p>
       )}
     </>
@@ -74,6 +76,7 @@ function StateTable({
   index: number;
   answers: Record<number, Answer>;
 }) {
+  const { t } = useTranslation();
   const names: string[] = [];
   for (const step of steps) {
     for (const variable of step.visual?.vars ?? []) {
@@ -84,10 +87,10 @@ function StateTable({
   return (
     <div className={styles.tableWrap}>
       <table className={styles.stateTable}>
-        <caption>State after each step</caption>
+        <caption>{t("walkthrough.state")}</caption>
         <thead>
           <tr>
-            <th scope="col">Step</th>
+            <th scope="col">{t("walkthrough.step")}</th>
             {names.map((name) => (
               <th key={name} scope="col">
                 {name}
@@ -133,6 +136,7 @@ function StateTable({
  * its text once the learner answers. Arrow keys step, R resets.
  */
 export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
+  const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, Answer>>({});
   const count = steps.length;
@@ -176,9 +180,9 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
 
   return (
     <div className={styles.visualizer}>
-      <Card heading="Step by step">
+      <Card heading={t("lessonMore.stepByStep")}>
         <span className={styles.stepCount}>
-          Step {index + 1} of {steps.length}
+          {t("walkthrough.step")} {index + 1} {t("lesson.stepOf")} {steps.length}
         </span>
         {visual && <Cells visual={visual} />}
         {visual && <Variables visual={visual} hidden={hidden} />}
@@ -193,7 +197,7 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           <h3 className={styles.stepTitle}>{step.title}</h3>
           {waiting ? (
             <p className={styles.stepHidden}>
-              Answer the question to see what happens in this step.
+              {t("lessonMore.answerFirst")}
             </p>
           ) : (
             <>
@@ -210,16 +214,16 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
             disabled={index === 0}
             onClick={() => go(index - 1)}
           >
-            Back
+            {t("lesson.previous")}
           </Button>
           <Button disabled={last} onClick={() => go(index + 1)}>
-            Next step
+            {t("lessonMore.nextStep")}
           </Button>
           <Button variant="secondary" onClick={reset}>
-            Reset
+            {t("lesson.reset")}
           </Button>
         </div>
-        <p className={styles.keys}>Keyboard: ← and → to step, R to reset.</p>
+        <p className={styles.keys}>{t("walkthrough.keyboard")}</p>
       </Card>
       {hasVisuals && (
         <Card>

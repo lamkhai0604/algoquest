@@ -1,4 +1,5 @@
 import { cx } from "../components";
+import { useTranslation } from "../i18n";
 import styles from "./Lesson.module.css";
 import { InlineText } from "./Markdown";
 import type { Prediction } from "./types";
@@ -11,17 +12,18 @@ export function Predict({
   predict,
   answer,
   onAnswer,
-  legend = "Predict before you reveal",
+  legend,
 }: {
   predict: Prediction;
   answer: Answer | undefined;
   onAnswer: (answer: Answer) => void;
   legend?: string;
 }) {
+  const { t } = useTranslation();
   const done = answer !== undefined;
   return (
     <fieldset className={styles.predict}>
-      <legend>{legend}</legend>
+      <legend>{legend ?? t("lessonMore.predictBefore")}</legend>
       <p>
         <InlineText text={predict.question} />
       </p>
@@ -47,10 +49,10 @@ export function Predict({
         <p className={styles.answer} role="status">
           <strong>
             {answer === predict.answer
-              ? "Correct."
+              ? t("lessonMore.correct")
               : answer === "shown"
-                ? "Answer:"
-                : "Not quite."}
+                ? t("lessonMore.answer")
+                : t("lessonMore.incorrect")}
           </strong>{" "}
           <InlineText text={predict.explanation} />
         </p>
@@ -60,7 +62,7 @@ export function Predict({
           className={styles.linkButton}
           onClick={() => onAnswer("shown")}
         >
-          Show the answer
+          {t("lessonMore.showAnswer")}
         </button>
       )}
     </fieldset>

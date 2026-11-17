@@ -203,5 +203,38 @@
     "levelPassed": "cấp độ đã đạt",
     "levelDone": "cấp độ hoàn thành",
     "of": "trên"
+  },
+  "lessonMore": {
+    "intuition": "Kiểm tra trực giác",
+    "objectives": "Sau bài học này, bạn có thể",
+    "practiceIntro": "Giải các bài theo thứ tự và giải thích cách làm bằng lời. AI đánh giá lập luận; code vượt qua mọi bài kiểm tra ẩn sẽ nhận gấp đôi XP.",
+    "problemsSolved": "bài đã giải,",
+    "practiceOpen": "Lượt luyện tập đã mở.",
+    "practiceOpens": "Lượt luyện tập mở khi đạt",
+    "testOpen": "Bài kiểm tra lên cấp đã mở.",
+    "testLocked": "Bài kiểm tra lên cấp mở khi thanh tiến độ đầy.",
+    "goProblems": "Đến danh sách bài tập",
+    "nextStep": "Bước tiếp theo",
+    "stepByStep": "Từng bước",
+    "answerFirst": "Trả lời câu hỏi để xem điều gì xảy ra ở bước này.",
+    "swapped": "Đã hoán đổi",
+    "and": "và",
+    "correct": "Chính xác.",
+    "incorrect": "Chưa đúng.",
+    "answer": "Đáp án:",
+    "showAnswer": "Xem đáp án",
+    "predictBefore": "Dự đoán trước khi xem đáp án",
+    "tryAnother": "Hãy chọn đáp án khác.",
+    "quickCheckDone": "Đã hoàn thành kiểm tra nhanh",
+    "quickCheckNote": "Trả lời đúng tất cả câu hỏi để hoàn thành bài học và nhận",
+    "quickCheckOnce": "XP một lần.",
+    "quickCheckError": "Chưa lưu được kết quả. Hãy trả lời lại để thử lần nữa."
+  },
+  "homeMore": {
+    "solved": "bài đã giải.",
+    "practiceOpen": "Lượt luyện tập đã mở.",
+    "practiceOpens": "Lượt luyện tập mở khi đạt",
+    "levelsDone": "cấp độ hoàn thành",
+    "loadingLevels": "Đang tải các cấp độ…"
   }
 }

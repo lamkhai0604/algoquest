@@ -20,6 +20,8 @@ export type TranslationKey =
   | `profileExtra.${keyof typeof en.profileExtra}`
   | `solve.${keyof typeof en.solve}`
   | `walkthrough.${keyof typeof en.walkthrough}`
+  | `lessonMore.${keyof typeof en.lessonMore}`
+  | `homeMore.${keyof typeof en.homeMore}`
   | `common.${keyof typeof en.common}`
   | `auth.${keyof typeof en.auth}`
   | `misc.${keyof typeof en.misc}`

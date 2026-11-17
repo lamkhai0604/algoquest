@@ -100,10 +100,10 @@ function ContinueCard({ level }: { level: Level }) {
             max={level.target}
           />
           <p className={game.note}>
-            {level.solved} of {level.problems} problems solved.{" "}
+            {level.solved} of {level.problems} {t("homeMore.solved")}{" "}
             {level.practiceOpen
-              ? "The practice round is open."
-              : `The practice round opens at ${practiceAt} XP (${rules.practiceOpenPercent}%).`}
+              ? t("homeMore.practiceOpen")
+              : `${t("homeMore.practiceOpens")} ${practiceAt} XP (${rules.practiceOpenPercent}%).`}
           </p>
         </div>
       </div>
@@ -201,7 +201,7 @@ function PhaseSection({
           <span className={game.phaseGoal}>{t(phase.goalKey)}</span>
         </span>
         <Badge tone="xp">
-          {done} of {playable.length} levels done
+          {done} of {playable.length} {t("homeMore.levelsDone")}
         </Badge>
       </summary>
       <ol className={game.tiles} aria-label={`Phase ${phase.number} levels`}>

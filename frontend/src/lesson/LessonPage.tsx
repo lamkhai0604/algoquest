@@ -30,11 +30,11 @@ import { Walkthrough } from "./Walkthrough";
 
 /** The five learner steps; the lesson text's sections are shared among them. */
 const STEPS = [
-  { key: "understand", title: "Understand", hint: "Hook & intuition" },
-  { key: "visualize", title: "Visualize", hint: "Step through it" },
-  { key: "learn", title: "Learn", hint: "Code & complexity" },
-  { key: "check", title: "Check", hint: "Quick check" },
-  { key: "practice", title: "Practice", hint: "Problems" },
+  { key: "understand", title: "lesson.understand", hint: "lesson.hookIntuition" },
+  { key: "visualize", title: "lesson.visualize", hint: "lesson.stepThrough" },
+  { key: "learn", title: "lesson.learn", hint: "lesson.codeComplexity" },
+  { key: "check", title: "lesson.check", hint: "lesson.quickCheck" },
+  { key: "practice", title: "lesson.practice", hint: "lesson.problems" },
 ] as const;
 
 const UNDERSTAND = ["Problem hook", "Intuition", "When to use"];
@@ -125,7 +125,7 @@ function StepTabs({
           id={`step-tab-${i + 1}`}
           aria-selected={i === current}
           aria-controls="lesson-step"
-          aria-label={`Step ${i + 1}: ${step.title}`}
+          aria-label={`${t("lesson.step")} ${i + 1}: ${t(step.title)}`}
           className={cx(
             styles.stepTab,
             i < current && styles.stepTabDone,
@@ -135,9 +135,9 @@ function StepTabs({
         >
           <span className={styles.stepTabTitle}>
             {i + 1}
-            <span className={styles.stepTabName}> · {step.title}</span>
+            <span className={styles.stepTabName}> · {t(step.title)}</span>
           </span>
-          <span className={styles.stepTabHint}>{step.hint}</span>
+          <span className={styles.stepTabHint}>{t(step.hint)}</span>
         </button>
       ))}
     </div>
@@ -145,6 +145,7 @@ function StepTabs({
 }
 
 function PracticeStep({ level }: { level: number }) {
+  const { t } = useTranslation();
   const { levels, rules } = useGame();
   const info =
     levels.status === "ready"
@@ -154,34 +155,32 @@ function PracticeStep({ level }: { level: number }) {
     ? Math.ceil((info.target * rules.practiceOpenPercent) / 100)
     : null;
   return (
-    <Card heading="Practice">
+    <Card heading={t("lesson.practice")}>
       <div className={styles.prose}>
         <p>
-          Solve the problems in order and explain your approach in words. The AI
-          grades your reasoning; code that passes every hidden test earns double
-          XP.
+          {t("lessonMore.practiceIntro")}
         </p>
         {info && (
           <ul>
             <li>
-              {info.solved} of {info.problems} problems solved, {info.xp} /{" "}
+              {info.solved} of {info.problems} {t("lessonMore.problemsSolved")} {info.xp} /{" "}
               {info.target} XP.
             </li>
             <li>
               {info.practiceOpen
-                ? "The practice round is open."
-                : `The practice round opens at ${practiceAt} XP.`}
+                ? t("lessonMore.practiceOpen")
+                : `${t("lessonMore.practiceOpens")} ${practiceAt} XP.`}
             </li>
             <li>
               {info.testOpen
-                ? "The level-up test is open."
-                : "The level-up test opens when the level bar is full."}
+                ? t("lessonMore.testOpen")
+                : t("lessonMore.testLocked")}
             </li>
           </ul>
         )}
       </div>
       <div className={`${pages.row} ${styles.practiceAction}`}>
-        <ButtonLink to={`/levels/${level}`}>Go to the problems</ButtonLink>
+        <ButtonLink to={`/levels/${level}`}>{t("lessonMore.goProblems")}</ButtonLink>
       </div>
     </Card>
   );
@@ -224,7 +223,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
     <CodeLanguageContext.Provider value={codeLanguage}>
       <StepTabs current={current} onSelect={select} />
       <p className={styles.stepCaption}>
-        Step {current + 1} of {STEPS.length} · {STEPS[current]?.title}
+        {t("lesson.step")} {current + 1} {t("lesson.stepOf")} {STEPS.length} · {t(STEPS[current]?.title ?? "lesson.understand")}
       </p>
       <div
         id="lesson-step"
@@ -238,7 +237,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
               <MarkdownBlocks blocks={sections.understand.slice(0, cut)} />
               {lesson.intuition && (
                 <Predict
-                  legend="Check your intuition"
+                  legend={t("lessonMore.intuition")}
                   predict={lesson.intuition}
                   answer={intuitionAnswer}
                   onAnswer={setIntuitionAnswer}
@@ -247,7 +246,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
               <MarkdownBlocks blocks={sections.understand.slice(cut)} />
             </div>
             {sections.objectives.length > 0 && (
-              <Card heading="After this lesson you can" className={styles.side}>
+              <Card heading={t("lessonMore.objectives")} className={styles.side}>
                 <MarkdownBlocks blocks={sections.objectives} />
               </Card>
             )}
@@ -278,7 +277,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
         )}
         {next && (
           <Button onClick={() => select(current + 1)}>
-            {t("lesson.next")}: {next.title} →
+            {t("lesson.next")}: {t(next.title)} →
           </Button>
         )}
       </div>

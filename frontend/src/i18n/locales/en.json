@@ -203,5 +203,38 @@
     "levelPassed": "levels passed",
     "levelDone": "levels done",
     "of": "of"
+  },
+  "lessonMore": {
+    "intuition": "Check your intuition",
+    "objectives": "After this lesson you can",
+    "practiceIntro": "Solve the problems in order and explain your approach in words. The AI grades your reasoning; code that passes every hidden test earns double XP.",
+    "problemsSolved": "problems solved,",
+    "practiceOpen": "The practice round is open.",
+    "practiceOpens": "The practice round opens at",
+    "testOpen": "The level-up test is open.",
+    "testLocked": "The level-up test opens when the level bar is full.",
+    "goProblems": "Go to the problems",
+    "nextStep": "Next step",
+    "stepByStep": "Step by step",
+    "answerFirst": "Answer the question to see what happens in this step.",
+    "swapped": "Swapped",
+    "and": "and",
+    "correct": "Correct.",
+    "incorrect": "Not quite.",
+    "answer": "Answer:",
+    "showAnswer": "Show the answer",
+    "predictBefore": "Predict before you reveal",
+    "tryAnother": "Try another option.",
+    "quickCheckDone": "Quick check complete",
+    "quickCheckNote": "Answer every question correctly to finish the lesson and earn",
+    "quickCheckOnce": "XP once.",
+    "quickCheckError": "Your result was not saved. Answer again to retry."
+  },
+  "homeMore": {
+    "solved": "problems solved.",
+    "practiceOpen": "The practice round is open.",
+    "practiceOpens": "The practice round opens at",
+    "levelsDone": "levels done",
+    "loadingLevels": "Loading levels…"
   }
 }
