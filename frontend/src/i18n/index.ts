@@ -32,7 +32,8 @@ function initialLocale(): Locale {
   }
 }
 let currentLocale: Locale = initialLocale();
-if (typeof document !== "undefined") document.documentElement.lang = currentLocale;
+if (typeof document !== "undefined")
+  document.documentElement.lang = currentLocale;
 const listeners = new Set<() => void>();
 
 export function getLocale(): Locale {
@@ -43,20 +44,29 @@ export function setLocale(next: Locale): void {
   currentLocale = next;
   if (typeof document !== "undefined") document.documentElement.lang = next;
   if (typeof window !== "undefined") {
-    try { window.localStorage.setItem(STORAGE_KEY, next); } catch { /* storage may be blocked */ }
+    try {
+      window.localStorage.setItem(STORAGE_KEY, next);
+    } catch {
+      /* storage may be blocked */
+    }
   }
   listeners.forEach((listener) => listener());
 }
 function subscribe(listener: () => void): () => void {
   listeners.add(listener);
-  return () => { listeners.delete(listener); };
+  return () => {
+    listeners.delete(listener);
+  };
 }
 export function useLocale(): Locale {
   return useSyncExternalStore(subscribe, getLocale, () => DEFAULT_LOCALE);
 }
 export function translate(locale: Locale, key: TranslationKey): string {
   const [section, item] = key.split(".");
-  const dict = translations[locale] as unknown as Record<string, Record<string, string>>;
+  const dict = translations[locale] as unknown as Record<
+    string,
+    Record<string, string>
+  >;
   const fallback = en as unknown as Record<string, Record<string, string>>;
   return dict[section]?.[item] ?? fallback[section]?.[item] ?? key;
 }
