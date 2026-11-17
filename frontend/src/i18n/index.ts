@@ -88,7 +88,10 @@ export function translate(locale: Locale, key: TranslationKey): string {
 }
 export function useTranslation() {
   const locale = useLocale();
-  const t = useCallback((key: TranslationKey) => translate(locale, key), [locale]);
+  const t = useCallback(
+    (key: TranslationKey) => translate(locale, key),
+    [locale],
+  );
   return { locale, t };
 }
 export function localizeLabel(locale: Locale, source: string): string {
