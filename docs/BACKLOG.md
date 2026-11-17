@@ -107,6 +107,9 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-512 | Measure grading latency with `RealGraderCheck` | NFR-04 | P2 | Done 2026-11-16: median 885 ms, slowest 1,458 ms; all five sample scores in range, including the prompt-injection sample (0) |
 | T-414 | Profile page design pass (moved from Later) | NFR-05, D-053 | P2 | Done 2026-11-14 (design chosen by Claude as delegated by the PO; frontend tests; screenshots) |
 | T-514 | Owner test access to every level (`game.allLevels`) | FR-17, D-055 | P1 | Done 2026-11-16 (API tests for the Owner and a player; frontend test for the note) |
+| T-515 | Curriculum map (17 to 27 levels) and fixed level numbers | D-048, D-056 | P2 | Done 2026-11-17: [CURRICULUM-MAP.md](CURRICULUM-MAP.md) |
+| T-516 | Pattern Recognition demo for the PO to try (no backend) | D-057 | P1 | In progress |
+| T-517 | Pattern Recognition pilot: content schema and validator, six Level 3–4 challenges, API with label-decided correctness and AI-graded reasoning, `pattern_attempt` table, level page section | FR-03, FR-05, D-057 | P1 | Proposed; starts after the PO tries the demo |
 | T-513 | Sprint 5 report | D-007 | P2 | Proposed |
 
 ## Later (unscheduled)

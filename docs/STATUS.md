@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| Updated | 2026-11-14 |
+| Updated | 2026-11-17 |
 | Sprint | Sprint 5 — Level 4 and the profile page: approved 2026-11-14 ([plan](sprints/sprint-5.md)); Sprint 4 closed ([report](reports/sprint-4-report.md)) |
 | Repository | `lamkhai0604/algoquest` (public, D-039); branches `main` (protected by ruleset) and `dev` |
-| Active work | Sprint 5: T-509, T-510 (Level 4), and T-414 (profile) done on `dev`; T-512 latency measured (NFR-04 met); Owner test access (D-055); Java runs off until a Judge0 key is set (D-054); waiting on the Levels 1–4 content review (T-415) |
+| Active work | Sprint 5 extension: Pattern Recognition pilot (D-057); demo for the PO first (T-516). Waiting on the Levels 1–4 content review (T-415) |
 | Source revision | `dev` (see `git log dev`) |
 | Outstanding changes | Sprint 4 report and records, and the level page spacing fix, in the `dev → main` pull request |
 | Verification | GitHub Actions on 2026-11-14 (`2e0a683`): backend verify, frontend lint, format, typecheck, tests, build; smoke 5 passed; records check |
