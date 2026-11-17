@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "../i18n";
 import { Link, useParams } from "react-router";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
@@ -41,21 +42,22 @@ function useSecondsLeft(test: LevelTest): number {
 }
 
 function Result({ test }: { test: LevelTest }) {
+  const { t } = useTranslation();
   const { rules } = useGame();
   const next = test.nextLevelState;
   const unlock =
     next === "OPEN"
-      ? `Level ${test.level + 1} is open.`
+      ? `${t("common.level")} ${test.level + 1} ${t("testMore.levelOpen")}`
       : next === "EASY_ONLY"
-        ? `Level ${test.level + 1}: Easy problems are open. Score 100 to open the rest.`
-        : `Score ${rules.passScore} or more to open the next level. You can retake the test.`;
+        ? `${t("common.level")} ${test.level + 1}${t("testMore.easyOpen")}`
+        : `${t("testMore.scoreTo")} ${rules.passScore} ${t("testMore.scoreToTail")}`;
   return (
     <>
       <Card className={styles.score}>
         <Badge
           tone={(test.score ?? 0) >= rules.passScore ? "success" : "warning"}
         >
-          {(test.score ?? 0) >= rules.passScore ? "Passed" : "Not passed yet"}
+          {(test.score ?? 0) >= rules.passScore ? t("testMore.passed") : t("testMore.notPassed")}
         </Badge>
         <p className={styles.total}>
           <strong>{test.score}</strong> / 100
@@ -68,14 +70,14 @@ function Result({ test }: { test: LevelTest }) {
             {result
               ? `${totalOf(result)} / 100`
               : answer
-                ? "Not graded"
-                : "No answer: 0 / 100"}
+                ? t("testMore.notGraded")
+                : t("testMore.noAnswer")}
           </p>
           {result && <p className={styles.feedback}>{result.feedback}</p>}
         </Card>
       ))}
       <div className={styles.actions}>
-        <ButtonLink to={`/levels/${test.level}`}>Back to the level</ButtonLink>
+        <ButtonLink to={`/levels/${test.level}`}>{t("testMore.backLevel")}</ButtonLink>
       </div>
     </>
   );
@@ -88,6 +90,7 @@ function RunningTest({
   test: LevelTest;
   onSubmitted: (test: LevelTest) => void;
 }) {
+  const { t } = useTranslation();
   const left = useSecondsLeft(test);
   const timeUp = test.status === "timeUp" || left === 0;
   const [answers, setAnswers] = useState<Record<string, string>>(() =>
@@ -129,7 +132,7 @@ function RunningTest({
       }
       onSubmitted(await api.post<LevelTest>(`/api/v1/tests/${test.id}/submit`));
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Try again.");
+      setError(failure instanceof Error ? failure.message : t("common.retry"));
       setSubmitting(false);
     }
   }, [answers, saved, save, onSubmitted, test.id, timeUp]);
@@ -144,13 +147,13 @@ function RunningTest({
 
   return (
     <>
-      <p className={styles.timer} title="Time left">
-        <strong>{clock(left)}</strong> left
+      <p className={styles.timer} title={t("testMore.timeLeft")}>
+        <strong>{clock(left)}</strong> {t("testMore.left")}
       </p>
       {test.problems.map(({ problem }, index) => {
         const text = answers[problem.id] ?? "";
         const state =
-          text === saved[problem.id] ? (text ? "Saved" : "") : "Saving…";
+          text === saved[problem.id] ? (text ? t("testMore.saved") : "") : t("testMore.saving");
         return (
           <Card key={problem.id}>
             <h2 className={styles.problemTitle}>
@@ -170,7 +173,7 @@ function RunningTest({
               ))}
             </ul>
             <label className={styles.label} htmlFor={`answer-${problem.id}`}>
-              Your explanation
+              {t("solveMore.explanation")}
             </label>
             <textarea
               id={`answer-${problem.id}`}
@@ -192,7 +195,7 @@ function RunningTest({
       )}
       <div className={styles.actions}>
         <Button onClick={() => void submit()} disabled={submitting}>
-          {submitting ? "Grading your answers…" : "Submit the test"}
+          {submitting ? t("testMore.grading") : t("testMore.submit")}
         </Button>
       </div>
     </>
@@ -201,6 +204,7 @@ function RunningTest({
 
 /** Level-up test page (FR-10). */
 export function LevelTestPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { reloadLevels } = useGame();
   const { state, reload } = useApiGet<LevelTest>(`/api/v1/tests/${id}`);
@@ -221,11 +225,11 @@ export function LevelTestPage() {
         <BackButton
           to={test ? `/levels/${test.level}` : "/"}
           label={
-            test ? `Back to Level ${test.level}` : "Back to the Learning Path"
+            test ? `${t("lesson.backToLevel")} ${test.level}` : t("profile.back")
           }
         />
-        <nav className={styles.crumbs} aria-label="Breadcrumb">
-          <Link to="/">Learning Path</Link>
+        <nav className={styles.crumbs} aria-label={t("level.breadcrumb")}>
+          <Link to="/">{t("home.title")}</Link>
           {test && (
             <>
               {" / "}
@@ -235,10 +239,12 @@ export function LevelTestPage() {
         </nav>
       </div>
       <h1 className={pages.title}>
-        {test ? `Level ${test.level} test` : "Level-up test"}
+        {test
+          ? `${t("common.level")} ${test.level} test`
+          : t("testMore.levelTest")}
       </h1>
       {!test && state.status === "loading" && (
-        <LoadingState label="Loading the test…" />
+        <LoadingState label={t("testMore.loading")} />
       )}
       {!test && state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />

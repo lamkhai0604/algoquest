@@ -22,6 +22,9 @@ export type TranslationKey =
   | `walkthrough.${keyof typeof en.walkthrough}`
   | `lessonMore.${keyof typeof en.lessonMore}`
   | `homeMore.${keyof typeof en.homeMore}`
+  | `solveMore.${keyof typeof en.solveMore}`
+  | `testMore.${keyof typeof en.testMore}`
+  | `codeMore.${keyof typeof en.codeMore}`
   | `common.${keyof typeof en.common}`
   | `auth.${keyof typeof en.auth}`
   | `misc.${keyof typeof en.misc}`

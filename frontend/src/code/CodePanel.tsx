@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "../i18n";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
 import {
@@ -45,23 +46,24 @@ function showValue(value: unknown): string {
 }
 
 function RunResult({ result }: { result: CodeResult }) {
+  const { t } = useTranslation();
   const all = result.compileError === null && result.passed === result.total;
   return (
     <div className={styles.result} role="status">
       <div className={styles.resultHead}>
         <Badge tone={all ? "success" : "warning"}>
           {result.compileError
-            ? "Did not compile"
-            : `${result.passed} / ${result.total} tests passed`}
+            ? t("codeMore.noCompile")
+            : `${result.passed} / ${result.total} ${t("codeMore.testsPassed")}`}
         </Badge>
         {result.xpGained > 0 && (
           <span className={styles.bonus}>
-            +{result.xpGained} XP · 2× XP earned
+            +{result.xpGained} XP · {t("codeMore.earned")}
           </span>
         )}
         {all && result.xpGained === 0 && result.codeBonusAwarded && (
           <span className={styles.note}>
-            The 2× XP bonus was already earned.
+            {t("codeMore.bonusAlready")}
           </span>
         )}
       </div>
@@ -70,10 +72,10 @@ function RunResult({ result }: { result: CodeResult }) {
       )}
       {result.failedInput && (
         <pre className={styles.detail}>
-          {`First failing input: ${result.failedInput.map(showValue).join(", ")}\n`}
+          {`${t("codeMore.firstFailed")} ${result.failedInput.map(showValue).join(", ")}\n`}
           {result.failedError
-            ? `Error: ${result.failedError}`
-            : `Your output: ${result.failedOutput ?? "null"}`}
+            ? `${t("codeMore.error")} ${result.failedError}`
+            : `${t("codeMore.output")} ${result.failedOutput ?? "null"}`}
         </pre>
       )}
     </div>
@@ -94,6 +96,7 @@ function CodeRunner({
   runner,
 }: CodeRunnerProps) {
   const { reloadLevels } = useGame();
+  const { t } = useTranslation();
   const [language, setLanguage] = useState<CodeLanguage>("javascript");
   const languages = LANGUAGES.filter(
     (item) => item.id !== "java" || setup.javaAvailable,
@@ -141,7 +144,7 @@ function CodeRunner({
       setError(
         failure instanceof Error
           ? failure.message
-          : "Something went wrong. Please try again.",
+          : t("common.error"),
       );
     } finally {
       setRunning(false);
@@ -152,7 +155,7 @@ function CodeRunner({
   return (
     <div className={styles.panel}>
       <div className={styles.toolbar}>
-        <div className={styles.languages} role="group" aria-label="Language">
+        <div className={styles.languages} role="group" aria-label={t("codeMore.lang")}>
           {languages.map((item) => (
             <Chip
               key={item.id}
@@ -169,14 +172,14 @@ function CodeRunner({
         </div>
         <p className={styles.note}>
           {language === "java"
-            ? `Java runs on a server: ${javaLeft} of ${setup.javaDailyLimit} runs left today.`
+            ? `${t("codeMore.javaRuns")} ${javaLeft} of ${setup.javaDailyLimit} ${t("codeMore.runsLeft")}`
             : setup.javaAvailable
-              ? "JavaScript runs in your browser, up to 5 seconds."
-              : "JavaScript runs in your browser, up to 5 seconds. Java runs are coming soon."}
+              ? t("codeMore.jsRuns")
+              : `${t("codeMore.jsRuns")} ${t("codeMore.javaSoon")}`}
         </p>
       </div>
       <CodeEditor
-        label={`Your ${language === "java" ? "Java" : "JavaScript"} code`}
+        label={`${t("codeMore.your")} ${language === "java" ? "Java" : "JavaScript"} ${t("codeMore.code")}`}
         language={language}
         value={code}
         onChange={change}
@@ -184,19 +187,19 @@ function CodeRunner({
       <div className={styles.toolbar}>
         <p className={styles.note}>
           {earned
-            ? "2× XP earned for this problem. You can keep practising."
-            : `Pass all ${setup.inputs.length} hidden tests to double this problem's XP.`}
+            ? t("codeMore.keepPractice")
+            : `${t("codeMore.passAll")} ${setup.inputs.length} ${t("codeMore.hiddenTests")}`}
         </p>
         <Button
           onClick={() => void run()}
           disabled={running || !code.trim() || javaOut}
         >
-          {running ? "Running…" : "▶ Run tests"}
+          {running ? t("codeMore.running") : t("codeMore.run")}
         </Button>
       </div>
       {javaOut && (
         <p className={styles.note} role="status">
-          Java runs are used up for today. JavaScript still works.
+          {t("codeMore.javaUsed")}
         </p>
       )}
       {error && (
@@ -222,23 +225,23 @@ export function CodePanel({
   starterCode,
   runner = runJavaScript,
 }: CodePanelProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const setup = useApiGet<CodeSetup>(
     open ? `/api/v1/problems/${problemId}/code` : null,
   );
 
   return (
-    <Card heading="Code it for 2× XP">
+    <Card heading={t("codeMore.heading")}>
       {!open ? (
         <div className={styles.toolbar}>
           <p className={styles.note}>
-            Write the solution as code. Passing every hidden test doubles the XP
-            of this problem, once.
+            {t("codeMore.desc")}
           </p>
-          <Button onClick={() => setOpen(true)}>Write code</Button>
+          <Button onClick={() => setOpen(true)}>{t("codeMore.write")}</Button>
         </div>
       ) : setup.state.status === "loading" ? (
-        <LoadingState label="Loading the tests" />
+        <LoadingState label={t("codeMore.loading")} />
       ) : setup.state.status === "error" ? (
         <ErrorState message={setup.state.message} onRetry={setup.reload} />
       ) : (

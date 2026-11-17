@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "../i18n";
 import { useNavigate } from "react-router";
 import { api } from "../api";
 import { Badge, Button, Card } from "../components";
@@ -10,6 +11,7 @@ import styles from "./LevelTest.module.css";
 /** The level-up test entry on the level page (FR-10, FR-11 placeholder). */
 export function TestStartCard({ level }: { level: Level }) {
   const { rules } = useGame();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,21 +23,19 @@ export function TestStartCard({ level }: { level: Level }) {
       .post<LevelTest>(`/api/v1/levels/${level.number}/tests`)
       .then((test) => navigate(`/tests/${test.id}`))
       .catch((failure: unknown) => {
-        setError(failure instanceof Error ? failure.message : "Try again.");
+        setError(failure instanceof Error ? failure.message : t("common.retry"));
         setStarting(false);
       });
   };
 
   return (
-    <Card heading="Level-up test">
+    <Card heading={t("testMore.levelTest")}>
       <p className={styles.muted}>
-        3 new problems, about 2 hours. A score of {rules.passScore} to 99 opens
-        the next level&apos;s Easy problems; 100 opens the whole level. Retakes
-        are always allowed.
+        {t("testMore.summary")} {rules.passScore} {t("testMore.summaryTail")}
       </p>
       {level.bestTestScore !== null && (
         <p className={styles.muted}>
-          Best score: <strong>{level.bestTestScore}</strong> / 100
+          {t("testMore.bestScore")} <strong>{level.bestTestScore}</strong> / 100
         </p>
       )}
       {error && (
@@ -47,19 +47,19 @@ export function TestStartCard({ level }: { level: Level }) {
         {level.testOpen ? (
           <Button onClick={start} disabled={starting}>
             {level.bestTestScore === null
-              ? "Start the test"
-              : "Retake the test"}
+              ? t("testMore.start")
+              : t("testMore.retake")}
           </Button>
         ) : (
           <span className={styles.muted}>
-            Opens when the level bar is full ({level.target} XP).
+            {t("testMore.opensAt")} ({level.target} XP).
           </span>
         )}
         <span className={styles.hardMode}>
           <Button variant="secondary" disabled>
-            Hard mode
+            {t("testMore.hardMode")}
           </Button>
-          <Badge tone="warning">Coming soon</Badge>
+          <Badge tone="warning">{t("common.comingSoon")}</Badge>
         </span>
       </div>
     </Card>
