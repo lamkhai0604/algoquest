@@ -10,7 +10,8 @@
     "copy": "Sao chép",
     "comingSoon": "Sắp ra mắt",
     "level": "Cấp độ",
-    "phase": "Giai đoạn"
+    "phase": "Giai đoạn",
+    "copied": "Đã sao chép"
   },
   "nav": {
     "map": "Lộ trình học",
@@ -45,7 +46,8 @@
     "hookIntuition": "Tình huống và trực giác",
     "stepThrough": "Theo dõi từng bước",
     "codeComplexity": "Code và độ phức tạp",
-    "problems": "Bài tập"
+    "problems": "Bài tập",
+    "codeLanguage": "Ngôn ngữ lập trình"
   },
   "language": {
     "english": "English",
