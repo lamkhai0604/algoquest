@@ -10,7 +10,8 @@
     "copy": "Copy",
     "comingSoon": "Coming soon",
     "level": "Level",
-    "phase": "Phase"
+    "phase": "Phase",
+    "copied": "Copied"
   },
   "nav": {
     "map": "Map",
@@ -45,7 +46,8 @@
     "hookIntuition": "Hook & intuition",
     "stepThrough": "Step through it",
     "codeComplexity": "Code & complexity",
-    "problems": "Problems"
+    "problems": "Problems",
+    "codeLanguage": "Code language"
   },
   "language": {
     "english": "English",
