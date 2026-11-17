@@ -48,7 +48,7 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
       <div className={styles.stats}>
         {account && (
           <>
-            <span className={styles.stat} title={t("game.dayStreak")}>
+            <span className={styles.stat} title={t("game.dayStreakTitle")}>
               🔥 <strong>{stats.streakDays}</strong>
               <span className={styles.unit}>{t("game.dayStreak")}</span>
             </span>
