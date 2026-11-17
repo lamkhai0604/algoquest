@@ -46,7 +46,8 @@ function Verdict({
         {result.label === "unsuitable" && (
           <>
             {t("pattern.notSuitable")} {mine?.why} {t("pattern.try")}{" "}
-            <strong>{name(result.bestApproach)}</strong> {t("pattern.otherValid")}
+            <strong>{name(result.bestApproach)}</strong>{" "}
+            {t("pattern.otherValid")}
           </>
         )}
       </p>
@@ -114,7 +115,8 @@ function Result({
           </table>
         </div>
         <p className={game.note}>
-          {t("pattern.noXpNote")} {result.answersLeftToday} {t("pattern.answersLeft")}
+          {t("pattern.noXpNote")} {result.answersLeftToday}{" "}
+          {t("pattern.answersLeft")}
         </p>
       </div>
     </Card>
@@ -146,11 +148,7 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
       setResult(answer);
       setLeft(answer.answersLeftToday);
     } catch (failure: unknown) {
-      setError(
-        failure instanceof Error
-          ? failure.message
-          : t("pattern.error"),
-      );
+      setError(failure instanceof Error ? failure.message : t("pattern.error"));
     } finally {
       setSending(false);
     }
