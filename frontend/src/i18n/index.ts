@@ -15,7 +15,11 @@ export type TranslationKey =
   | `pattern.${keyof typeof en.pattern}`
   | `home.${keyof typeof en.home}`
   | `profile.${keyof typeof en.profile}`
-  | `footer.${keyof typeof en.footer}`;
+  | `footer.${keyof typeof en.footer}`
+  | `level.${keyof typeof en.level}`
+  | `profileExtra.${keyof typeof en.profileExtra}`
+  | `solve.${keyof typeof en.solve}`
+  | `walkthrough.${keyof typeof en.walkthrough}`;
 
 export function isLocale(value: string): value is Locale {
   return value === "en" || value === "vi";
