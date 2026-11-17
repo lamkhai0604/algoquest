@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { Link } from "react-router";
+import { useAuth } from "../auth/authContext";
 import {
   Badge,
   Button,
@@ -226,6 +227,10 @@ function LearningPath({ levels }: { levels: Level[] }) {
 /** The Learning Path (FR-02): the level to continue and every level by phase. */
 export function HomePage() {
   const { levels, reloadLevels } = useGame();
+  const { state } = useAuth();
+  const testing =
+    state.status === "signed-in" &&
+    state.user.permissions.includes("game.allLevels");
   return (
     <div className={styles.page}>
       <div>
@@ -233,6 +238,12 @@ export function HomePage() {
         <p className={styles.lead}>
           Core Foundations → Problem-Solving Patterns → Interview Mastery
         </p>
+        {testing && (
+          <p className={game.note} role="note">
+            <Badge tone="warning">Test access</Badge> Every level with content
+            is open for your account, with no locks.
+          </p>
+        )}
       </div>
       {levels.status === "loading" && <LoadingState label="Loading levels…" />}
       {levels.status === "error" && (

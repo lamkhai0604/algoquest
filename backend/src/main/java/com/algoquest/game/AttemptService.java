@@ -240,7 +240,7 @@ public class AttemptService {
   private void requirePracticeOpen(UUID userId, Problem problem) {
     int levelXp = progress.xpByLevel(userId).getOrDefault(problem.level(), 0);
     GameRules current = rules.current();
-    if (!LevelRules.practiceOpen(current, levelXp, problem.level())) {
+    if (!LevelRules.practiceOpen(current, levelXp, problem.level()) && !game.allLevels(userId)) {
       throw new ApiException(
           HttpStatus.FORBIDDEN,
           "Forbidden",
