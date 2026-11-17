@@ -25,6 +25,7 @@ export type TranslationKey =
   | `solveMore.${keyof typeof en.solveMore}`
   | `testMore.${keyof typeof en.testMore}`
   | `codeMore.${keyof typeof en.codeMore}`
+  | `admin.${keyof typeof en.admin}`
   | `common.${keyof typeof en.common}`
   | `auth.${keyof typeof en.auth}`
   | `misc.${keyof typeof en.misc}`
@@ -87,4 +88,7 @@ export function translate(locale: Locale, key: TranslationKey): string {
 export function useTranslation() {
   const locale = useLocale();
   return { locale, t: (key: TranslationKey) => translate(locale, key) };
+}
+export function localizeLabel(locale: Locale, source: string): string {
+  return translations[locale].adminLabels[source as keyof typeof en.adminLabels] ?? source;
 }

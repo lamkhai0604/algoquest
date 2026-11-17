@@ -1,4 +1,5 @@
 import { useApiGet } from "../api/useApiGet";
+import { useTranslation, localizeLabel } from "../i18n";
 import { Badge, Card, ErrorState, LoadingState } from "../components";
 import styles from "./Admin.module.css";
 import type { AuditEntry } from "./types";
@@ -17,17 +18,18 @@ function values(json: string | null): string {
 
 /** The audit log, newest first (FR-17.6). Entries are never changed. */
 export function AuditLogPanel() {
+  const { t } = useTranslation();
   const { state, reload } = useApiGet<AuditEntry[]>("/api/v1/admin/audit-log");
   return (
     <section className={styles.section}>
       {state.status === "loading" && (
-        <LoadingState label="Loading the audit log…" />
+        <LoadingState label={t("admin.loadingAudit")} />
       )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}
       {state.status === "ready" && state.data.length === 0 && (
-        <p className={styles.muted}>No admin actions yet.</p>
+        <p className={styles.muted}>{t("admin.noAudit")}</p>
       )}
       {state.status === "ready" &&
         state.data.map((entry, index) => (
@@ -38,14 +40,14 @@ export function AuditLogPanel() {
                 {new Date(entry.at).toLocaleString()}
               </span>
               <span className={styles.muted}>
-                by {entry.actorEmail ?? "system"}
+                {t("admin.by")} {entry.actorEmail ?? "system"}
               </span>
               <span className={styles.muted}>
-                on {entry.targetEmail ?? entry.target}
+                {t("admin.on")} {entry.targetEmail ?? entry.target}
               </span>
             </div>
             <p className={styles.muted}>
-              Before: {values(entry.before)} · After: {values(entry.after)}
+              {t("admin.before")} {values(entry.before)} · {t("admin.after")} {values(entry.after)}
             </p>
           </Card>
         ))}
