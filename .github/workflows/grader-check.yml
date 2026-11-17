@@ -1,0 +1,55 @@
+name: grader-check
+
+# Manual real-grader check (NFR-04, T-512): grades five sample explanations with
+# the live Gemini model and reports scores and latency. Runs only when started by
+# hand, uses the GEMINI_API_KEY repository secret, and spends five free-tier
+# requests. Never runs on pull requests, so forks cannot reach the secret.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  grader:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      - name: Real grader check
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::error title=Missing secret::Add GEMINI_API_KEY under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          set +e
+          ./mvnw -B -ntp test -Dtest=RealGraderCheck -DexcludedGroups=none -Dsurefire.failIfNoSpecifiedTests=false 2>&1 | tee grader.log
+          status=${PIPESTATUS[0]}
+          set -e
+          # The table and the latency line, without the API key or request bodies.
+          report=$(sed -n '/^problem /,/^Latency:/p' grader.log)
+          {
+            echo '## Real grader check'
+            echo '```'
+            echo "$report"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=Grader check::${report//$'\n'/%0A}"
+          exit "$status"
