@@ -76,5 +76,9 @@ describe("profile", () => {
     );
     expect(within(nav).getByRole("link", { name: "Profile" })).toBeVisible();
     expect(within(nav).queryByRole("link", { name: "Admin" })).toBeNull();
+    expect(screen.getByRole("link", { name: /your profile/ })).toHaveAttribute(
+      "href",
+      "/profile",
+    );
   });
 });
