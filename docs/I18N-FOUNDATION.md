@@ -1,40 +1,33 @@
-# AlgoQuest i18n Foundation (EN/VI)
+# AlgoQuest EN/VI Localization
 
-Status: implementation PR for review; do not merge or deploy without PO approval.
+This branch is based on current main and includes the Pattern Recognition pilot. It is reviewed through PR #23 into dev.
 
 ## Scope
 
-This branch is rebased onto main including Pattern Recognition pilot PR #22. It introduces a lightweight, dependency-free locale store with `useSyncExternalStore`, persisted EN/VI selection, and English fallback. A language selector is available in the app header.
+- Locale selection EN/VI in the header, persisted in localStorage and reflected in document.lang.
+- Typed dictionary keys, English default, Vietnamese UI strings, English fallback.
+- Localized UI across navigation, authentication, Learning Path, profiles, levels, lessons, walkthroughs, quick checks, pattern challenges, problem solving, code challenges, level-up tests and admin screens.
+- User data, problem statements, lesson markdown, server-provided explanations, grading feedback and source code remain in the original language.
+- No modifications to content/levels, grading rules, XP calculations or protected branches.
 
-Translated UI includes header/footer, Pattern Recognition pilot controls and verdict labels, Learning Path headings and coming-soon/battle/test-access notices, profile navigation, and lesson Back/Next navigation.
+## Validation
 
-The original lesson and challenge content returned by the backend stays in English in this phase. In particular, **do not change** `content/levels/`, `patterns.json`, problem statements, answer keys, code samples, hidden tests, XP or grading rules. Server-supplied AI feedback remains in its original language.
+Run in frontend:
 
-## Files
-
-- `frontend/src/i18n/locales/en.json`: English source strings.
-- `frontend/src/i18n/locales/vi.json`: Vietnamese translations with matching keys.
-- `frontend/src/i18n/index.ts`: locale state, persistence, typed key lookup, hooks and fallback.
-- `frontend/src/i18n/i18n.test.ts`: dictionary parity and locale tests.
-
-## Usage
-
-```tsx
-import { useTranslation } from "../i18n";
-const { t } = useTranslation();
-return <h1>{t("home.title")}</h1>;
+```sh
+npm ci
+npm run lint
+npm run format:check
+npm run typecheck
+npm test
+npm run build
 ```
 
-## Review checklist
+Also review GitHub's Playwright smoke workflow and preview deployment. The PR into dev must have all checks green. After merge into dev, create a separate PR dev -> main for product-owner review; never auto-merge to main.
 
-- Verify EN remains the default and existing tests are unchanged in English.
-- Toggle EN/VI and reload: choice should persist.
-- Verify the document `lang` attribute updates.
-- Verify UI controls are translated but API-provided lesson and pattern content remains English.
-- Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` in `frontend/`.
-- Review the main/dev branch divergence before merging into dev.
-- Later: translate Level 1 after backend content loader and schema audit.
+## Manual bilingual QA
 
-## Coordination
-
-Claude owns curriculum/lesson structure; i18n owns localization. Any overlap requires PO review. This PR must target `dev`, not `main`.
+- Select VI; verify menus, header/footer, patterns, lessons, solving and test flows, code editor, admin and error states.
+- Reload: language preference persists; switch back to EN and verify existing English terminology.
+- Check that lesson markdown, problem content, patterns.json and AI-generated feedback remain English.
+- Verify keyboard navigation, button labels and screen reader semantics.
