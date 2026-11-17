@@ -20,8 +20,8 @@
     "signOut": "Sign out"
   },
   "game": {
-    "dayStreak": "day streak",
-    "xp": "XP",
+    "dayStreak": "Day streak",
+    "xp": "Total XP",
     "hints": "hints",
     "hintsLeft": "Hints left"
   },
