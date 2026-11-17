@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import en from "./locales/en.json";
 import vi from "./locales/vi.json";
 
@@ -88,7 +88,8 @@ export function translate(locale: Locale, key: TranslationKey): string {
 }
 export function useTranslation() {
   const locale = useLocale();
-  return { locale, t: (key: TranslationKey) => translate(locale, key) };
+  const t = useCallback((key: TranslationKey) => translate(locale, key), [locale]);
+  return { locale, t };
 }
 export function localizeLabel(locale: Locale, source: string): string {
   return (

@@ -139,7 +139,7 @@ function RunningTest({
       setError(failure instanceof Error ? failure.message : t("common.retry"));
       setSubmitting(false);
     }
-  }, [answers, saved, save, onSubmitted, test.id, timeUp]);
+  }, [answers, saved, save, onSubmitted, test.id, timeUp, t]);
 
   const autoSubmitted = useRef(false);
   useEffect(() => {

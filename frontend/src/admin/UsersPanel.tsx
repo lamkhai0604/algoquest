@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslation, localizeLabel } from "../i18n";
+import { useTranslation } from "../i18n";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
 import {

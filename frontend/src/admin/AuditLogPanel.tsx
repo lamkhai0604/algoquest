@@ -1,5 +1,5 @@
 import { useApiGet } from "../api/useApiGet";
-import { useTranslation, localizeLabel } from "../i18n";
+import { useTranslation } from "../i18n";
 import { Badge, Card, ErrorState, LoadingState } from "../components";
 import styles from "./Admin.module.css";
 import type { AuditEntry } from "./types";

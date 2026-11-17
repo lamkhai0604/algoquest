@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslation, localizeLabel } from "../i18n";
+import { useTranslation } from "../i18n";
 import { useApiGet } from "../api/useApiGet";
 import { Badge, Button, Card, ErrorState, LoadingState } from "../components";
 import styles from "./Admin.module.css";
