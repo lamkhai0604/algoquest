@@ -12,6 +12,7 @@ import type { BadgeTone } from "../components";
 import { useGame } from "../game/gameContext";
 import type { Level, Profile } from "../game/types";
 import game from "./Game.module.css";
+import { useTranslation } from "../i18n";
 import styles from "./Pages.module.css";
 
 /** Phase names, as on the Learning Path (D-048). */
@@ -173,17 +174,18 @@ function Progress({ profile }: { profile: Profile }) {
 
 /** Profile (FR-12): who you are, where to continue, totals, streak, and progress per level. */
 export function ProfilePage() {
+  const { t } = useTranslation();
   const { profile, reloadLevels } = useGame();
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
-        <BackButton to="/" label="Back to the Learning Path" />
+        <BackButton to="/" label={t("profile.back")} />
         {profile.status !== "ready" && (
-          <h1 className={styles.title}>Profile</h1>
+          <h1 className={styles.title}>{t("nav.profile")}</h1>
         )}
       </div>
       {profile.status === "loading" && (
-        <LoadingState label="Loading profile…" />
+        <LoadingState label={t("profile.loading")} />
       )}
       {profile.status === "error" && (
         <ErrorState message={profile.message} onRetry={reloadLevels} />
