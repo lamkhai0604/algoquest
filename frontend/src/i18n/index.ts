@@ -62,7 +62,7 @@ export function useLocale(): Locale {
   return useSyncExternalStore(subscribe, getLocale, () => DEFAULT_LOCALE);
 }
 export function translate(locale: Locale, key: TranslationKey): string {
-  const [section, item] = key.split(".");
+  const [section = "", item = ""] = key.split(".");
   const dict = translations[locale] as unknown as Record<
     string,
     Record<string, string>
