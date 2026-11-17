@@ -80,7 +80,9 @@ public class PatternStore {
     return count == null ? 0 : count;
   }
 
-  /** The best label each challenge has received from this player: best, then valid, then unsuitable. */
+  /**
+   * The best label each challenge has received from this player: best, then valid, then unsuitable.
+   */
   public Map<String, String> bestLabels(UUID userId) {
     Map<String, String> best = new HashMap<>();
     jdbc.query(

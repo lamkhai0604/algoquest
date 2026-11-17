@@ -216,7 +216,10 @@ final class ContentValidator {
         if ("best".equals(a.label())) {
           best++;
         }
-        if (blank(a.name()) || blank(a.hint()) || blank(a.time()) || blank(a.space())
+        if (blank(a.name())
+            || blank(a.hint())
+            || blank(a.time())
+            || blank(a.space())
             || blank(a.why())) {
           problems.add(at + ": name, hint, time, space, and why required");
         }

@@ -20,8 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**
- * Pattern Recognition (D-057). Whether a choice is correct comes only from the content's label;
- * the grader scores only the written reason. No XP is awarded in the pilot.
+ * Pattern Recognition (D-057). Whether a choice is correct comes only from the content's label; the
+ * grader scores only the written reason. No XP is awarded in the pilot.
  */
 @Service
 public class PatternService {
@@ -120,7 +120,8 @@ public class PatternService {
     PatternChallenge challenge = playable(userId, id);
     Approach chosen = request == null ? null : challenge.approach(request.approach());
     if (chosen == null) {
-      throw new ApiException(HttpStatus.BAD_REQUEST, "Bad Request", "Choose one of the approaches.");
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST, "Bad Request", "Choose one of the approaches.");
     }
     String text = request.explanation() == null ? "" : request.explanation().strip();
     if (text.length() < MIN_REASON || text.length() > MAX_REASON) {

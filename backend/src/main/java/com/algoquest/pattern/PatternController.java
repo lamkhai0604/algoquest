@@ -34,7 +34,8 @@ public class PatternController {
   }
 
   @GetMapping("/patterns/{id}")
-  public ChallengeView view(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
+  public ChallengeView view(
+      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
     return patterns.view(user.id(), id);
   }
 

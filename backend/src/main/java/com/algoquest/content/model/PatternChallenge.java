@@ -19,13 +19,7 @@ public record PatternChallenge(
 
   /** One approach a learner can choose, with how well it fits this problem and why. */
   public record Approach(
-      String id,
-      String name,
-      String hint,
-      String label,
-      String time,
-      String space,
-      String why) {
+      String id, String name, String hint, String label, String time, String space, String why) {
 
     public boolean correct() {
       return !"unsuitable".equals(label);

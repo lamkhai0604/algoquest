@@ -1,7 +1,5 @@
 package com.algoquest.admin;
 
-import com.algoquest.pattern.PatternStore;
-import com.algoquest.pattern.PatternStore.StoredAnswer;
 import com.algoquest.access.AccessService;
 import com.algoquest.access.AuditLog;
 import com.algoquest.access.AuthenticatedUser;
@@ -9,6 +7,8 @@ import com.algoquest.access.UserNotFoundException;
 import com.algoquest.game.AdminGameService;
 import com.algoquest.game.AdminGameService.LevelProgress;
 import com.algoquest.game.AdminGameService.LoggedAttempt;
+import com.algoquest.pattern.PatternStore;
+import com.algoquest.pattern.PatternStore.StoredAnswer;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.security.access.prepost.PreAuthorize;
