@@ -75,13 +75,13 @@ function Hero({ profile }: { profile: Profile }) {
         <p className={game.note}>{streakText(profile)}</p>
         {current && (
           <div className={styles.row}>
-            <ButtonLink to={`/levels/${current.number}`}>Continue</ButtonLink>
+            <ButtonLink to={`/levels/${current.number}`}>{t("common.continue")}</ButtonLink>
           </div>
         )}
       </div>
       <div className={game.profileTotal}>
         <span className={game.profileTotalValue}>{profile.totalXp}</span>
-        <span className={game.note}>Total XP</span>
+        <span className={game.note}>{t("profileExtra.totalXp")}</span>
       </div>
     </Card>
   );
@@ -99,7 +99,7 @@ function Stats({ profile }: { profile: Profile }) {
     { label: "Best streak", value: profile.bestStreak },
   ];
   return (
-    <ul className={game.statRow} aria-label="Totals">
+    <ul className={game.statRow} aria-label={t("profileExtra.totals")}>
       {items.map((item) => (
         <li key={item.label} className={game.statTile}>
           <span className={game.statValue}>{item.value}</span>
@@ -120,7 +120,7 @@ function LevelRow({ level }: { level: Level }) {
         <span className={game.rowTitle}>{level.title}</span>
         <Badge tone={badge.tone}>{badge.text}</Badge>
         <span className={game.profileLevelBar}>
-          <XpBar label="Level XP" value={level.xp} max={level.target} />
+          <XpBar label={t("home.levelXp")} value={level.xp} max={level.target} />
         </span>
         <span className={game.note}>
           {level.solved} of {level.problems} problems ·{" "}
