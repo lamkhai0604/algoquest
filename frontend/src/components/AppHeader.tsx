@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router";
 import styles from "./AppHeader.module.css";
+import { setLocale, useTranslation } from "../i18n";
 import { Button } from "./Button";
 import { cx } from "./cx";
 import { ThemeToggle } from "./ThemeToggle";
@@ -24,6 +25,7 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ stats, account }: AppHeaderProps) {
+  const { locale, t } = useTranslation();
   return (
     <header className={styles.header}>
       <div className={styles.left}>
@@ -38,25 +40,25 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
             <NavLink to="/" end>
               Map
             </NavLink>
-            <NavLink to="/profile">Profile</NavLink>
-            {account.isAdmin && <NavLink to="/admin">Admin</NavLink>}
+            <NavLink to="/profile">{t("nav.profile")}</NavLink>
+            {account.isAdmin && <NavLink to="/admin">{t("nav.admin")}</NavLink>}
           </nav>
         )}
       </div>
       <div className={styles.stats}>
         {account && (
           <>
-            <span className={styles.stat} title="Day streak">
+            <span className={styles.stat} title={t("game.dayStreak")}>
               🔥 <strong>{stats.streakDays}</strong>
-              <span className={styles.unit}>day streak</span>
+              <span className={styles.unit}>{t("game.dayStreak")}</span>
             </span>
-            <span className={cx(styles.stat, styles.xp)} title="Total XP">
+            <span className={cx(styles.stat, styles.xp)} title={t("game.xp")}>
               ★ <strong>{stats.totalXp}</strong>
               <span className={styles.unit}>XP</span>
             </span>
-            <span className={styles.stat} title="Hints left">
+            <span className={styles.stat} title={t("game.hintsLeft")}>
               💡 <strong>{stats.hintsLeft}</strong>
-              <span className={styles.unit}>hints</span>
+              <span className={styles.unit}>{t("game.hints")}</span>
             </span>
             <Link
               to="/profile"
@@ -73,6 +75,13 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
             </Button>
           </>
         )}
+        <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <span className="sr-only">{t("language.selector")}</span>
+          <select aria-label={t("language.selector")} value={locale} onChange={(event) => setLocale(event.target.value === "vi" ? "vi" : "en")}>
+            <option value="en">EN</option>
+            <option value="vi">VI</option>
+          </select>
+        </label>
         <ThemeToggle />
       </div>
     </header>
