@@ -37,13 +37,19 @@ const PHASES = [
   },
 ] as const;
 
-function stateLabel(level: Level, locale: Locale): { text: string; tone: BadgeTone } {
-  if (!level.available) return { text: translate(locale, "common.comingSoon"), tone: "neutral" };
+function stateLabel(
+  level: Level,
+  locale: Locale,
+): { text: string; tone: BadgeTone } {
+  if (!level.available)
+    return { text: translate(locale, "common.comingSoon"), tone: "neutral" };
   if (level.bestTestScore !== null && level.state !== "LOCKED") {
     return { text: `Test ${level.bestTestScore}`, tone: "success" };
   }
-  if (level.state === "OPEN") return { text: translate(locale, "home.open"), tone: "success" };
-  if (level.state === "EASY_ONLY") return { text: translate(locale, "home.easyOnly"), tone: "xp" };
+  if (level.state === "OPEN")
+    return { text: translate(locale, "home.open"), tone: "success" };
+  if (level.state === "EASY_ONLY")
+    return { text: translate(locale, "home.easyOnly"), tone: "xp" };
   return { text: translate(locale, "home.locked"), tone: "neutral" };
 }
 
@@ -71,7 +77,9 @@ function ContinueCard({ level }: { level: Level }) {
         </h2>
         <p className={styles.lead}>{level.summary}</p>
         <div className={styles.row}>
-          <ButtonLink to={`/levels/${level.number}`}>{t("common.continue")}</ButtonLink>
+          <ButtonLink to={`/levels/${level.number}`}>
+            {t("common.continue")}
+          </ButtonLink>
           <ButtonLink to={`/levels/${level.number}/lesson`} variant="secondary">
             {t("home.readLesson")}
           </ButtonLink>
@@ -86,7 +94,11 @@ function ContinueCard({ level }: { level: Level }) {
           <span>{percent}%</span>
         </div>
         <div className={game.heroNumbers}>
-          <XpBar label={t("home.levelXp")} value={level.xp} max={level.target} />
+          <XpBar
+            label={t("home.levelXp")}
+            value={level.xp}
+            max={level.target}
+          />
           <p className={game.note}>
             {level.solved} of {level.problems} problems solved.{" "}
             {level.practiceOpen
@@ -245,11 +257,14 @@ export function HomePage() {
         </p>
         {testing && (
           <p className={game.note} role="note">
-            <Badge tone="warning">{t("home.testAccess")}</Badge> {t("home.testNote")}
+            <Badge tone="warning">{t("home.testAccess")}</Badge>{" "}
+            {t("home.testNote")}
           </p>
         )}
       </div>
-      {levels.status === "loading" && <LoadingState label={t("home.loading")} />}
+      {levels.status === "loading" && (
+        <LoadingState label={t("home.loading")} />
+      )}
       {levels.status === "error" && (
         <ErrorState message={levels.message} onRetry={reloadLevels} />
       )}
@@ -261,9 +276,7 @@ export function HomePage() {
         <div className={game.phaseSummary}>
           <span className={game.phaseText}>
             <span className={game.phaseTitle}>{t("home.battle")}</span>
-            <span className={game.phaseGoal}>
-              {t("home.battleGoal")}
-            </span>
+            <span className={game.phaseGoal}>{t("home.battleGoal")}</span>
           </span>
           <Badge>{t("common.comingSoon")}</Badge>
         </div>
