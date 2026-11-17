@@ -31,6 +31,22 @@ describe("learning path", () => {
     );
     expect(screen.getByText(/1 of 6 problems solved/)).toBeVisible();
     expect(screen.getByTitle("Total XP")).toHaveTextContent("40");
+    expect(screen.queryByText("Test access")).toBeNull();
+  });
+
+  it("tells an account with test access that every level is open", async () => {
+    fakeApi({
+      ...routes,
+      "GET /api/v1/me": () =>
+        json(200, {
+          ...ME,
+          roles: ["OWNER"],
+          permissions: [...ME.permissions, "game.allLevels"],
+        }),
+    });
+    renderSignedInAt("/");
+
+    expect(await screen.findByText("Test access")).toBeVisible();
   });
 
   it("groups levels by phase and links only the levels the player can enter", async () => {

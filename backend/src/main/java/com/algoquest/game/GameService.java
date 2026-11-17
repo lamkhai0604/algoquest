@@ -1,5 +1,8 @@
 package com.algoquest.game;
 
+import com.algoquest.access.AccessService;
+import com.algoquest.access.Permission;
+import com.algoquest.access.Scope;
 import com.algoquest.content.ContentCatalog;
 import com.algoquest.content.ContentViews.LessonView;
 import com.algoquest.content.ContentViews.ProblemView;
@@ -44,6 +47,7 @@ public class GameService {
   private final QuickCheckStore quickChecks;
   private final AttemptStore attempts;
   private final GameRulesService rules;
+  private final AccessService access;
 
   public GameService(
       ContentCatalog catalog,
@@ -52,12 +56,14 @@ public class GameService {
       ProblemTimeStore times,
       QuickCheckStore quickChecks,
       AttemptStore attempts,
-      GameRulesService rules) {
+      GameRulesService rules,
+      AccessService access) {
     this.catalog = catalog;
     this.progress = progress;
     this.tests = tests;
     this.times = times;
     this.quickChecks = quickChecks;
+    this.access = access;
     this.attempts = attempts;
     this.rules = rules;
   }
@@ -68,6 +74,7 @@ public class GameService {
     Map<String, ProblemProgress> byProblem = progress.byProblem(userId);
     Map<Integer, Integer> best = tests.bestScores(userId);
     GameRules current = rules.current();
+    boolean all = allLevels(userId);
     List<LevelView> result = new ArrayList<>();
     for (LevelContent level : catalog.levels()) {
       int number = level.info().number();
@@ -90,11 +97,13 @@ public class GameService {
               level.info().summary(),
               level.info().phase(),
               level.available(),
-              LevelRules.state(current, number, optional(best.get(number - 1))),
+              all
+                  ? LevelState.OPEN
+                  : LevelRules.state(current, number, optional(best.get(number - 1))),
               LevelRules.barXp(current, xp, number),
               XpRules.levelTarget(current, number),
-              LevelRules.practiceOpen(current, xp, number),
-              LevelRules.testOpen(current, xp, number),
+              all || LevelRules.practiceOpen(current, xp, number),
+              all || LevelRules.testOpen(current, xp, number),
               playable,
               solved,
               best.get(number)));
@@ -150,13 +159,14 @@ public class GameService {
     Map<String, ProblemProgress> byProblem = progress.byProblem(userId);
     Set<String> done = progress.practiceDone(userId);
     Set<String> started = times.started(userId);
+    boolean all = allLevels(userId);
     List<ProblemItem> result = new ArrayList<>();
     for (Problem problem : inOrder(level)) {
       ProblemProgress mine = byProblem.getOrDefault(problem.id(), ProblemProgress.NEW);
       boolean tried = byProblem.containsKey(problem.id());
       boolean locked =
           !LevelRules.canOpen(state, Difficulty.fromLabel(problem.difficulty()))
-              || (!tried && !previousSolved(level, problem, byProblem));
+              || (!all && !tried && !previousSolved(level, problem, byProblem));
       result.add(
           new ProblemItem(
               problem.id(),
@@ -231,7 +241,9 @@ public class GameService {
     LevelContent level = catalog.level(problem.level()).orElseThrow();
     Map<String, ProblemProgress> byProblem = progress.byProblem(userId);
     // A problem with progress stays open even if the order changed later (D-042).
-    if (!byProblem.containsKey(problem.id()) && !previousSolved(level, problem, byProblem)) {
+    if (!byProblem.containsKey(problem.id())
+        && !previousSolved(level, problem, byProblem)
+        && !allLevels(userId)) {
       throw forbidden("Solve the problem before this one first.");
     }
     return problem;
@@ -239,11 +251,16 @@ public class GameService {
 
   /** The player's state for a level, from the best test score of the level before it. */
   LevelState state(UUID userId, int level) {
-    if (level == 1) {
+    if (level == 1 || allLevels(userId)) {
       return LevelState.OPEN;
     }
     return LevelRules.state(
         rules.current(), level, optional(tests.bestScores(userId).get(level - 1)));
+  }
+
+  /** Whether the player may open every available level for testing (Owner, D-055). */
+  public boolean allLevels(UUID userId) {
+    return access.hasPermission(userId, Scope.GLOBAL, Permission.GAME_ALL_LEVELS);
   }
 
   private static OptionalInt optional(Integer score) {
