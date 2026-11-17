@@ -32,6 +32,7 @@ function initialLocale(): Locale {
   }
 }
 let currentLocale: Locale = initialLocale();
+if (typeof document !== "undefined") document.documentElement.lang = currentLocale;
 const listeners = new Set<() => void>();
 
 export function getLocale(): Locale {
