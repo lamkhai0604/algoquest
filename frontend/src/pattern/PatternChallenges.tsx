@@ -2,7 +2,8 @@ import { Link } from "react-router";
 import { useApiGet } from "../api/useApiGet";
 import { Badge } from "../components";
 import game from "../pages/Game.module.css";
-import { LABEL_TEXT, LABEL_TONE } from "./types";
+import { useTranslation } from "../i18n";
+import { LABEL_TONE } from "./types";
 import type { ChallengeSummary } from "./types";
 
 /**
@@ -10,6 +11,7 @@ import type { ChallengeSummary } from "./types";
  * A failed load hides the section; it is an optional pilot and must not block the level page.
  */
 export function PatternChallenges({ level }: { level: number }) {
+  const { t } = useTranslation();
   const list = useApiGet<ChallengeSummary[]>(
     `/api/v1/levels/${level}/patterns`,
   );
@@ -18,11 +20,10 @@ export function PatternChallenges({ level }: { level: number }) {
   return (
     <section className={game.path} aria-labelledby="pattern-heading">
       <h2 className={game.sectionTitle} id="pattern-heading">
-        Pattern challenges <Badge tone="primary">Pilot · no XP</Badge>
+        {t("pattern.challenges")} <Badge tone="primary">{t("pattern.pilot")}</Badge>
       </h2>
       <p className={game.note}>
-        Each problem hides its pattern. Pick the approach you would use and say
-        why. Any correct approach counts.
+        {t("pattern.intro")}
       </p>
       <ul className={game.levelList}>
         {list.state.data.map((challenge) => (
@@ -34,10 +35,10 @@ export function PatternChallenges({ level }: { level: number }) {
               <span className={game.rowMeta}>
                 {challenge.bestLabel ? (
                   <Badge tone={LABEL_TONE[challenge.bestLabel]}>
-                    {LABEL_TEXT[challenge.bestLabel]}
+                    {t(`pattern.${challenge.bestLabel}`)}
                   </Badge>
                 ) : (
-                  <Badge>Not tried</Badge>
+                  <Badge>{t("pattern.notTried")}</Badge>
                 )}
               </span>
             </Link>
