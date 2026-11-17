@@ -15,7 +15,11 @@ const VIEW: ChallengeView = {
   examples: ["[42, 7, 7] → true"],
   constraints: ["Up to 100,000 scans"],
   approaches: [
-    { id: "hash", name: "HashMap / HashSet", hint: "Remember what you have seen" },
+    {
+      id: "hash",
+      name: "HashMap / HashSet",
+      hint: "Remember what you have seen",
+    },
     { id: "nested", name: "Nested loops", hint: "Compare every pair" },
     { id: "pass", name: "Single pass", hint: "One running value" },
   ],
@@ -32,9 +36,27 @@ const RESULT: AnswerResult = {
   complexity: 40,
   feedback: "Clear reason.",
   comparison: [
-    { ...VIEW.approaches[0]!, label: "best", time: "O(n)", space: "O(n)", why: "One pass with a set." },
-    { ...VIEW.approaches[1]!, label: "valid", time: "O(n²)", space: "O(1)", why: "Correct but slow." },
-    { ...VIEW.approaches[2]!, label: "unsuitable", time: "O(n)", space: "O(1)", why: "Cannot remember." },
+    {
+      ...VIEW.approaches[0]!,
+      label: "best",
+      time: "O(n)",
+      space: "O(n)",
+      why: "One pass with a set.",
+    },
+    {
+      ...VIEW.approaches[1]!,
+      label: "valid",
+      time: "O(n²)",
+      space: "O(1)",
+      why: "Correct but slow.",
+    },
+    {
+      ...VIEW.approaches[2]!,
+      label: "unsuitable",
+      time: "O(n)",
+      space: "O(1)",
+      why: "Cannot remember.",
+    },
   ],
   answersLeftToday: 4,
 };
@@ -83,7 +105,9 @@ describe("pattern challenges", () => {
     });
     renderSignedInAt("/patterns/P1-repeat");
 
-    const check = await screen.findByRole("button", { name: "Check my choice" });
+    const check = await screen.findByRole("button", {
+      name: "Check my choice",
+    });
     expect(check).toBeDisabled();
     await userEvent.click(screen.getByRole("radio", { name: /Nested loops/ }));
     await userEvent.type(
@@ -97,15 +121,21 @@ describe("pattern challenges", () => {
       approach: "nested",
       explanation: "Compare every pair. O(n²).",
     });
-    expect(await screen.findByText("It works.", { exact: false })).toBeVisible();
+    expect(
+      await screen.findByText("It works.", { exact: false }),
+    ).toBeVisible();
     expect(screen.getByText("100/100")).toBeVisible();
     const table = screen.getByRole("table");
     expect(within(table).getByText("Nested loops (yours)")).toBeVisible();
     expect(within(table).getByText("Best fit")).toBeVisible();
     expect(screen.getByText(/4 answers left today/)).toBeVisible();
 
-    await userEvent.click(screen.getByRole("button", { name: "Try another approach" }));
-    expect(screen.getByRole("radio", { name: /Nested loops/ })).not.toBeChecked();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Try another approach" }),
+    );
+    expect(
+      screen.getByRole("radio", { name: /Nested loops/ }),
+    ).not.toBeChecked();
   });
 
   it("shows the server's message when the daily limit is reached", async () => {
@@ -115,15 +145,25 @@ describe("pattern challenges", () => {
       "POST /api/v1/patterns/P1-repeat/answers": () =>
         json(429, {
           title: "Daily limit reached",
-          detail: "You have answered this challenge 5 times today. Try again tomorrow.",
+          detail:
+            "You have answered this challenge 5 times today. Try again tomorrow.",
         }),
     });
     renderSignedInAt("/patterns/P1-repeat");
 
-    await userEvent.click(await screen.findByRole("radio", { name: /HashMap/ }));
-    await userEvent.type(screen.getByLabelText("Why this approach?"), "Keep a set of badges.");
-    await userEvent.click(screen.getByRole("button", { name: "Check my choice" }));
+    await userEvent.click(
+      await screen.findByRole("radio", { name: /HashMap/ }),
+    );
+    await userEvent.type(
+      screen.getByLabelText("Why this approach?"),
+      "Keep a set of badges.",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Check my choice" }),
+    );
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(/Try again tomorrow/);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /Try again tomorrow/,
+    );
   });
 });

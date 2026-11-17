@@ -1,3 +1,5 @@
+import type { BadgeTone } from "../components";
+
 /** Pattern Recognition (D-057). Labels arrive only with an answer's result. */
 export type ApproachLabel = "best" | "valid" | "unsuitable";
 
@@ -50,4 +52,10 @@ export const LABEL_TEXT: Record<ApproachLabel, string> = {
   best: "Best fit",
   valid: "Valid, not the best",
   unsuitable: "Does not fit this problem",
+};
+
+export const LABEL_TONE: Record<ApproachLabel, BadgeTone> = {
+  best: "success",
+  valid: "xp",
+  unsuitable: "warning",
 };

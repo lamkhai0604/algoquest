@@ -14,14 +14,19 @@ import {
 } from "../components";
 import game from "../pages/Game.module.css";
 import pages from "../pages/Pages.module.css";
-import { LABEL_TONE } from "./PatternChallenges";
 import styles from "./Pattern.module.css";
-import { LABEL_TEXT } from "./types";
+import { LABEL_TEXT, LABEL_TONE } from "./types";
 import type { AnswerResult, ChallengeView, Choice } from "./types";
 
 const MIN_REASON = 10;
 
-function Verdict({ result, choices }: { result: AnswerResult; choices: Choice[] }) {
+function Verdict({
+  result,
+  choices,
+}: {
+  result: AnswerResult;
+  choices: Choice[];
+}) {
   const mine = result.comparison.find((a) => a.id === result.approach);
   const best = result.comparison.find((a) => a.id === result.bestApproach);
   const name = (id: string) => choices.find((c) => c.id === id)?.name ?? id;
@@ -48,7 +53,13 @@ function Verdict({ result, choices }: { result: AnswerResult; choices: Choice[] 
   );
 }
 
-function Result({ result, choices }: { result: AnswerResult; choices: Choice[] }) {
+function Result({
+  result,
+  choices,
+}: {
+  result: AnswerResult;
+  choices: Choice[];
+}) {
   return (
     <Card>
       <div className={styles.result} aria-live="polite">
@@ -84,7 +95,9 @@ function Result({ result, choices }: { result: AnswerResult; choices: Choice[] }
                     {a.id === result.approach ? " (yours)" : ""}
                   </td>
                   <td>
-                    <Badge tone={LABEL_TONE[a.label]}>{LABEL_TEXT[a.label]}</Badge>
+                    <Badge tone={LABEL_TONE[a.label]}>
+                      {LABEL_TEXT[a.label]}
+                    </Badge>
                   </td>
                   <td data-k="Time">
                     <code>{a.time}</code>
@@ -116,7 +129,8 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
   const [result, setResult] = useState<AnswerResult | null>(null);
   const [left, setLeft] = useState(challenge.answersLeftToday);
 
-  const ready = choice !== null && reason.trim().length >= MIN_REASON && left > 0;
+  const ready =
+    choice !== null && reason.trim().length >= MIN_REASON && left > 0;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -163,13 +177,19 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
       </Card>
       <Card>
         <form className={styles.form} onSubmit={submit}>
-          <fieldset className={styles.fieldset} disabled={result !== null || sending}>
+          <fieldset
+            className={styles.fieldset}
+            disabled={result !== null || sending}
+          >
             <legend>Which approach would you use?</legend>
             <div className={styles.options}>
               {challenge.approaches.map((a) => (
                 <label
                   key={a.id}
-                  className={cx(styles.option, choice === a.id && styles.chosen)}
+                  className={cx(
+                    styles.option,
+                    choice === a.id && styles.chosen,
+                  )}
                 >
                   <input
                     type="radio"
@@ -203,7 +223,12 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
           )}
           <div className={pages.row}>
             {result ? (
-              <Button type="button" variant="secondary" onClick={again} disabled={left <= 0}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={again}
+                disabled={left <= 0}
+              >
                 Try another approach
               </Button>
             ) : (
@@ -241,16 +266,22 @@ export function PatternPage() {
         {challenge && (
           <nav className={game.crumbs} aria-label="Breadcrumb">
             <Link to="/">Learning Path</Link> /{" "}
-            <Link to={`/levels/${challenge.level}`}>Level {challenge.level}</Link>{" "}
+            <Link to={`/levels/${challenge.level}`}>
+              Level {challenge.level}
+            </Link>{" "}
             / <span>Pattern challenge</span>
           </nav>
         )}
       </div>
       <div className={styles.head}>
-        <h1 className={pages.title}>{challenge?.title ?? "Pattern challenge"}</h1>
+        <h1 className={pages.title}>
+          {challenge?.title ?? "Pattern challenge"}
+        </h1>
         <Badge tone="primary">Pilot · no XP</Badge>
       </div>
-      {view.state.status === "loading" && <LoadingState label="Loading challenge…" />}
+      {view.state.status === "loading" && (
+        <LoadingState label="Loading challenge…" />
+      )}
       {view.state.status === "error" && (
         <ErrorState message={view.state.message} onRetry={view.reload} />
       )}

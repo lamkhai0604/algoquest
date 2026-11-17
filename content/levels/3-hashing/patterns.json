@@ -55,7 +55,7 @@
     "id": "P3-gift-pair",
     "level": 3,
     "title": "Two Gifts, Exact Budget",
-    "statement": "You have a gift card worth exactly budget. Prices are listed in no particular order. Return the positions of two different gifts whose prices add up to the budget, or [-1, -1].",
+    "statement": "You have a gift card worth a fixed budget. Prices are listed in no particular order. Return the positions of two different gifts whose prices add up to the budget, or [-1, -1].",
     "examples": [
       "prices = [12, 5, 9, 20], budget = 14 → [1, 2]",
       "prices = [3, 3], budget = 6 → [0, 1]"
