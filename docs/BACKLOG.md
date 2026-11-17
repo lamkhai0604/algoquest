@@ -104,7 +104,7 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-508 | Apply the Levels 1–3 review corrections | FR-03, FR-04 | P1 | Proposed |
 | T-509 | Visualizer: swap highlight | FR-03, D-049 | P1 | Done 2026-11-14 (content check for indices; frontend test replays the Level 4 swaps) |
 | T-510 | Level 4 Sorting Fundamentals content | FR-03, FR-04, D-048 | P1 | Done 2026-11-14: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles. PO content review in the pull request |
-| T-512 | Measure grading latency with `RealGraderCheck` | NFR-04 | P2 | In progress: manual `grader-check` workflow added; waits for the `GEMINI_API_KEY` repository secret |
+| T-512 | Measure grading latency with `RealGraderCheck` | NFR-04 | P2 | Done 2026-11-16: median 885 ms, slowest 1,458 ms; all five sample scores in range, including the prompt-injection sample (0) |
 | T-414 | Profile page design pass (moved from Later) | NFR-05, D-053 | P2 | Done 2026-11-14 (design chosen by Claude as delegated by the PO; frontend tests; screenshots) |
 | T-514 | Owner test access to every level (`game.allLevels`) | FR-17, D-055 | P1 | Done 2026-11-16 (API tests for the Owner and a player; frontend test for the note) |
 | T-513 | Sprint 5 report | D-007 | P2 | Proposed |
