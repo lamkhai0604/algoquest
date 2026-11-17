@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "../i18n";
 import { Link } from "react-router";
 import { api } from "../api";
 import { Button, Card } from "../components";
@@ -14,6 +15,7 @@ interface HintPanelProps {
 
 /** Hints in order; each one costs 20% of this problem's XP (FR-06). */
 export function HintPanel({ hints, problemId, onChange }: HintPanelProps) {
+  const { t } = useTranslation();
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { opened, total, quota } = hints;
@@ -26,21 +28,27 @@ export function HintPanel({ hints, problemId, onChange }: HintPanelProps) {
       .post<Hints>(`/api/v1/problems/${problemId}/hints`)
       .then(onChange)
       .catch((failure: unknown) =>
-        setError(failure instanceof Error ? failure.message : "Try again."),
+        setError(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        ),
       )
       .finally(() => setOpening(false));
   };
 
   return (
-    <Card heading="Hints">
+    <Card heading={t("solveMore.hints")}>
       {opened.map((hint, index) => (
         <p key={index} className={styles.hint}>
-          <strong>Hint {index + 1}.</strong> {hint}
+          <strong>
+            {t("solveMore.hint")} {index + 1}.
+          </strong>{" "}
+          {hint}
         </p>
       ))}
       <p className={styles.muted}>
-        {quota.remaining} of {quota.perWindow} hints left
-        {quota.refillsAt && ` · next one back ${refillIn(quota.refillsAt)}`}
+        {quota.remaining} of {quota.perWindow} {t("solveMore.hintsLeft")}
+        {quota.refillsAt &&
+          ` · ${t("solveMore.nextRefill")} ${refillIn(quota.refillsAt)}`}
       </p>
       {error && (
         <p className={styles.error} role="alert">
@@ -49,12 +57,12 @@ export function HintPanel({ hints, problemId, onChange }: HintPanelProps) {
       )}
       {!allOpen && quota.remaining > 0 && (
         <Button variant="secondary" disabled={opening} onClick={openNext}>
-          Show hint {opened.length + 1} of {total} (−20% XP)
+          {t("solveMore.showHint")} {opened.length + 1} of {total} (−20% XP)
         </Button>
       )}
       {!allOpen && quota.remaining === 0 && (
         <Link to="/vip" className={styles.vipLink}>
-          Get more hints with VIP
+          {t("solveMore.getVip")}
         </Link>
       )}
     </Card>

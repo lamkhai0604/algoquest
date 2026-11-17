@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "../i18n";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { api } from "../api";
 import { ErrorState, LoadingState } from "../components";
@@ -8,6 +9,7 @@ import type { Session } from "./session";
 
 /** Receives the one-time code after the provider sign-in and trades it for a token. */
 export function AuthCallbackPage() {
+  const { t } = useTranslation();
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const { refresh } = useAuth();
@@ -32,15 +34,12 @@ export function AuthCallbackPage() {
   if (failed) {
     return (
       <>
-        <ErrorState
-          title="Sign-in did not finish"
-          message="The sign-in link expired or was already used."
-        />
+        <ErrorState title={t("auth.notFinished")} message={t("auth.expired")} />
         <p style={{ textAlign: "center" }}>
-          <Link to="/sign-in">Sign in again</Link>
+          <Link to="/sign-in">{t("auth.again")}</Link>
         </p>
       </>
     );
   }
-  return <LoadingState label="Signing you in…" />;
+  return <LoadingState label={t("common.signing")} />;
 }

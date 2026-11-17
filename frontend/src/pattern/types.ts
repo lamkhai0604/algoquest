@@ -48,12 +48,6 @@ export interface AnswerResult {
   answersLeftToday: number;
 }
 
-export const LABEL_TEXT: Record<ApproachLabel, string> = {
-  best: "Best fit",
-  valid: "Valid, not the best",
-  unsuitable: "Does not fit this problem",
-};
-
 export const LABEL_TONE: Record<ApproachLabel, BadgeTone> = {
   best: "success",
   valid: "xp",

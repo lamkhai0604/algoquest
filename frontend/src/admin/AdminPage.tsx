@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation, localizeLabel } from "../i18n";
 import { BackButton, Chip } from "../components";
 import pages from "../pages/Pages.module.css";
 import styles from "./Admin.module.css";
@@ -18,12 +19,13 @@ const TABS: { id: Tab; label: string }[] = [
 
 /** Admin panel (FR-17.6, FR-18): grading log, users and roles, rules, audit. */
 export function AdminPage() {
+  const { t, locale } = useTranslation();
   const [tab, setTab] = useState<Tab>("log");
   return (
     <div className={pages.page}>
       <div className={pages.topBar}>
-        <BackButton to="/" label="Back to the Learning Path" />
-        <h1 className={pages.title}>Admin</h1>
+        <BackButton to="/" label={t("profile.back")} />
+        <h1 className={pages.title}>{t("nav.admin")}</h1>
       </div>
       <div className={styles.tabs}>
         {TABS.map((item) => (
@@ -32,7 +34,7 @@ export function AdminPage() {
             selected={tab === item.id}
             onToggle={() => setTab(item.id)}
           >
-            {item.label}
+            {localizeLabel(locale, item.label)}
           </Chip>
         ))}
       </div>

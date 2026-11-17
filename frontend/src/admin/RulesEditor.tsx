@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation, localizeLabel } from "../i18n";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
 import {
@@ -66,6 +67,7 @@ function Form({
   onSaved: (v: RulesView) => void;
 }) {
   const { reloadLevels } = useGame();
+  const { t, locale } = useTranslation();
   const [draft, setDraft] = useState<GameRules>(view.current);
   const [confirming, setConfirming] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -83,12 +85,14 @@ function Form({
       .put<RulesView>("/api/v1/admin/game-rules", draft)
       .then((saved) => {
         setDraft(saved.current);
-        setMessage("Saved. The new rules apply from the next request.");
+        setMessage(t("admin.saved"));
         onSaved(saved);
         reloadLevels();
       })
       .catch((failure: unknown) =>
-        setMessage(failure instanceof Error ? failure.message : "Try again."),
+        setMessage(
+          failure instanceof Error ? failure.message : t("common.retry"),
+        ),
       )
       .finally(() => {
         setSaving(false);
@@ -99,14 +103,16 @@ function Form({
   return (
     <>
       {GROUPS.map((group) => (
-        <Card key={group.title} heading={group.title}>
+        <Card key={group.title} heading={localizeLabel(locale, group.title)}>
           <div className={styles.rules}>
             {group.fields.map((field) => (
               <label key={field.key} className={styles.rule}>
                 <span>
-                  {field.label}
+                  {localizeLabel(locale, field.label)}
                   {draft[field.key] !== view.defaults[field.key] && (
-                    <Badge tone="xp">default {view.defaults[field.key]}</Badge>
+                    <Badge tone="xp">
+                      {t("admin.defaultLabel")} {view.defaults[field.key]}
+                    </Badge>
                   )}
                 </span>
                 <span className={styles.ruleInput}>
@@ -121,7 +127,9 @@ function Form({
                       })
                     }
                   />
-                  <span className={styles.muted}>{field.unit}</span>
+                  <span className={styles.muted}>
+                    {localizeLabel(locale, field.unit)}
+                  </span>
                 </span>
               </label>
             ))}
@@ -130,10 +138,10 @@ function Form({
       ))}
       <Card>
         <p className={styles.muted}>
-          With these values an Easy problem earns {easyXp} XP and a Medium one{" "}
-          {mediumXp} XP. A full pass through a level (3 Easy, 3 Medium, quick
-          check) earns {fullPass} XP against a bar of {draft.levelTarget} XP
-          {fullPass < draft.levelTarget ? " — the bar would not fill" : ""}.
+          {t("admin.ruleSummary")} {easyXp} {t("admin.ruleSummaryMid")}{" "}
+          {mediumXp} {t("admin.ruleSummaryEnd")} {fullPass}{" "}
+          {t("admin.ruleSummaryBar")} {draft.levelTarget} XP
+          {fullPass < draft.levelTarget ? t("admin.ruleSummaryNotFull") : ""}.
         </p>
         <div className={styles.saveRow}>
           <Button
@@ -141,15 +149,15 @@ function Form({
             onClick={() => setDraft(view.defaults)}
             disabled={saving}
           >
-            Use defaults
+            {t("admin.defaults")}
           </Button>
           <Button
             onClick={() => setConfirming(true)}
             disabled={saving || changed.length === 0}
           >
-            Save{" "}
+            {t("admin.save")}{" "}
             {changed.length > 0
-              ? `${changed.length} change${changed.length > 1 ? "s" : ""}`
+              ? `${changed.length} ${t(changed.length > 1 ? "admin.changes" : "admin.change")}`
               : ""}
           </Button>
         </div>
@@ -161,9 +169,9 @@ function Form({
       </Card>
       {confirming && (
         <ConfirmDialog
-          title="Change the game rules?"
-          confirmLabel="Save"
-          cancelLabel="Cancel"
+          title={t("admin.rulesConfirm")}
+          confirmLabel={t("common.save")}
+          cancelLabel={t("common.cancel")}
           busy={saving}
           onConfirm={save}
           onCancel={() => setConfirming(false)}
@@ -171,8 +179,7 @@ function Form({
           {changed
             .map((key) => `${key}: ${view.current[key]} → ${draft[key]}`)
             .join(", ")}
-          . XP already earned stays as it is. The change is written to the audit
-          log.
+          . {t("admin.rulesConfirmInfo")}
         </ConfirmDialog>
       )}
     </>
@@ -181,12 +188,15 @@ function Form({
 
 /** Game rules editor (FR-18.3, D-047). */
 export function RulesEditor() {
+  const { t } = useTranslation();
   const { state, reload } = useApiGet<RulesView>("/api/v1/admin/game-rules");
   const [saved, setSaved] = useState<RulesView | null>(null);
   const view = saved ?? (state.status === "ready" ? state.data : null);
   return (
     <section className={styles.section}>
-      {state.status === "loading" && <LoadingState label="Loading rules…" />}
+      {state.status === "loading" && (
+        <LoadingState label={t("admin.loadingRules")} />
+      )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}

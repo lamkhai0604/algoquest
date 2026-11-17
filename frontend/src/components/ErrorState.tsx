@@ -1,4 +1,5 @@
 import { Button } from "./Button";
+import { useTranslation } from "../i18n";
 import styles from "./States.module.css";
 
 export interface ErrorStateProps {
@@ -12,13 +13,16 @@ export function ErrorState({
   message,
   onRetry,
 }: ErrorStateProps) {
+  const { t } = useTranslation();
   return (
     <div className={styles.state} role="alert">
-      <strong className={styles.title}>{title}</strong>
+      <strong className={styles.title}>
+        {title === "Something went wrong" ? t("common.errorTitle") : title}
+      </strong>
       <span>{message}</span>
       {onRetry && (
         <Button variant="secondary" size="sm" onClick={onRetry}>
-          Try again
+          {t("common.retry")}
         </Button>
       )}
     </div>

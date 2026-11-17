@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "../i18n";
 import { Link, useParams, useSearchParams } from "react-router";
 import { api } from "../api";
 import { useApiGet } from "../api/useApiGet";
@@ -27,12 +28,13 @@ import type { AttemptMode, AttemptResult, ProblemDetail } from "./types";
 import { drafts, useActiveTime } from "./useTimer";
 
 function ProblemText({ problem }: { problem: ProblemDetail }) {
+  const { t } = useTranslation();
   return (
     <Card>
       <p className={styles.statement}>
         <InlineText text={problem.statement} />
       </p>
-      <h2 className={styles.subheading}>Examples</h2>
+      <h2 className={styles.subheading}>{t("solve.examples")}</h2>
       <ul className={styles.examples}>
         {problem.examples.map((example, index) => (
           <li key={index}>
@@ -43,7 +45,7 @@ function ProblemText({ problem }: { problem: ProblemDetail }) {
           </li>
         ))}
       </ul>
-      <h2 className={styles.subheading}>Constraints</h2>
+      <h2 className={styles.subheading}>{t("solve.constraints")}</h2>
       <ul className={styles.constraints}>
         {problem.constraints.map((constraint) => (
           <li key={constraint}>
@@ -71,24 +73,25 @@ function TimeNote({
   seconds: number;
   rules: GameRules;
 }) {
+  const { t } = useTranslation();
   const limit = timeLimitSeconds(difficulty, rules);
   if (seconds > limit) {
     return (
       <p className={styles.timeNote} role="status">
-        The time bonus is over. You can still solve this problem and earn its XP
-        without the +{rules.timeBonus} bonus.
+        {t("solveMore.timeOver")} +{rules.timeBonus} {t("solveMore.bonus")}
       </p>
     );
   }
   return (
     <p className={styles.timeNote}>
-      Finish within {clock(limit)} of active time for +{rules.timeBonus} XP. The
-      clock pauses when you leave this page.
+      {t("solveMore.finishWithin")} {clock(limit)} {t("solveMore.activeTime")} +
+      {rules.timeBonus} {t("solveMore.clockPauses")}
     </p>
   );
 }
 
 function Solve({ problem, mode }: SolveProps) {
+  const { t } = useTranslation();
   const practice = mode === "practice";
   const { reloadLevels, reloadHintQuota, rules } = useGame();
   const hintState = useApiGet<Hints>(
@@ -151,9 +154,7 @@ function Solve({ problem, mode }: SolveProps) {
       })
       .catch((failure: unknown) => {
         setError(
-          failure instanceof Error
-            ? failure.message
-            : "Something went wrong. Please try again.",
+          failure instanceof Error ? failure.message : t("common.error"),
         );
         setAsking(null);
       })
@@ -179,9 +180,7 @@ function Solve({ problem, mode }: SolveProps) {
       })
       .catch((failure: unknown) => {
         setError(
-          failure instanceof Error
-            ? failure.message
-            : "Something went wrong. Please try again.",
+          failure instanceof Error ? failure.message : t("common.error"),
         );
       })
       .finally(() => setSubmitting(false));
@@ -191,15 +190,17 @@ function Solve({ problem, mode }: SolveProps) {
     <>
       <div className={styles.titleRow}>
         <Badge tone="primary">{problem.difficulty}</Badge>
-        {practice && <Badge tone="xp">Practice round</Badge>}
+        {practice && <Badge tone="xp">{t("solve.practiceRound")}</Badge>}
         <h1 className={pages.title}>{problem.title}</h1>
         {!practice && view === "work" && (
           <span
             className={cx(styles.timer, over && styles.timerOver)}
-            title="Active time on this problem"
+            title={t("solve.activeTime")}
           >
             <strong>{clock(seconds)}</strong>
-            {over ? " · time bonus over" : ` / ${clock(limit)} time bonus`}
+            {over
+              ? ` · ${t("solveMore.timeBonusOver")}`
+              : ` / ${clock(limit)} ${t("solveMore.timeBonus")}`}
           </span>
         )}
       </div>
@@ -207,9 +208,8 @@ function Solve({ problem, mode }: SolveProps) {
         <ProblemText problem={problem} />
         {practice ? (
           <p className={styles.muted}>
-            Explain the problem again without hints. A score of{" "}
-            {rules.passScore} or more marks it Done and adds up to{" "}
-            {rules.practiceDoneXp} XP.
+            {t("solveMore.practiceIntro")} {rules.passScore}{" "}
+            {t("solveMore.practiceEnd")} {rules.practiceDoneXp} XP.
           </p>
         ) : (
           currentHints && (
@@ -224,7 +224,10 @@ function Solve({ problem, mode }: SolveProps) {
       {view === "result" && result ? (
         <>
           <div className={styles.resultRow}>
-            <Card heading="Your answer" className={styles.answerCard}>
+            <Card
+              heading={t("solveMore.yourAnswer")}
+              className={styles.answerCard}
+            >
               <p className={styles.answerText}>{result.explanation || text}</p>
             </Card>
             <FeedbackPanel result={result} level={problem.level} />
@@ -254,8 +257,8 @@ function Solve({ problem, mode }: SolveProps) {
           <ExplainForm
             xpNote={
               practice
-                ? `Done adds up to ${rules.practiceDoneXp} XP`
-                : `Up to ${maxXp(problem.difficulty, seconds, hintsUsed, rules)} XP`
+                ? `${t("solveMore.doneUpTo")} ${rules.practiceDoneXp} XP`
+                : `${t("solveMore.upTo")} ${maxXp(problem.difficulty, seconds, hintsUsed, rules)} XP`
             }
             text={text}
             onTextChange={changeText}
@@ -268,29 +271,27 @@ function Solve({ problem, mode }: SolveProps) {
       {!practice && <ScoringGuide />}
       {asking === "resume" && (
         <ConfirmDialog
-          title="Continue where you left off?"
-          confirmLabel="Continue"
-          cancelLabel="Start again"
+          title={t("solve.resume")}
+          confirmLabel={t("common.continue")}
+          cancelLabel={t("solveMore.startAgain")}
           busy={restarting}
           onConfirm={() => setAsking(null)}
           onCancel={startAgain}
         >
-          You have {clock(problem.activeSeconds)} of active time on this
-          problem. Continue keeps your draft and the clock; Start again clears
-          both.
+          {t("solveMore.resumeInfo")} {clock(problem.activeSeconds)}{" "}
+          {t("solveMore.resumeInfoTail")}
         </ConfirmDialog>
       )}
       {asking === "retry" && (
         <ConfirmDialog
-          title="Retry this problem?"
-          confirmLabel="Retry"
-          cancelLabel="Keep my result"
+          title={t("solve.retry")}
+          confirmLabel={t("solveMore.retry")}
+          cancelLabel={t("solveMore.retryKeep")}
           busy={restarting}
           onConfirm={startAgain}
           onCancel={() => setAsking(null)}
         >
-          The answer box starts empty and the clock starts from zero. XP you
-          already earned stays; a problem earns XP only once.
+          {t("solveMore.retryInfo")}
         </ConfirmDialog>
       )}
     </>
@@ -299,6 +300,7 @@ function Solve({ problem, mode }: SolveProps) {
 
 /** Solve page (FR-04, FR-05): problem, explanation box, and result. */
 export function SolvePage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [params] = useSearchParams();
   const mode: AttemptMode =
@@ -313,12 +315,12 @@ export function SolvePage() {
           to={level === null ? "/" : `/levels/${level}`}
           label={
             level === null
-              ? "Back to the Learning Path"
-              : `Back to Level ${level}`
+              ? t("profile.back")
+              : `${t("lesson.backToLevel")} ${level}`
           }
         />
-        <nav className={styles.crumbs} aria-label="Breadcrumb">
-          <Link to="/">Learning Path</Link>
+        <nav className={styles.crumbs} aria-label={t("level.breadcrumb")}>
+          <Link to="/">{t("home.title")}</Link>
           {level !== null && (
             <>
               {" / "}
@@ -327,7 +329,9 @@ export function SolvePage() {
           )}
         </nav>
       </div>
-      {state.status === "loading" && <LoadingState label="Loading problem…" />}
+      {state.status === "loading" && (
+        <LoadingState label={t("solve.loading")} />
+      )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}

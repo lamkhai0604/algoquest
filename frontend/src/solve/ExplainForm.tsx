@@ -1,4 +1,5 @@
 import { Badge, Button, Card } from "../components";
+import { useTranslation } from "../i18n";
 import { CRITERIA, MAX_LENGTH } from "./rules";
 import styles from "./Solve.module.css";
 
@@ -21,13 +22,12 @@ export function ExplainForm({
   error,
   onSubmit,
 }: ExplainFormProps) {
+  const { t } = useTranslation();
   const length = text.trim().length;
   const tooLong = length > MAX_LENGTH;
   return (
-    <Card heading="Explain your approach">
-      <p className={styles.muted}>
-        Talk it through like an interview. No code needed.
-      </p>
+    <Card heading={t("solveMore.explain")}>
+      <p className={styles.muted}>{t("solveMore.interview")}</p>
       <div className={styles.rubric}>
         {CRITERIA.map((criterion) => (
           <Badge key={criterion.key} tone="primary">
@@ -36,7 +36,7 @@ export function ExplainForm({
         ))}
       </div>
       <label className={styles.label} htmlFor="explanation">
-        Your explanation
+        {t("solveMore.explanation")}
       </label>
       <textarea
         id="explanation"
@@ -59,7 +59,7 @@ export function ExplainForm({
       </div>
       {tooLong && (
         <p className={styles.error} role="alert">
-          Your explanation is longer than {MAX_LENGTH} characters.
+          {t("solveMore.tooLong")} {MAX_LENGTH} {t("solveMore.characters")}
         </p>
       )}
       {error && (
@@ -71,7 +71,7 @@ export function ExplainForm({
         onClick={onSubmit}
         disabled={submitting || length === 0 || tooLong}
       >
-        {submitting ? "Grading your explanation…" : "Submit for grading"}
+        {submitting ? t("solveMore.grading") : t("solveMore.submit")}
       </Button>
     </Card>
   );
