@@ -36,9 +36,8 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
             ))}
           </ul>
           <p className={styles.note}>
-            An AI grader compares your explanation with the teacher&apos;s
-            answer key. <strong>{rules.passScore} or more</strong> solves the
-            problem.
+            {t("scoringText.graderIntro")}{" "}
+            <strong>{rules.passScore} {t("scoringText.orMore")}</strong> {t("scoringText.solves")}
           </p>
         </section>
         {variant === "problem" ? (
@@ -63,26 +62,20 @@ export function ScoringGuide({ variant = "problem" }: ScoringGuideProps) {
             </ul>
             <p className={styles.note}>
               Each problem includes a{" "}
-              <strong>+{rules.timeBonus} XP time bonus</strong> for finishing
-              within {timeLimitMinutes("Easy", rules)} minutes (Easy) or{" "}
-              {timeLimitMinutes("Medium", rules)} minutes (Medium) of active
-              time. The clock pauses when you leave the page. After the limit
-              you can still solve the problem, without the bonus.
+              <strong>+{rules.timeBonus} {t("scoringText.timeBonus")}</strong> {t("scoringText.within")}{" "}
+              {timeLimitMinutes("Easy", rules)} {t("scoringText.minutes")} ({t("common.difficultyEasy")}) {t("scoringText.or")}{" "}
+              {timeLimitMinutes("Medium", rules)} {t("scoringText.minutes")} ({t("common.difficultyMedium")}) {t("scoringText.active")}
             </p>
             <p className={styles.note}>
-              Each hint takes {rules.hintPenaltyPercent}% off the problem&apos;s
-              XP. XP is earned once, the first time you solve a problem; the
-              next problem opens when this one is solved.
+              {t("scoringText.hintStart")} {rules.hintPenaltyPercent}% {t("scoringText.hintEnd")}
             </p>
           </section>
         ) : (
           <section>
             <h3 className={styles.heading}>{t("solve.testScore")}</h3>
             <p className={styles.note}>
-              The test score is the average of the three problem scores, rounded
-              down. {rules.passScore}–99 opens the Easy problems of the next
-              level; 100 opens the whole level. Below {rules.passScore}, you can
-              take the test again.
+              {t("scoringText.testStart")} {rules.passScore}–99 {t("scoringText.nextOpen")}{" "}
+              {rules.passScore}, {t("scoringText.retake")}
             </p>
           </section>
         )}

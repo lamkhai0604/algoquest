@@ -26,6 +26,7 @@ export type TranslationKey =
   | `testMore.${keyof typeof en.testMore}`
   | `codeMore.${keyof typeof en.codeMore}`
   | `admin.${keyof typeof en.admin}`
+  | `scoringText.${keyof typeof en.scoringText}`
   | `common.${keyof typeof en.common}`
   | `auth.${keyof typeof en.auth}`
   | `misc.${keyof typeof en.misc}`

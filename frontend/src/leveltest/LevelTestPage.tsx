@@ -250,7 +250,7 @@ export function LevelTestPage() {
       </div>
       <h1 className={pages.title}>
         {test
-          ? `${t("common.level")} ${test.level} test`
+          ? `${t("common.level")} ${test.level} ${t("testMore.testWord")}`
           : t("testMore.levelTest")}
       </h1>
       {!test && state.status === "loading" && (

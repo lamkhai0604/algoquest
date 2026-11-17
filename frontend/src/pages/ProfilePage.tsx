@@ -57,7 +57,8 @@ function streakText(profile: Profile, locale: Locale): string {
     return translate(locale, "profileMore.noStreak");
   }
   const days = profile.currentStreak === 1 ? "day" : "days";
-  return `${profile.currentStreak} ${days} ${translate(locale, "profileMore.daysInRow")}`;
+  const unit = locale === "vi" ? "ngày" : days;
+  return `${profile.currentStreak} ${unit} ${translate(locale, "profileMore.daysInRow")}`;
 }
 
 function Hero({ profile }: { profile: Profile }) {

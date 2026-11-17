@@ -318,7 +318,8 @@
     "levelOpen": "is open.",
     "easyOpen": ": Easy problems are open. Score 100 to open the rest.",
     "scoreTo": "Score",
-    "scoreToTail": "or more to open the next level. You can retake the test."
+    "scoreToTail": "or more to open the next level. You can retake the test.",
+    "testWord": "test"
   },
   "codeMore": {
     "heading": "Code it for 2× XP",
@@ -421,5 +422,20 @@
     "Steps": "Steps",
     "Time and space": "Time and space",
     "Edge cases": "Edge cases"
+  },
+  "scoringText": {
+    "graderIntro": "An AI grader compares your explanation with the teacher's answer key.",
+    "orMore": "or more",
+    "solves": "solves the problem.",
+    "timeBonus": "XP time bonus",
+    "within": "for finishing within",
+    "minutes": "minutes",
+    "or": "or",
+    "active": "of active time. The clock pauses when you leave the page. After the limit you can still solve the problem, without the bonus.",
+    "hintStart": "Each hint takes",
+    "hintEnd": "off the problem's XP. XP is earned once, the first time you solve a problem; the next problem opens when this one is solved.",
+    "testStart": "The test score is the average of the three problem scores, rounded down.",
+    "nextOpen": "opens the Easy problems of the next level; 100 opens the whole level. Below",
+    "retake": "you can take the test again."
   }
 }

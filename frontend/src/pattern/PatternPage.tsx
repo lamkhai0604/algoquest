@@ -264,7 +264,7 @@ export function PatternPage() {
           label={t("pattern.backLevel")}
         />
         {challenge && (
-          <nav className={game.crumbs} aria-label="Breadcrumb">
+          <nav className={game.crumbs} aria-label={t("level.breadcrumb")}>
             <Link to="/">{t("nav.map")}</Link> /{" "}
             <Link to={`/levels/${challenge.level}`}>
               Level {challenge.level}

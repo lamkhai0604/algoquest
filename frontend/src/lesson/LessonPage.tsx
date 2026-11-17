@@ -308,7 +308,7 @@ export function LessonPage() {
           to={`/levels/${number}`}
           label={`${t("lesson.backToLevel")} ${number}`}
         />
-        <nav className={styles.crumbs} aria-label="Breadcrumb">
+        <nav className={styles.crumbs} aria-label={t("level.breadcrumb")}>
           <Link to="/">{t("nav.map")}</Link> /{" "}
           <Link to={`/levels/${number}`}>Level {number}</Link> /{" "}
           <span>{t("lesson.lesson")}</span>

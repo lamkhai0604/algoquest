@@ -318,7 +318,8 @@
     "levelOpen": "đã mở.",
     "easyOpen": ": Các bài dễ đã mở. Đạt 100 điểm để mở phần còn lại.",
     "scoreTo": "Đạt",
-    "scoreToTail": "điểm trở lên để mở cấp độ tiếp theo. Bạn có thể thi lại."
+    "scoreToTail": "điểm trở lên để mở cấp độ tiếp theo. Bạn có thể thi lại.",
+    "testWord": "kiểm tra"
   },
   "codeMore": {
     "heading": "Viết code để nhận gấp đôi XP",
@@ -421,5 +422,20 @@
     "Steps": "Các bước",
     "Time and space": "Thời gian và bộ nhớ",
     "Edge cases": "Trường hợp biên"
+  },
+  "scoringText": {
+    "graderIntro": "AI so sánh phần giải thích của bạn với đáp án mẫu.",
+    "orMore": "trở lên",
+    "solves": "là giải thành công.",
+    "timeBonus": "XP thưởng thời gian",
+    "within": "khi hoàn thành trong",
+    "minutes": "phút",
+    "or": "hoặc",
+    "active": "thời gian làm bài. Đồng hồ dừng khi bạn rời trang. Hết giờ vẫn giải bài được nhưng không nhận thưởng.",
+    "hintStart": "Mỗi gợi ý trừ",
+    "hintEnd": "XP của bài. XP được cộng một lần ở lần đầu giải thành công; bài tiếp theo mở khi giải xong bài hiện tại.",
+    "testStart": "Điểm kiểm tra bằng trung bình điểm ba bài, làm tròn xuống.",
+    "nextOpen": "mở các bài dễ ở cấp độ tiếp theo; 100 mở toàn bộ. Nếu dưới",
+    "retake": "bạn có thể thi lại."
   }
 }
