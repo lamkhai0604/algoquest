@@ -3,7 +3,6 @@ import { Link } from "react-router";
 import { useAuth } from "../auth/authContext";
 import {
   Badge,
-  Button,
   ButtonLink,
   Card,
   cx,
@@ -250,17 +249,21 @@ export function HomePage() {
         <ErrorState message={levels.message} onRetry={reloadLevels} />
       )}
       {levels.status === "ready" && <LearningPath levels={levels.data} />}
-      <Card heading="Battle mode">
-        <p className={game.note}>
-          Race another player on the same problem: the better explanation wins
-          the round. <Badge tone="warning">Coming soon</Badge>
-        </p>
-        <div className={styles.row}>
-          <Button variant="secondary" disabled>
-            Find an opponent
-          </Button>
+      <section
+        className={cx(game.phase, game.phaseLocked)}
+        aria-label="Battle mode"
+      >
+        <div className={game.phaseSummary}>
+          <span className={game.phaseText}>
+            <span className={game.phaseTitle}>Battle mode</span>
+            <span className={game.phaseGoal}>
+              Race another player on the same problem: the better explanation
+              wins the round.
+            </span>
+          </span>
+          <Badge>Coming soon</Badge>
         </div>
-      </Card>
+      </section>
     </div>
   );
 }
