@@ -20,11 +20,10 @@ export function PatternChallenges({ level }: { level: number }) {
   return (
     <section className={game.path} aria-labelledby="pattern-heading">
       <h2 className={game.sectionTitle} id="pattern-heading">
-        {t("pattern.challenges")} <Badge tone="primary">{t("pattern.pilot")}</Badge>
+        {t("pattern.challenges")}{" "}
+        <Badge tone="primary">{t("pattern.pilot")}</Badge>
       </h2>
-      <p className={game.note}>
-        {t("pattern.intro")}
-      </p>
+      <p className={game.note}>{t("pattern.intro")}</p>
       <ul className={game.levelList}>
         {list.state.data.map((challenge) => (
           <li key={challenge.id}>
