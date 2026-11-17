@@ -8,7 +8,9 @@ afterEach(() => setLocale("en"));
 describe("i18n foundation", () => {
   it("keeps EN/VI dictionaries in sync", () => {
     for (const section of Object.keys(en) as (keyof typeof en)[]) {
-      expect(Object.keys(vi[section]).sort()).toEqual(Object.keys(en[section]).sort());
+      expect(Object.keys(vi[section]).sort()).toEqual(
+        Object.keys(en[section]).sort(),
+      );
     }
   });
 
