@@ -88,7 +88,8 @@ flowchart TB
 | `content` | Load `content/` at startup, validate against the schema (startup fails on invalid content), expose a read-only catalog; public DTOs never include answer keys or test expectations | In-memory catalog |
 | `game.domain` | Pure Java rules with no Spring or I/O: problem XP (FR-08), level target, lock states (FR-10), practice gate (FR-09), hint quota (FR-06), streak (FR-13), test score | Nothing |
 | `game` | Use cases: attempts, hints, practice, tests, profile, leaderboard (dummy players from content) | `attempt`, `problem_progress`, `level_progress`, `test_attempt`, `hint_use`, `streak` |
-| `grading` | `Grader` interface; `GeminiGrader` (prompt, JSON schema, 20 s timeout, score snapping); `FakeGrader` for tests and smoke runs | Grading prompt |
+| `pattern` | Pattern Recognition pilot (D-057): list challenges, record an answer, compare approaches; the content label decides correctness and the AI grades only the reason; no XP; 5 answers per challenge per day | `pattern_attempt` |
+| `grading` | `Grader` and `PatternGrader` interfaces; `GeminiClient` (shared call, JSON schema, 20 s timeout); `GeminiGrader` and `GeminiPatternGrader` (prompts, score snapping); fakes for tests and smoke runs | Grading prompts |
 | `runner` | `CodeRunner` interface; `Judge0Runner` for Java (daily quota guard); JavaScript output checking (D-035) | Test harnesses |
 | `admin` | Admin endpoints; every one guarded by a permission and audit-logged | Nothing |
 | `config` | Game config with file defaults and validated database overrides | `game_config` |
@@ -255,7 +256,11 @@ sequenceDiagram
 | POST | `/api/v1/tests/{id}/submit` | `game.play` | FR-10 |
 | GET | `/api/v1/profile` | `game.play` | FR-12, FR-13 |
 | GET | `/api/v1/leaderboard` | `game.play` | FR-14 |
+| GET | `/api/v1/levels/{n}/patterns` | `game.play` | D-057 |
+| GET | `/api/v1/patterns/{id}` | `game.play` | D-057 |
+| POST | `/api/v1/patterns/{id}/answers` | `game.play` | D-057 |
 | GET | `/api/v1/admin/attempts` | `admin.gradingLog.view` | FR-18.1 |
+| GET | `/api/v1/admin/pattern-answers` | `admin.gradingLog.view` | FR-18.1, D-057 |
 | POST | `/api/v1/admin/users/{id}/progress-reset` | `admin.progress.reset` | FR-18.2 |
 | GET, PUT | `/api/v1/admin/config` | `admin.config.edit` | FR-18.3 |
 | GET | `/api/v1/admin/users` | `admin.users.view` | FR-18.4 |
@@ -275,6 +280,7 @@ erDiagram
     APP_USER ||--|| STREAK : keeps
     APP_USER ||--o{ ROLE_ASSIGNMENT : holds
     APP_USER ||--o{ AUDIT_LOG : performs
+    APP_USER ||--o{ PATTERN_ATTEMPT : answers
     APP_USER {
       uuid id PK
       text email UK
@@ -358,6 +364,20 @@ erDiagram
       uuid updated_by FK
       timestamptz updated_at
     }
+    PATTERN_ATTEMPT {
+      uuid id PK
+      uuid user_id FK
+      text challenge_id
+      text approach_id
+      text label
+      text explanation
+      int reason_score
+      int complexity
+      text feedback
+      text grader
+      int grading_ms
+      timestamptz created_at
+    }
     LOGIN_CODE {
       text code_hash PK
       uuid user_id FK
@@ -366,7 +386,7 @@ erDiagram
     }
 ```
 
-Schema changes only through Flyway migrations. `PROBLEM_PROGRESS (user_id, problem_id)` being unique stops double XP. `ROLE_ASSIGNMENT.scope_type`/`scope_id` are empty in this release (§9.3). The app has no update or delete path for `AUDIT_LOG`. Problems, lessons, and levels live in `content/`, so tables store their text IDs; dummy players are a content file.
+Schema changes only through Flyway migrations. `PROBLEM_PROGRESS (user_id, problem_id)` being unique stops double XP. `ROLE_ASSIGNMENT.scope_type`/`scope_id` are empty in this release (§9.3). The app has no update or delete path for `AUDIT_LOG`. Problems, lessons, and levels live in `content/`, so tables store their text IDs; dummy players are a content file. `PATTERN_ATTEMPT.label` is copied from the content at answer time so the record stays readable if the content changes.
 
 ## 9. Security and Access Control
 

@@ -1,0 +1,158 @@
+[
+  {
+    "id": "P3-repeat-visitor",
+    "level": 3,
+    "title": "Repeat Visitor",
+    "statement": "A museum scanner logs a badge ID each time a visitor enters. Return true if any badge was scanned more than once today.",
+    "examples": [
+      "badges = [42, 7, 13, 7, 99] → true",
+      "badges = [5, 6, 8] → false"
+    ],
+    "constraints": [
+      "Up to 100,000 scans",
+      "Badge IDs are whole numbers"
+    ],
+    "approaches": [
+      {
+        "id": "hash",
+        "name": "HashMap / HashSet",
+        "hint": "Remember what you have seen",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "One pass; a set answers \"seen before?\" in O(1) on average, so the first repeat is found right away."
+      },
+      {
+        "id": "sort",
+        "name": "Sort, then scan",
+        "hint": "Put items in order first",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(1) to O(n)",
+        "why": "Repeats end up side by side, so one scan finds them. Correct, but sorting costs more than one pass."
+      },
+      {
+        "id": "nested",
+        "name": "Nested loops",
+        "hint": "Compare every pair",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Correct, but 100,000 scans means about 5 billion comparisons."
+      },
+      {
+        "id": "pass",
+        "name": "Single pass",
+        "hint": "One loop with a running value",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "A single running value cannot remember every badge seen so far."
+      }
+    ]
+  },
+  {
+    "id": "P3-gift-pair",
+    "level": 3,
+    "title": "Two Gifts, Exact Budget",
+    "statement": "You have a gift card worth a fixed budget. Prices are listed in no particular order. Return the positions of two different gifts whose prices add up to the budget, or [-1, -1].",
+    "examples": [
+      "prices = [12, 5, 9, 20], budget = 14 → [1, 2]",
+      "prices = [3, 3], budget = 6 → [0, 1]"
+    ],
+    "constraints": [
+      "Up to 100,000 prices",
+      "At most one answer"
+    ],
+    "approaches": [
+      {
+        "id": "hash",
+        "name": "HashMap / HashSet",
+        "hint": "Remember what you have seen",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "For each price, look up budget − price among the prices already seen, with their positions."
+      },
+      {
+        "id": "nested",
+        "name": "Nested loops",
+        "hint": "Compare every pair",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Checks every pair. Correct, but slow for 100,000 prices."
+      },
+      {
+        "id": "sort",
+        "name": "Sort, then scan",
+        "hint": "Put items in order first",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Works if each price keeps its original position while sorting; searching the sorted list for the pair is taught in Level 12."
+      },
+      {
+        "id": "pass",
+        "name": "Single pass",
+        "hint": "One loop with a running value",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "One running value cannot tell which earlier price completes the pair."
+      }
+    ]
+  },
+  {
+    "id": "P3-class-winner",
+    "level": 3,
+    "title": "Class Election Winner",
+    "statement": "Each student writes one name on a ballot. Return the name with the most votes. If names tie, return the one that comes first alphabetically.",
+    "examples": [
+      "votes = [\"mai\", \"an\", \"mai\", \"binh\"] → \"mai\"",
+      "votes = [\"lan\", \"an\"] → \"an\""
+    ],
+    "constraints": [
+      "Up to 100,000 ballots",
+      "Names use lowercase letters"
+    ],
+    "approaches": [
+      {
+        "id": "hash",
+        "name": "HashMap / HashSet",
+        "hint": "Remember what you have seen",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(k) for k names",
+        "why": "Count each name in a map, then pick the highest count, breaking ties by name."
+      },
+      {
+        "id": "sort",
+        "name": "Sort, then scan",
+        "hint": "Put items in order first",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(1) to O(n)",
+        "why": "After sorting, equal names sit together, so one scan counts each run. Correct, and ties already come in alphabetical order."
+      },
+      {
+        "id": "nested",
+        "name": "Nested loops",
+        "hint": "Compare every pair",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Counting every name by scanning the whole list again is correct, but slow for 100,000 ballots."
+      },
+      {
+        "id": "pass",
+        "name": "Single pass",
+        "hint": "One loop with a running value",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Keeping only a current leader fails: a name seen early can overtake later, and you no longer know its count."
+      }
+    ]
+  }
+]

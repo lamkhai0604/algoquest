@@ -1,9 +1,9 @@
 name: grader-check
 
-# Manual real-grader check (NFR-04, T-512): grades five sample explanations with
-# the live Gemini model and reports scores and latency. Runs only when started by
-# hand, uses the GEMINI_API_KEY repository secret, and spends five free-tier
-# requests. Never runs on pull requests, so forks cannot reach the secret.
+# Manual real-grader check (NFR-04, T-512, T-517): grades five sample explanations
+# and six Pattern Recognition reasons with the live Gemini model and reports scores
+# and latency. Runs only when started by hand, uses the GEMINI_API_KEY repository
+# secret, and spends eleven free-tier requests. Never runs on pull requests, so forks cannot reach the secret.
 on:
   workflow_dispatch:
 
@@ -40,11 +40,11 @@ jobs:
             exit 1
           fi
           set +e
-          ./mvnw -B -ntp test -Dtest=RealGraderCheck -DexcludedGroups=none -Dsurefire.failIfNoSpecifiedTests=false 2>&1 | tee grader.log
+          ./mvnw -B -ntp test -Dtest='RealGraderCheck,RealPatternGraderCheck' -DexcludedGroups=none -Dsurefire.failIfNoSpecifiedTests=false 2>&1 | tee grader.log
           status=${PIPESTATUS[0]}
           set -e
           # The table and the latency line, without the API key or request bodies.
-          report=$(sed -n '/^problem /,/^Latency:/p' grader.log)
+          report=$(sed -n '/^problem /,/^Latency:/p;/^pattern /,/^$/p' grader.log)
           {
             echo '## Real grader check'
             echo '```'

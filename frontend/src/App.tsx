@@ -16,6 +16,7 @@ import { LessonPage } from "./lesson/LessonPage";
 import { LevelTestPage } from "./leveltest/LevelTestPage";
 import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
+import { PatternPage } from "./pattern/PatternPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { UiKitPage } from "./pages/UiKitPage";
@@ -79,6 +80,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <SolvePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/patterns/:id"
+            element={
+              <RequireAuth>
+                <PatternPage />
               </RequireAuth>
             }
           />

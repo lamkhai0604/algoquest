@@ -29,6 +29,8 @@
 | 6 | T-512 Grading latency (NFR-04) | Run `RealGraderCheck` against Gemini with the live model and prompt | 95th percentile recorded; NFR-04 marked met or a follow-up proposed | Run log summarised in the report |
 | 7 | T-513 Sprint 5 report | `docs/reports/sprint-5-report.md` | Implemented, verified, reviewed, merged listed separately | Records check |
 
+Scope extension approved by the PO on 2026-11-17: the curriculum map (T-515) and the Pattern Recognition pilot (T-516 demo, T-517 implementation, D-057), done while the content review is pending.
+
 Out of scope: Level 5 Linked Lists and the linked-node visualizer (T-511, deferred until Level 4 sets the standard), Hard problems and hard test mode (T-501), Levels 6 and later (T-502), the leaderboard (T-403), organizations (T-503).
 
 ## Risks

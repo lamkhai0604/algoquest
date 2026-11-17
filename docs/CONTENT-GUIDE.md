@@ -61,7 +61,24 @@ Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) pl
 - The backend validates every file at startup and in CI; invalid content fails the build (D-033).
 - Test `expected` values are never sent to the browser; for JavaScript the browser only receives `input` (D-035).
 
-## 4. Grading rubric (FR-05)
+## 4. Pattern challenges (optional, `content/levels/<n>-<slug>/patterns.json`, D-057)
+
+A JSON array of challenges. The learner picks an approach and explains why; the label below decides whether the choice is correct, and the AI grades only the written reason.
+
+| Field | Rule |
+| --- | --- |
+| `id` | `P<level>-<name>`, lowercase words joined by hyphens, unique across the content |
+| `level` | The level of the folder |
+| `title`, `statement` | Plain text; an everyday scenario, not a copy of a known problem (D-052) |
+| `examples`, `constraints` | At least one string each |
+| `approaches` | 3–4 items, exactly one `best` |
+| `approaches[].id`, `name`, `hint` | Short; the hint is shown before answering and must not give the label away |
+| `approaches[].label` | `best`, `valid` (works but slower or uses more memory), or `unsuitable` (wrong or does not fit) |
+| `approaches[].time`, `space`, `why` | Shown in the comparison after answering |
+
+Write 2–3 challenges per level. The backend validates the file with the rest of the content.
+
+## 5. Grading rubric (FR-05)
 
 | Criterion | Values | Meaning |
 | --- | --- | --- |
@@ -72,7 +89,7 @@ Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) pl
 
 The grading prompt lives in `tools/grading-test/prompt.mjs` until it moves into the app.
 
-## 5. Amount of content per level
+## 6. Amount of content per level
 
 About 3 Easy, 3 Medium, 2 Hard practice problems (levels 1–2 may skip Hard), 3 `test` problems, and 5 `hardTest` problems.
 
