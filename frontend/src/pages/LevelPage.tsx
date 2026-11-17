@@ -18,6 +18,7 @@ import game from "./Game.module.css";
 import styles from "./Pages.module.css";
 
 function ProblemStatus({ problem }: { problem: ProblemItem }) {
+  const { t } = useTranslation();
   if (problem.status === "comingSoon") {
     return <Badge tone="warning">{t("level.comingSoon")}</Badge>;
   }
