@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
- * A manual check of the Pattern Recognition grader with the live model (D-057, T-517), run by
- * the grader-check workflow. Six free-tier requests. It checks that a valid alternative's reason
- * is graded on its own terms and that instructions inside an answer earn nothing.
+ * A manual check of the Pattern Recognition grader with the live model (D-057, T-517), run by the
+ * grader-check workflow. Six free-tier requests. It checks that a valid alternative's reason is
+ * graded on its own terms and that instructions inside an answer earn nothing.
  */
 @Tag("real")
 class RealPatternGraderCheck {
@@ -90,8 +90,8 @@ class RealPatternGraderCheck {
 
     List<String> outOfRange = new ArrayList<>();
     System.out.printf(
-        "%n%-20s %-8s %-26s %5s %8s  %s%n", "pattern", "choice", "sample", "total", "ms",
-        "feedback");
+        "%n%-20s %-8s %-26s %5s %8s  %s%n",
+        "pattern", "choice", "sample", "total", "ms", "feedback");
     for (Sample sample : SAMPLES) {
       PatternChallenge challenge =
           levels.values().stream()
@@ -109,7 +109,11 @@ class RealPatternGraderCheck {
       long ms = (System.nanoTime() - started) / 1_000_000;
       System.out.printf(
           "%-20s %-8s %-26s %5d %8d  %s%n",
-          sample.challengeId(), sample.approach(), sample.label(), result.total(), ms,
+          sample.challengeId(),
+          sample.approach(),
+          sample.label(),
+          result.total(),
+          ms,
           result.feedback());
       if (result.total() < sample.min() || result.total() > sample.max()) {
         outOfRange.add(

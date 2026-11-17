@@ -1,10 +1,9 @@
 name: grader-check
 
-# Manual real-grader check (NFR-04, T-512, T-517): grades five sample explanations and six
-# Pattern Recognition reasons with
-# the live Gemini model and reports scores and latency. Runs only when started by
-# hand, uses the GEMINI_API_KEY repository secret, and spends eleven free-tier
-# requests. Never runs on pull requests, so forks cannot reach the secret.
+# Manual real-grader check (NFR-04, T-512, T-517): grades five sample explanations
+# and six Pattern Recognition reasons with the live Gemini model and reports scores
+# and latency. Runs only when started by hand, uses the GEMINI_API_KEY repository
+# secret, and spends eleven free-tier requests. Never runs on pull requests, so forks cannot reach the secret.
 on:
   workflow_dispatch:
 
