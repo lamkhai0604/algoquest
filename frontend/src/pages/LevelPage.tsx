@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n";
 import { Link, useParams } from "react-router";
 import { useApiGet } from "../api/useApiGet";
 import {
@@ -18,16 +19,16 @@ import styles from "./Pages.module.css";
 
 function ProblemStatus({ problem }: { problem: ProblemItem }) {
   if (problem.status === "comingSoon") {
-    return <Badge tone="warning">Coming soon</Badge>;
+    return <Badge tone="warning">{t("level.comingSoon")}</Badge>;
   }
-  if (problem.locked) return <Badge>Locked</Badge>;
+  if (problem.locked) return <Badge>{t("level.locked")}</Badge>;
   if (problem.solved) {
     const done = problem.practiceDone ? " · Done" : "";
     return <Badge tone="success">{`Solved · +${problem.xp} XP${done}`}</Badge>;
   }
-  if (problem.tried) return <Badge tone="warning">Not solved yet</Badge>;
+  if (problem.tried) return <Badge tone="warning">{t("level.notSolved")}</Badge>;
   if (problem.paused) return null;
-  return <Badge>Not tried</Badge>;
+  return <Badge>{t("level.notTried")}</Badge>;
 }
 
 function ProblemRow({ problem }: { problem: ProblemItem }) {
@@ -84,7 +85,7 @@ function PracticeRound({
           problem.practiceDone ? (
             <li key={problem.id} className={game.levelRow}>
               <span className={game.rowText}>{problem.title}</span>
-              <Badge tone="success">Done</Badge>
+              <Badge tone="success">{t("level.done")}</Badge>
             </li>
           ) : (
             <li key={problem.id}>
@@ -93,7 +94,7 @@ function PracticeRound({
                 className={game.levelRow}
               >
                 <span className={game.rowText}>{problem.title}</span>
-                <Badge tone="xp">Practice</Badge>
+                <Badge tone="xp">{t("level.practice")}</Badge>
               </Link>
             </li>
           ),
@@ -105,6 +106,7 @@ function PracticeRound({
 
 /** One level: XP bar, lesson, practice round, and problems (FR-04, FR-09). */
 export function LevelPage() {
+  const { t } = useTranslation();
   const number = Number(useParams().number);
   const { levels, rules } = useGame();
   const problems = useApiGet<ProblemItem[]>(
@@ -119,16 +121,16 @@ export function LevelPage() {
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
-        <BackButton to="/" label="Back to the Learning Path" />
-        <nav className={game.crumbs} aria-label="Breadcrumb">
-          <Link to="/">Learning Path</Link> / <span>{title}</span>
+        <BackButton to="/" label={t("profile.back")} />
+        <nav className={game.crumbs} aria-label={t("level.breadcrumb")}>
+          <Link to="/">{t("nav.map")}</Link> / <span>{title}</span>
         </nav>
       </div>
       <h1 className={styles.title}>{title}</h1>
       {level && (
         <Card>
           <div className={game.levelIntro}>
-            <XpBar label="Level XP" value={level.xp} max={level.target} />
+            <XpBar label={t("home.levelXp")} value={level.xp} max={level.target} />
             <p className={game.note}>{level.summary}</p>
             <div className={styles.row}>
               <ButtonLink to={`/levels/${number}/lesson`} variant="secondary">
@@ -143,13 +145,13 @@ export function LevelPage() {
       )}
       {level && <TestStartCard level={level} />}
       <section className={game.path}>
-        <h2 className={game.sectionTitle}>Problems</h2>
+        <h2 className={game.sectionTitle}>{t("level.problems")}</h2>
         <p className={game.note}>
           Problems open in order: solve one (score {rules.passScore} or more) to
           open the next.
         </p>
         {problems.state.status === "loading" && (
-          <LoadingState label="Loading problems…" />
+          <LoadingState label={t("level.loading")} />
         )}
         {problems.state.status === "error" && (
           <ErrorState
