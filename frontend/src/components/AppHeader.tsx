@@ -77,7 +77,13 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
         )}
         <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
           <span className="sr-only">{t("language.selector")}</span>
-          <select aria-label={t("language.selector")} value={locale} onChange={(event) => setLocale(event.target.value === "vi" ? "vi" : "en")}>
+          <select
+            aria-label={t("language.selector")}
+            value={locale}
+            onChange={(event) =>
+              setLocale(event.target.value === "vi" ? "vi" : "en")
+            }
+          >
             <option value="en">EN</option>
             <option value="vi">VI</option>
           </select>
