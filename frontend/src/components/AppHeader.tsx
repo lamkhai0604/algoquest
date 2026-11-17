@@ -36,9 +36,9 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
           AlgoQuest
         </Link>
         {account && (
-          <nav className={styles.nav} aria-label="Main">
+          <nav className={styles.nav} aria-label={t("common.main")}>
             <NavLink to="/" end>
-              Map
+              {t("nav.map")}
             </NavLink>
             <NavLink to="/profile">{t("nav.profile")}</NavLink>
             {account.isAdmin && <NavLink to="/admin">{t("nav.admin")}</NavLink>}
@@ -63,7 +63,7 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
             <Link
               to="/profile"
               className={styles.account}
-              aria-label={`${account.name}: your profile`}
+              aria-label={`${account.name}${t("common.yourProfile")}`}
             >
               <span className={styles.avatar} aria-hidden="true">
                 {account.name.trim().charAt(0).toUpperCase() || "?"}
@@ -71,7 +71,7 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
               <span className={styles.name}>{account.name}</span>
             </Link>
             <Button variant="ghost" size="sm" onClick={account.onSignOut}>
-              Sign out
+              {t("nav.signOut")}
             </Button>
           </>
         )}

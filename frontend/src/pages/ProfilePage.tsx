@@ -57,6 +57,7 @@ function streakText(profile: Profile): string {
 }
 
 function Hero({ profile }: { profile: Profile }) {
+  const { t } = useTranslation();
   const { rules } = useGame();
   const current = currentLevel(profile.levels, rules.passScore);
   const initial = profile.displayName.trim().charAt(0).toUpperCase() || "?";
@@ -69,13 +70,15 @@ function Hero({ profile }: { profile: Profile }) {
         <h1 className={styles.title}>{profile.displayName}</h1>
         {current && (
           <p className={game.note}>
-            Now on Level {current.number} · {current.title}
+            {t("profileMore.nowOn")} {current.number} · {current.title}
           </p>
         )}
         <p className={game.note}>{streakText(profile)}</p>
         {current && (
           <div className={styles.row}>
-            <ButtonLink to={`/levels/${current.number}`}>{t("common.continue")}</ButtonLink>
+            <ButtonLink to={`/levels/${current.number}`}>
+              {t("common.continue")}
+            </ButtonLink>
           </div>
         )}
       </div>
@@ -88,15 +91,16 @@ function Hero({ profile }: { profile: Profile }) {
 }
 
 function Stats({ profile }: { profile: Profile }) {
+  const { t } = useTranslation();
   const { rules } = useGame();
   const levelsPassed = profile.levels.filter((level) =>
     passed(level, rules.passScore),
   ).length;
   const items = [
-    { label: "Problems solved", value: profile.solvedProblems },
-    { label: "Levels passed", value: levelsPassed },
-    { label: "Day streak", value: profile.currentStreak },
-    { label: "Best streak", value: profile.bestStreak },
+    { label: t("profileMore.problemsSolved"), value: profile.solvedProblems },
+    { label: t("profileMore.levelsPassed"), value: levelsPassed },
+    { label: t("profileMore.dayStreak"), value: profile.currentStreak },
+    { label: t("profileMore.bestStreak"), value: profile.bestStreak },
   ];
   return (
     <ul className={game.statRow} aria-label={t("profileExtra.totals")}>
@@ -111,6 +115,7 @@ function Stats({ profile }: { profile: Profile }) {
 }
 
 function LevelRow({ level }: { level: Level }) {
+  const { t } = useTranslation();
   const { rules } = useGame();
   const badge = stateBadge(level, rules.passScore);
   return (
@@ -120,7 +125,11 @@ function LevelRow({ level }: { level: Level }) {
         <span className={game.rowTitle}>{level.title}</span>
         <Badge tone={badge.tone}>{badge.text}</Badge>
         <span className={game.profileLevelBar}>
-          <XpBar label={t("home.levelXp")} value={level.xp} max={level.target} />
+          <XpBar
+            label={t("home.levelXp")}
+            value={level.xp}
+            max={level.target}
+          />
         </span>
         <span className={game.note}>
           {level.solved} of {level.problems} problems ·{" "}
@@ -134,13 +143,14 @@ function LevelRow({ level }: { level: Level }) {
 }
 
 function Progress({ profile }: { profile: Profile }) {
+  const { t } = useTranslation();
   const { rules } = useGame();
   const unlocked = profile.levels.filter(
     (level) => level.available && level.state !== "LOCKED",
   );
   const phases = [...new Set(unlocked.map((level) => level.phase))];
   return (
-    <Card heading="Progress by level">
+    <Card heading={t("profileMore.progressBy")}>
       {phases.map((phase) => {
         const playable = profile.levels.filter(
           (level) => level.phase === phase && level.available,

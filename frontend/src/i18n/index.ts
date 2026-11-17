@@ -19,7 +19,12 @@ export type TranslationKey =
   | `level.${keyof typeof en.level}`
   | `profileExtra.${keyof typeof en.profileExtra}`
   | `solve.${keyof typeof en.solve}`
-  | `walkthrough.${keyof typeof en.walkthrough}`;
+  | `walkthrough.${keyof typeof en.walkthrough}`
+  | `common.${keyof typeof en.common}`
+  | `auth.${keyof typeof en.auth}`
+  | `misc.${keyof typeof en.misc}`
+  | `levelExtra.${keyof typeof en.levelExtra}`
+  | `profileMore.${keyof typeof en.profileMore}`;
 
 export function isLocale(value: string): value is Locale {
   return value === "en" || value === "vi";

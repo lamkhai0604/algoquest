@@ -1,17 +1,15 @@
 {
   "common": {
-    "loading": "Đang tải...",
-    "retry": "Thử lại",
-    "back": "Quay lại",
-    "next": "Tiếp theo",
-    "continue": "Tiếp tục",
-    "cancel": "Hủy",
-    "save": "Lưu",
-    "copy": "Sao chép",
-    "comingSoon": "Sắp ra mắt",
-    "level": "Cấp độ",
-    "phase": "Giai đoạn",
-    "copied": "Đã sao chép"
+    "error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "errorTitle": "Đã xảy ra lỗi",
+    "loadingEllipsis": "Đang tải…",
+    "waking": "Đang khởi động máy chủ… có thể mất khoảng một phút.",
+    "main": "Menu chính",
+    "yourProfile": ": hồ sơ của bạn",
+    "signing": "Đang đăng nhập…",
+    "difficultyEasy": "Dễ",
+    "difficultyMedium": "Trung bình",
+    "difficultyHard": "Khó"
   },
   "nav": {
     "map": "Lộ trình học",
@@ -156,5 +154,54 @@
     "state": "Trạng thái sau từng bước",
     "step": "Bước",
     "keyboard": "Bàn phím: ← và → để chuyển bước, R để đặt lại."
+  },
+  "auth": {
+    "title": "Đăng nhập AlgoQuest",
+    "lead": "Đừng để thuật toán đánh bại bạn.",
+    "google": "Tiếp tục với Google",
+    "github": "Tiếp tục với GitHub",
+    "verify": "Tài khoản của bạn chưa có email được xác minh. Hãy xác minh với nhà cung cấp rồi thử lại.",
+    "error": "Đăng nhập chưa hoàn tất. Vui lòng thử lại.",
+    "expired": "Liên kết đăng nhập đã hết hạn hoặc đã được sử dụng.",
+    "notFinished": "Đăng nhập chưa hoàn tất",
+    "again": "Đăng nhập lại"
+  },
+  "misc": {
+    "notFound": "Không tìm thấy trang",
+    "backQuest": "Quay lại hành trình học",
+    "themeLight": "Chuyển sang giao diện sáng",
+    "themeDark": "Chuyển sang giao diện tối",
+    "vipTitle": "AlgoQuest VIP",
+    "vipLead": "Gói thuê bao tương lai dành cho người học muốn có thêm hỗ trợ. Hiện chưa thể mua dịch vụ nào tại đây.",
+    "vipHints": "10 gợi ý mỗi 5 giờ thay vì 3",
+    "vipHard": "Bài khó và chế độ kiểm tra khó khi được phát hành",
+    "vipReport": "Báo cáo tiến độ hằng tháng"
+  },
+  "levelExtra": {
+    "solved": "Đã giải",
+    "paused": "Tạm dừng",
+    "unlockPrefix": "Các bài mở theo thứ tự: giải một bài (đạt",
+    "unlockSuffix": "điểm trở lên) để mở bài kế tiếp.",
+    "practicePrefix": "Lượt luyện tập mở khi đạt",
+    "practiceSuffix": "thanh tiến độ).",
+    "practiceDesc": "Giải thích lại một bài đã giải mà không dùng gợi ý. Mỗi bài được đánh dấu hoàn thành sẽ cộng",
+    "practiceDescEnd": "XP cho đến khi thanh tiến độ đầy.",
+    "practiceRound": "Lượt luyện tập"
+  },
+  "profileMore": {
+    "problemsSolved": "Bài đã giải",
+    "levelsPassed": "Cấp độ đã vượt qua",
+    "dayStreak": "Ngày học liên tiếp",
+    "bestStreak": "Chuỗi dài nhất",
+    "progressBy": "Tiến độ theo cấp độ",
+    "noTest": "Chưa kiểm tra",
+    "bestTest": "Điểm cao nhất:",
+    "noStreak": "Giải một bài hôm nay để bắt đầu chuỗi ngày học.",
+    "daysInRow": "liên tiếp. Giải một bài mỗi ngày để duy trì nhé.",
+    "nowOn": "Đang ở cấp độ",
+    "passed": "Đạt",
+    "levelPassed": "cấp độ đã đạt",
+    "levelDone": "cấp độ hoàn thành",
+    "of": "trên"
   }
 }

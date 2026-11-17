@@ -24,15 +24,17 @@ function ProblemStatus({ problem }: { problem: ProblemItem }) {
   }
   if (problem.locked) return <Badge>{t("level.locked")}</Badge>;
   if (problem.solved) {
-    const done = problem.practiceDone ? " · Done" : "";
-    return <Badge tone="success">{`Solved · +${problem.xp} XP${done}`}</Badge>;
+    const done = problem.practiceDone ? ` · ${t("level.done")}` : "";
+    return <Badge tone="success">{`${t("levelExtra.solved")} · +${problem.xp} XP${done}`}</Badge>;
   }
-  if (problem.tried) return <Badge tone="warning">{t("level.notSolved")}</Badge>;
+  if (problem.tried)
+    return <Badge tone="warning">{t("level.notSolved")}</Badge>;
   if (problem.paused) return null;
   return <Badge>{t("level.notTried")}</Badge>;
 }
 
 function ProblemRow({ problem }: { problem: ProblemItem }) {
+  const { t } = useTranslation();
   const body = (
     <>
       <span className={game.rowText}>
@@ -40,7 +42,7 @@ function ProblemRow({ problem }: { problem: ProblemItem }) {
       </span>
       <span className={game.rowMeta}>
         <Badge tone="primary">{problem.difficulty}</Badge>
-        {problem.paused && <Badge tone="xp">⏸ Paused</Badge>}
+        {problem.paused && <Badge tone="xp">⏸ {t("levelExtra.paused")}</Badge>}
         <ProblemStatus problem={problem} />
       </span>
     </>
@@ -65,21 +67,20 @@ function PracticeRound({
   problems: ProblemItem[];
 }) {
   const { rules } = useGame();
+  const { t } = useTranslation();
   const solved = problems.filter((problem) => problem.solved);
   if (!level.practiceOpen) {
     const at = Math.ceil((level.target * rules.practiceOpenPercent) / 100);
     return (
       <p className={game.note}>
-        The practice round opens at {at} XP ({rules.practiceOpenPercent}% of the
-        bar).
+        {t("levelExtra.practicePrefix")} {at} XP ({rules.practiceOpenPercent}% {t("levelExtra.practiceSuffix")}
       </p>
     );
   }
   return (
-    <Card heading="Practice round">
+    <Card heading={t("levelExtra.practiceRound")}>
       <p className={game.note}>
-        Explain a solved problem again without hints. Each one marked Done adds{" "}
-        {rules.practiceDoneXp} XP until the bar is full.
+        {t("levelExtra.practiceDesc")} {rules.practiceDoneXp} {t("levelExtra.practiceDescEnd")}
       </p>
       <ul className={game.levelList}>
         {solved.map((problem) =>
@@ -131,11 +132,15 @@ export function LevelPage() {
       {level && (
         <Card>
           <div className={game.levelIntro}>
-            <XpBar label={t("home.levelXp")} value={level.xp} max={level.target} />
+            <XpBar
+              label={t("home.levelXp")}
+              value={level.xp}
+              max={level.target}
+            />
             <p className={game.note}>{level.summary}</p>
             <div className={styles.row}>
               <ButtonLink to={`/levels/${number}/lesson`} variant="secondary">
-                Read lesson
+                {t("home.readLesson")}
               </ButtonLink>
             </div>
           </div>
@@ -148,8 +153,7 @@ export function LevelPage() {
       <section className={game.path}>
         <h2 className={game.sectionTitle}>{t("level.problems")}</h2>
         <p className={game.note}>
-          Problems open in order: solve one (score {rules.passScore} or more) to
-          open the next.
+          {t("levelExtra.unlockPrefix")} {rules.passScore} {t("levelExtra.unlockSuffix")}
         </p>
         {problems.state.status === "loading" && (
           <LoadingState label={t("level.loading")} />

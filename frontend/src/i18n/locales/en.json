@@ -1,17 +1,15 @@
 {
   "common": {
-    "loading": "Loading...",
-    "retry": "Try again",
-    "back": "Back",
-    "next": "Next",
-    "continue": "Continue",
-    "cancel": "Cancel",
-    "save": "Save",
-    "copy": "Copy",
-    "comingSoon": "Coming soon",
-    "level": "Level",
-    "phase": "Phase",
-    "copied": "Copied"
+    "error": "Something went wrong. Please try again.",
+    "errorTitle": "Something went wrong",
+    "loadingEllipsis": "Loading…",
+    "waking": "Waking the server… this can take about a minute.",
+    "main": "Main",
+    "yourProfile": ": your profile",
+    "signing": "Signing you in…",
+    "difficultyEasy": "Easy",
+    "difficultyMedium": "Medium",
+    "difficultyHard": "Hard"
   },
   "nav": {
     "map": "Map",
@@ -156,5 +154,54 @@
     "state": "State after each step",
     "step": "Step",
     "keyboard": "Keyboard: ← and → to step, R to reset."
+  },
+  "auth": {
+    "title": "Sign in to AlgoQuest",
+    "lead": "Don't let Algorithm beat you.",
+    "google": "Continue with Google",
+    "github": "Continue with GitHub",
+    "verify": "Your account has no verified email address. Verify it with the provider and try again.",
+    "error": "Sign-in did not finish. Please try again.",
+    "expired": "The sign-in link expired or was already used.",
+    "notFinished": "Sign-in did not finish",
+    "again": "Sign in again"
+  },
+  "misc": {
+    "notFound": "Page not found",
+    "backQuest": "Back to your quest",
+    "themeLight": "Switch to light theme",
+    "themeDark": "Switch to dark theme",
+    "vipTitle": "AlgoQuest VIP",
+    "vipLead": "A future monthly plan for players who want more help. Nothing on this page can be bought yet.",
+    "vipHints": "10 hints every 5 hours instead of 3",
+    "vipHard": "Hard problems and hard test mode as soon as they are ready",
+    "vipReport": "A monthly progress summary"
+  },
+  "levelExtra": {
+    "solved": "Solved",
+    "paused": "Paused",
+    "unlockPrefix": "Problems open in order: solve one (score",
+    "unlockSuffix": "or more) to open the next.",
+    "practicePrefix": "The practice round opens at",
+    "practiceSuffix": "of the bar).",
+    "practiceDesc": "Explain a solved problem again without hints. Each one marked Done adds",
+    "practiceDescEnd": "XP until the bar is full.",
+    "practiceRound": "Practice round"
+  },
+  "profileMore": {
+    "problemsSolved": "Problems solved",
+    "levelsPassed": "Levels passed",
+    "dayStreak": "Day streak",
+    "bestStreak": "Best streak",
+    "progressBy": "Progress by level",
+    "noTest": "No test yet",
+    "bestTest": "Best test:",
+    "noStreak": "Solve a problem today to start a streak.",
+    "daysInRow": "in a row. Solve one problem each day to keep it going.",
+    "nowOn": "Now on Level",
+    "passed": "Passed",
+    "levelPassed": "levels passed",
+    "levelDone": "levels done",
+    "of": "of"
   }
 }
