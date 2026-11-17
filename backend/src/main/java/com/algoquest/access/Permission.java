@@ -6,6 +6,8 @@ import java.util.Optional;
 /** Named permissions (ARCHITECTURE §9.1). Code checks permissions, never role names. */
 public enum Permission {
   GAME_PLAY("game.play"),
+  /** Opens every available level, problem, practice round, and test, for testing content. */
+  GAME_ALL_LEVELS("game.allLevels"),
   ADMIN_GRADING_LOG_VIEW("admin.gradingLog.view"),
   ADMIN_PROGRESS_RESET("admin.progress.reset"),
   ADMIN_CONFIG_EDIT("admin.config.edit"),

@@ -109,7 +109,7 @@ public class TestService {
             throw forbidden("This level is locked.");
           }
           int xp = progress.xpByLevel(userId).getOrDefault(level, 0);
-          if (!LevelRules.testOpen(rules.current(), xp, level)) {
+          if (!LevelRules.testOpen(rules.current(), xp, level) && !game.allLevels(userId)) {
             throw forbidden("The level-up test opens when the level bar is full.");
           }
           List<String> problemIds =

@@ -68,7 +68,8 @@ public class GeminiGrader implements Grader {
               .retrieve()
               .body(String.class);
     } catch (RestClientResponseException e) {
-      throw new GraderUnavailableException("Gemini answered HTTP " + status(e.getStatusCode()));
+      throw new GraderUnavailableException(
+          "Gemini answered HTTP " + status(e.getStatusCode()) + errorStatus(e));
     } catch (RestClientException e) {
       throw new GraderUnavailableException("Gemini call failed: " + e.getClass().getSimpleName());
     }
@@ -98,6 +99,24 @@ public class GeminiGrader implements Grader {
     body.put("contents", List.of(Map.of("role", "user", "parts", List.of(Map.of("text", user)))));
     body.put("generationConfig", config);
     return body;
+  }
+
+  /**
+   * Gemini's own error code and the first words of its message (for example "INVALID_ARGUMENT: API
+   * key not valid"), for logs. The body describes the request, never the player's text.
+   */
+  private static String errorStatus(RestClientResponseException e) {
+    try {
+      JsonNode error = JSON.readTree(e.getResponseBodyAsString()).path("error");
+      String code = error.path("status").asString("");
+      String message = error.path("message").asString("");
+      if (message.length() > 80) {
+        message = message.substring(0, 80) + "…";
+      }
+      return code.isEmpty() && message.isEmpty() ? "" : " (" + code + ": " + message + ")";
+    } catch (RuntimeException ignored) {
+      return "";
+    }
   }
 
   static GradingResult parse(String responseBody) {

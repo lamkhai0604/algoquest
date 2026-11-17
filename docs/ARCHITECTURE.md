@@ -375,6 +375,7 @@ Schema changes only through Flyway migrations. `PROBLEM_PROGRESS (user_id, probl
 | Permission | Owner | Player | Admin (defined, empty until OQ-05) |
 | --- | --- | --- | --- |
 | `game.play` | ✓ | ✓ | — |
+| `game.allLevels` (test access, D-055) | ✓ | | |
 | `admin.gradingLog.view` | ✓ | | |
 | `admin.progress.reset` | ✓ | | |
 | `admin.config.edit` | ✓ | | |
