@@ -18,9 +18,7 @@ export function AppFooter() {
             </span>
             AlgoQuest
           </span>
-          <span className={styles.tagline}>
-            {t("footer.tagline")}
-          </span>
+          <span className={styles.tagline}>{t("footer.tagline")}</span>
         </div>
         <nav aria-label={t("footer.navigation")} className={styles.links}>
           <Link to="/">{t("nav.map")}</Link>
