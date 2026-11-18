@@ -222,15 +222,27 @@ export function LevelTestPage() {
   const { state, reload } = useApiGet<LevelTest>(
     `/api/v1/tests/${id}?lang=${locale}`,
   );
-  const [submitted, setSubmitted] = useState<LevelTest | null>(null);
-  const test = submitted ?? (state.status === "ready" ? state.data : null);
+  const [previous, setPrevious] = useState<LevelTest | null>(null);
+  useEffect(() => {
+    if (state.status === "ready") setPrevious(state.data);
+  }, [state]);
+  const [submitted, setSubmitted] = useState<{ locale: string; data: LevelTest } | null>(null);
+  // Keep unsaved answers mounted when a learner switches language mid-test.
+  const test =
+    submitted?.locale === locale
+      ? submitted.data
+      : state.status === "ready"
+        ? state.data
+        : previous?.id === id
+          ? previous
+          : null;
 
   const onSubmitted = useCallback(
     (result: LevelTest) => {
-      setSubmitted(result);
+      setSubmitted({ locale, data: result });
       reloadLevels();
     },
-    [reloadLevels],
+    [reloadLevels, locale],
   );
 
   return (

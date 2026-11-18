@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../i18n";
 import { Link, useParams, useSearchParams } from "react-router";
 import { api } from "../api";
@@ -97,13 +97,14 @@ function Solve({ problem, mode }: SolveProps) {
   const hintState = useApiGet<Hints>(
     practice ? null : `/api/v1/problems/${problem.id}/hints?lang=${locale}`,
   );
-  const [hints, setHints] = useState<Hints | null>(null);
+  const [hints, setHints] = useState<{ locale: string; data: Hints } | null>(null);
   const currentHints =
-    hints ?? (hintState.state.status === "ready" ? hintState.state.data : null);
+    (hints?.locale === locale ? hints.data : null) ??
+    (hintState.state.status === "ready" ? hintState.state.data : null);
   const hintsUsed = currentHints?.opened.length ?? 0;
 
   const changeHints = (next: Hints) => {
-    setHints(next);
+    setHints({ locale, data: next });
     reloadHintQuota();
   };
   const [text, setText] = useState(() =>
@@ -308,7 +309,18 @@ export function SolvePage() {
   const { state, reload } = useApiGet<ProblemDetail>(
     `/api/v1/problems/${id}?lang=${locale}`,
   );
-  const level = state.status === "ready" ? state.data.level : null;
+  // Keep the current form mounted while the translated text is being fetched.
+  const [previous, setPrevious] = useState<ProblemDetail | null>(null);
+  useEffect(() => {
+    if (state.status === "ready") setPrevious(state.data);
+  }, [state]);
+  const shown =
+    state.status === "ready"
+      ? state.data
+      : previous?.id === id
+        ? previous
+        : null;
+  const level = shown?.level ?? null;
 
   return (
     <div className={pages.page}>
@@ -331,18 +343,14 @@ export function SolvePage() {
           )}
         </nav>
       </div>
-      {state.status === "loading" && (
+      {state.status === "loading" && !shown && (
         <LoadingState label={t("solve.loading")} />
       )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}
-      {state.status === "ready" && (
-        <Solve
-          key={`${state.data.id}-${mode}-${locale}`}
-          problem={state.data}
-          mode={mode}
-        />
+      {shown && (
+        <Solve key={`${shown.id}-${mode}`} problem={shown} mode={mode} />
       )}
     </div>
   );
