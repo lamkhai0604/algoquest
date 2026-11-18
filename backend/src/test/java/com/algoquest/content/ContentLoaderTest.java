@@ -97,8 +97,7 @@ class ContentLoaderTest {
   @Test
   void vietnameseLevelOneLoadsWithCanonicalAnswerIndices() {
     Map<Integer, LevelContent> canonical = ContentLoader.load(RESOLVER, "classpath:content/");
-    var localized =
-        ContentLoader.loadVietnameseLessons(RESOLVER, "classpath:content/", canonical);
+    var localized = ContentLoader.loadVietnameseLessons(RESOLVER, "classpath:content/", canonical);
 
     assertThat(localized).containsKey(1);
     assertThat(localized.get(1).markdown()).contains("## [problem-hook] Tình huống mở đầu");
@@ -115,7 +114,8 @@ class ContentLoaderTest {
   @Test
   void missingLocaleFilesFallBackToCanonicalEnglish() {
     Map<Integer, LevelContent> canonical = load();
-    var localized = ContentLoader.loadVietnameseLessons(RESOLVER, dir.toUri().toString(), canonical);
+    var localized =
+        ContentLoader.loadVietnameseLessons(RESOLVER, dir.toUri().toString(), canonical);
     assertThat(localized).isEmpty();
   }
 

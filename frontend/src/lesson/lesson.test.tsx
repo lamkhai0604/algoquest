@@ -139,15 +139,29 @@ describe("lesson page", () => {
       };
       const fetchFn = open(translated);
       expect(
-        await screen.findByRole("heading", { name: "Bài học: Big-O và nền tảng thuật toán" }),
+        await screen.findByRole("heading", {
+          name: "Bài học: Big-O và nền tảng thuật toán",
+        }),
       ).toBeVisible();
-      expect(screen.getByRole("heading", { name: "Tình huống mở đầu" })).toBeVisible();
+      expect(
+        screen.getByRole("heading", { name: "Tình huống mở đầu" }),
+      ).toBeVisible();
       expect(screen.getByText("Mô tả độ phức tạp")).toBeVisible();
       expect(screen.getByRole("heading", { name: "Trực giác" })).toBeVisible();
-      expect(screen.getByRole("heading", { name: "Khi nào nên dùng?" })).toBeVisible();
-      expect(screen.getByRole("group", { name: "Kiểm tra trực giác" })).toBeVisible();
-      expect(fetchFn.mock.calls.some(([url]) => String(url).includes("/lesson?lang=vi"))).toBe(true);
-      await userEvent.click(screen.getByRole("tab", { name: "Bước 3: Tìm hiểu" }));
+      expect(
+        screen.getByRole("heading", { name: "Khi nào nên dùng?" }),
+      ).toBeVisible();
+      expect(
+        screen.getByRole("group", { name: "Kiểm tra trực giác" }),
+      ).toBeVisible();
+      expect(
+        fetchFn.mock.calls.some(([url]) =>
+          String(url).includes("/lesson?lang=vi"),
+        ),
+      ).toBe(true);
+      await userEvent.click(
+        screen.getByRole("tab", { name: "Bước 3: Tìm hiểu" }),
+      );
       expect(screen.getByText("Code mẫu")).toBeVisible();
       expect(screen.queryByText("Tình huống mở đầu")).toBeNull();
     } finally {

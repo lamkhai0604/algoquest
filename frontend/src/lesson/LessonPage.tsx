@@ -73,7 +73,12 @@ interface Sections {
 
 /** Splits the lesson text at its "##" headings into the steps that show them. */
 function splitSections(markdown: string): Sections {
-  const sections: Sections = { objectives: [], understand: [], learn: [], intuitionCut: null };
+  const sections: Sections = {
+    objectives: [],
+    understand: [],
+    learn: [],
+    intuitionCut: null,
+  };
   let target: Block[] = sections.understand;
   for (const block of parseMarkdown(markdown)) {
     if (block.type === "heading" && block.level === 1) continue;
@@ -84,7 +89,8 @@ function splitSections(markdown: string): Sections {
         continue;
       }
       target = UNDERSTAND.includes(id) ? sections.understand : sections.learn;
-      if (id === AFTER_INTUITION) sections.intuitionCut = sections.understand.length;
+      if (id === AFTER_INTUITION)
+        sections.intuitionCut = sections.understand.length;
     }
     target.push(readableHeading(block));
   }
