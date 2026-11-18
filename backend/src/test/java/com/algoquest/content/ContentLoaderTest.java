@@ -95,6 +95,31 @@ class ContentLoaderTest {
   }
 
   @Test
+  void vietnameseLevelOneLoadsWithCanonicalAnswerIndices() {
+    Map<Integer, LevelContent> canonical = ContentLoader.load(RESOLVER, "classpath:content/");
+    var localized =
+        ContentLoader.loadVietnameseLessons(RESOLVER, "classpath:content/", canonical);
+
+    assertThat(localized).containsKey(1);
+    assertThat(localized.get(1).markdown()).contains("## [problem-hook] Tình huống mở đầu");
+    assertThat(localized.get(1).quickCheck()).hasSameSizeAs(canonical.get(1).lesson().quickCheck());
+    for (int i = 0; i < localized.get(1).quickCheck().size(); i++) {
+      assertThat(localized.get(1).quickCheck().get(i).answer())
+          .isEqualTo(canonical.get(1).lesson().quickCheck().get(i).answer());
+    }
+    assertThat(localized.get(1).walkthrough().get(0).visual().cells())
+        .isEqualTo(canonical.get(1).lesson().walkthrough().get(0).visual().cells());
+    assertThat(localized).doesNotContainKey(99);
+  }
+
+  @Test
+  void missingLocaleFilesFallBackToCanonicalEnglish() {
+    Map<Integer, LevelContent> canonical = load();
+    var localized = ContentLoader.loadVietnameseLessons(RESOLVER, dir.toUri().toString(), canonical);
+    assertThat(localized).isEmpty();
+  }
+
+  @Test
   void everyProblemIsReportedWithItsFile() throws IOException {
     replace(level.resolve("lesson.md"), "## Worked example", "## Example");
     replace(level.resolve("quick-check.json"), "\"answer\": 1", "\"answer\": 5");
