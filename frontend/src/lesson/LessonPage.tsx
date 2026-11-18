@@ -68,11 +68,12 @@ interface Sections {
   objectives: Block[];
   understand: Block[];
   learn: Block[];
+  intuitionCut: number | null;
 }
 
 /** Splits the lesson text at its "##" headings into the steps that show them. */
 function splitSections(markdown: string): Sections {
-  const sections: Sections = { objectives: [], understand: [], learn: [] };
+  const sections: Sections = { objectives: [], understand: [], learn: [], intuitionCut: null };
   let target: Block[] = sections.understand;
   for (const block of parseMarkdown(markdown)) {
     if (block.type === "heading" && block.level === 1) continue;
@@ -83,6 +84,7 @@ function splitSections(markdown: string): Sections {
         continue;
       }
       target = UNDERSTAND.includes(id) ? sections.understand : sections.learn;
+      if (id === AFTER_INTUITION) sections.intuitionCut = sections.understand.length;
     }
     target.push(readableHeading(block));
   }
@@ -235,10 +237,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
     }),
     [language],
   );
-  const split = sections.understand.findIndex(
-    (block) => block.type === "heading" && sectionId(block.text) === AFTER_INTUITION,
-  );
-  const cut = split < 0 ? sections.understand.length : split;
+  const cut = sections.intuitionCut ?? sections.understand.length;
 
   return (
     <CodeLanguageContext.Provider value={codeLanguage}>
