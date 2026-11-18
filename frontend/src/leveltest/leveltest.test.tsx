@@ -48,7 +48,9 @@ describe("level-up test", () => {
     });
     renderSignedInAt("/tests/t-1");
     expect(
-      await screen.findByText("Nhiệt độ thấp nhất và cao nhất"),
+      await screen.findByRole("heading", {
+        name: /Nhiệt độ thấp nhất và cao nhất/,
+      }),
     ).toBeVisible();
     const answer = await screen.findByLabelText("Phần giải thích của bạn", {
       selector: "#answer-L1-min-and-max",
@@ -139,7 +141,7 @@ describe("level-up test", () => {
     expect(screen.getByText(/Easy problems are open/)).toBeVisible();
     expect(screen.getAllByText("95 / 100")).toHaveLength(3);
     const saves = fetchFn.mock.calls.filter(([url]) =>
-      String(url).endsWith("/answers"),
+      new URL(String(url)).pathname.endsWith("/answers"),
     );
     expect(String(saves.at(-1)?.[1]?.body)).toContain("tracking min and max");
   });
@@ -161,7 +163,7 @@ describe("level-up test", () => {
     expect(await screen.findByText("Not passed yet")).toBeVisible();
     expect(screen.getAllByText("No answer: 0 / 100")).toHaveLength(3);
     const submits = fetchFn.mock.calls.filter(([url]) =>
-      String(url).endsWith("/submit"),
+      new URL(String(url)).pathname.endsWith("/submit"),
     );
     expect(submits).toHaveLength(1);
   });
