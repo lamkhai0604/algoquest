@@ -1,6 +1,7 @@
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { setLocale } from "../i18n";
 import { fakeApi, json, ME } from "../test/fakeApi";
 import { GRADED, LEVELS, PROBLEM } from "../test/gameData";
 import { renderSignedInAt } from "../test/renderApp";
@@ -47,7 +48,36 @@ function attemptBodies(fetchFn: ReturnType<typeof fakeApi>) {
   );
 }
 
+afterEach(() => setLocale("en"));
+
 describe("solve page", () => {
+  it("loads Vietnamese exercise text without changing the grading endpoint", async () => {
+    setLocale("vi");
+    const fetchFn = open(() => json(200, GRADED), undefined, {
+      ...PROBLEM,
+      title: "Nhiệt độ cao nhất",
+      statement: "Cho một mảng nhiệt độ theo ngày. Hãy tìm nhiệt độ cao nhất.",
+    });
+    expect(
+      await screen.findByRole("heading", { name: "Nhiệt độ cao nhất" }),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/Cho một mảng nhiệt độ theo ngày/),
+    ).toBeVisible();
+    expect(
+      fetchFn.mock.calls.some(([url]) =>
+        String(url).endsWith("/api/v1/problems/L1-max-temperature?lang=vi"),
+      ),
+    ).toBe(true);
+    await userEvent.type(
+      await screen.findByLabelText("Phần giải thích của bạn"),
+      EXPLANATION,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Nộp để chấm điểm" }));
+    await screen.findByText("Đã giải");
+    expect(attemptBodies(fetchFn)).toHaveLength(1);
+  });
+
   it("shows the problem, the rubric, the time bonus, and the scoring guide", async () => {
     const fetchFn = open(() => json(200, GRADED));
 

@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { setLocale } from "../i18n";
 import type { Hints } from "../game/types";
 import { fakeApi, json, ME } from "../test/fakeApi";
 import { LEVELS, PROBLEM } from "../test/gameData";
@@ -34,7 +35,26 @@ function open(start: Hints, afterOpen: Hints) {
   return fetchFn;
 }
 
+afterEach(() => setLocale("en"));
+
 describe("hints", () => {
+  it("requests translated hints but uses the same quota and hint endpoint", async () => {
+    setLocale("vi");
+    const fetchFn = open(hints([], 3), hints(["Nhớ giá trị lớn nhất từ đầu đến nay."], 2));
+    await screen.findByText(/gợi ý còn lại/);
+    expect(
+      fetchFn.mock.calls.some(([url]) => String(url).endsWith(`${HINTS}?lang=vi`)),
+    ).toBe(true);
+    await userEvent.click(screen.getByRole("button", { name: /Hiện gợi ý 1/ }));
+    expect(await screen.findByText("Nhớ giá trị lớn nhất từ đầu đến nay.")).toBeVisible();
+    expect(
+      fetchFn.mock.calls.some(([url, init]) =>
+        init?.method === "POST" && String(url).endsWith(`${HINTS}?lang=vi`),
+      ),
+    ).toBe(true);
+    expect(screen.getByText(/2 of 3 gợi ý còn lại/)).toBeVisible();
+  });
+
   it("opens the next hint and lowers the possible XP", async () => {
     const fetchFn = open(hints([], 3), hints(["Keep the best so far."], 2));
 
