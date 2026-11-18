@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 import com.algoquest.content.model.LevelContent;
+import com.algoquest.content.model.Problem;
+import com.algoquest.content.model.ProblemTranslation;
 import com.algoquest.content.model.PatternChallenge;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -86,6 +88,56 @@ class ContentLoaderTest {
     assertThat(challenge.approach("nested").correct()).isTrue();
     assertThat(challenge.approach("pass").correct()).isFalse();
     assertThat(levels.get(2).available()).isFalse();
+  }
+
+  @Test
+  void vietnameseProblemTextsPreserveExamplesAndHiddenScoringData() {
+    Map<Integer, LevelContent> canonical = ContentLoader.load(RESOLVER, "classpath:content/");
+    Map<String, ProblemTranslation> localized =
+        ContentLoader.loadVietnameseProblems(RESOLVER, "classpath:content/", canonical);
+
+    assertThat(localized).hasSize(9).containsKeys("L1-max-temperature", "L1-count-peaks");
+    assertThat(localized).doesNotContainKey("L1-moving-median");
+
+    for (Problem problem : canonical.get(1).problems()) {
+      ProblemTranslation translation = localized.get(problem.id());
+      if (translation == null) continue;
+      var displayed = ContentViews.ProblemView.of(problem, translation);
+      assertThat(displayed.id()).isEqualTo(problem.id());
+      assertThat(displayed.difficulty()).isEqualTo(problem.difficulty());
+      assertThat(displayed.starterCode()).isEqualTo(problem.starterCode());
+      assertThat(displayed.hintCount()).isEqualTo(problem.hints().size());
+      assertThat(displayed.examples()).hasSameSizeAs(problem.examples());
+      for (int i = 0; i < problem.examples().size(); i++) {
+        assertThat(displayed.examples().get(i).input())
+            .isEqualTo(problem.examples().get(i).input());
+        assertThat(displayed.examples().get(i).output())
+            .isEqualTo(problem.examples().get(i).output());
+      }
+    }
+    assertThat(localized.get("L1-max-temperature").title()).isEqualTo("Nhiệt độ cao nhất");
+  }
+
+  @Test
+  void localizedConstraintsCannotChangeNumericLimits() {
+    Map<Integer, LevelContent> canonical = ContentLoader.load(RESOLVER, "classpath:content/");
+    Map<String, ProblemTranslation> localized =
+        ContentLoader.loadVietnameseProblems(RESOLVER, "classpath:content/", canonical);
+    Problem original =
+        canonical.get(1).problems().stream()
+            .filter(problem -> problem.id().equals("L1-max-temperature"))
+            .findFirst()
+            .orElseThrow();
+    ProblemTranslation valid = localized.get(original.id());
+    List<String> changed = new java.util.ArrayList<>(valid.constraints());
+    changed.set(0, changed.get(0).replace("10^5", "10^6"));
+    ProblemTranslation tampered =
+        new ProblemTranslation(
+            valid.id(), valid.title(), valid.statement(),
+            valid.exampleExplanations(), changed, valid.hints());
+
+    assertThat(ContentValidator.checkTranslatedProblem("vi/problem.json", original, tampered))
+        .anyMatch(message -> message.contains("numeric limits"));
   }
 
   @Test
