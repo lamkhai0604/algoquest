@@ -48,7 +48,7 @@ const OBJECTIVES = "objectives";
 
 /** Stable section IDs, with backward compatibility for English heading text. */
 function sectionId(title: string): string {
-  const tagged = /^\\[([a-z-]+)\\]\\s+/.exec(title);
+  const tagged = /^\[([a-z-]+)\]\s+/.exec(title);
   if (tagged) return tagged[1] ?? "";
   const legacy: Record<string, string> = {
     "Learning objectives": "objectives",
@@ -61,7 +61,7 @@ function sectionId(title: string): string {
 
 function readableHeading(block: Block): Block {
   if (block.type !== "heading") return block;
-  return { ...block, text: block.text.replace(/^\\[[a-z-]+\\]\\s+/, "") };
+  return { ...block, text: block.text.replace(/^\[[a-z-]+\]\s+/, "") };
 }
 
 interface Sections {

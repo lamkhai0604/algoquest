@@ -114,6 +114,82 @@ final class ContentValidator {
     return problems;
   }
 
+  /**
+   * Localized prose may change, but section identities and grading-critical answer indices,
+   * counts, code, and visual structure must agree with canonical English.
+   */
+  static List<String> checkLocalizedLesson(String folder, Lesson english, Lesson localized) {
+    List<String> issues = new ArrayList<>();
+    List<String> ids =
+        List.of("objectives", "problem-hook", "intuition", "when-to-use",
+            "template-code", "complexity", "common-mistakes", "edge-cases", "worked-example");
+    for (String id : ids) {
+      if (localized.markdown() == null
+          || !localized.markdown().contains("\\n## [" + id + "] ")) {
+        issues.add(folder + "lesson.md: missing section ID " + id);
+      }
+    }
+    if (localized.quickCheck().size() != english.quickCheck().size()) {
+      issues.add(folder + "quick-check.json: question count must match English");
+    } else {
+      for (int i = 0; i < english.quickCheck().size(); i++) {
+        QuickCheckQuestion source = english.quickCheck().get(i);
+        QuickCheckQuestion target = localized.quickCheck().get(i);
+        checkQuestion(issues, folder + "quick-check.json, question " + (i + 1), target);
+        if (source.answer() != target.answer()
+            || source.options().size() != target.options().size()) {
+          issues.add(folder + "quick-check.json, question " + (i + 1)
+              + ": answer index and option count must match English");
+        }
+      }
+    }
+    checkQuestion(issues, folder + "intuition.json", localized.intuition());
+    if (english.intuition().answer() != localized.intuition().answer()
+        || english.intuition().options().size() != localized.intuition().options().size()) {
+      issues.add(folder + "intuition.json: answer index and options must match English");
+    }
+    if (localized.walkthrough().size() != english.walkthrough().size()) {
+      issues.add(folder + "walkthrough.json: step count must match English");
+    } else {
+      for (int i = 0; i < english.walkthrough().size(); i++) {
+        WalkthroughStep source = english.walkthrough().get(i);
+        WalkthroughStep target = localized.walkthrough().get(i);
+        if (!java.util.Objects.equals(source.code(), target.code())) {
+          issues.add(folder + "walkthrough.json, step " + (i + 1)
+              + ": executable code must match English");
+        }
+        Visual a = source.visual();
+        Visual b = target.visual();
+        if ((a == null) != (b == null)) {
+          issues.add(folder + "walkthrough.json, step " + (i + 1)
+              + ": visual structure must match English");
+        } else if (a != null) {
+          if (!java.util.Objects.equals(a.cells(), b.cells())
+              || !java.util.Objects.equals(a.markers(), b.markers())
+              || !java.util.Objects.equals(a.vars(), b.vars())
+              || !java.util.Objects.equals(a.swap(), b.swap())) {
+            issues.add(folder + "walkthrough.json, step " + (i + 1)
+                + ": visual values and markers must match English");
+          }
+          Visual.Prediction pa = a.predict();
+          Visual.Prediction pb = b.predict();
+          if ((pa == null) != (pb == null)) {
+            issues.add(folder + "walkthrough.json, step " + (i + 1)
+                + ": prediction presence must match English");
+          } else if (pa != null) {
+            if (pa.answer() != pb.answer()
+                || pa.options().size() != pb.options().size()
+                || !java.util.Objects.equals(pa.hides(), pb.hides())) {
+              issues.add(folder + "walkthrough.json, step " + (i + 1)
+                  + ": prediction structure must match English");
+            }
+          }
+        }
+      }
+    }
+    return issues;
+  }
+
   private static void checkQuestion(List<String> problems, String where, QuickCheckQuestion q) {
     if (blank(q.question()) || blank(q.explanation())) {
       problems.add(where + ": question and explanation required");
