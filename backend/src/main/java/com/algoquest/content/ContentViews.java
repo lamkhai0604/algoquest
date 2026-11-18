@@ -1,8 +1,8 @@
 package com.algoquest.content;
 
 import com.algoquest.content.model.Example;
-import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.Lesson;
+import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.QuickCheckQuestion;
 import com.algoquest.content.model.WalkthroughStep;

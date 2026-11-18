@@ -51,7 +51,8 @@ final class ContentLoader {
   }
 
   /**
-   * Loads optional VI lesson resources at startup. English remains authoritative for XP and grading.
+   * Loads optional VI lesson resources at startup. English remains authoritative for XP and
+   * grading.
    */
   static Map<Integer, Lesson> loadVietnameseLessons(
       ResourcePatternResolver resolver, String base, Map<Integer, LevelContent> canonical) {
@@ -65,7 +66,8 @@ final class ContentLoader {
       List<WalkthroughStep> walkthrough =
           loader.read(folder + "walkthrough.json", new TypeReference<List<WalkthroughStep>>() {});
       List<QuickCheckQuestion> quickCheck =
-          loader.read(folder + "quick-check.json", new TypeReference<List<QuickCheckQuestion>>() {});
+          loader.read(
+              folder + "quick-check.json", new TypeReference<List<QuickCheckQuestion>>() {});
       QuickCheckQuestion intuition =
           loader.read(folder + "intuition.json", new TypeReference<QuickCheckQuestion>() {});
       if (markdown != null && walkthrough != null && quickCheck != null && intuition != null) {
