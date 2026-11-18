@@ -94,7 +94,7 @@ function RunningTest({
   test: LevelTest;
   onSubmitted: (test: LevelTest) => void;
 }) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const left = useSecondsLeft(test);
   const timeUp = test.status === "timeUp" || left === 0;
   const [answers, setAnswers] = useState<Record<string, string>>(() =>
@@ -108,12 +108,12 @@ function RunningTest({
   const save = useCallback(
     (problemId: string, text: string) =>
       api
-        .post<LevelTest>(`/api/v1/tests/${test.id}/answers`, {
+        .post<LevelTest>(`/api/v1/tests/${test.id}/answers?lang=${locale}`, {
           problemId,
           text,
         })
         .then(() => setSaved((s) => ({ ...s, [problemId]: text }))),
-    [test.id],
+    [test.id, locale],
   );
 
   const change = (problemId: string, text: string) => {
@@ -134,7 +134,7 @@ function RunningTest({
           if (text !== saved[problemId]) await save(problemId, text);
         }
       }
-      onSubmitted(await api.post<LevelTest>(`/api/v1/tests/${test.id}/submit`));
+      onSubmitted(await api.post<LevelTest>(`/api/v1/tests/${test.id}/submit?lang=${locale}`));
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : t("common.retry"));
       setSubmitting(false);
@@ -212,10 +212,10 @@ function RunningTest({
 
 /** Level-up test page (FR-10). */
 export function LevelTestPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { id } = useParams();
   const { reloadLevels } = useGame();
-  const { state, reload } = useApiGet<LevelTest>(`/api/v1/tests/${id}`);
+  const { state, reload } = useApiGet<LevelTest>(`/api/v1/tests/${id}?lang=${locale}`);
   const [submitted, setSubmitted] = useState<LevelTest | null>(null);
   const test = submitted ?? (state.status === "ready" ? state.data : null);
 

@@ -91,11 +91,11 @@ function TimeNote({
 }
 
 function Solve({ problem, mode }: SolveProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const practice = mode === "practice";
   const { reloadLevels, reloadHintQuota, rules } = useGame();
   const hintState = useApiGet<Hints>(
-    practice ? null : `/api/v1/problems/${problem.id}/hints`,
+    practice ? null : `/api/v1/problems/${problem.id}/hints?lang=${locale}`,
   );
   const [hints, setHints] = useState<Hints | null>(null);
   const currentHints =
@@ -300,12 +300,12 @@ function Solve({ problem, mode }: SolveProps) {
 
 /** Solve page (FR-04, FR-05): problem, explanation box, and result. */
 export function SolvePage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { id } = useParams();
   const [params] = useSearchParams();
   const mode: AttemptMode =
     params.get("mode") === "practice" ? "practice" : "explain";
-  const { state, reload } = useApiGet<ProblemDetail>(`/api/v1/problems/${id}`);
+  const { state, reload } = useApiGet<ProblemDetail>(`/api/v1/problems/${id}?lang=${locale}`);
   const level = state.status === "ready" ? state.data.level : null;
 
   return (
@@ -337,7 +337,7 @@ export function SolvePage() {
       )}
       {state.status === "ready" && (
         <Solve
-          key={`${state.data.id}-${mode}`}
+          key={`${state.data.id}-${mode}-${locale}`}
           problem={state.data}
           mode={mode}
         />
