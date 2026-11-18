@@ -1,0 +1,18 @@
+{
+  "id": "L1-count-passing-scores",
+  "title": "Đếm số điểm đạt yêu cầu",
+  "statement": "Điểm kiểm tra của một lớp được lưu trong một mảng, cùng với điểm đạt yêu cầu (mark). Hãy trả về số bài có điểm lớn hơn hoặc bằng mark.",
+  "exampleExplanations": [
+    "Điểm 70 và 82 đều đạt yêu cầu.",
+    ""
+  ],
+  "constraints": [
+    "0 <= scores.length <= 10^5",
+    "0 <= scores[i], mark <= 100"
+  ],
+  "hints": [
+    "Bạn cần xem mỗi điểm bao nhiêu lần?",
+    "Chỉ cần một biến đếm; không phải tạo mảng phụ.",
+    "Dùng >= để tính cả điểm bằng đúng mức đạt yêu cầu."
+  ]
+}

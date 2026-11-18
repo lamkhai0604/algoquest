@@ -1,0 +1,18 @@
+{
+  "id": "L1-longest-sunny-streak",
+  "title": "Chuỗi ngày nắng dài nhất",
+  "statement": "Nhật ký thời tiết là một chuỗi ký tự, mỗi ký tự tương ứng với một ngày: 'S' là ngày nắng và 'R' là ngày mưa. Hãy trả về số ngày lớn nhất trong một chuỗi ngày nắng liên tiếp.",
+  "exampleExplanations": [
+    "",
+    ""
+  ],
+  "constraints": [
+    "0 <= log.length <= 10^5",
+    "log chỉ chứa các ký tự 'S' và 'R'"
+  ],
+  "hints": [
+    "Nếu bắt đầu đếm từ từng ngày, bạn sẽ lặp lại nhiều công việc. Bạn có thể ghi nhớ thông tin gì từ ngày trước?",
+    "Theo dõi độ dài chuỗi ngày nắng hiện tại và độ dài lớn nhất đã gặp.",
+    "Cập nhật kết quả lớn nhất ở mỗi ngày nắng, để không bỏ sót chuỗi ngày nắng kéo dài đến cuối nhật ký."
+  ]
+}
