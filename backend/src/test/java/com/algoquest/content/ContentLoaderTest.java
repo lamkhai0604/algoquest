@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 import com.algoquest.content.model.LevelContent;
+import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.ProblemTranslation;
-import com.algoquest.content.model.PatternChallenge;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -133,8 +133,12 @@ class ContentLoaderTest {
     changed.set(0, changed.get(0).replace("10^5", "10^6"));
     ProblemTranslation tampered =
         new ProblemTranslation(
-            valid.id(), valid.title(), valid.statement(),
-            valid.exampleExplanations(), changed, valid.hints());
+            valid.id(),
+            valid.title(),
+            valid.statement(),
+            valid.exampleExplanations(),
+            changed,
+            valid.hints());
 
     assertThat(ContentValidator.checkTranslatedProblem("vi/problem.json", original, tampered))
         .anyMatch(message -> message.contains("numeric limits"));

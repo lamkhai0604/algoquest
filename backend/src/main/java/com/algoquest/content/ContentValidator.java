@@ -87,8 +87,7 @@ final class ContentValidator {
 
   private static List<String> protectedTokens(String text) {
     java.util.regex.Matcher matcher =
-        java.util.regex.Pattern.compile(
-                "<=|>=|==|\\d+(?:\\.\\d+)?(?:\\^\\d+)?|'[^']*'|[<>]")
+        java.util.regex.Pattern.compile("<=|>=|==|\\d+(?:\\.\\d+)?(?:\\^\\d+)?|'[^']*'|[<>]")
             .matcher(text);
     List<String> tokens = new ArrayList<>();
     while (matcher.find()) tokens.add(matcher.group());
