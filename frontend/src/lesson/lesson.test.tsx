@@ -2,6 +2,7 @@ import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { fakeApi, json, ME } from "../test/fakeApi";
+import { setLocale } from "../i18n";
 import { LEVELS } from "../test/gameData";
 import { renderSignedInAt } from "../test/renderApp";
 import type { Lesson } from "./types";
@@ -106,6 +107,68 @@ const variable = (name: string) =>
   screen.getByText(name, { selector: "dt" }).nextElementSibling;
 
 describe("lesson page", () => {
+  it("loads VI content and groups translated headings by stable IDs", async () => {
+    setLocale("vi");
+    try {
+      const translated: Lesson = {
+        ...LESSON,
+        title: "Big-O và nền tảng thuật toán",
+        markdown: [
+          "# Big-O và nền tảng thuật toán",
+          "",
+          "## [objectives] Mục tiêu học tập",
+          "",
+          "- Mô tả độ phức tạp",
+          "",
+          "## [problem-hook] Tình huống mở đầu",
+          "",
+          "Đọc danh sách **một lần**.",
+          "",
+          "## [intuition] Trực giác",
+          "",
+          "Giữ lại giá trị lớn nhất.",
+          "",
+          "## [when-to-use] Khi nào nên dùng?",
+          "",
+          "Khi cần tìm phần tử lớn nhất.",
+          "",
+          "## [template-code] Code mẫu",
+          "",
+          "Một lần duyệt là O(n).",
+        ].join("\n"),
+      };
+      const fetchFn = open(translated);
+      expect(
+        await screen.findByRole("heading", {
+          name: "Bài học: Big-O và nền tảng thuật toán",
+        }),
+      ).toBeVisible();
+      expect(
+        screen.getByRole("heading", { name: "Tình huống mở đầu" }),
+      ).toBeVisible();
+      expect(screen.getByText("Mô tả độ phức tạp")).toBeVisible();
+      expect(screen.getByRole("heading", { name: "Trực giác" })).toBeVisible();
+      expect(
+        screen.getByRole("heading", { name: "Khi nào nên dùng?" }),
+      ).toBeVisible();
+      expect(
+        screen.getByRole("group", { name: "Kiểm tra trực giác" }),
+      ).toBeVisible();
+      expect(
+        fetchFn.mock.calls.some(([url]) =>
+          String(url).includes("/lesson?lang=vi"),
+        ),
+      ).toBe(true);
+      await userEvent.click(
+        screen.getByRole("tab", { name: "Bước 3: Tìm hiểu" }),
+      );
+      expect(screen.getByText("Code mẫu")).toBeVisible();
+      expect(screen.queryByText("Tình huống mở đầu")).toBeNull();
+    } finally {
+      setLocale("en");
+    }
+  });
+
   it("splits the lesson into five steps, starting with Understand", async () => {
     open();
 

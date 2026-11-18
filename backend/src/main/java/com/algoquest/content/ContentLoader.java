@@ -50,6 +50,37 @@ final class ContentLoader {
     return levels;
   }
 
+  /**
+   * Loads optional VI lesson resources at startup. English remains authoritative for XP and
+   * grading.
+   */
+  static Map<Integer, Lesson> loadVietnameseLessons(
+      ResourcePatternResolver resolver, String base, Map<Integer, LevelContent> canonical) {
+    ContentLoader loader = new ContentLoader(resolver, base);
+    Map<Integer, Lesson> translated = new TreeMap<>();
+    for (LevelContent level : canonical.values()) {
+      if (!level.available()) continue;
+      String folder = folder(level.info()) + "locales/vi/";
+      if (!resolver.getResource(loader.base + folder + "lesson.md").exists()) continue;
+      String markdown = loader.readText(folder + "lesson.md");
+      List<WalkthroughStep> walkthrough =
+          loader.read(folder + "walkthrough.json", new TypeReference<List<WalkthroughStep>>() {});
+      List<QuickCheckQuestion> quickCheck =
+          loader.read(
+              folder + "quick-check.json", new TypeReference<List<QuickCheckQuestion>>() {});
+      QuickCheckQuestion intuition =
+          loader.read(folder + "intuition.json", new TypeReference<QuickCheckQuestion>() {});
+      if (markdown != null && walkthrough != null && quickCheck != null && intuition != null) {
+        Lesson localized = new Lesson(markdown, walkthrough, quickCheck, intuition);
+        loader.problems.addAll(
+            ContentValidator.checkLocalizedLesson(folder, level.lesson(), localized));
+        translated.put(level.info().number(), localized);
+      }
+    }
+    if (!loader.problems.isEmpty()) throw new ContentException(loader.problems);
+    return Map.copyOf(translated);
+  }
+
   private Map<Integer, LevelContent> loadAll() {
     List<LevelInfo> infos = read("levels.json", new TypeReference<List<LevelInfo>>() {});
     if (infos == null) {

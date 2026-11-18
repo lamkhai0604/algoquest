@@ -118,6 +118,14 @@ class PlayApiTest {
     mvc.perform(get("/api/v1/levels/99/problems").with(player)).andExpect(status().isNotFound());
   }
 
+  @Test
+  void requestingUnavailableLocaleFallsBackToEnglish() throws Exception {
+    mvc.perform(get("/api/v1/levels/1/lesson").param("lang", "vi").with(player))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.markdown").value(containsString("Intuition")))
+        .andExpect(jsonPath("$.quickCheck.length()").value(2));
+  }
+
   private ResultActions quickCheck(String answers) throws Exception {
     return mvc.perform(
         post("/api/v1/levels/1/quick-check")

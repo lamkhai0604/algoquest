@@ -1,0 +1,177 @@
+[
+  {
+    "title": "Bài toán",
+    "body": "Tìm nhiệt độ lớn nhất trong **[3, -2, 9, 4]**. Chúng ta duyệt danh sách một lần và giữ một biến `best`.",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [],
+      "vars": []
+    }
+  },
+  {
+    "title": "Xử lý danh sách rỗng",
+    "body": "Danh sách có phần tử nên ta có thể bắt đầu. Nếu rỗng, trả về null ngay thay vì đọc `temps[0]`.",
+    "code": "if (temps.length === 0) return null;",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [],
+      "vars": []
+    }
+  },
+  {
+    "title": "Bắt đầu từ giá trị đầu tiên",
+    "body": "Đặt `best = 3`. Khởi tạo bằng phần tử đầu tiên, thay vì 0, giúp có kết quả đúng cả khi mọi nhiệt độ đều âm.",
+    "code": "let best = temps[0]; // 3",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "current",
+          "value": "3"
+        },
+        {
+          "name": "best",
+          "value": "3"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Xét -2",
+    "body": "-2 không lớn hơn 3 nên `best` vẫn là 3. Chỉ cần một phép so sánh, không tốn thêm bộ nhớ.",
+    "code": "if (-2 > best) ... // no change, best = 3",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "current",
+          "value": "-2"
+        },
+        {
+          "name": "best",
+          "value": "3"
+        }
+      ],
+      "predict": {
+        "question": "best đang là 3, giá trị hiện tại là -2. Sau bước này best bằng bao nhiêu?",
+        "options": [
+          "-2",
+          "3",
+          "1"
+        ],
+        "answer": 1,
+        "explanation": "-2 không lớn hơn 3 nên best không thay đổi.",
+        "hides": [
+          "best"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Xét 9",
+    "body": "9 lớn hơn 3 nên `best` được cập nhật thành 9.",
+    "code": "if (9 > best) best = 9; // best = 9",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "current",
+          "value": "9"
+        },
+        {
+          "name": "best",
+          "value": "9"
+        }
+      ],
+      "predict": {
+        "question": "best đang là 3, giá trị hiện tại là 9. Sau bước này best bằng bao nhiêu?",
+        "options": [
+          "3",
+          "9",
+          "12"
+        ],
+        "answer": 1,
+        "explanation": "9 lớn hơn 3 nên best trở thành 9. Ta giữ giá trị lớn hơn, không cộng hai giá trị lại.",
+        "hides": [
+          "best"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Xét 4 và kết thúc",
+    "body": "4 không lớn hơn 9. Vòng lặp kết thúc và trả về **9**. Chúng ta so sánh mỗi phần tử một lần: **O(n) thời gian**, chỉ giữ một biến: **O(1) bộ nhớ**.",
+    "code": "return best; // 9",
+    "visual": {
+      "cells": [
+        "3",
+        "-2",
+        "9",
+        "4"
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "current",
+          "value": "4"
+        },
+        {
+          "name": "best",
+          "value": "9"
+        },
+        {
+          "name": "result",
+          "value": "9"
+        }
+      ]
+    }
+  }
+]

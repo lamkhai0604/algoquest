@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** Level map, lesson, problem, attempt, hint, and profile endpoints (FR-02 to FR-13). */
@@ -50,8 +51,10 @@ public class PlayController {
 
   @GetMapping("/levels/{number}/lesson")
   public LessonPage lesson(
-      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable int number) {
-    return game.lesson(user.id(), number);
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable int number,
+      @RequestParam(defaultValue = "en") String lang) {
+    return game.lesson(user.id(), number, lang);
   }
 
   @PostMapping("/levels/{number}/quick-check")

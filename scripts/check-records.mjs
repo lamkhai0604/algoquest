@@ -22,6 +22,7 @@ import { fileURLToPath } from "node:url";
 const SKIP_DIRS = new Set([".git", "node_modules", "target", "dist", "coverage", "playwright-report", "test-results"]);
 const SKIP_PATHS = ["docs/standard/"]; // internal guidelines, git-ignored (D-003)
 const LANGUAGE_EXEMPT = ["tools/grading-test/data/"]; // test data may contain other languages
+const LOCALIZED_CONTENT = /^content\/levels\/[^/]+\/locales\/vi\//; // translated learning material, not records
 const DEFINITION_FILES = ["docs/SRS.md", "docs/BACKLOG.md", "docs/DECISIONS.md"];
 
 const ID_PATTERN = /\b(FR|NFR|OQ|D|T)-\d+\b/g;
@@ -107,7 +108,7 @@ export function checkRecords(root) {
     rawLines.forEach((line, i) => {
       if (PRIVATE_LINKS.test(line)) report("private", file, i + 1, "link to a private workspace (claude.ai)");
       if (INTERNAL_GUIDELINES.test(line)) report("internal", file, i + 1, "reference to the internal engineering guidelines");
-      if (VIETNAMESE.test(line) && !LANGUAGE_EXEMPT.some((p) => file.startsWith(p))) {
+      if (VIETNAMESE.test(line) && !LANGUAGE_EXEMPT.some((p) => file.startsWith(p)) && !LOCALIZED_CONTENT.test(file)) {
         report("language", file, i + 1, "non-English text in a record");
       }
     });
