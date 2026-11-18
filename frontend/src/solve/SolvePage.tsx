@@ -97,7 +97,9 @@ function Solve({ problem, mode }: SolveProps) {
   const hintState = useApiGet<Hints>(
     practice ? null : `/api/v1/problems/${problem.id}/hints?lang=${locale}`,
   );
-  const [hints, setHints] = useState<{ locale: string; data: Hints } | null>(null);
+  const [hints, setHints] = useState<{ locale: string; data: Hints } | null>(
+    null,
+  );
   const currentHints =
     (hints?.locale === locale ? hints.data : null) ??
     (hintState.state.status === "ready" ? hintState.state.data : null);

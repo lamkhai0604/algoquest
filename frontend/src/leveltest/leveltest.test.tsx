@@ -47,13 +47,17 @@ describe("level-up test", () => {
       "GET /api/v1/tests/t-1": () => json(200, data),
     });
     renderSignedInAt("/tests/t-1");
-    expect(await screen.findByText("Nhiệt độ thấp nhất và cao nhất")).toBeVisible();
+    expect(
+      await screen.findByText("Nhiệt độ thấp nhất và cao nhất"),
+    ).toBeVisible();
     const answer = await screen.findByLabelText("Phần giải thích của bạn", {
       selector: "#answer-L1-min-and-max",
     });
     await userEvent.type(answer, "One pass");
     expect(
-      fetchFn.mock.calls.some(([url]) => String(url).endsWith("/tests/t-1?lang=vi")),
+      fetchFn.mock.calls.some(([url]) =>
+        String(url).endsWith("/tests/t-1?lang=vi"),
+      ),
     ).toBe(true);
     act(() => setLocale("en"));
     expect(answer).toHaveValue("One pass");

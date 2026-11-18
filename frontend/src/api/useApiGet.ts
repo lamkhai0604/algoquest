@@ -52,8 +52,6 @@ export function useApiGet<T>(
     result?.outcome.status === "ready" &&
     result.path.split("?")[0] === path.split("?")[0];
   const state =
-    result && (result.path === path || sameResource)
-      ? result.outcome
-      : LOADING;
+    result && (result.path === path || sameResource) ? result.outcome : LOADING;
   return { state, reload };
 }

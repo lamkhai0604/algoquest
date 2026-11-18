@@ -143,7 +143,7 @@ function RunningTest({
       setError(failure instanceof Error ? failure.message : t("common.retry"));
       setSubmitting(false);
     }
-  }, [answers, saved, save, onSubmitted, test.id, timeUp, t]);
+  }, [answers, saved, save, onSubmitted, test.id, timeUp, t, locale]);
 
   const autoSubmitted = useRef(false);
   useEffect(() => {
@@ -224,7 +224,10 @@ export function LevelTestPage() {
     api,
     true,
   );
-  const [submitted, setSubmitted] = useState<{ locale: string; data: LevelTest } | null>(null);
+  const [submitted, setSubmitted] = useState<{
+    locale: string;
+    data: LevelTest;
+  } | null>(null);
   // Keep unsaved answers mounted when a learner switches language mid-test.
   const test =
     submitted?.locale === locale

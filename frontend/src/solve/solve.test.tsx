@@ -61,9 +61,7 @@ describe("solve page", () => {
     expect(
       await screen.findByRole("heading", { name: "Nhiệt độ cao nhất" }),
     ).toBeVisible();
-    expect(
-      screen.getByText(/Cho một mảng nhiệt độ theo ngày/),
-    ).toBeVisible();
+    expect(screen.getByText(/Cho một mảng nhiệt độ theo ngày/)).toBeVisible();
     expect(
       fetchFn.mock.calls.some(([url]) =>
         String(url).endsWith("/api/v1/problems/L1-max-temperature?lang=vi"),
@@ -73,7 +71,9 @@ describe("solve page", () => {
       await screen.findByLabelText("Phần giải thích của bạn"),
       EXPLANATION,
     );
-    await userEvent.click(screen.getByRole("button", { name: "Nộp để chấm điểm" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Nộp để chấm điểm" }),
+    );
     await screen.findByText("Đã giải");
     expect(attemptBodies(fetchFn)).toHaveLength(1);
   });

@@ -40,16 +40,24 @@ afterEach(() => setLocale("en"));
 describe("hints", () => {
   it("requests translated hints but uses the same quota and hint endpoint", async () => {
     setLocale("vi");
-    const fetchFn = open(hints([], 3), hints(["Nhớ giá trị lớn nhất từ đầu đến nay."], 2));
+    const fetchFn = open(
+      hints([], 3),
+      hints(["Nhớ giá trị lớn nhất từ đầu đến nay."], 2),
+    );
     await screen.findByText(/gợi ý còn lại/);
     expect(
-      fetchFn.mock.calls.some(([url]) => String(url).endsWith(`${HINTS}?lang=vi`)),
+      fetchFn.mock.calls.some(([url]) =>
+        String(url).endsWith(`${HINTS}?lang=vi`),
+      ),
     ).toBe(true);
     await userEvent.click(screen.getByRole("button", { name: /Hiện gợi ý 1/ }));
-    expect(await screen.findByText("Nhớ giá trị lớn nhất từ đầu đến nay.")).toBeVisible();
     expect(
-      fetchFn.mock.calls.some(([url, init]) =>
-        init?.method === "POST" && String(url).endsWith(`${HINTS}?lang=vi`),
+      await screen.findByText("Nhớ giá trị lớn nhất từ đầu đến nay."),
+    ).toBeVisible();
+    expect(
+      fetchFn.mock.calls.some(
+        ([url, init]) =>
+          init?.method === "POST" && String(url).endsWith(`${HINTS}?lang=vi`),
       ),
     ).toBe(true);
     expect(screen.getByText(/2 of 3 gợi ý còn lại/)).toBeVisible();
