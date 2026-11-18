@@ -41,33 +41,58 @@ const STEPS = [
   { key: "practice", title: "lesson.practice", hint: "lesson.problems" },
 ] as const;
 
-const UNDERSTAND = ["Problem hook", "Intuition", "When to use"];
+const UNDERSTAND = ["problem-hook", "intuition", "when-to-use"];
 /** The intuition question goes right before this section, after the examples. */
-const AFTER_INTUITION = "When to use";
-const OBJECTIVES = "Learning objectives";
+const AFTER_INTUITION = "when-to-use";
+const OBJECTIVES = "objectives";
+
+/** Stable section IDs, with backward compatibility for English heading text. */
+function sectionId(title: string): string {
+  const tagged = /^\[([a-z-]+)\]\s+/.exec(title);
+  if (tagged) return tagged[1] ?? "";
+  const legacy: Record<string, string> = {
+    "Learning objectives": "objectives",
+    "Problem hook": "problem-hook",
+    Intuition: "intuition",
+    "When to use": "when-to-use",
+  };
+  return legacy[title] ?? "learn";
+}
+
+function readableHeading(block: Block): Block {
+  if (block.type !== "heading") return block;
+  return { ...block, text: block.text.replace(/^\[[a-z-]+\]\s+/, "") };
+}
 
 interface Sections {
   objectives: Block[];
   understand: Block[];
   learn: Block[];
+  intuitionCut: number | null;
 }
 
 /** Splits the lesson text at its "##" headings into the steps that show them. */
 function splitSections(markdown: string): Sections {
-  const sections: Sections = { objectives: [], understand: [], learn: [] };
+  const sections: Sections = {
+    objectives: [],
+    understand: [],
+    learn: [],
+    intuitionCut: null,
+  };
   let target: Block[] = sections.understand;
   for (const block of parseMarkdown(markdown)) {
     if (block.type === "heading" && block.level === 1) continue;
     if (block.type === "heading" && block.level === 2) {
-      if (block.text === OBJECTIVES) {
+      const id = sectionId(block.text);
+      if (id === OBJECTIVES) {
         target = sections.objectives;
         continue;
       }
-      target = UNDERSTAND.includes(block.text)
-        ? sections.understand
-        : sections.learn;
+      target = UNDERSTAND.includes(id) ? sections.understand : sections.learn;
+      if (id === AFTER_INTUITION)
+        sections.intuitionCut = sections.understand.length;
     }
-    target.push(block);
+    target.push(readableHeading(block));
   }
   return sections;
 }
@@ -218,10 +243,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
     }),
     [language],
   );
-  const split = sections.understand.findIndex(
-    (block) => block.type === "heading" && block.text === AFTER_INTUITION,
-  );
-  const cut = split < 0 ? sections.understand.length : split;
+  const cut = sections.intuitionCut ?? sections.understand.length;
 
   return (
     <CodeLanguageContext.Provider value={codeLanguage}>
@@ -295,10 +317,10 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
 
 /** Lesson page (FR-03): the lesson in five steps, from hook to practice. */
 export function LessonPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const number = Number(useParams().number);
   const { state, reload } = useApiGet<Lesson>(
-    `/api/v1/levels/${number}/lesson`,
+    `/api/v1/levels/${number}/lesson?lang=${locale}`,
   );
 
   return (

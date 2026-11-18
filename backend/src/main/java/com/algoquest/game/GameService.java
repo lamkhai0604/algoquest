@@ -113,7 +113,13 @@ public class GameService {
 
   @Transactional(readOnly = true)
   public LessonPage lesson(UUID userId, int number) {
-    LessonView lesson = LessonView.of(openLevel(userId, number));
+    return lesson(userId, number, "en");
+  }
+
+  @Transactional(readOnly = true)
+  public LessonPage lesson(UUID userId, int number, String locale) {
+    LevelContent level = openLevel(userId, number);
+    LessonView lesson = LessonView.of(level, catalog.lesson(number, locale));
     return new LessonPage(lesson, quickChecks.done(userId, number));
   }
 

@@ -1,0 +1,11 @@
+{
+  "question": "Danh sách tăng từ 100 lên 1.000 phần tử. Một lần duyệt toàn bộ danh sách bây giờ cần khoảng bao nhiêu bước?",
+  "options": [
+    "100",
+    "Khoảng 1.000",
+    "Khoảng 10.000",
+    "Khoảng 1.000.000"
+  ],
+  "answer": 1,
+  "explanation": "Duyệt một lần thực hiện một bước cho mỗi phần tử. Số phần tử gấp mười thì số bước cũng xấp xỉ gấp mười: khoảng 1.000. Đó là tăng tuyến tính O(n). Nếu chọn 1.000.000, bạn đang nghĩ đến việc so sánh từng phần tử với tất cả phần tử khác, tức O(n²)."
+}

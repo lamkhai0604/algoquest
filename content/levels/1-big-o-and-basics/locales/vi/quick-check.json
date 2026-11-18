@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Một hàm duyệt danh sách n phần tử, và trong mỗi lượt lại duyệt toàn bộ danh sách. Độ phức tạp thời gian là gì?",
+    "options": [
+      "O(n)",
+      "O(2n)",
+      "O(n²)",
+      "O(log n)"
+    ],
+    "answer": 2,
+    "explanation": "Với mỗi trong n phần tử, vòng trong chạy n bước, nên tổng công việc là n × n = O(n²)."
+  },
+  {
+    "question": "Bạn tìm phần tử lớn nhất bằng cách giữ một biến `best` khi duyệt danh sách một lần. Bộ nhớ phụ sử dụng là bao nhiêu?",
+    "options": [
+      "O(1)",
+      "O(n)",
+      "O(n log n)",
+      "O(n²)"
+    ],
+    "answer": 0,
+    "explanation": "Chỉ giữ một biến bất kể danh sách dài đến đâu nên bộ nhớ phụ không đổi: O(1)."
+  },
+  {
+    "question": "Vì sao khởi tạo giá trị lớn nhất bằng 0 lại là lỗi?",
+    "options": [
+      "Nó khiến vòng lặp thành O(n²)",
+      "Khi mọi giá trị âm, hàm trả về 0",
+      "Nó sử dụng O(n) bộ nhớ phụ",
+      "Nó lỗi với danh sách chỉ có một phần tử"
+    ],
+    "answer": 1,
+    "explanation": "Nếu mọi giá trị đều âm, không phần tử nào lớn hơn 0 nên hàm trả sai 0. Hãy khởi tạo từ phần tử đầu tiên."
+  }
+]
