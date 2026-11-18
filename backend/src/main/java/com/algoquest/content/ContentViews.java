@@ -66,21 +66,40 @@ public final class ContentViews {
       int hints = p.hints() == null ? 0 : p.hints().size();
       if (translated == null) {
         return new ProblemView(
-            p.id(), p.level(), p.title(), p.difficulty(), p.statement(), p.examples(),
-            p.constraints(), p.starterCode(), p.similarLeetCode(), hints);
+            p.id(),
+            p.level(),
+            p.title(),
+            p.difficulty(),
+            p.statement(),
+            p.examples(),
+            p.constraints(),
+            p.starterCode(),
+            p.similarLeetCode(),
+            hints);
       }
       List<Example> examples = new ArrayList<>();
       for (int i = 0; i < p.examples().size(); i++) {
         Example canonical = p.examples().get(i);
         String translation = translated.exampleExplanations().get(i);
-        examples.add(new Example(
-            canonical.input(), canonical.output(),
-            translation == null || translation.isBlank() ? canonical.explanation() : translation));
+        examples.add(
+            new Example(
+                canonical.input(),
+                canonical.output(),
+                translation == null || translation.isBlank()
+                    ? canonical.explanation()
+                    : translation));
       }
       return new ProblemView(
-          p.id(), p.level(), translated.title(), p.difficulty(), translated.statement(),
-          List.copyOf(examples), translated.constraints(), p.starterCode(),
-          p.similarLeetCode(), hints);
+          p.id(),
+          p.level(),
+          translated.title(),
+          p.difficulty(),
+          translated.statement(),
+          List.copyOf(examples),
+          translated.constraints(),
+          p.starterCode(),
+          p.similarLeetCode(),
+          hints);
     }
   }
 }

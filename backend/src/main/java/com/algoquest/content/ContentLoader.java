@@ -83,8 +83,8 @@ final class ContentLoader {
   }
 
   /**
-   * Optional Vietnamese problem strings. Validation runs at startup, and an untranslated
-   * problem continues to use canonical English content.
+   * Optional Vietnamese problem strings. Validation runs at startup, and an untranslated problem
+   * continues to use canonical English content.
    */
   static Map<String, ProblemTranslation> loadVietnameseProblems(
       ResourcePatternResolver resolver, String base, Map<Integer, LevelContent> canonical) {
@@ -98,7 +98,8 @@ final class ContentLoader {
         ProblemTranslation translation =
             loader.read(path, new TypeReference<ProblemTranslation>() {});
         if (translation != null) {
-          loader.problems.addAll(ContentValidator.checkTranslatedProblem(path, problem, translation));
+          loader.problems.addAll(
+              ContentValidator.checkTranslatedProblem(path, problem, translation));
           localized.put(problem.id(), translation);
         }
       }

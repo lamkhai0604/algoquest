@@ -67,8 +67,11 @@ final class ContentValidator {
         if (blank(localized)) {
           issues.add(path + ": constraint " + (i + 1) + " cannot be empty");
         } else if (!protectedTokens(original).equals(protectedTokens(localized))) {
-          issues.add(path + ": constraint " + (i + 1)
-              + " must preserve numeric limits, comparisons and quoted values");
+          issues.add(
+              path
+                  + ": constraint "
+                  + (i + 1)
+                  + " must preserve numeric limits, comparisons and quoted values");
         }
       }
     }
@@ -85,7 +88,7 @@ final class ContentValidator {
   private static List<String> protectedTokens(String text) {
     java.util.regex.Matcher matcher =
         java.util.regex.Pattern.compile(
-            "<=|>=|==|\\\\d+(?:\\\\.\\\\d+)?(?:\\\\^\\\\d+)?|'[^']*'|[<>]")
+                "<=|>=|==|\\d+(?:\\.\\d+)?(?:\\^\\d+)?|'[^']*'|[<>]")
             .matcher(text);
     List<String> tokens = new ArrayList<>();
     while (matcher.find()) tokens.add(matcher.group());

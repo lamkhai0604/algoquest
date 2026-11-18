@@ -223,7 +223,9 @@ public class GameService {
             : null;
     return new ProblemPage(
         ProblemView.of(problem, catalog.problemTranslation(problem.id(), locale)),
-        times.activeSeconds(userId, problem.id()), last, next);
+        times.activeSeconds(userId, problem.id()),
+        last,
+        next);
   }
 
   /** Localize only the publicly opened hints; never alter hint usage or quota. */

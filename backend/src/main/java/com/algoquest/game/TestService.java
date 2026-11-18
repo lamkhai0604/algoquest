@@ -216,13 +216,21 @@ public class TestService {
     List<TestProblem> localized = new ArrayList<>();
     for (TestProblem item : original.problems()) {
       Problem canonical = catalog.problem(item.problem().id()).orElseThrow();
-      localized.add(new TestProblem(
-          ProblemView.of(canonical, catalog.problemTranslation(canonical.id(), locale)),
-          item.answer(), item.result()));
+      localized.add(
+          new TestProblem(
+              ProblemView.of(canonical, catalog.problemTranslation(canonical.id(), locale)),
+              item.answer(),
+              item.result()));
     }
     return new TestView(
-        original.id(), original.level(), original.status(), original.startedAt(),
-        original.endsAt(), original.serverTime(), List.copyOf(localized), original.score(),
+        original.id(),
+        original.level(),
+        original.status(),
+        original.startedAt(),
+        original.endsAt(),
+        original.serverTime(),
+        List.copyOf(localized),
+        original.score(),
         original.nextLevelState());
   }
 
