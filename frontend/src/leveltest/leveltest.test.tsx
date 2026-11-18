@@ -1,6 +1,7 @@
-import { screen } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { setLocale } from "../i18n";
 import { fakeApi, json, ME } from "../test/fakeApi";
 import { LEVELS, PROBLEM, PROBLEMS } from "../test/gameData";
 import { renderSignedInAt } from "../test/renderApp";
@@ -33,7 +34,37 @@ function makeTest(rest: Partial<LevelTest>): LevelTest {
   };
 }
 
+afterEach(() => setLocale("en"));
+
 describe("level-up test", () => {
+  it("loads Vietnamese test prompts without erasing an unsaved answer on language switch", async () => {
+    setLocale("vi");
+    const data = makeTest({});
+    data.problems[0]!.problem.title = "Nhiệt độ thấp nhất và cao nhất";
+    const fetchFn = fakeApi({
+      "GET /api/v1/me": () => json(200, ME),
+      "GET /api/v1/levels": () => json(200, LEVELS),
+      "GET /api/v1/tests/t-1": () => json(200, data),
+    });
+    renderSignedInAt("/tests/t-1");
+    expect(
+      await screen.findByRole("heading", {
+        name: /Nhiệt độ thấp nhất và cao nhất/,
+      }),
+    ).toBeVisible();
+    const answer = await screen.findByLabelText("Phần giải thích của bạn", {
+      selector: "#answer-L1-min-and-max",
+    });
+    await userEvent.type(answer, "One pass");
+    expect(
+      fetchFn.mock.calls.some(([url]) =>
+        String(url).endsWith("/tests/t-1?lang=vi"),
+      ),
+    ).toBe(true);
+    act(() => setLocale("en"));
+    expect(answer).toHaveValue("One pass");
+  });
+
   it("can be started from the level page when the bar is full", async () => {
     const full = [
       { ...LEVELS[0], xp: 100, testOpen: true, practiceOpen: true },
@@ -110,7 +141,7 @@ describe("level-up test", () => {
     expect(screen.getByText(/Easy problems are open/)).toBeVisible();
     expect(screen.getAllByText("95 / 100")).toHaveLength(3);
     const saves = fetchFn.mock.calls.filter(([url]) =>
-      String(url).endsWith("/answers"),
+      new URL(String(url)).pathname.endsWith("/answers"),
     );
     expect(String(saves.at(-1)?.[1]?.body)).toContain("tracking min and max");
   });
@@ -132,7 +163,7 @@ describe("level-up test", () => {
     expect(await screen.findByText("Not passed yet")).toBeVisible();
     expect(screen.getAllByText("No answer: 0 / 100")).toHaveLength(3);
     const submits = fetchFn.mock.calls.filter(([url]) =>
-      String(url).endsWith("/submit"),
+      new URL(String(url)).pathname.endsWith("/submit"),
     );
     expect(submits).toHaveLength(1);
   });

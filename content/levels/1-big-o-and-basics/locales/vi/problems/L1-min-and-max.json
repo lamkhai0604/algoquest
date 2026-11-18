@@ -1,0 +1,18 @@
+{
+  "id": "L1-min-and-max",
+  "title": "Nhiệt độ thấp nhất và cao nhất",
+  "statement": "Cho một mảng nhiệt độ. Hãy trả về cả giá trị thấp nhất và cao nhất dưới dạng [lowest, highest]. Nếu mảng rỗng, trả về null. Chỉ duyệt mảng một lần.",
+  "exampleExplanations": [
+    "",
+    ""
+  ],
+  "constraints": [
+    "0 <= temps.length <= 10^5",
+    "-100 <= temps[i] <= 100"
+  ],
+  "hints": [
+    "Duyệt hai lần vẫn đúng, nhưng bạn có thể theo dõi cả hai giá trị chỉ với một lần duyệt không?",
+    "Giữ một biến lưu giá trị nhỏ nhất và một biến lưu giá trị lớn nhất từ đầu đến hiện tại.",
+    "Sau khi xử lý trường hợp mảng rỗng, hãy khởi tạo cả hai biến bằng phần tử đầu tiên."
+  ]
+}

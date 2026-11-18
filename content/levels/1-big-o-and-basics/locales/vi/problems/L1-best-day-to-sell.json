@@ -1,0 +1,18 @@
+{
+  "id": "L1-best-day-to-sell",
+  "title": "Ngày bán có lời nhất",
+  "statement": "Bạn theo dõi giá của một vật phẩm (skin) trong trò chơi qua nhiều ngày. Bạn được mua vào một ngày và bán vào một ngày sau đó. Hãy trả về lợi nhuận lớn nhất có thể đạt được, hoặc 0 nếu không thể có lãi.",
+  "exampleExplanations": [
+    "Mua với giá 1, bán với giá 5.",
+    ""
+  ],
+  "constraints": [
+    "0 <= prices.length <= 10^5",
+    "0 <= prices[i] <= 10^4"
+  ],
+  "hints": [
+    "Thử mọi cặp ngày mua và bán sẽ tốn O(n²). Để tính lợi nhuận khi bán hôm nay, bạn cần biết gì về các ngày trước đó?",
+    "Ghi nhớ mức giá thấp nhất từ đầu đến hiện tại; nếu bán hôm nay, lợi nhuận bằng giá hôm nay trừ mức giá thấp nhất đó.",
+    "Khởi tạo lợi nhuận lớn nhất bằng 0, để trường hợp giá chỉ giảm sẽ trả về 0 thay vì số âm."
+  ]
+}

@@ -208,6 +208,32 @@ public class TestService {
         });
   }
 
+  /**
+   * Only changes public problem text. The test clock, answers, score and grading remain canonical.
+   */
+  public TestView localize(TestView original, String locale) {
+    if (!"vi".equalsIgnoreCase(locale)) return original;
+    List<TestProblem> localized = new ArrayList<>();
+    for (TestProblem item : original.problems()) {
+      Problem canonical = catalog.problem(item.problem().id()).orElseThrow();
+      localized.add(
+          new TestProblem(
+              ProblemView.of(canonical, catalog.problemTranslation(canonical.id(), locale)),
+              item.answer(),
+              item.result()));
+    }
+    return new TestView(
+        original.id(),
+        original.level(),
+        original.status(),
+        original.startedAt(),
+        original.endsAt(),
+        original.serverTime(),
+        List.copyOf(localized),
+        original.score(),
+        original.nextLevelState());
+  }
+
   private StoredTest owned(UUID userId, UUID testId) {
     return tests.find(userId, testId).orElseThrow(TestService::notFound);
   }

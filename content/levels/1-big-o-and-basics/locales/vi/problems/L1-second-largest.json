@@ -1,0 +1,19 @@
+{
+  "id": "L1-second-largest",
+  "title": "Điểm cao thứ hai (phân biệt)",
+  "statement": "Cho một mảng điểm số nguyên. Hãy trả về giá trị lớn thứ hai phân biệt với giá trị lớn nhất. Nếu có ít hơn hai giá trị phân biệt, trả về null.",
+  "exampleExplanations": [
+    "",
+    "",
+    ""
+  ],
+  "constraints": [
+    "0 <= scores.length <= 10^5",
+    "-10^9 <= scores[i] <= 10^9"
+  ],
+  "hints": [
+    "Sắp xếp có thể giải bài toán, nhưng bạn có thể tìm đáp án khi duyệt mỗi điểm chỉ một lần không?",
+    "Giữ hai biến: giá trị lớn nhất và giá trị lớn thứ hai phân biệt.",
+    "Giá trị bằng với số lớn nhất không được trở thành số lớn thứ hai."
+  ]
+}

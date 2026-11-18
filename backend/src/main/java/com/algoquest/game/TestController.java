@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** Level-up test endpoints (FR-10). */
@@ -26,25 +27,35 @@ public class TestController {
   }
 
   @PostMapping("/levels/{number}/tests")
-  public TestView start(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable int number) {
-    return tests.start(user.id(), number);
+  public TestView start(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable int number,
+      @RequestParam(defaultValue = "en") String lang) {
+    return tests.localize(tests.start(user.id(), number), lang);
   }
 
   @GetMapping("/tests/{id}")
-  public TestView get(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
-    return tests.get(user.id(), id);
+  public TestView get(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable UUID id,
+      @RequestParam(defaultValue = "en") String lang) {
+    return tests.localize(tests.get(user.id(), id), lang);
   }
 
   @PostMapping("/tests/{id}/answers")
   public TestView answer(
       @AuthenticationPrincipal AuthenticatedUser user,
       @PathVariable UUID id,
-      @RequestBody AnswerRequest request) {
-    return tests.saveAnswer(user.id(), id, request);
+      @RequestBody AnswerRequest request,
+      @RequestParam(defaultValue = "en") String lang) {
+    return tests.localize(tests.saveAnswer(user.id(), id, request), lang);
   }
 
   @PostMapping("/tests/{id}/submit")
-  public TestView submit(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable UUID id) {
-    return tests.submit(user.id(), id);
+  public TestView submit(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable UUID id,
+      @RequestParam(defaultValue = "en") String lang) {
+    return tests.localize(tests.submit(user.id(), id), lang);
   }
 }

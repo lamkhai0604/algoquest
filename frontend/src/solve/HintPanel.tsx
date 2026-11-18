@@ -15,7 +15,7 @@ interface HintPanelProps {
 
 /** Hints in order; each one costs 20% of this problem's XP (FR-06). */
 export function HintPanel({ hints, problemId, onChange }: HintPanelProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { opened, total, quota } = hints;
@@ -25,7 +25,7 @@ export function HintPanel({ hints, problemId, onChange }: HintPanelProps) {
     setOpening(true);
     setError(null);
     api
-      .post<Hints>(`/api/v1/problems/${problemId}/hints`)
+      .post<Hints>(`/api/v1/problems/${problemId}/hints?lang=${locale}`)
       .then(onChange)
       .catch((failure: unknown) =>
         setError(

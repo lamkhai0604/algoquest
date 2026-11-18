@@ -21,6 +21,7 @@ const LOADING = { status: "loading" } as const;
 export function useApiGet<T>(
   path: string | null,
   client: ApiClient = api,
+  keepPreviousLocale = false,
 ): { state: Loadable<T>; reload: () => void } {
   const [result, setResult] = useState<Result<T> | null>(null);
   const [version, setVersion] = useState(0);
@@ -44,6 +45,13 @@ export function useApiGet<T>(
   }, [path, version, client]);
 
   const reload = useCallback(() => setVersion((v) => v + 1), []);
-  const state = result && result.path === path ? result.outcome : LOADING;
+  // A locale change refreshes the same resource without unmounting an active form.
+  const sameResource =
+    keepPreviousLocale &&
+    path !== null &&
+    result?.outcome.status === "ready" &&
+    result.path.split("?")[0] === path.split("?")[0];
+  const state =
+    result && (result.path === path || sameResource) ? result.outcome : LOADING;
   return { state, reload };
 }

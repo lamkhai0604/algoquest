@@ -1,0 +1,18 @@
+{
+  "id": "L1-count-peaks",
+  "title": "Đếm các đỉnh núi",
+  "statement": "Chiều cao tại các vị trí trên đường đi bộ đường dài được lưu trong một mảng. Một đỉnh phải cao hơn hẳn cả hai vị trí liền kề; vị trí đầu tiên và cuối cùng không bao giờ được tính là đỉnh. Hãy trả về số đỉnh tìm được.",
+  "exampleExplanations": [
+    "Giá trị 4 là một đỉnh. Hai giá trị 5 bằng nhau, nên không giá trị nào cao hơn hẳn cả hai vị trí liền kề.",
+    ""
+  ],
+  "constraints": [
+    "0 <= heights.length <= 10^5",
+    "0 <= heights[i] <= 10^4"
+  ],
+  "hints": [
+    "Những vị trí nào chắc chắn không thể là đỉnh?",
+    "Mỗi vị trí ở giữa chỉ cần so sánh với vị trí ngay bên trái và bên phải.",
+    "Dùng phép so sánh nghiêm ngặt (>) để không đếm các đoạn đỉnh bằng phẳng."
+  ]
+}

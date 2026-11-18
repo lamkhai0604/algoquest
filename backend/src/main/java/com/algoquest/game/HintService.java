@@ -46,13 +46,23 @@ public class HintService {
 
   @Transactional(readOnly = true)
   public Hints opened(UUID userId, String problemId) {
+    return opened(userId, problemId, "en");
+  }
+
+  @Transactional(readOnly = true)
+  public Hints opened(UUID userId, String problemId, String locale) {
     Problem problem = game.playableProblem(userId, problemId);
-    return hints(userId, problem, clock.instant());
+    return hints(userId, problem, clock.instant(), locale);
   }
 
   /** Opens the next hint of a problem, if the player has quota left. */
   @Transactional
   public Hints openNext(UUID userId, String problemId) {
+    return openNext(userId, problemId, "en");
+  }
+
+  @Transactional
+  public Hints openNext(UUID userId, String problemId, String locale) {
     Problem problem = game.playableProblem(userId, problemId);
     // One player's hint requests run one at a time, so two at once cannot both pass the quota.
     jdbc.queryForObject("select id from app_user where id = ? for update", UUID.class, userId);
@@ -76,7 +86,7 @@ public class HintService {
         problem.id(),
         used + 1,
         Timestamp.from(now));
-    return hints(userId, problem, now);
+    return hints(userId, problem, now, locale);
   }
 
   /** How many hints the player has opened for a problem; each one lowers its XP by 20%. */
@@ -90,9 +100,10 @@ public class HintService {
     return count == null ? 0 : count;
   }
 
-  private Hints hints(UUID userId, Problem problem, Instant now) {
+  private Hints hints(UUID userId, Problem problem, Instant now, String locale) {
     int used = usedFor(userId, problem.id());
-    return new Hints(problem.hints().subList(0, used), problem.hints().size(), quota(userId, now));
+    List<String> strings = game.hintTexts(problem, locale);
+    return new Hints(strings.subList(0, used), problem.hints().size(), quota(userId, now));
   }
 
   private Quota quota(UUID userId, Instant now) {

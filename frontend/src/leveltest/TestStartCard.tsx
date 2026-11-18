@@ -11,7 +11,7 @@ import styles from "./LevelTest.module.css";
 /** The level-up test entry on the level page (FR-10, FR-11 placeholder). */
 export function TestStartCard({ level }: { level: Level }) {
   const { rules } = useGame();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const navigate = useNavigate();
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export function TestStartCard({ level }: { level: Level }) {
     setStarting(true);
     setError(null);
     api
-      .post<LevelTest>(`/api/v1/levels/${level.number}/tests`)
+      .post<LevelTest>(`/api/v1/levels/${level.number}/tests?lang=${locale}`)
       .then((test) => navigate(`/tests/${test.id}`))
       .catch((failure: unknown) => {
         setError(
