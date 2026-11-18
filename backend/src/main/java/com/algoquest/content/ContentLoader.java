@@ -5,6 +5,7 @@ import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.LevelInfo;
 import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
+import com.algoquest.content.model.ProblemTranslation;
 import com.algoquest.content.model.QuickCheckQuestion;
 import com.algoquest.content.model.WalkthroughStep;
 import java.io.IOException;
@@ -79,6 +80,31 @@ final class ContentLoader {
     }
     if (!loader.problems.isEmpty()) throw new ContentException(loader.problems);
     return Map.copyOf(translated);
+  }
+
+  /**
+   * Optional Vietnamese problem strings. Validation runs at startup, and an untranslated
+   * problem continues to use canonical English content.
+   */
+  static Map<String, ProblemTranslation> loadVietnameseProblems(
+      ResourcePatternResolver resolver, String base, Map<Integer, LevelContent> canonical) {
+    ContentLoader loader = new ContentLoader(resolver, base);
+    Map<String, ProblemTranslation> localized = new TreeMap<>();
+    for (LevelContent level : canonical.values()) {
+      for (Problem problem : level.problems()) {
+        if (!problem.isReady()) continue;
+        String path = folder(level.info()) + "locales/vi/problems/" + problem.id() + ".json";
+        if (!resolver.getResource(loader.base + path).exists()) continue;
+        ProblemTranslation translation =
+            loader.read(path, new TypeReference<ProblemTranslation>() {});
+        if (translation != null) {
+          loader.problems.addAll(ContentValidator.checkTranslatedProblem(path, problem, translation));
+          localized.put(problem.id(), translation);
+        }
+      }
+    }
+    if (!loader.problems.isEmpty()) throw new ContentException(loader.problems);
+    return Map.copyOf(localized);
   }
 
   private Map<Integer, LevelContent> loadAll() {

@@ -160,6 +160,11 @@ public class GameService {
 
   @Transactional(readOnly = true)
   public List<ProblemItem> problems(UUID userId, int number) {
+    return problems(userId, number, "en");
+  }
+
+  @Transactional(readOnly = true)
+  public List<ProblemItem> problems(UUID userId, int number, String locale) {
     LevelContent level = openLevel(userId, number);
     LevelState state = state(userId, number);
     Map<String, ProblemProgress> byProblem = progress.byProblem(userId);
@@ -176,7 +181,9 @@ public class GameService {
       result.add(
           new ProblemItem(
               problem.id(),
-              problem.title(),
+              catalog.problemTranslation(problem.id(), locale) == null
+                  ? problem.title()
+                  : catalog.problemTranslation(problem.id(), locale).title(),
               problem.difficulty(),
               problem.status(),
               locked,
@@ -191,6 +198,11 @@ public class GameService {
 
   @Transactional(readOnly = true)
   public ProblemPage problem(UUID userId, String id) {
+    return problem(userId, id, "en");
+  }
+
+  @Transactional(readOnly = true)
+  public ProblemPage problem(UUID userId, String id, String locale) {
     Problem problem = playableProblem(userId, id);
     AttemptResult last = null;
     // A level reset removes the progress row; older attempts then stay in the log only.
@@ -210,7 +222,14 @@ public class GameService {
             ? order.get(index + 1).id()
             : null;
     return new ProblemPage(
-        ProblemView.of(problem), times.activeSeconds(userId, problem.id()), last, next);
+        ProblemView.of(problem, catalog.problemTranslation(problem.id(), locale)),
+        times.activeSeconds(userId, problem.id()), last, next);
+  }
+
+  /** Localize only the publicly opened hints; never alter hint usage or quota. */
+  List<String> hintTexts(Problem problem, String locale) {
+    var translation = catalog.problemTranslation(problem.id(), locale);
+    return translation == null ? problem.hints() : translation.hints();
   }
 
   /** Adds a heartbeat of working time (D-043). */

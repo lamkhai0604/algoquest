@@ -6,6 +6,7 @@ import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelInfo;
 import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
+import com.algoquest.content.model.ProblemTranslation;
 import com.algoquest.content.model.QuickCheckQuestion;
 import com.algoquest.content.model.Visual;
 import com.algoquest.content.model.WalkthroughStep;
@@ -41,6 +42,55 @@ final class ContentValidator {
   private static final Set<String> STATUSES = Set.of("ready", "comingSoon");
 
   private ContentValidator() {}
+
+  /** The translation cannot modify hidden tests, solution data, option order or executable code. */
+  static List<String> checkTranslatedProblem(
+      String path, Problem canonical, ProblemTranslation translated) {
+    List<String> issues = new ArrayList<>();
+    if (!canonical.id().equals(translated.id())) {
+      issues.add(path + ": id must match the canonical problem");
+    }
+    if (blank(translated.title()) || blank(translated.statement())) {
+      issues.add(path + ": translated title and statement are required");
+    }
+    if (translated.exampleExplanations() == null
+        || translated.exampleExplanations().size() != canonical.examples().size()) {
+      issues.add(path + ": example count must match English");
+    }
+    if (translated.constraints() == null
+        || translated.constraints().size() != canonical.constraints().size()) {
+      issues.add(path + ": constraint count must match English");
+    } else {
+      for (int i = 0; i < canonical.constraints().size(); i++) {
+        String original = canonical.constraints().get(i);
+        String localized = translated.constraints().get(i);
+        if (blank(localized)) {
+          issues.add(path + ": constraint " + (i + 1) + " cannot be empty");
+        } else if (!protectedTokens(original).equals(protectedTokens(localized))) {
+          issues.add(path + ": constraint " + (i + 1)
+              + " must preserve numeric limits, comparisons and quoted values");
+        }
+      }
+    }
+    if (translated.hints() == null || translated.hints().size() != canonical.hints().size()) {
+      issues.add(path + ": hint count must match English");
+    } else {
+      for (String hint : translated.hints()) {
+        if (blank(hint)) issues.add(path + ": hints cannot be empty");
+      }
+    }
+    return issues;
+  }
+
+  private static List<String> protectedTokens(String text) {
+    java.util.regex.Matcher matcher =
+        java.util.regex.Pattern.compile(
+            "<=|>=|==|\\\\d+(?:\\\\.\\\\d+)?(?:\\\\^\\\\d+)?|'[^']*'|[<>]")
+            .matcher(text);
+    List<String> tokens = new ArrayList<>();
+    while (matcher.find()) tokens.add(matcher.group());
+    return tokens;
+  }
 
   static List<String> checkLevels(List<LevelInfo> levels) {
     List<String> problems = new ArrayList<>();

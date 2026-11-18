@@ -67,14 +67,18 @@ public class PlayController {
 
   @GetMapping("/levels/{number}/problems")
   public List<ProblemItem> problems(
-      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable int number) {
-    return game.problems(user.id(), number);
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable int number,
+      @RequestParam(defaultValue = "en") String lang) {
+    return game.problems(user.id(), number, lang);
   }
 
   @GetMapping("/problems/{id}")
   public ProblemPage problem(
-      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
-    return game.problem(user.id(), id);
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable String id,
+      @RequestParam(defaultValue = "en") String lang) {
+    return game.problem(user.id(), id, lang);
   }
 
   @PostMapping("/problems/{id}/heartbeat")
@@ -105,13 +109,18 @@ public class PlayController {
 
   @GetMapping("/problems/{id}/hints")
   public Hints openedHints(
-      @AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
-    return hints.opened(user.id(), id);
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable String id,
+      @RequestParam(defaultValue = "en") String lang) {
+    return hints.opened(user.id(), id, lang);
   }
 
   @PostMapping("/problems/{id}/hints")
-  public Hints openHint(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable String id) {
-    return hints.openNext(user.id(), id);
+  public Hints openHint(
+      @AuthenticationPrincipal AuthenticatedUser user,
+      @PathVariable String id,
+      @RequestParam(defaultValue = "en") String lang) {
+    return hints.openNext(user.id(), id, lang);
   }
 
   @GetMapping("/hints/quota")

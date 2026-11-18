@@ -4,6 +4,7 @@ import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
+import com.algoquest.content.model.ProblemTranslation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ public class ContentCatalog {
 
   private final Map<Integer, LevelContent> levels;
   private final Map<Integer, Lesson> vietnameseLessons;
+  private final Map<String, ProblemTranslation> vietnameseProblems;
   private final Map<String, Problem> problemsById = new HashMap<>();
   private final Map<String, PatternChallenge> patternsById = new HashMap<>();
 
@@ -32,6 +34,7 @@ public class ContentCatalog {
     var resolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
     this.levels = ContentLoader.load(resolver, location);
     this.vietnameseLessons = ContentLoader.loadVietnameseLessons(resolver, location, levels);
+    this.vietnameseProblems = ContentLoader.loadVietnameseProblems(resolver, location, levels);
     List<String> duplicates = new ArrayList<>();
     for (LevelContent level : levels.values()) {
       for (Problem problem : level.problems()) {
@@ -64,6 +67,11 @@ public class ContentCatalog {
     return "vi".equalsIgnoreCase(locale)
         ? vietnameseLessons.getOrDefault(number, level.lesson())
         : level.lesson();
+  }
+
+  /** Returns translated public strings only; missing translations use canonical English. */
+  public ProblemTranslation problemTranslation(String problemId, String locale) {
+    return "vi".equalsIgnoreCase(locale) ? vietnameseProblems.get(problemId) : null;
   }
 
   /** The full challenge, including its labels. Send labels only after an answer (D-057). */

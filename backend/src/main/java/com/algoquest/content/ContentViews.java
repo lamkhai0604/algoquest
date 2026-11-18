@@ -4,8 +4,10 @@ import com.algoquest.content.model.Example;
 import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.Problem;
+import com.algoquest.content.model.ProblemTranslation;
 import com.algoquest.content.model.QuickCheckQuestion;
 import com.algoquest.content.model.WalkthroughStep;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -57,18 +59,28 @@ public final class ContentViews {
       int hintCount) {
 
     public static ProblemView of(Problem p) {
+      return of(p, null);
+    }
+
+    public static ProblemView of(Problem p, ProblemTranslation translated) {
       int hints = p.hints() == null ? 0 : p.hints().size();
+      if (translated == null) {
+        return new ProblemView(
+            p.id(), p.level(), p.title(), p.difficulty(), p.statement(), p.examples(),
+            p.constraints(), p.starterCode(), p.similarLeetCode(), hints);
+      }
+      List<Example> examples = new ArrayList<>();
+      for (int i = 0; i < p.examples().size(); i++) {
+        Example canonical = p.examples().get(i);
+        String translation = translated.exampleExplanations().get(i);
+        examples.add(new Example(
+            canonical.input(), canonical.output(),
+            translation == null || translation.isBlank() ? canonical.explanation() : translation));
+      }
       return new ProblemView(
-          p.id(),
-          p.level(),
-          p.title(),
-          p.difficulty(),
-          p.statement(),
-          p.examples(),
-          p.constraints(),
-          p.starterCode(),
-          p.similarLeetCode(),
-          hints);
+          p.id(), p.level(), translated.title(), p.difficulty(), translated.statement(),
+          List.copyOf(examples), translated.constraints(), p.starterCode(),
+          p.similarLeetCode(), hints);
     }
   }
 }
