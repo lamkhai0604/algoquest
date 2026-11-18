@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "../i18n";
 import { Link, useParams, useSearchParams } from "react-router";
 import { api } from "../api";
@@ -308,18 +308,10 @@ export function SolvePage() {
     params.get("mode") === "practice" ? "practice" : "explain";
   const { state, reload } = useApiGet<ProblemDetail>(
     `/api/v1/problems/${id}?lang=${locale}`,
+    api,
+    true,
   );
-  // Keep the current form mounted while the translated text is being fetched.
-  const [previous, setPrevious] = useState<ProblemDetail | null>(null);
-  useEffect(() => {
-    if (state.status === "ready") setPrevious(state.data);
-  }, [state]);
-  const shown =
-    state.status === "ready"
-      ? state.data
-      : previous?.id === id
-        ? previous
-        : null;
+  const shown = state.status === "ready" ? state.data : null;
   const level = shown?.level ?? null;
 
   return (
