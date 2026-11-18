@@ -135,7 +135,7 @@ describe("lesson page", () => {
           "## [template-code] Code mẫu",
           "",
           "Một lần duyệt là O(n).",
-        ].join("\\n"),
+        ].join("\n"),
       };
       const fetchFn = open(translated);
       expect(
