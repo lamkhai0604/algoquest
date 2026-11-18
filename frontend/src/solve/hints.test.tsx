@@ -79,7 +79,9 @@ describe("hints", () => {
     expect(quota).toHaveTextContent("next one back in 3h");
     expect(screen.getByText("Up to 16 XP")).toBeVisible();
     const posts = fetchFn.mock.calls.filter(
-      ([url, init]) => new URL(String(url)).pathname.endsWith(HINTS) && init?.method === "POST",
+      ([url, init]) =>
+        new URL(String(url)).pathname.endsWith(HINTS) &&
+        init?.method === "POST",
     );
     expect(posts).toHaveLength(1);
   });
@@ -94,7 +96,8 @@ describe("hints", () => {
     ).toBeVisible();
     const posts = fetchFn.mock.calls.filter(
       ([url, init]) =>
-        init?.method === "POST" && new URL(String(url)).pathname.endsWith("/hints"),
+        init?.method === "POST" &&
+        new URL(String(url)).pathname.endsWith("/hints"),
     );
     expect(posts).toHaveLength(0);
   });
