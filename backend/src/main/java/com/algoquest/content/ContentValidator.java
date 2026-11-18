@@ -125,7 +125,7 @@ final class ContentValidator {
             "template-code", "complexity", "common-mistakes", "edge-cases", "worked-example");
     for (String id : ids) {
       if (localized.markdown() == null
-          || !localized.markdown().contains("\\n## [" + id + "] ")) {
+          || !localized.markdown().contains("\n## [" + id + "] ")) {
         issues.add(folder + "lesson.md: missing section ID " + id);
       }
     }
