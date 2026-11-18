@@ -305,7 +305,9 @@ export function SolvePage() {
   const [params] = useSearchParams();
   const mode: AttemptMode =
     params.get("mode") === "practice" ? "practice" : "explain";
-  const { state, reload } = useApiGet<ProblemDetail>(`/api/v1/problems/${id}?lang=${locale}`);
+  const { state, reload } = useApiGet<ProblemDetail>(
+    `/api/v1/problems/${id}?lang=${locale}`,
+  );
   const level = state.status === "ready" ? state.data.level : null;
 
   return (

@@ -134,7 +134,11 @@ function RunningTest({
           if (text !== saved[problemId]) await save(problemId, text);
         }
       }
-      onSubmitted(await api.post<LevelTest>(`/api/v1/tests/${test.id}/submit?lang=${locale}`));
+      onSubmitted(
+        await api.post<LevelTest>(
+          `/api/v1/tests/${test.id}/submit?lang=${locale}`,
+        ),
+      );
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : t("common.retry"));
       setSubmitting(false);
@@ -215,7 +219,9 @@ export function LevelTestPage() {
   const { t, locale } = useTranslation();
   const { id } = useParams();
   const { reloadLevels } = useGame();
-  const { state, reload } = useApiGet<LevelTest>(`/api/v1/tests/${id}?lang=${locale}`);
+  const { state, reload } = useApiGet<LevelTest>(
+    `/api/v1/tests/${id}?lang=${locale}`,
+  );
   const [submitted, setSubmitted] = useState<LevelTest | null>(null);
   const test = submitted ?? (state.status === "ready" ? state.data : null);
 
