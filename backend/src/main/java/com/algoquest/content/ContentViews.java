@@ -2,6 +2,7 @@ package com.algoquest.content;
 
 import com.algoquest.content.model.Example;
 import com.algoquest.content.model.LevelContent;
+import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.QuickCheckQuestion;
 import com.algoquest.content.model.WalkthroughStep;
@@ -25,13 +26,21 @@ public final class ContentViews {
       QuickCheckQuestion intuition) {
 
     public static LessonView of(LevelContent level) {
+      return of(level, level.lesson());
+    }
+
+    public static LessonView of(LevelContent level, Lesson translated) {
+      String title = level.info().title();
+      if (translated != level.lesson() && translated.markdown().startsWith("# ")) {
+        title = translated.markdown().split("\\R", 2)[0].substring(2).trim();
+      }
       return new LessonView(
           level.info().number(),
-          level.info().title(),
-          level.lesson().markdown(),
-          level.lesson().walkthrough(),
-          level.lesson().quickCheck(),
-          level.lesson().intuition());
+          title,
+          translated.markdown(),
+          translated.walkthrough(),
+          translated.quickCheck(),
+          translated.intuition());
     }
   }
 
