@@ -1,0 +1,323 @@
+{
+  "id": "L5-add-odometers",
+  "level": 5,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Add Two Odometers",
+  "statement": "Two trip odometers store their distances as linked lists of digits with the ones digit first: 312 km is stored as 2 → 1 → 3. Return the total distance as a new list in the same form. Neither list has extra zeros at the end, except the number 0 itself (a single node 0).",
+  "examples": [
+    {
+      "input": "a = 2 → 1 → 3 (312), b = 9 → 8 (89)",
+      "output": "1 → 0 → 4 (401)"
+    },
+    {
+      "input": "a = 9 → 9, b = 1",
+      "output": "0 → 0 → 1"
+    }
+  ],
+  "constraints": [
+    "1 <= length of a, b <= 100",
+    "Each node holds a digit from 0 to 9",
+    "The numbers can be far too large for a normal integer"
+  ],
+  "answerKey": {
+    "pattern": "Walk both lists together, adding digits with a carry, building the result behind a dummy node",
+    "keyPoints": [
+      "Keep a carry starting at 0 and a dummy node with a tail pointer",
+      "While either list has a digit or the carry is not 0, add the two digits (0 if a list has ended) and the carry",
+      "Append sum % 10 and set carry to the integer part of sum / 10",
+      "Return dummy.next"
+    ],
+    "timeComplexity": "O(max(n, m))",
+    "spaceComplexity": "O(max(n, m)) for the result",
+    "edgeCases": [
+      "Lists of different lengths",
+      "A carry left after the last digits (99 + 1)",
+      "One number is 0"
+    ],
+    "acceptableSlowerApproaches": []
+  },
+  "hints": [
+    "The ones digits come first. How do you add two numbers by hand, starting from the ones?",
+    "Add the digits at the same position plus a carry. Write down sum % 10 and carry the rest.",
+    "Keep going while either list has digits left or the carry is not 0. Converting to a number overflows for long lists."
+  ],
+  "starterCode": {
+    "javascript": "// A node is { val, next }. Make one with new ListNode(val, next).\nfunction addOdometers(a, b) {\n  // return the sum as a list of digits, ones digit first\n}",
+    "java": "// ListNode has: int val; ListNode next; and new ListNode(val) or new ListNode(val, next).\nclass Solution {\n  ListNode addOdometers(ListNode a, ListNode b) {\n    // return the sum as a list of digits, ones digit first\n  }\n}"
+  },
+  "similarLeetCode": "Add Two Numbers",
+  "tests": [
+    {
+      "input": [
+        [
+          2,
+          1,
+          3
+        ],
+        [
+          9,
+          8
+        ]
+      ],
+      "expected": [
+        1,
+        0,
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          9,
+          9
+        ],
+        [
+          1
+        ]
+      ],
+      "expected": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "input": [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "expected": [
+        0
+      ]
+    },
+    {
+      "input": [
+        [
+          0
+        ],
+        [
+          5,
+          4
+        ]
+      ],
+      "expected": [
+        5,
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          5
+        ],
+        [
+          5
+        ]
+      ],
+      "expected": [
+        0,
+        1
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        5,
+        7,
+        9
+      ]
+    },
+    {
+      "input": [
+        [
+          9,
+          9,
+          9,
+          9,
+          9
+        ],
+        [
+          1
+        ]
+      ],
+      "expected": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "input": [
+        [
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9
+        ],
+        [
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9
+        ]
+      ],
+      "expected": [
+        8,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        1
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          9,
+          9
+        ]
+      ],
+      "expected": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    }
+  ]
+}

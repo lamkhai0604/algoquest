@@ -1,0 +1,146 @@
+[
+  {
+    "id": "P5-backwards-tour",
+    "level": 5,
+    "title": "Backwards Tour",
+    "statement": "A walking tour is stored as a linked list of stops from start to finish. Tomorrow's tour runs the same stops in reverse. Return the head of the list in reverse order; the nodes may be reused.",
+    "examples": [
+      "1 → 2 → 3 → 4 becomes 4 → 3 → 2 → 1",
+      "a single stop stays as it is"
+    ],
+    "constraints": [
+      "Up to 100,000 stops"
+    ],
+    "approaches": [
+      {
+        "id": "pointers",
+        "name": "Turn the pointers around in one pass",
+        "hint": "Walk once and change each arrow",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "prev, curr, and a saved next pointer turn every arrow around in one walk, with no copies."
+      },
+      {
+        "id": "array",
+        "name": "Copy values to an array, write them back reversed",
+        "hint": "Use an array as a scratch pad",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Correct and linear, but it needs an array as long as the list."
+      },
+      {
+        "id": "recursion",
+        "name": "Recursion on the rest of the list",
+        "hint": "Solve a smaller copy first",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Reverse the rest, then attach the first node at the end. Correct, but the call stack grows with the list and can overflow for long lists."
+      },
+      {
+        "id": "sort",
+        "name": "Sort the stops in decreasing order",
+        "hint": "Put items in order first",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Reversing is about position, not value. Sorting only works when the stops happen to be in increasing order."
+      }
+    ]
+  },
+  {
+    "id": "P5-merge-queues",
+    "level": 5,
+    "title": "Two Sorted Queues",
+    "statement": "Two ticket queues are linked lists of ticket numbers, each in increasing order. Join them into one list in increasing order, reusing the nodes.",
+    "examples": [
+      "1 → 4 → 9 and 2 → 3 give 1 → 2 → 3 → 4 → 9",
+      "an empty queue and 5 give 5"
+    ],
+    "constraints": [
+      "Up to 100,000 nodes in each list"
+    ],
+    "approaches": [
+      {
+        "id": "relink",
+        "name": "Relink with a dummy head and a tail pointer",
+        "hint": "Take the smaller front node each time",
+        "label": "best",
+        "time": "O(n + m)",
+        "space": "O(1)",
+        "why": "Each node is attached once by changing one pointer; the leftover list is attached in one step."
+      },
+      {
+        "id": "collect",
+        "name": "Collect all values, sort, build a new list",
+        "hint": "Put items in order first",
+        "label": "valid",
+        "time": "O((n + m) log(n + m))",
+        "space": "O(n + m)",
+        "why": "Correct, but it ignores that both lists are already sorted and makes new nodes."
+      },
+      {
+        "id": "append",
+        "name": "Attach the second list after the first",
+        "hint": "Join the ends",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "The result is only sorted if every ticket in the first list is smaller than every ticket in the second."
+      }
+    ]
+  },
+  {
+    "id": "P5-skip-closed",
+    "level": 5,
+    "title": "Skip Closed Stations",
+    "statement": "A subway line is a linked list of station codes. Some stations are closed today, listed by code. Remove every closed station from the list and return the head; the closed codes may include the first station.",
+    "examples": [
+      "7 → 3 → 7 → 5 with closed 7 gives 3 → 5",
+      "4 → 4 with closed 4 gives an empty list"
+    ],
+    "constraints": [
+      "Up to 100,000 stations"
+    ],
+    "approaches": [
+      {
+        "id": "dummy",
+        "name": "Dummy node, then unlink in one pass",
+        "hint": "Give the head a node before it",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "With a dummy in front, every node, the head too, is removed by changing its predecessor's pointer, in one walk."
+      },
+      {
+        "id": "rebuild",
+        "name": "Build a new list of the open stations",
+        "hint": "Copy what you keep",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Correct and linear, but it makes a second list instead of reusing the nodes."
+      },
+      {
+        "id": "restart",
+        "name": "Find one closed station, remove it, start again from the head",
+        "hint": "Repeat until nothing changes",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Correct, but each removal walks from the head again, so many closed stations make it slow."
+      },
+      {
+        "id": "blank",
+        "name": "Set the closed stations' values to 0",
+        "hint": "Change the value in place",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "The nodes stay in the list, so the closed stations are still there, just with a wrong code."
+      }
+    ]
+  }
+]

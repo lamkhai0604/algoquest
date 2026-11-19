@@ -127,6 +127,10 @@ function CodeRunner({
           code,
           setup.functionName ?? "solve",
           setup.inputs,
+          {
+            listArguments: setup.listArguments ?? [],
+            returnsList: setup.returnsList ?? false,
+          },
         );
         body = { ...body, outputs: browser.outputs, errors: browser.errors };
       }

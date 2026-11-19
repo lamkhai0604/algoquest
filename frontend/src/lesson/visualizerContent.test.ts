@@ -78,19 +78,50 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(steps.at(-1)!, "swaps")).toBe(String(pairs));
   });
 
+  it("Level 5: the pointers change one node at a time, ending reversed", () => {
+    const steps = walkthrough("5-linked-lists");
+    const n = steps[0]!.visual!.cells.length;
+    // The reference reversal: after node k turns around, nodes 0..k point back.
+    const expected: number[][] = [
+      Array.from({ length: n }, (_, i) => (i + 1 < n ? i + 1 : -1)),
+    ];
+    for (let k = 0; k < n; k++) {
+      const next = [...expected.at(-1)!];
+      next[k] = k - 1;
+      expected.push(next);
+    }
+    const seen: number[][] = [];
+    for (const step of steps) {
+      const next = step.visual!.next!;
+      expect(step.visual!.cells).toEqual(steps[0]!.visual!.cells);
+      if (JSON.stringify(seen.at(-1)) !== JSON.stringify(next)) seen.push(next);
+    }
+    expect(seen).toEqual(expected);
+    // Walking from the head marker of the last step gives the result.
+    const last = steps.at(-1)!;
+    const head = last.visual!.markers!.find((m) => m.label === "head")!.index;
+    const values: string[] = [];
+    for (let i = head; i !== -1; i = last.visual!.next![i]!) {
+      values.push(last.visual!.cells[i]!);
+    }
+    expect(value(last, "result")).toBe(`[${values.join(", ")}]`);
+  });
+
   it("every prediction's answer is one of its options", () => {
     for (const folder of [
       "1-big-o-and-basics",
       "2-arrays-and-strings",
       "3-hashing",
       "4-sorting-fundamentals",
+      "5-linked-lists",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;
         if (!predict) continue;
         expect(predict.options[predict.answer]).toBeDefined();
         for (const name of predict.hides ?? []) {
-          expect(value(step, name)).toBeDefined();
+          if (name === "next") expect(step.visual?.next).toBeTruthy();
+          else expect(value(step, name)).toBeDefined();
         }
       }
     }

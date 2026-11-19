@@ -27,8 +27,37 @@ public final class JavaHarness {
   /** The program to run and the marker that starts each result line. */
   public record Program(String source, String marker) {}
 
-  /** The method to call: its name and parameter types, read from the Java starter code. */
-  public record Signature(String name, List<String> parameterTypes) {}
+  /** The Java type that marks a linked-list argument or result (D-058). */
+  public static final String LIST_NODE = "ListNode";
+
+  /** The longest list a result may be before it counts as a cycle (D-058). */
+  public static final int MAX_LIST_LENGTH = 100_000;
+
+  /**
+   * The method to call: its return type, name, and parameter types, read from the Java starter
+   * code.
+   */
+  public record Signature(String returnType, String name, List<String> parameterTypes) {
+
+    /** The positions of the parameters that are linked lists. */
+    public List<Integer> listArguments() {
+      List<Integer> positions = new ArrayList<>();
+      for (int i = 0; i < parameterTypes.size(); i++) {
+        if (parameterTypes.get(i).equals(LIST_NODE)) {
+          positions.add(i);
+        }
+      }
+      return positions;
+    }
+
+    public boolean returnsList() {
+      return returnType.equals(LIST_NODE);
+    }
+
+    boolean usesLists() {
+      return returnsList() || parameterTypes.contains(LIST_NODE);
+    }
+  }
 
   private JavaHarness() {}
 
@@ -49,7 +78,7 @@ public final class JavaHarness {
           types.add(trimmed.substring(0, trimmed.lastIndexOf(' ')).replace(" ", ""));
         }
       }
-      return new Signature(m.group(2), types);
+      return new Signature(m.group(1), m.group(2), types);
     }
     throw new IllegalArgumentException(problem.id() + ": no method in the Java starter code");
   }
@@ -66,13 +95,15 @@ public final class JavaHarness {
         Object value = a < input.size() ? input.get(a) : null;
         arguments.add(literal(signature.parameterTypes().get(a), JSON.valueToTree(value)));
       }
+      String call = "new Solution()." + signature.name() + "(" + String.join(", ", arguments) + ")";
+      if (signature.returnsList()) {
+        call = "list(" + call + ")";
+      }
       main.append("    run(")
           .append(i)
-          .append(", new Call() { public Object call() throws Throwable { return new Solution().")
-          .append(signature.name())
-          .append('(')
-          .append(String.join(", ", arguments))
-          .append("); } });\n");
+          .append(", new Call() { public Object call() throws Throwable { return ")
+          .append(call)
+          .append("; } });\n");
     }
     String source =
         "import java.util.*;\n\n"
@@ -119,6 +150,7 @@ public final class JavaHarness {
             + "    }\n"
             + "    return str(o.toString());\n"
             + "  }\n\n"
+            + (signature.usesLists() ? LIST_HELPERS : "")
             + "  static String str(String s) {\n"
             + "    StringBuilder b = new StringBuilder(\"\\\"\");\n"
             + "    for (char ch : s.toCharArray()) {\n"
@@ -129,10 +161,51 @@ public final class JavaHarness {
             + "    return b.append('\"').toString();\n"
             + "  }\n"
             + "}\n\n"
+            + (signature.usesLists() ? LIST_NODE_CLASS : "")
             + code
             + "\n";
     return new Program(source, marker);
   }
+
+  /** Turns a returned list into an array; a cycle or a list too long stops the test. */
+  private static final String LIST_HELPERS =
+      "  static class ListCycleOrTooLong extends RuntimeException {}\n\n"
+          + "  static int[] list(ListNode head) {\n"
+          + "    List<Integer> values = new ArrayList<Integer>();\n"
+          + "    for (ListNode p = head; p != null; p = p.next) {\n"
+          + "      if (values.size() >= "
+          + MAX_LIST_LENGTH
+          + ") throw new ListCycleOrTooLong();\n"
+          + "      values.add(p.val);\n"
+          + "    }\n"
+          + "    int[] out = new int[values.size()];\n"
+          + "    for (int k = 0; k < out.length; k++) out[k] = values.get(k);\n"
+          + "    return out;\n"
+          + "  }\n\n";
+
+  /** The node class the player's code uses, as on common interview sites. */
+  private static final String LIST_NODE_CLASS =
+      "class ListNode {\n"
+          + "  int val;\n"
+          + "  ListNode next;\n\n"
+          + "  ListNode() {}\n\n"
+          + "  ListNode(int val) {\n"
+          + "    this.val = val;\n"
+          + "  }\n\n"
+          + "  ListNode(int val, ListNode next) {\n"
+          + "    this.val = val;\n"
+          + "    this.next = next;\n"
+          + "  }\n\n"
+          + "  static ListNode of(int[] values) {\n"
+          + "    ListNode dummy = new ListNode();\n"
+          + "    ListNode tail = dummy;\n"
+          + "    for (int v : values) {\n"
+          + "      tail.next = new ListNode(v);\n"
+          + "      tail = tail.next;\n"
+          + "    }\n"
+          + "    return dummy.next;\n"
+          + "  }\n"
+          + "}\n\n";
 
   /** Reads the result lines printed after the marker; a missing line means the test did not run. */
   public static List<TestOutcome> outcomes(String stdout, String marker, int tests) {
@@ -177,6 +250,10 @@ public final class JavaHarness {
 
   /** A Java expression of the given type for a JSON value. */
   static String literal(String type, JsonNode value) {
+    if (type.equals(LIST_NODE)) {
+      boolean empty = value == null || value.isNull();
+      return "ListNode.of(" + (empty ? "new int[]{}" : literal("int[]", value)) + ")";
+    }
     if (value == null || value.isNull()) {
       return type.endsWith("[]") || !Character.isLowerCase(type.charAt(0))
           ? "(" + type + ") null"

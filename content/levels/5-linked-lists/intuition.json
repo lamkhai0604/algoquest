@@ -1,0 +1,11 @@
+{
+  "question": "A playlist has 1,000,000 songs. You already hold the song that is playing. About how many steps does it take to add a new song right after it?",
+  "options": [
+    "About 1,000,000: every later song moves",
+    "About 500,000 on average",
+    "A few steps, whatever the length",
+    "About 20, like a binary search"
+  ],
+  "answer": 2,
+  "explanation": "In a linked list, nothing shifts. The new song points at the old next song, and the playing song points at the new one: two pointer changes. An array would have to move every later song."
+}

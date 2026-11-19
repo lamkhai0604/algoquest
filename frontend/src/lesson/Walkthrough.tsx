@@ -53,6 +53,79 @@ function Cells({ visual }: { visual: Visual }) {
   );
 }
 
+/**
+ * A linked list: each cell is a node, drawn with where its next pointer goes.
+ * Arrows join neighbouring nodes that point at each other; a node whose
+ * pointer changed since the previous step is highlighted. While a prediction
+ * hides "next", the pointers show "?".
+ */
+function Nodes({
+  visual,
+  previous,
+  hidden,
+}: {
+  visual: Visual;
+  previous: Visual | null;
+  hidden: string[];
+}) {
+  const { t } = useTranslation();
+  const next = visual.next ?? [];
+  const masked = hidden.includes("next");
+  const labels = new Map<number, string[]>();
+  for (const marker of visual.markers ?? []) {
+    labels.set(marker.index, [
+      ...(labels.get(marker.index) ?? []),
+      marker.label,
+    ]);
+  }
+  const before =
+    previous?.next && previous.next.length === next.length
+      ? previous.next
+      : null;
+  const target = (i: number) =>
+    masked ? "?" : next[i] === -1 ? "null" : `[${next[i]}]`;
+  const link = (i: number) => {
+    if (masked) return "";
+    const forward = next[i] === i + 1;
+    const back = next[i + 1] === i;
+    return forward && back ? "⇄" : forward ? "→" : back ? "←" : "";
+  };
+  return (
+    <ol className={styles.nodes} aria-label={t("walkthrough.items")}>
+      {visual.cells.map((cell, index) => {
+        const marks = labels.get(index);
+        const changed =
+          !masked && before !== null && before[index] !== next[index];
+        return (
+          <li key={index} className={styles.nodeItem}>
+            <div
+              className={cx(
+                styles.cell,
+                styles.node,
+                marks && styles.cellCurrent,
+                changed && styles.cellSwapped,
+              )}
+              aria-current={marks ? "true" : undefined}
+            >
+              <span className={styles.cellIndex}>[{index}]</span>
+              <span className={styles.cellValue}>{cell}</span>
+              <span className={styles.nodeNext}>next {target(index)}</span>
+              <span className={styles.cellMarker}>
+                {marks?.join(", ") ?? ""}
+              </span>
+            </div>
+            {index < visual.cells.length - 1 && (
+              <span className={styles.nodeLink} aria-hidden="true">
+                {link(index)}
+              </span>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function Variables({ visual, hidden }: { visual: Visual; hidden: string[] }) {
   if (!visual.vars?.length) return null;
   return (
@@ -186,7 +259,16 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           {t("walkthrough.step")} {index + 1} {t("lesson.stepOf")}{" "}
           {steps.length}
         </span>
-        {visual && <Cells visual={visual} />}
+        {visual &&
+          (visual.next ? (
+            <Nodes
+              visual={visual}
+              previous={steps[index - 1]?.visual ?? null}
+              hidden={hidden}
+            />
+          ) : (
+            <Cells visual={visual} />
+          ))}
         {visual && <Variables visual={visual} hidden={hidden} />}
         {predict && (
           <Predict
