@@ -346,6 +346,39 @@
   }
 }
 
+.nodes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: var(--space-2);
+  margin: var(--space-3) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nodeItem {
+  display: flex;
+  align-items: center;
+}
+
+.node {
+  min-width: 64px;
+}
+
+.nodeNext {
+  color: var(--color-text-muted);
+  font: var(--text-xs) / 1.2 var(--font-mono);
+  white-space: nowrap;
+}
+
+.nodeLink {
+  width: 1.75rem;
+  color: var(--color-primary);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  text-align: center;
+}
+
 .cellIndex {
   color: var(--color-text-muted);
   font-size: var(--text-xs);

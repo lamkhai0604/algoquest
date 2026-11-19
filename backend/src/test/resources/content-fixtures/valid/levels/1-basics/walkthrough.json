@@ -45,6 +45,18 @@
   },
   {
     "title": "Finish",
-    "body": "Return best."
+    "body": "Return best.",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "3"
+      ],
+      "next": [
+        1,
+        2,
+        -1
+      ]
+    }
   }
 ]

@@ -235,7 +235,8 @@ final class ContentValidator {
           if (!java.util.Objects.equals(a.cells(), b.cells())
               || !java.util.Objects.equals(a.markers(), b.markers())
               || !java.util.Objects.equals(a.vars(), b.vars())
-              || !java.util.Objects.equals(a.swap(), b.swap())) {
+              || !java.util.Objects.equals(a.swap(), b.swap())
+              || !java.util.Objects.equals(a.next(), b.next())) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -300,6 +301,18 @@ final class ContentValidator {
             || swap.stream().anyMatch(i -> i < 0 || i >= visual.cells().size()))) {
       problems.add(where + ": swap needs the indices of two different cells");
     }
+    List<Integer> next = visual.next();
+    if (next != null) {
+      boolean valid = next.size() == visual.cells().size();
+      for (int i = 0; valid && i < next.size(); i++) {
+        Integer target = next.get(i);
+        valid = target != null && target >= -1 && target < next.size() && target != i;
+      }
+      if (!valid) {
+        problems.add(
+            where + ": next needs one entry per cell: another cell's index, or -1 for null");
+      }
+    }
     Set<String> names = new HashSet<>();
     if (visual.vars() != null) {
       for (Visual.Variable variable : visual.vars()) {
@@ -309,6 +322,9 @@ final class ContentValidator {
           names.add(variable.name());
         }
       }
+    }
+    if (visual.next() != null) {
+      names.add("next");
     }
     Visual.Prediction predict = visual.predict();
     if (predict != null) {

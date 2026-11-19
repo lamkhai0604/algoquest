@@ -25,6 +25,8 @@ export interface Visual {
   predict?: Prediction | null;
   /** Indices of the two cells whose values this step exchanged. */
   swap?: [number, number] | null;
+  /** Linked list: for each cell, the index its next points to, or -1 for null. */
+  next?: number[] | null;
 }
 
 export interface WalkthroughStep {

@@ -5,9 +5,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.algoquest.content.model.AnswerKey;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.TestCase;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -81,6 +90,80 @@ class JavaHarnessTest {
         .contains("new Solution().countPassing(new int[]{}, 50)")
         .contains("class Solution { int countPassing");
     assertThat(program.marker()).startsWith("@@").hasSize(14);
+  }
+
+  @Test
+  void readsListArgumentsAndResultsFromTheStarterCode() {
+    Problem p =
+        problem(
+            "class Solution {\n  ListNode merge(ListNode a, int x, ListNode b) {\n  }\n}",
+            List.of());
+
+    JavaHarness.Signature signature = JavaHarness.signature(p);
+
+    assertThat(signature.listArguments()).containsExactly(0, 2);
+    assertThat(signature.returnsList()).isTrue();
+    assertThat(JavaHarness.literal("ListNode", JSON.valueToTree(List.of(1, 2))))
+        .isEqualTo("ListNode.of(new int[]{1, 2})");
+    assertThat(JavaHarness.literal("ListNode", JSON.valueToTree(List.of())))
+        .isEqualTo("ListNode.of(new int[]{})");
+  }
+
+  @Test
+  void runsListCodeAndStopsAtACycle() throws Exception {
+    Problem p =
+        problem(
+            "class Solution {\n  ListNode reverse(ListNode head) {\n  }\n}",
+            List.of(
+                new TestCase(List.of(List.of(1, 2, 3)), List.of(3, 2, 1)),
+                new TestCase(List.of(List.of()), List.of()),
+                new TestCase(List.of(List.of(7, 7)), List.of())));
+    String code =
+        "class Solution {\n"
+            + "  ListNode reverse(ListNode head) {\n"
+            + "    if (head != null && head.val == 7) { head.next.next = head; return head; }\n"
+            + "    ListNode prev = null;\n"
+            + "    while (head != null) {\n"
+            + "      ListNode next = head.next;\n"
+            + "      head.next = prev;\n"
+            + "      prev = head;\n"
+            + "      head = next;\n"
+            + "    }\n"
+            + "    return prev;\n"
+            + "  }\n"
+            + "}";
+
+    JavaHarness.Program program = JavaHarness.build(p, code);
+    List<TestOutcome> outcomes =
+        JavaHarness.outcomes(compileAndRun(program.source()), program.marker(), 3);
+
+    assertThat(outcomes.get(0).output()).isEqualTo(JSON.valueToTree(List.of(3, 2, 1)));
+    assertThat(outcomes.get(1).output()).isEqualTo(JSON.valueToTree(List.of()));
+    assertThat(outcomes.get(2).error()).isEqualTo("ListCycleOrTooLong");
+  }
+
+  @Test
+  void leavesTheListClassOutWhenNoListIsUsed() {
+    Problem p = problem("class Solution {\n  int f(int[] a) {\n  }\n}", List.of());
+
+    assertThat(JavaHarness.build(p, "class Solution {}").source()).doesNotContain("ListNode");
+  }
+
+  private static String compileAndRun(String source) throws Exception {
+    Path dir = Files.createTempDirectory("harness");
+    Files.writeString(dir.resolve("Main.java"), source);
+    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    int status = compiler.run(null, null, null, "-d", dir.toString(), dir + "/Main.java");
+    assertThat(status).isZero();
+    PrintStream original = System.out;
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    try (URLClassLoader loader = new URLClassLoader(new URL[] {dir.toUri().toURL()})) {
+      System.setOut(new PrintStream(out, true, StandardCharsets.UTF_8));
+      loader.loadClass("Main").getMethod("main", String[].class).invoke(null, (Object) new String[0]);
+    } finally {
+      System.setOut(original);
+    }
+    return out.toString(StandardCharsets.UTF_8);
   }
 
   @Test

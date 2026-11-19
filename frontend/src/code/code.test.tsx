@@ -10,6 +10,8 @@ import type { CodeResult, CodeSetup } from "./types";
 const SETUP: CodeSetup = {
   functionName: "maxTemperature",
   inputs: [[[3, -2, 9]], [[]]],
+  listArguments: [],
+  returnsList: false,
   javaAvailable: true,
   javaRunsLeft: 45,
   javaDailyLimit: 45,

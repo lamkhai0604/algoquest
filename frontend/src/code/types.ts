@@ -4,6 +4,10 @@ export type CodeLanguage = "javascript" | "java";
 export interface CodeSetup {
   functionName: string | null;
   inputs: unknown[][];
+  /** Positions of the arguments that are linked lists (D-058). */
+  listArguments: number[];
+  /** True when the function returns a linked list (D-058). */
+  returnsList: boolean;
   /** False when the site has no Java runner; the editor then offers JavaScript only. */
   javaAvailable: boolean;
   javaRunsLeft: number;
