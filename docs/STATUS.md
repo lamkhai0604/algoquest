@@ -2,12 +2,12 @@
 
 | Field | Value |
 | --- | --- |
-| Updated | 2026-11-17 |
-| Sprint | Sprint 5 — Level 4 and the profile page: approved 2026-11-14 ([plan](sprints/sprint-5.md)); Sprint 4 closed ([report](reports/sprint-4-report.md)) |
+| Updated | 2026-11-19 |
+| Sprint | Sprint 5 closed 2026-11-19 ([report](reports/sprint-5-report.md)); Sprint 6 not yet planned |
 | Repository | `lamkhai0604/algoquest` (public, D-039); branches `main` (protected by ruleset) and `dev` |
-| Active work | Pattern Recognition pilot (D-057, T-517) built: six challenges on Levels 3–4, in the `dev → main` pull request. Waiting on the Levels 1–4 content review (T-415) |
+| Active work | None on the engineering side. English/Vietnamese work runs on its own track ([I18N-FOUNDATION.md](I18N-FOUNDATION.md)) |
 | Source revision | `dev` (see `git log dev`) |
-| Outstanding changes | Pattern Recognition pilot, curriculum map (27 levels) and D-056–D-057, in the `dev → main` pull request |
-| Verification | GitHub Actions on 2026-11-14 (`2e0a683`): backend verify, frontend lint, format, typecheck, tests, build; smoke 5 passed; records check |
-| Blockers | None |
-| Next action | PO: merge the pull request and try the challenges on Levels 3–4; review the Levels 1–4 content (T-415). Engineering: rerun the live pattern grader check |
+| Outstanding changes | Sprint 5 report and records, in the `dev → main` pull request |
+| Verification | GitHub Actions on 2026-11-18 (`686d86d`): backend verify (199 tests), frontend, smoke; live grader check on 2026-11-17 |
+| Blockers | None. The live Java check stays paused (D-054) |
+| Next action | PO: merge the pull request; approve the Sprint 6 scope |

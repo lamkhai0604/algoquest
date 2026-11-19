@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Approved — PO, 2026-11-14** (scope: Level 4 and the profile page; Level 5 deferred) |
+| Status | **Closed 2026-11-19** ([report](../reports/sprint-5-report.md)). Approved by the PO on 2026-11-14 (scope: Level 4 and the profile page; Level 5 deferred) |
 | Goal | Level 4 (Sorting Fundamentals) is playable in the five-step lesson format and becomes the reference for later levels; the profile page is redesigned; Levels 1–3 content is reviewed by the PO; Java code runs on the live site |
 | Duration | About 1 week from approval |
 | Tasks | T-402 (live check), T-415, T-508 to T-510, T-512, T-513, T-414 ([BACKLOG.md](../BACKLOG.md)) |
