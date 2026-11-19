@@ -1,5 +1,6 @@
 import { screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { setLocale } from "../i18n";
 import { fakeApi, json, ME } from "../test/fakeApi";
 import { LEVELS, PROBLEMS } from "../test/gameData";
 import { renderSignedInAt } from "../test/renderApp";
@@ -89,7 +90,29 @@ describe("learning path", () => {
   });
 });
 
+afterEach(() => setLocale("en"));
+
 describe("level page", () => {
+  it("shows translated problem titles and fetches localized rows", async () => {
+    setLocale("vi");
+    const local = PROBLEMS.map((problem) =>
+      problem.id === "L1-max-temperature"
+        ? { ...problem, title: "Nhiệt độ cao nhất" }
+        : problem,
+    );
+    const fetchFn = fakeApi({
+      ...routes,
+      "GET /api/v1/levels/1/problems": () => json(200, local),
+    });
+    renderSignedInAt("/levels/1");
+    expect(await screen.findByText("Nhiệt độ cao nhất")).toBeVisible();
+    expect(
+      fetchFn.mock.calls.some(([url]) =>
+        String(url).endsWith("/levels/1/problems?lang=vi"),
+      ),
+    ).toBe(true);
+  });
+
   it("lists problems with difficulty and status", async () => {
     fakeApi(routes);
     renderSignedInAt("/levels/1");

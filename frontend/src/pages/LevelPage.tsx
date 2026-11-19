@@ -112,11 +112,11 @@ function PracticeRound({
 
 /** One level: XP bar, lesson, practice round, and problems (FR-04, FR-09). */
 export function LevelPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const number = Number(useParams().number);
   const { levels, rules } = useGame();
   const problems = useApiGet<ProblemItem[]>(
-    `/api/v1/levels/${number}/problems`,
+    `/api/v1/levels/${number}/problems?lang=${locale}`,
   );
   const level =
     levels.status === "ready"

@@ -1,0 +1,18 @@
+{
+  "id": "L1-max-temperature",
+  "title": "Nhiệt độ cao nhất",
+  "statement": "Cho một mảng nhiệt độ theo ngày (các số nguyên, có thể âm). Hãy trả về nhiệt độ cao nhất. Nếu mảng rỗng, trả về null.",
+  "exampleExplanations": [
+    "",
+    ""
+  ],
+  "constraints": [
+    "0 <= temps.length <= 10^5",
+    "-100 <= temps[i] <= 100"
+  ],
+  "hints": [
+    "Sắp xếp mảng tốn bao nhiêu thời gian? Có cần sắp xếp toàn bộ chỉ để tìm một giá trị không?",
+    "Giữ giá trị lớn nhất đã gặp khi duyệt mảng đúng một lần.",
+    "Khởi tạo giá trị lớn nhất bằng phần tử đầu tiên, và xử lý mảng rỗng trước khi vào vòng lặp."
+  ]
+}

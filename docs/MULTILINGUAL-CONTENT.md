@@ -68,3 +68,12 @@ Backend loads and validates translations at startup. Invalid or incomplete trans
 - Confirm the translation folder does not change any original content or grading logic.
 
 This pilot is proposed for `dev` review; no automatic merge to `main`.
+
+## Level 1 exercise translation pilot
+
+- Nine ready Level 1 problems have optional learner-facing translations under `content/levels/1-big-o-and-basics/locales/vi/problems/<id>.json`: six practice problems and three level-up test problems. Coming-soon entries are intentionally unchanged.
+- Allowed translation fields are strictly `id`, `title`, `statement`, `exampleExplanations`, `constraints`, and `hints`. The translation schema never contains the answer key, tests, code, status, difficulty, ID changes or XP.
+- On startup, the loader checks translation IDs, example counts, hint counts, constraint counts, and protected numeric/comparison/quoted tokens. Each example input and output is always sourced from the canonical English problem.
+- `GET /api/v1/levels/{number}/problems?lang=vi` returns localized titles, `GET /api/v1/problems/{id}?lang=vi` returns the exercise text, and hints only return opened localized strings through GET/POST with the same `lang` query. `GET /api/v1/tests/{id}?lang=vi` and related test endpoints localize the public problem fields without changing saved answers, scoring or test time.
+- Missing/unsupported translations always use English. Backend scoring continues to use canonical English problem data. AI grading feedback is not localized in this phase.
+- Check language switching during an active unsent explanation and active test. Ensure no extra hints are revealed, no saved progress is reset, and practice/test logic is unchanged.

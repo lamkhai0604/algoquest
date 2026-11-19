@@ -90,7 +90,7 @@ Each sprint is about one week, sized for a few hours of PO review time. Dates ar
 | --- | --- | --- | --- | --- |
 | T-409 | Curriculum of 27 levels in three phases; Levels 2 and 3 reordered; migration V13 | FR-02, D-048 | P1 | Done 2026-11-13 (content check for phases; backend tests) |
 | T-410 | Learning Path page and five-step lessons with the step visualizer | FR-02, FR-03, D-049 | P1 | Done 2026-11-13 (frontend tests check each walkthrough against a reference run; smoke covers the five steps) |
-| T-411 | Levels 1–3 content: Level 1 extended, Level 2 Arrays & Strings (new), Level 3 Hashing | FR-03, FR-04, D-048 | P1 | Done 2026-11-13: hidden test answers computed by JavaScript and Java reference solutions. **PO content review open (T-415)** |
+| T-411 | Levels 1–3 content: Level 1 extended, Level 2 Arrays & Strings (new), Level 3 Hashing | FR-03, FR-04, D-048 | P1 | Done 2026-11-13: hidden test answers computed by JavaScript and Java reference solutions. PO content review done 2026-11-19 (T-415) |
 | T-412 | Review fixes: locked phases and upcoming tiles, Back button, button spacing, code Copy button, site footer | FR-02, D-050 | P2 | Done 2026-11-14 |
 | T-413 | Intuition question, collapsible Learn sections, JavaScript/Java switch, complete Java samples | FR-03, D-051, D-052 | P2 | Done 2026-11-14 (every Java block compiles and matches the JavaScript results on the lesson examples) |
 
@@ -100,17 +100,17 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-415 | PO content review of Levels 1–3 (moved from Later) | FR-03, FR-04 | P1 | Proposed |
-| T-508 | Apply the Levels 1–3 review corrections | FR-03, FR-04 | P1 | Proposed |
+| T-415 | PO content review of Levels 1–3 (moved from Later) | FR-03, FR-04 | P1 | Done 2026-11-19: Levels 1–4 and the pattern challenges reviewed, all items OK |
+| T-508 | Apply the Levels 1–3 review corrections | FR-03, FR-04 | P1 | Done 2026-11-19: no corrections needed |
 | T-509 | Visualizer: swap highlight | FR-03, D-049 | P1 | Done 2026-11-14 (content check for indices; frontend test replays the Level 4 swaps) |
 | T-510 | Level 4 Sorting Fundamentals content | FR-03, FR-04, D-048 | P1 | Done 2026-11-14: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles. PO content review in the pull request |
 | T-512 | Measure grading latency with `RealGraderCheck` | NFR-04 | P2 | Done 2026-11-16: median 885 ms, slowest 1,458 ms; all five sample scores in range, including the prompt-injection sample (0) |
 | T-414 | Profile page design pass (moved from Later) | NFR-05, D-053 | P2 | Done 2026-11-14 (design chosen by Claude as delegated by the PO; frontend tests; screenshots) |
 | T-514 | Owner test access to every level (`game.allLevels`) | FR-17, D-055 | P1 | Done 2026-11-16 (API tests for the Owner and a player; frontend test for the note) |
 | T-515 | Curriculum map (17 to 27 levels) and fixed level numbers | D-048, D-056 | P2 | Done 2026-11-17: [CURRICULUM-MAP.md](CURRICULUM-MAP.md) |
-| T-516 | Pattern Recognition demo for the PO to try (no backend) | D-057 | P1 | Done (2026-11-17) |
-| T-517 | Pattern Recognition pilot: content schema and validator, six Level 3–4 challenges, API with label-decided correctness and AI-graded reasoning, `pattern_attempt` table, level page section | FR-03, FR-05, D-057 | P1 | Done (2026-11-17); live Gemini check pending a retry |
-| T-513 | Sprint 5 report | D-007 | P2 | Proposed |
+| T-516 | Pattern Recognition demo for the PO to try (no backend) | D-057 | P1 | Done 2026-11-17 |
+| T-517 | Pattern Recognition pilot: content schema and validator, six Level 3–4 challenges, API with label-decided correctness and AI-graded reasoning, `pattern_attempt` table, level page section | FR-03, FR-05, D-057 | P1 | Done 2026-11-17: live Gemini check 6 of 6 as expected |
+| T-513 | Sprint 5 report | D-007 | P2 | Done 2026-11-19: [report](reports/sprint-5-report.md) |
 
 ## Later (unscheduled)
 

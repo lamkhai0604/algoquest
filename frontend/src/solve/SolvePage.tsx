@@ -91,19 +91,22 @@ function TimeNote({
 }
 
 function Solve({ problem, mode }: SolveProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const practice = mode === "practice";
   const { reloadLevels, reloadHintQuota, rules } = useGame();
   const hintState = useApiGet<Hints>(
-    practice ? null : `/api/v1/problems/${problem.id}/hints`,
+    practice ? null : `/api/v1/problems/${problem.id}/hints?lang=${locale}`,
   );
-  const [hints, setHints] = useState<Hints | null>(null);
+  const [hints, setHints] = useState<{ locale: string; data: Hints } | null>(
+    null,
+  );
   const currentHints =
-    hints ?? (hintState.state.status === "ready" ? hintState.state.data : null);
+    (hints?.locale === locale ? hints.data : null) ??
+    (hintState.state.status === "ready" ? hintState.state.data : null);
   const hintsUsed = currentHints?.opened.length ?? 0;
 
   const changeHints = (next: Hints) => {
-    setHints(next);
+    setHints({ locale, data: next });
     reloadHintQuota();
   };
   const [text, setText] = useState(() =>
@@ -300,13 +303,18 @@ function Solve({ problem, mode }: SolveProps) {
 
 /** Solve page (FR-04, FR-05): problem, explanation box, and result. */
 export function SolvePage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { id } = useParams();
   const [params] = useSearchParams();
   const mode: AttemptMode =
     params.get("mode") === "practice" ? "practice" : "explain";
-  const { state, reload } = useApiGet<ProblemDetail>(`/api/v1/problems/${id}`);
-  const level = state.status === "ready" ? state.data.level : null;
+  const { state, reload } = useApiGet<ProblemDetail>(
+    `/api/v1/problems/${id}?lang=${locale}`,
+    api,
+    true,
+  );
+  const shown = state.status === "ready" ? state.data : null;
+  const level = shown?.level ?? null;
 
   return (
     <div className={pages.page}>
@@ -329,18 +337,14 @@ export function SolvePage() {
           )}
         </nav>
       </div>
-      {state.status === "loading" && (
+      {state.status === "loading" && !shown && (
         <LoadingState label={t("solve.loading")} />
       )}
       {state.status === "error" && (
         <ErrorState message={state.message} onRetry={reload} />
       )}
-      {state.status === "ready" && (
-        <Solve
-          key={`${state.data.id}-${mode}`}
-          problem={state.data}
-          mode={mode}
-        />
+      {shown && (
+        <Solve key={`${shown.id}-${mode}`} problem={shown} mode={mode} />
       )}
     </div>
   );

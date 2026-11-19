@@ -1,0 +1,18 @@
+{
+  "id": "L1-best-stretch",
+  "title": "Đoạn liên tiếp có tổng điểm lớn nhất",
+  "statement": "Sau mỗi vòng chơi, điểm của người chơi thay đổi theo một số nguyên dương hoặc âm. Hãy trả về tổng điểm lớn nhất của một đoạn gồm các vòng liên tiếp (ít nhất một vòng). Nếu không có vòng nào, trả về null.",
+  "exampleExplanations": [
+    "Từ vòng 3 đến vòng 6: 3 + 4 - 1 + 2.",
+    ""
+  ],
+  "constraints": [
+    "0 <= points.length <= 10^5",
+    "-10^4 <= points[i] <= 10^4"
+  ],
+  "hints": [
+    "Tính tổng mọi đoạn liên tiếp có thể tốn O(n²). Ở mỗi vòng, bạn chỉ cần giữ lại loại đoạn kết thúc tại vòng đó nào?",
+    "Đoạn tốt nhất kết thúc ở vòng hiện tại hoặc bắt đầu ngay tại vòng này, hoặc nối tiếp đoạn tốt nhất kết thúc ở vòng trước.",
+    "Hãy khởi tạo bằng giá trị đầu tiên thay vì 0, để danh sách toàn số âm vẫn trả về kết quả đúng."
+  ]
+}

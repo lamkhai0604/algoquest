@@ -1,0 +1,18 @@
+{
+  "id": "L1-largest-jump",
+  "title": "Bước di chuyển xa nhất",
+  "statement": "Một mảng ghi lại vị trí của người chạy sau mỗi giây. Hãy trả về quãng đường lớn nhất đi được trong một giây, tức độ chênh lệch tuyệt đối lớn nhất giữa hai vị trí liền kề. Nếu mảng có ít hơn hai giá trị, trả về 0.",
+  "exampleExplanations": [
+    "Từ vị trí 1 đến vị trí 9.",
+    ""
+  ],
+  "constraints": [
+    "0 <= positions.length <= 10^5",
+    "-10^6 <= positions[i] <= 10^6"
+  ],
+  "hints": [
+    "Chỉ những giá trị liền kề mới quan trọng. Có bao nhiêu cặp liền kề trong mảng?",
+    "Duyệt mảng một lần và so sánh mỗi giá trị với giá trị ngay trước nó.",
+    "Chạy lùi vẫn tạo ra quãng đường: hãy dùng giá trị tuyệt đối của hiệu hai vị trí."
+  ]
+}

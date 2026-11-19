@@ -173,3 +173,41 @@ test("player reads the lesson, solves a problem, and earns XP", async ({
   await expect(page.getByText("1 of 6 problems solved.")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/level-map-progress.png` });
 });
+
+
+test("Vietnamese Level 1 exercise text and opened hints survive EN/VI switching", async ({
+  page,
+}) => {
+  await page.goto(`${API}/test-login?email=locale-learner@example.com`);
+  await expect(page.getByRole("heading", { name: "Learning Path" })).toBeVisible();
+
+  await page.getByRole("combobox", { name: "Language" }).selectOption("vi");
+  await expect(page.getByRole("heading", { name: "Lộ trình học" })).toBeVisible();
+
+  await page.goto("/levels/1");
+  await page.getByRole("link", { name: /Nhiệt độ cao nhất/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "Nhiệt độ cao nhất" }),
+  ).toBeVisible();
+  await expect(page.getByText(/Cho một mảng nhiệt độ theo ngày/)).toBeVisible();
+  await expect(page.getByText("[3, -2, 9, 4] → 9")).toBeVisible();
+
+  const draft = "Tôi duyệt mảng một lần và giữ giá trị lớn nhất.";
+  await page.getByLabel("Phần giải thích của bạn").fill(draft);
+  await page.getByRole("button", { name: /Hiện gợi ý 1/ }).click();
+  await expect(page.getByText(/Sắp xếp mảng tốn bao nhiêu thời gian/)).toBeVisible();
+  await expect(page.getByTitle("Gợi ý còn lại")).toContainText("2");
+  await page.screenshot({
+    path: `${SHOTS}/level1-exercise-vi.png`,
+    fullPage: true,
+  });
+
+  await page.getByRole("combobox", { name: "Ngôn ngữ" }).selectOption("en");
+  await expect(page.getByRole("heading", { name: "Max Temperature" })).toBeVisible();
+  await expect(
+    page.getByText(/You are given an array of daily temperatures/),
+  ).toBeVisible();
+  await expect(page.getByText(/What does sorting cost/)).toBeVisible();
+  await expect(page.getByLabel("Your explanation")).toHaveValue(draft);
+  await expect(page.getByTitle("Hints left")).toContainText("2");
+});
