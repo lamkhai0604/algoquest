@@ -1,0 +1,187 @@
+{
+  "id": "L5-remove-stops",
+  "level": 5,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Cancelled Stops",
+  "statement": "A delivery route is a linked list of street numbers. Roadworks close one street, `closed`, and the driver must skip every stop on it. Remove all nodes whose value equals `closed` and return the head of the route that is left (null if nothing is left). Keep the other stops in their order.",
+  "examples": [
+    {
+      "input": "head = 3 → 7 → 3 → 5, closed = 3",
+      "output": "7 → 5"
+    },
+    {
+      "input": "head = 2 → 2, closed = 2",
+      "output": "null"
+    }
+  ],
+  "constraints": [
+    "0 <= number of stops <= 10^5",
+    "0 <= street number, closed <= 10^4"
+  ],
+  "answerKey": {
+    "pattern": "Dummy node before head, then unlink matching nodes in one pass",
+    "keyPoints": [
+      "Put a dummy node in front of head so the first stop is removed like any other",
+      "Keep a pointer prev at the last kept node",
+      "If prev.next has the closed value, skip it with prev.next = prev.next.next; otherwise move prev forward",
+      "Return dummy.next"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "The head itself is removed",
+      "Every stop is removed",
+      "Removed stops next to each other",
+      "Empty route"
+    ],
+    "acceptableSlowerApproaches": [
+      "Copy the kept values into a new list: O(n) time but O(n) extra space"
+    ]
+  },
+  "hints": [
+    "Removing a node means changing the pointer of the node before it. What is before the head?",
+    "Add a dummy node in front of head. Now every real node has a node before it.",
+    "Only move prev forward when you keep prev.next. After removing, check the new prev.next again."
+  ],
+  "starterCode": {
+    "javascript": "// A node is { val, next }. Make one with new ListNode(val, next).\nfunction removeStops(head, closed) {\n  // return the head of the list without the closed stops\n}",
+    "java": "// ListNode has: int val; ListNode next; and new ListNode(val) or new ListNode(val, next).\nclass Solution {\n  ListNode removeStops(ListNode head, int closed) {\n    // return the head of the list without the closed stops\n  }\n}"
+  },
+  "similarLeetCode": "Remove Linked List Elements",
+  "tests": [
+    {
+      "input": [
+        [
+          3,
+          7,
+          3,
+          5
+        ],
+        3
+      ],
+      "expected": [
+        7,
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          2
+        ],
+        2
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [],
+        1
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3
+        ],
+        4
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3
+        ],
+        1
+      ],
+      "expected": [
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3
+        ],
+        3
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          5,
+          5,
+          1,
+          5,
+          5,
+          2,
+          5
+        ],
+        5
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          9
+        ],
+        9
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          4,
+          1,
+          4,
+          1
+        ],
+        1
+      ],
+      "expected": [
+        4,
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          0,
+          0,
+          7
+        ],
+        0
+      ],
+      "expected": [
+        7
+      ]
+    }
+  ]
+}
