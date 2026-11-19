@@ -82,7 +82,9 @@ describe("lesson visualizers match their reference algorithms", () => {
     const steps = walkthrough("5-linked-lists");
     const n = steps[0]!.visual!.cells.length;
     // The reference reversal: after node k turns around, nodes 0..k point back.
-    const expected: number[][] = [Array.from({ length: n }, (_, i) => (i + 1 < n ? i + 1 : -1))];
+    const expected: number[][] = [
+      Array.from({ length: n }, (_, i) => (i + 1 < n ? i + 1 : -1)),
+    ];
     for (let k = 0; k < n; k++) {
       const next = [...expected.at(-1)!];
       next[k] = k - 1;
