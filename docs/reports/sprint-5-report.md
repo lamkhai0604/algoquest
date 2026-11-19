@@ -42,7 +42,7 @@ Review: all tasks are self-reviewed. The PO reviews and merges each `dev → mai
 | --- | --- |
 | Backend (`./mvnw verify`, PostgreSQL 16) | 199 tests, 0 failed; formatting clean |
 | Frontend (lint, format, typecheck, tests, build) | Green |
-| Smoke (Playwright, fake grader) | 5 passed |
+| Smoke (Playwright, fake grader) | 6 passed |
 | Live grader check (Gemini) | Explanation grader 5 of 5 in range, median 2,549 ms, slowest 6,487 ms; pattern grader 6 of 6 as expected (clear 100, valid alternative 100, vague 30, unsuitable with an honest reason 80, Vietnamese 100, prompt injection 0) |
 | Records check | OK |
 
