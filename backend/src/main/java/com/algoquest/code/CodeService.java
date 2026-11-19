@@ -119,6 +119,15 @@ public class CodeService {
       int levelTarget,
       int javaRunsLeft) {}
 
+  /** The Java signature, which says which arguments are lists; no lists if it cannot be read. */
+  private static JavaHarness.Signature listShape(Problem problem) {
+    try {
+      return JavaHarness.signature(problem);
+    } catch (IllegalArgumentException e) {
+      return new JavaHarness.Signature("", "", List.of());
+    }
+  }
+
   public CodeSetup setup(UUID userId, String problemId) {
     Problem problem = game.playableProblem(userId, problemId);
     ProblemProgress mine =
@@ -127,7 +136,7 @@ public class CodeService {
     for (TestCase test : problem.tests()) {
       inputs.add(test.input());
     }
-    JavaHarness.Signature signature = JavaHarness.signature(problem);
+    JavaHarness.Signature signature = listShape(problem);
     return new CodeSetup(
         jsFunctionName(problem),
         inputs,

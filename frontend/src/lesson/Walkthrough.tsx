@@ -94,7 +94,8 @@ function Nodes({
     <ol className={styles.nodes} aria-label={t("walkthrough.items")}>
       {visual.cells.map((cell, index) => {
         const marks = labels.get(index);
-        const changed = !masked && before !== null && before[index] !== next[index];
+        const changed =
+          !masked && before !== null && before[index] !== next[index];
         return (
           <li key={index} className={styles.nodeItem}>
             <div
@@ -109,7 +110,9 @@ function Nodes({
               <span className={styles.cellIndex}>[{index}]</span>
               <span className={styles.cellValue}>{cell}</span>
               <span className={styles.nodeNext}>next {target(index)}</span>
-              <span className={styles.cellMarker}>{marks?.join(", ") ?? ""}</span>
+              <span className={styles.cellMarker}>
+                {marks?.join(", ") ?? ""}
+              </span>
             </div>
             {index < visual.cells.length - 1 && (
               <span className={styles.nodeLink} aria-hidden="true">

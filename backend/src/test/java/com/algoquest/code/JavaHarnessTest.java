@@ -159,7 +159,10 @@ class JavaHarnessTest {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     try (URLClassLoader loader = new URLClassLoader(new URL[] {dir.toUri().toURL()})) {
       System.setOut(new PrintStream(out, true, StandardCharsets.UTF_8));
-      loader.loadClass("Main").getMethod("main", String[].class).invoke(null, (Object) new String[0]);
+      loader
+          .loadClass("Main")
+          .getMethod("main", String[].class)
+          .invoke(null, (Object) new String[0]);
     } finally {
       System.setOut(original);
     }

@@ -32,7 +32,9 @@ describe("linked-list helpers (D-058)", () => {
   it("gives the player's code a ListNode with default values", () => {
     const node = new helpers.ListNode();
     expect(node).toEqual({ val: 0, next: null });
-    expect(helpers.toValues(new helpers.ListNode(4, new helpers.ListNode(5)))).toEqual([4, 5]);
+    expect(
+      helpers.toValues(new helpers.ListNode(4, new helpers.ListNode(5))),
+    ).toEqual([4, 5]);
   });
 
   it("leaves results that are not lists as they are", () => {
