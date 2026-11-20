@@ -133,14 +133,18 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(depths).toEqual([1, 2, 3, 4, 3, 2, 1, 0]);
     for (const step of steps) {
       step.visual!.cells.forEach((cell, i) => expect(cell).toBe(`sum(${i})`));
-      expect(value(step, "call stack depth")).toBe(String(step.visual!.cells.length));
+      expect(value(step, "call stack depth")).toBe(
+        String(step.visual!.cells.length),
+      );
     }
     // Returns arrive newest call first: sum(3), sum(2), sum(1), sum(0).
     const returned = steps
       .map((step) => value(step, "last return"))
       .filter((v) => v !== "·")
       .map((v) => Number(v!.split("=").at(-1)));
-    const expected = [3, 2, 1, 0].map((i) => a.slice(i).reduce((x, y) => x + y, 0));
+    const expected = [3, 2, 1, 0].map((i) =>
+      a.slice(i).reduce((x, y) => x + y, 0),
+    );
     expect(returned).toEqual(expected);
   });
 
