@@ -236,7 +236,8 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.markers(), b.markers())
               || !java.util.Objects.equals(a.vars(), b.vars())
               || !java.util.Objects.equals(a.swap(), b.swap())
-              || !java.util.Objects.equals(a.next(), b.next())) {
+              || !java.util.Objects.equals(a.next(), b.next())
+              || a.drawsTree() != b.drawsTree()) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -300,6 +301,20 @@ final class ContentValidator {
             || swap.get(0).equals(swap.get(1))
             || swap.stream().anyMatch(i -> i < 0 || i >= visual.cells().size()))) {
       problems.add(where + ": swap needs the indices of two different cells");
+    }
+    if (visual.drawsTree()) {
+      List<String> cells = visual.cells();
+      boolean valid = cells.size() <= Visual.MAX_TREE_CELLS;
+      for (int i = 1; valid && i < cells.size(); i++) {
+        valid = blank(cells.get(i)) || !blank(cells.get((i - 1) / 2));
+      }
+      if (!valid) {
+        problems.add(
+            where
+                + ": a tree has at most "
+                + Visual.MAX_TREE_CELLS
+                + " cells, and every node needs its parent at (i - 1) / 2");
+      }
     }
     List<Integer> next = visual.next();
     if (next != null) {

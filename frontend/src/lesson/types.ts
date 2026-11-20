@@ -27,6 +27,8 @@ export interface Visual {
   swap?: [number, number] | null;
   /** Linked list: for each cell, the index its next points to, or -1 for null. */
   next?: number[] | null;
+  /** Binary tree in array positions: children of i are 2i + 1 and 2i + 2; "" is no node. */
+  tree?: boolean | null;
 }
 
 export interface WalkthroughStep {

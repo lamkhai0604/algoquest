@@ -30,6 +30,9 @@ public final class JavaHarness {
   /** The Java type that marks a linked-list argument or result (D-058). */
   public static final String LIST_NODE = "ListNode";
 
+  /** The Java type that marks a binary-tree argument or result (D-059). */
+  public static final String TREE_NODE = "TreeNode";
+
   /** The longest list a result may be before it counts as a cycle (D-058). */
   public static final int MAX_LIST_LENGTH = 100_000;
 
@@ -54,8 +57,27 @@ public final class JavaHarness {
       return returnType.equals(LIST_NODE);
     }
 
+    /** The positions of the parameters that are binary trees. */
+    public List<Integer> treeArguments() {
+      List<Integer> positions = new ArrayList<>();
+      for (int i = 0; i < parameterTypes.size(); i++) {
+        if (parameterTypes.get(i).equals(TREE_NODE)) {
+          positions.add(i);
+        }
+      }
+      return positions;
+    }
+
+    public boolean returnsTree() {
+      return returnType.equals(TREE_NODE);
+    }
+
     boolean usesLists() {
       return returnsList() || parameterTypes.contains(LIST_NODE);
+    }
+
+    boolean usesTrees() {
+      return returnsTree() || parameterTypes.contains(TREE_NODE);
     }
   }
 
@@ -98,6 +120,8 @@ public final class JavaHarness {
       String call = "new Solution()." + signature.name() + "(" + String.join(", ", arguments) + ")";
       if (signature.returnsList()) {
         call = "list(" + call + ")";
+      } else if (signature.returnsTree()) {
+        call = "tree(" + call + ")";
       }
       main.append("    run(")
           .append(i)
@@ -151,6 +175,7 @@ public final class JavaHarness {
             + "    return str(o.toString());\n"
             + "  }\n\n"
             + (signature.usesLists() ? LIST_HELPERS : "")
+            + (signature.usesTrees() ? TREE_HELPERS : "")
             + "  static String str(String s) {\n"
             + "    StringBuilder b = new StringBuilder(\"\\\"\");\n"
             + "    for (char ch : s.toCharArray()) {\n"
@@ -162,6 +187,7 @@ public final class JavaHarness {
             + "  }\n"
             + "}\n\n"
             + (signature.usesLists() ? LIST_NODE_CLASS : "")
+            + (signature.usesTrees() ? TREE_NODE_CLASS : "")
             + code
             + "\n";
     return new Program(source, marker);
@@ -182,6 +208,67 @@ public final class JavaHarness {
           + "    for (int k = 0; k < out.length; k++) out[k] = values.get(k);\n"
           + "    return out;\n"
           + "  }\n\n";
+
+  /** Turns a returned tree into a level-order array without trailing nulls (D-059). */
+  private static final String TREE_HELPERS =
+      "  static class TreeCycleOrTooLarge extends RuntimeException {}\n\n"
+          + "  static Integer[] tree(TreeNode root) {\n"
+          + "    List<Integer> values = new ArrayList<Integer>();\n"
+          + "    List<TreeNode> order = new ArrayList<TreeNode>();\n"
+          + "    order.add(root);\n"
+          + "    for (int k = 0; k < order.size(); k++) {\n"
+          + "      if (order.size() > "
+          + MAX_LIST_LENGTH
+          + ") throw new TreeCycleOrTooLarge();\n"
+          + "      TreeNode node = order.get(k);\n"
+          + "      values.add(node == null ? null : node.val);\n"
+          + "      if (node != null) {\n"
+          + "        order.add(node.left);\n"
+          + "        order.add(node.right);\n"
+          + "      }\n"
+          + "    }\n"
+          + "    int end = values.size();\n"
+          + "    while (end > 0 && values.get(end - 1) == null) end--;\n"
+          + "    return values.subList(0, end).toArray(new Integer[0]);\n"
+          + "  }\n\n";
+
+  /** The tree node class the player's code uses, as on common interview sites. */
+  private static final String TREE_NODE_CLASS =
+      "class TreeNode {\n"
+          + "  int val;\n"
+          + "  TreeNode left;\n"
+          + "  TreeNode right;\n\n"
+          + "  TreeNode() {}\n\n"
+          + "  TreeNode(int val) {\n"
+          + "    this.val = val;\n"
+          + "  }\n\n"
+          + "  TreeNode(int val, TreeNode left, TreeNode right) {\n"
+          + "    this.val = val;\n"
+          + "    this.left = left;\n"
+          + "    this.right = right;\n"
+          + "  }\n\n"
+          + "  static TreeNode of(Integer[] values) {\n"
+          + "    if (values.length == 0 || values[0] == null) return null;\n"
+          + "    TreeNode root = new TreeNode(values[0]);\n"
+          + "    java.util.ArrayDeque<TreeNode> queue = new java.util.ArrayDeque<TreeNode>();\n"
+          + "    queue.add(root);\n"
+          + "    int k = 1;\n"
+          + "    while (!queue.isEmpty() && k < values.length) {\n"
+          + "      TreeNode node = queue.poll();\n"
+          + "      if (k < values.length && values[k] != null) {\n"
+          + "        node.left = new TreeNode(values[k]);\n"
+          + "        queue.add(node.left);\n"
+          + "      }\n"
+          + "      k++;\n"
+          + "      if (k < values.length && values[k] != null) {\n"
+          + "        node.right = new TreeNode(values[k]);\n"
+          + "        queue.add(node.right);\n"
+          + "      }\n"
+          + "      k++;\n"
+          + "    }\n"
+          + "    return root;\n"
+          + "  }\n"
+          + "}\n\n";
 
   /** The node class the player's code uses, as on common interview sites. */
   private static final String LIST_NODE_CLASS =
@@ -250,6 +337,15 @@ public final class JavaHarness {
 
   /** A Java expression of the given type for a JSON value. */
   static String literal(String type, JsonNode value) {
+    if (type.equals(TREE_NODE)) {
+      List<String> items = new ArrayList<>();
+      if (value != null && value.isArray()) {
+        for (JsonNode item : value) {
+          items.add(item.isNull() ? "null" : String.valueOf(item.asInt()));
+        }
+      }
+      return "TreeNode.of(new Integer[]{" + String.join(", ", items) + "})";
+    }
     if (type.equals(LIST_NODE)) {
       boolean empty = value == null || value.isNull();
       return "ListNode.of(" + (empty ? "new int[]{}" : literal("int[]", value)) + ")";

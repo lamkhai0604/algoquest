@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Approved — PO, 2026-11-19** |
+| Status | **Closed 2026-11-19** ([report](../reports/sprint-7-report.md)). Approved by the PO on 2026-11-19 |
 | Goal | Level 6 (Stack, Queue & Deque) is playable in the five-step lesson format at the Level 4 and 5 standard, with pattern challenges |
 | Duration | About 1 week from approval |
 | Tasks | T-522, T-523, T-524 ([BACKLOG.md](../BACKLOG.md)) |

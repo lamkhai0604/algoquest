@@ -1,0 +1,137 @@
+[
+  {
+    "id": "P7-garden-steps",
+    "level": 7,
+    "title": "Garden Steps",
+    "statement": "A garden path has n stepping stones. You can step to the next stone or skip one. Count the different ways to cross a path of up to 80 stones.",
+    "examples": [
+      "3 stones: 3 ways",
+      "5 stones: 8 ways"
+    ],
+    "constraints": [
+      "1 <= n <= 80 (use a 64-bit number)"
+    ],
+    "approaches": [
+      {
+        "id": "loop",
+        "name": "Loop from the start, keeping only the last two counts",
+        "hint": "Build up from small cases",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Each count is the sum of the two before it, so two variables are enough."
+      },
+      {
+        "id": "memo",
+        "name": "Recursion that remembers each result",
+        "hint": "Store answers you already computed",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Correct and fast, but it keeps a table and a call stack of size n."
+      },
+      {
+        "id": "plain",
+        "name": "Plain recursion without remembering",
+        "hint": "Call the function on both smaller cases",
+        "label": "valid",
+        "time": "O(2^n)",
+        "space": "O(n)",
+        "why": "Correct, but it recomputes the same counts so often that 80 stones would take ages."
+      },
+      {
+        "id": "double",
+        "name": "Double the count for every stone",
+        "hint": "Each stone has two choices",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Skipping is not free at every stone: 3 stones have 3 ways, not 8."
+      }
+    ]
+  },
+  {
+    "id": "P7-signal-boost",
+    "level": 7,
+    "title": "Signal Boost",
+    "statement": "A signal is multiplied by the same gain g, k times, and you need the result modulo 1,000,000,007. k can be up to 10^18.",
+    "examples": [
+      "g = 2, k = 10 gives 1024",
+      "g = 5, k = 0 gives 1"
+    ],
+    "constraints": [
+      "k up to 10^18"
+    ],
+    "approaches": [
+      {
+        "id": "halves",
+        "name": "Square the result for k / 2, multiply by g once more if k is odd",
+        "hint": "Halve the problem each time",
+        "label": "best",
+        "time": "O(log k)",
+        "space": "O(log k)",
+        "why": "The exponent halves every call, so about 60 calls cover 10^18."
+      },
+      {
+        "id": "loop",
+        "name": "Multiply by g, k times",
+        "hint": "Do exactly what the statement says",
+        "label": "valid",
+        "time": "O(k)",
+        "space": "O(1)",
+        "why": "Correct, but 10^18 multiplications would never finish."
+      },
+      {
+        "id": "float",
+        "name": "Use the language's floating-point power and then take the remainder",
+        "hint": "Use a built-in",
+        "label": "unsuitable",
+        "time": "O(1)",
+        "space": "O(1)",
+        "why": "The exact number is far too big; floating point loses the digits, so the remainder is wrong."
+      }
+    ]
+  },
+  {
+    "id": "P7-shuffle-score",
+    "level": 7,
+    "title": "Shuffle Score",
+    "statement": "A game scores how shuffled a deck of up to 200,000 numbered cards is: the number of pairs where a higher card comes before a lower one.",
+    "examples": [
+      "3 1 2 has 2 such pairs",
+      "1 2 3 has 0"
+    ],
+    "constraints": [
+      "Up to 200,000 cards"
+    ],
+    "approaches": [
+      {
+        "id": "merge",
+        "name": "Count while merge sorting",
+        "hint": "Split, solve the halves, count across them while combining",
+        "label": "best",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Pairs inside each half are counted recursively; pairs across the halves are counted during the merge."
+      },
+      {
+        "id": "pairs",
+        "name": "Check every pair with two loops",
+        "hint": "Compare each card with all later cards",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Correct, but 200,000 cards means about 20 billion comparisons."
+      },
+      {
+        "id": "sorted",
+        "name": "Sort the deck and count cards that moved",
+        "hint": "Compare with the sorted order",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "How many cards moved is not the number of out-of-order pairs: 3 1 2 has 3 moved cards but 2 pairs."
+      }
+    ]
+  }
+]

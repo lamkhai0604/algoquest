@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Which traversal of a binary search tree lists its values in increasing order?",
+    "options": [
+      "Pre-order (node, left, right)",
+      "In-order (left, node, right)",
+      "Post-order (left, right, node)",
+      "Level order"
+    ],
+    "answer": 1,
+    "explanation": "Everything in the left subtree is smaller and everything in the right is larger, so left, node, right visits values from smallest to largest."
+  },
+  {
+    "question": "You insert 1, 2, 3, 4, 5 into an empty binary search tree in that order. What is its height?",
+    "options": [
+      "3",
+      "5",
+      "1",
+      "2"
+    ],
+    "answer": 1,
+    "explanation": "Each new value is larger than all before it, so it goes to the right every time: the tree becomes a chain of 5 nodes, and searches become O(n)."
+  },
+  {
+    "question": "To print a tree level by level, which structure holds the nodes waiting to be visited?",
+    "options": [
+      "A stack",
+      "A queue",
+      "A hash map",
+      "A sorted array"
+    ],
+    "answer": 1,
+    "explanation": "Level order visits nodes in the order they were discovered: first in, first out, which is a queue."
+  }
+]

@@ -126,6 +126,62 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(steps.at(-1)!, "result")).toBe("true");
   });
 
+  it("Level 7: the call stack grows to the base case, then each call returns its sum", () => {
+    const steps = walkthrough("7-recursion-divide-and-conquer");
+    const a = [3, 1, 4];
+    const depths = steps.map((step) => step.visual!.cells.length);
+    expect(depths).toEqual([1, 2, 3, 4, 3, 2, 1, 0]);
+    for (const step of steps) {
+      step.visual!.cells.forEach((cell, i) => expect(cell).toBe(`sum(${i})`));
+      expect(value(step, "call stack depth")).toBe(
+        String(step.visual!.cells.length),
+      );
+    }
+    // Returns arrive newest call first: sum(3), sum(2), sum(1), sum(0).
+    const returned = steps
+      .map((step) => value(step, "last return"))
+      .filter((v) => v !== "·")
+      .map((v) => Number(v!.split("=").at(-1)));
+    const expected = [3, 2, 1, 0].map((i) =>
+      a.slice(i).reduce((x, y) => x + y, 0),
+    );
+    expect(returned).toEqual(expected);
+  });
+
+  it("Level 8: the tree is a valid BST and the search follows the BST rule", () => {
+    const steps = walkthrough("8-trees-and-bst");
+    const cells = steps[0]!.visual!.cells;
+    const at = (i: number) =>
+      i < cells.length && cells[i] !== "" ? Number(cells[i]) : null;
+    // In-order values of a BST increase.
+    const inOrder: number[] = [];
+    const walk = (i: number) => {
+      if (at(i) === null) return;
+      walk(2 * i + 1);
+      inOrder.push(at(i)!);
+      walk(2 * i + 2);
+    };
+    walk(0);
+    expect(inOrder).toEqual([...inOrder].sort((a, b) => a - b));
+    // The search path for the target, by the BST rule.
+    const target = Number(value(steps[0]!, "target"));
+    const path: number[] = [];
+    for (let i = 0; at(i) !== null;) {
+      path.push(i);
+      if (at(i) === target) break;
+      i = target < at(i)! ? 2 * i + 1 : 2 * i + 2;
+    }
+    const shown: number[] = [];
+    for (const step of steps) {
+      expect(step.visual!.tree).toBe(true);
+      expect(step.visual!.cells).toEqual(cells);
+      const index = step.visual!.markers![0]!.index;
+      if (shown.at(-1) !== index) shown.push(index);
+    }
+    expect(shown).toEqual(path);
+    expect(at(path.at(-1)!)).toBe(target);
+  });
+
   it("every prediction's answer is one of its options", () => {
     for (const folder of [
       "1-big-o-and-basics",
@@ -134,6 +190,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "4-sorting-fundamentals",
       "5-linked-lists",
       "6-stack-queue-deque",
+      "7-recursion-divide-and-conquer",
+      "8-trees-and-bst",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

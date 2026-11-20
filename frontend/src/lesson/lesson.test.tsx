@@ -306,6 +306,29 @@ describe("lesson page", () => {
     );
   });
 
+  it("draws a binary tree with its edges and marked node", async () => {
+    const tree = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Search",
+          body: "Go left from 8.",
+          visual: {
+            cells: ["8", "3", "10", "", "6"],
+            tree: true,
+            markers: [{ index: 1, label: "curr" }],
+          },
+        },
+      ],
+    };
+    open(tree, 2);
+
+    expect(await screen.findByText("curr")).toBeInTheDocument();
+    expect(document.querySelectorAll("svg circle")).toHaveLength(4);
+    // Edges: 8-3, 8-10, 3-6 (the empty cell 3 has no node).
+    expect(document.querySelectorAll("svg line")).toHaveLength(3);
+  });
+
   it("asks for a prediction before showing the step", async () => {
     open(LESSON, 2);
     await userEvent.click(

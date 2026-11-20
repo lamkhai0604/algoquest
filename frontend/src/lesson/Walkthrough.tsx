@@ -126,6 +126,97 @@ function Nodes({
   );
 }
 
+/** Horizontal room per node on the lowest level of a tree drawing. */
+const TREE_SLOT = 64;
+const TREE_ROW = 72;
+const TREE_RADIUS = 20;
+
+/**
+ * A binary tree in array positions (D-059): the children of cell i are cells
+ * 2i + 1 and 2i + 2, and an empty cell is no node. Drawn as an SVG that
+ * scales to the width, so five levels still fit on a phone.
+ */
+function Tree({ visual }: { visual: Visual }) {
+  const { t } = useTranslation();
+  const cells = visual.cells;
+  const levels = Math.max(1, Math.floor(Math.log2(cells.length)) + 1);
+  const width = TREE_SLOT * 2 ** (levels - 1);
+  const height = TREE_ROW * levels + 8;
+  const labels = new Map<number, string[]>();
+  for (const marker of visual.markers ?? []) {
+    labels.set(marker.index, [
+      ...(labels.get(marker.index) ?? []),
+      marker.label,
+    ]);
+  }
+  const place = (i: number) => {
+    const level = Math.floor(Math.log2(i + 1));
+    const slot = i - (2 ** level - 1);
+    return {
+      x: ((slot + 0.5) * width) / 2 ** level,
+      y: TREE_RADIUS + 6 + level * TREE_ROW,
+    };
+  };
+  const present = (i: number) => i < cells.length && cells[i] !== "";
+  return (
+    <div className={styles.treeWrap}>
+      <svg
+        className={styles.tree}
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={t("walkthrough.items")}
+        style={{ maxWidth: `min(100%, ${Math.max(width, 240)}px)` }}
+      >
+        {cells.map((_, i) =>
+          [2 * i + 1, 2 * i + 2]
+            .filter((child) => present(i) && present(child))
+            .map((child) => {
+              const from = place(i);
+              const to = place(child);
+              return (
+                <line
+                  key={`${i}-${child}`}
+                  className={styles.treeEdge}
+                  x1={from.x}
+                  y1={from.y}
+                  x2={to.x}
+                  y2={to.y}
+                />
+              );
+            }),
+        )}
+        {cells.map((cell, i) => {
+          if (!present(i)) return null;
+          const { x, y } = place(i);
+          const marks = labels.get(i);
+          return (
+            <g key={i} aria-current={marks ? "true" : undefined}>
+              <circle
+                className={cx(styles.treeNode, marks && styles.treeNodeCurrent)}
+                cx={x}
+                cy={y}
+                r={TREE_RADIUS}
+              />
+              <text className={styles.treeValue} x={x} y={y}>
+                {cell}
+              </text>
+              {marks && (
+                <text
+                  className={styles.treeMarker}
+                  x={x}
+                  y={y + TREE_RADIUS + 14}
+                >
+                  {marks.join(", ")}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 function Variables({ visual, hidden }: { visual: Visual; hidden: string[] }) {
   if (!visual.vars?.length) return null;
   return (
@@ -260,7 +351,9 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           {steps.length}
         </span>
         {visual &&
-          (visual.next ? (
+          (visual.tree ? (
+            <Tree visual={visual} />
+          ) : visual.next ? (
             <Nodes
               visual={visual}
               previous={steps[index - 1]?.visual ?? null}
