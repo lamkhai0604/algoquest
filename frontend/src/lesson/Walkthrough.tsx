@@ -160,59 +160,59 @@ function Tree({ visual }: { visual: Visual }) {
   const present = (i: number) => i < cells.length && cells[i] !== "";
   return (
     <div className={styles.treeWrap}>
-    <svg
-      className={styles.tree}
-      viewBox={`0 0 ${width} ${height}`}
-      role="img"
-      aria-label={t("walkthrough.items")}
-      style={{ maxWidth: `min(100%, ${Math.max(width, 240)}px)` }}
-    >
-      {cells.map((_, i) =>
-        [2 * i + 1, 2 * i + 2]
-          .filter((child) => present(i) && present(child))
-          .map((child) => {
-            const from = place(i);
-            const to = place(child);
-            return (
-              <line
-                key={`${i}-${child}`}
-                className={styles.treeEdge}
-                x1={from.x}
-                y1={from.y}
-                x2={to.x}
-                y2={to.y}
+      <svg
+        className={styles.tree}
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={t("walkthrough.items")}
+        style={{ maxWidth: `min(100%, ${Math.max(width, 240)}px)` }}
+      >
+        {cells.map((_, i) =>
+          [2 * i + 1, 2 * i + 2]
+            .filter((child) => present(i) && present(child))
+            .map((child) => {
+              const from = place(i);
+              const to = place(child);
+              return (
+                <line
+                  key={`${i}-${child}`}
+                  className={styles.treeEdge}
+                  x1={from.x}
+                  y1={from.y}
+                  x2={to.x}
+                  y2={to.y}
+                />
+              );
+            }),
+        )}
+        {cells.map((cell, i) => {
+          if (!present(i)) return null;
+          const { x, y } = place(i);
+          const marks = labels.get(i);
+          return (
+            <g key={i} aria-current={marks ? "true" : undefined}>
+              <circle
+                className={cx(styles.treeNode, marks && styles.treeNodeCurrent)}
+                cx={x}
+                cy={y}
+                r={TREE_RADIUS}
               />
-            );
-          }),
-      )}
-      {cells.map((cell, i) => {
-        if (!present(i)) return null;
-        const { x, y } = place(i);
-        const marks = labels.get(i);
-        return (
-          <g key={i} aria-current={marks ? "true" : undefined}>
-            <circle
-              className={cx(styles.treeNode, marks && styles.treeNodeCurrent)}
-              cx={x}
-              cy={y}
-              r={TREE_RADIUS}
-            />
-            <text className={styles.treeValue} x={x} y={y}>
-              {cell}
-            </text>
-            {marks && (
-              <text
-                className={styles.treeMarker}
-                x={x}
-                y={y + TREE_RADIUS + 14}
-              >
-                {marks.join(", ")}
+              <text className={styles.treeValue} x={x} y={y}>
+                {cell}
               </text>
-            )}
-          </g>
-        );
-      })}
-    </svg>
+              {marks && (
+                <text
+                  className={styles.treeMarker}
+                  x={x}
+                  y={y + TREE_RADIUS + 14}
+                >
+                  {marks.join(", ")}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
     </div>
   );
 }
