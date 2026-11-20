@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Approved — PO, 2026-11-20** |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-9-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | Level 8 (Trees & Binary Search Trees) is playable in the five-step lesson format, with a visualizer that draws a binary tree, tree arguments in code runs, and pattern challenges |
 | Duration | About 1 week from approval |
 | Tasks | T-528, T-529, T-530, T-531, T-532 ([BACKLOG.md](../BACKLOG.md)) |
