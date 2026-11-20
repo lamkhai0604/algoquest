@@ -5,15 +5,17 @@ import java.util.List;
 /**
  * The state the visualizer draws for one walkthrough step: a row of cells (array items or
  * characters), labelled markers on cells, variable values, an optional prediction asked before the
- * step is revealed, and an optional swap: the indices of two cells whose values this step
- * exchanged. Everything except {@code cells} is optional.
+ * step is revealed, an optional swap: the indices of two cells whose values this step exchanged,
+ * and optional linked-list pointers: for each cell, the index of the cell its {@code next} points
+ * to, or -1 for {@code null}. Everything except {@code cells} is optional.
  */
 public record Visual(
     List<String> cells,
     List<Marker> markers,
     List<Variable> vars,
     Prediction predict,
-    List<Integer> swap) {
+    List<Integer> swap,
+    List<Integer> next) {
 
   /** A label drawn on one cell, such as {@code i} for the current index. */
   public record Marker(int index, String label) {}

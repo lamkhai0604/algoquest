@@ -22,7 +22,7 @@ How lessons and problems are written (D-020). Status: **Approved** — PO, 2026-
 | 8 | Worked example | One problem solved: the spoken explanation, then the code |
 | 9 | Quick check | 2–3 multiple-choice questions with explanations |
 
-Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) plus `walkthrough.json` (part 4 steps), `quick-check.json` (part 9), and `intuition.json` (one ungraded question shown after the Intuition section: `question`, `options`, `answer` index, `explanation`). Lesson Markdown may use pipe tables with a header row. A walkthrough step that exchanges two items sets `visual.swap` to their two indices. The frontend renders them; no MDX build step (D-033).
+Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) plus `walkthrough.json` (part 4 steps), `quick-check.json` (part 9), and `intuition.json` (one ungraded question shown after the Intuition section: `question`, `options`, `answer` index, `explanation`). Lesson Markdown may use pipe tables with a header row. A walkthrough step that exchanges two items sets `visual.swap` to their two indices. A linked-list walkthrough sets `visual.next`: one entry per cell, the index of the node that cell points to, or -1 for `null`; a prediction may hide the pointers with `"hides": ["next"]`. The frontend renders them; no MDX build step (D-033).
 
 ## 3. Problem file (JSON, `content/levels/<n>-<slug>/problems/<id>.json`)
 
@@ -60,6 +60,8 @@ Files: `content/levels/<n>-<slug>/lesson.md` (parts 1–3, 5–8 as Markdown) pl
 - At least 8 hidden tests per problem, including every listed edge case.
 - The backend validates every file at startup and in CI; invalid content fails the build (D-033).
 - Test `expected` values are never sent to the browser; for JavaScript the browser only receives `input` (D-035).
+
+**Linked-list problems (D-058).** Declare list parameters and results as `ListNode` in the Java starter code; the JavaScript starter takes and returns nodes `{ val, next }`. Tests write each list as an array of values (`[1, 2, 3]`, `[]` for an empty list).
 
 ## 4. Pattern challenges (optional, `content/levels/<n>-<slug>/patterns.json`, D-057)
 

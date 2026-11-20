@@ -270,6 +270,42 @@ describe("lesson page", () => {
     expect(screen.getAllByText("⇄")).toHaveLength(2);
   });
 
+  it("draws a linked list with its next pointers and the changed node", async () => {
+    const linked = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Start",
+          body: "1 points to 2, 2 points to null.",
+          visual: { cells: ["1", "2"], next: [1, -1] },
+        },
+        {
+          title: "Reverse",
+          body: "2 now points back to 1.",
+          visual: {
+            cells: ["1", "2"],
+            next: [-1, 0],
+            markers: [{ index: 1, label: "curr" }],
+          },
+        },
+      ],
+    };
+    open(linked, 2);
+
+    expect(await screen.findByText("next [1]")).toBeVisible();
+    expect(screen.getByText("next null")).toBeVisible();
+    expect(screen.getByText("→")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Next step" }));
+    expect(screen.getByText("next [0]")).toBeVisible();
+    expect(screen.getByText("←")).toBeInTheDocument();
+    expect(screen.getByText("curr")).toBeVisible();
+    // Both nodes changed where they point.
+    expect(screen.getByText("next [0]").parentElement?.className).toMatch(
+      /cellSwapped/,
+    );
+  });
+
   it("asks for a prediction before showing the step", async () => {
     open(LESSON, 2);
     await userEvent.click(

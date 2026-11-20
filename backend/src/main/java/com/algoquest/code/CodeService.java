@@ -78,11 +78,14 @@ public class CodeService {
 
   /**
    * What the code panel needs: the JavaScript function to call, the hidden test inputs (never the
-   * expected outputs), whether Java can run here at all, and the Java runs left today.
+   * expected outputs), which arguments and whether the result are linked lists (D-058), whether
+   * Java can run here at all, and the Java runs left today.
    */
   public record CodeSetup(
       String functionName,
       List<List<Object>> inputs,
+      List<Integer> listArguments,
+      boolean returnsList,
       boolean javaAvailable,
       int javaRunsLeft,
       int javaDailyLimit,
@@ -116,6 +119,15 @@ public class CodeService {
       int levelTarget,
       int javaRunsLeft) {}
 
+  /** The Java signature, which says which arguments are lists; no lists if it cannot be read. */
+  private static JavaHarness.Signature listShape(Problem problem) {
+    try {
+      return JavaHarness.signature(problem);
+    } catch (IllegalArgumentException e) {
+      return new JavaHarness.Signature("", "", List.of());
+    }
+  }
+
   public CodeSetup setup(UUID userId, String problemId) {
     Problem problem = game.playableProblem(userId, problemId);
     ProblemProgress mine =
@@ -124,9 +136,12 @@ public class CodeService {
     for (TestCase test : problem.tests()) {
       inputs.add(test.input());
     }
+    JavaHarness.Signature signature = listShape(problem);
     return new CodeSetup(
         jsFunctionName(problem),
         inputs,
+        signature.listArguments(),
+        signature.returnsList(),
         javaRunner.available(),
         javaRunsLeft(),
         javaDailyLimit,

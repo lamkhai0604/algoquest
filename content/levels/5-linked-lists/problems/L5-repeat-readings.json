@@ -1,0 +1,254 @@
+{
+  "id": "L5-repeat-readings",
+  "level": 5,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Remove Repeat Readings",
+  "statement": "A water meter logs readings as a linked list in increasing order, but it sometimes logs the same reading more than once in a row. Keep one node for each reading and remove the repeats, then return the head.",
+  "examples": [
+    {
+      "input": "head = 3 → 3 → 4 → 6 → 6 → 6",
+      "output": "3 → 4 → 6"
+    },
+    {
+      "input": "head = 1 → 2",
+      "output": "1 → 2"
+    }
+  ],
+  "constraints": [
+    "0 <= number of readings <= 10^5",
+    "The list is in increasing order",
+    "0 <= reading <= 10^6"
+  ],
+  "answerKey": {
+    "pattern": "One pass: unlink the next node while it repeats the current value",
+    "keyPoints": [
+      "Repeats sit next to each other because the list is sorted",
+      "Walk curr from head; while curr.next has the same value, skip it with curr.next = curr.next.next",
+      "Only move curr forward when the next value is different"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Empty list",
+      "All readings the same",
+      "No repeats",
+      "Repeats at the end"
+    ],
+    "acceptableSlowerApproaches": [
+      "Keep a set of seen values: O(n) time but O(n) extra space, and ignores that the list is sorted"
+    ]
+  },
+  "hints": [
+    "Because the list is sorted, where can a repeat of a reading be?",
+    "Compare curr with curr.next. If they are equal, the next node is a repeat.",
+    "Skip the repeat by pointing curr.next past it, and check again before moving on."
+  ],
+  "starterCode": {
+    "javascript": "// A node is { val, next }. Make one with new ListNode(val, next).\nfunction removeRepeats(head) {\n  // return the head with one node per reading\n}",
+    "java": "// ListNode has: int val; ListNode next; and new ListNode(val) or new ListNode(val, next).\nclass Solution {\n  ListNode removeRepeats(ListNode head) {\n    // return the head with one node per reading\n  }\n}"
+  },
+  "similarLeetCode": "Remove Duplicates from Sorted List",
+  "tests": [
+    {
+      "input": [
+        [
+          3,
+          3,
+          4,
+          6,
+          6,
+          6
+        ]
+      ],
+      "expected": [
+        3,
+        4,
+        6
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2
+        ]
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          5,
+          5,
+          5,
+          5
+        ]
+      ],
+      "expected": [
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          7
+        ]
+      ],
+      "expected": [
+        7
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          1,
+          2,
+          3,
+          3
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          2,
+          2,
+          9,
+          1000000,
+          1000000
+        ]
+      ],
+      "expected": [
+        2,
+        9,
+        1000000
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          4,
+          4,
+          4,
+          5,
+          5,
+          5,
+          6,
+          6,
+          6,
+          7,
+          7,
+          7,
+          8,
+          8,
+          8,
+          9,
+          9,
+          9,
+          10,
+          10,
+          10,
+          11,
+          11,
+          11,
+          12,
+          12,
+          12,
+          13,
+          13,
+          13,
+          14,
+          14,
+          14,
+          15,
+          15,
+          15,
+          16,
+          16,
+          16,
+          17,
+          17,
+          17,
+          18,
+          18,
+          18,
+          19,
+          19,
+          19
+        ]
+      ],
+      "expected": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ]
+    }
+  ]
+}

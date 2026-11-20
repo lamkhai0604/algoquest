@@ -1,0 +1,306 @@
+[
+  {
+    "title": "The task",
+    "body": "Reverse the list **1 → 2 → 3** in place. Each box is a node: its value and where its `next` points. `prev` starts at `null` and `curr` at the head. No values move; only the arrows turn around.",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "3"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "head, curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prev",
+          "value": "null"
+        },
+        {
+          "name": "curr",
+          "value": "1"
+        },
+        {
+          "name": "nextNode",
+          "value": "·"
+        }
+      ],
+      "next": [
+        1,
+        2,
+        -1
+      ]
+    }
+  },
+  {
+    "title": "Save the rest",
+    "body": "Before touching node 1, save `curr.next` in `nextNode`. Without it, changing node 1's pointer would lose nodes 2 and 3.",
+    "code": "const nextNode = curr.next;",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "3"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "curr"
+        },
+        {
+          "index": 1,
+          "label": "nextNode"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prev",
+          "value": "null"
+        },
+        {
+          "name": "curr",
+          "value": "1"
+        },
+        {
+          "name": "nextNode",
+          "value": "2"
+        }
+      ],
+      "next": [
+        1,
+        2,
+        -1
+      ]
+    }
+  },
+  {
+    "title": "Turn node 1 around",
+    "body": "Point node 1 at `prev`, which is `null`. Node 1 will be the last node of the reversed list. Node 2 is still reachable through `nextNode`.",
+    "code": "curr.next = prev;",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "3"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "curr"
+        },
+        {
+          "index": 1,
+          "label": "nextNode"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prev",
+          "value": "null"
+        },
+        {
+          "name": "curr",
+          "value": "1"
+        },
+        {
+          "name": "nextNode",
+          "value": "2"
+        }
+      ],
+      "next": [
+        -1,
+        2,
+        -1
+      ],
+      "predict": {
+        "question": "After curr.next = prev, where does node 1 point?",
+        "options": [
+          "To node 2",
+          "To null",
+          "To node 3"
+        ],
+        "answer": 1,
+        "explanation": "prev is still null at the first node, so node 1 now points to null. It becomes the tail of the reversed list.",
+        "hides": [
+          "next"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Move forward",
+    "body": "`prev` moves to node 1 and `curr` moves to the saved node 2. The reversed part is 1 → null; the part still to do is 2 → 3.",
+    "code": "prev = curr;\ncurr = nextNode;",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "3"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "prev"
+        },
+        {
+          "index": 1,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prev",
+          "value": "1"
+        },
+        {
+          "name": "curr",
+          "value": "2"
+        },
+        {
+          "name": "nextNode",
+          "value": "2"
+        }
+      ],
+      "next": [
+        -1,
+        2,
+        -1
+      ]
+    }
+  },
+  {
+    "title": "Turn node 2 around",
+    "body": "Save `nextNode` = node 3, then point node 2 back at `prev`, node 1. Now 2 → 1 → null.",
+    "code": "const nextNode = curr.next;\ncurr.next = prev;",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "3"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "prev"
+        },
+        {
+          "index": 1,
+          "label": "curr"
+        },
+        {
+          "index": 2,
+          "label": "nextNode"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prev",
+          "value": "1"
+        },
+        {
+          "name": "curr",
+          "value": "2"
+        },
+        {
+          "name": "nextNode",
+          "value": "3"
+        }
+      ],
+      "next": [
+        -1,
+        0,
+        -1
+      ],
+      "predict": {
+        "question": "Node 2 used to point to node 3. Where does it point now?",
+        "options": [
+          "To node 3",
+          "To null",
+          "To node 1"
+        ],
+        "answer": 2,
+        "explanation": "curr.next = prev, and prev is node 1. Node 3 is not lost: nextNode still holds it.",
+        "hides": [
+          "next"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Last node",
+    "body": "Move forward (`prev` = node 2, `curr` = node 3), save `nextNode` = `null`, and point node 3 at node 2. Then `prev` = node 3 and `curr` = `null`.",
+    "code": "prev = curr;\ncurr = nextNode;",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "3"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "prev"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prev",
+          "value": "3"
+        },
+        {
+          "name": "curr",
+          "value": "null"
+        },
+        {
+          "name": "nextNode",
+          "value": "null"
+        }
+      ],
+      "next": [
+        -1,
+        0,
+        1
+      ]
+    }
+  },
+  {
+    "title": "Return prev",
+    "body": "`curr` is `null`, so the loop stops. `prev` holds node 3, the new head: **3 → 2 → 1**. Three nodes, three pointer changes: O(n) time and O(1) extra space.",
+    "code": "return prev;",
+    "visual": {
+      "cells": [
+        "1",
+        "2",
+        "3"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "head"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prev",
+          "value": "3"
+        },
+        {
+          "name": "curr",
+          "value": "null"
+        },
+        {
+          "name": "result",
+          "value": "[3, 2, 1]"
+        }
+      ],
+      "next": [
+        -1,
+        0,
+        1
+      ]
+    }
+  }
+]

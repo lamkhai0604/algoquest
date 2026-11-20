@@ -1,0 +1,189 @@
+{
+  "id": "L5-late-arrival",
+  "level": 5,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Late Arrival",
+  "statement": "A clinic keeps today's appointment times (minutes after opening) as a linked list in increasing order. A patient books one more time, `time`. Insert a new node with that time so the list stays in increasing order, and return the head. If the time is already in the list, put the new node after the existing ones.",
+  "examples": [
+    {
+      "input": "head = 10 → 30 → 50, time = 40",
+      "output": "10 → 30 → 40 → 50"
+    },
+    {
+      "input": "head = null, time = 15",
+      "output": "15"
+    }
+  ],
+  "constraints": [
+    "0 <= number of appointments <= 10^5",
+    "0 <= time <= 10^4",
+    "The list is in increasing order"
+  ],
+  "answerKey": {
+    "pattern": "Dummy node, walk to the last node that is not later, then link the new node in",
+    "keyPoints": [
+      "A dummy node in front handles inserting before the head",
+      "Move prev forward while prev.next exists and prev.next.val <= time",
+      "Create the node and set node.next = prev.next, then prev.next = node, in that order",
+      "Return dummy.next"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Empty list",
+      "New time before every other",
+      "New time after every other",
+      "Equal times already in the list"
+    ],
+    "acceptableSlowerApproaches": [
+      "Copy to an array, insert, and rebuild the list: O(n) extra space"
+    ]
+  },
+  "hints": [
+    "Where does the new node go: after which node?",
+    "Walk prev from a dummy node while the next time is not later than the new one.",
+    "Link the new node to prev.next before you change prev.next, or you lose the rest of the list."
+  ],
+  "starterCode": {
+    "javascript": "// A node is { val, next }. Make one with new ListNode(val, next).\nfunction lateArrival(head, time) {\n  // return the head with the new time inserted in order\n}",
+    "java": "// ListNode has: int val; ListNode next; and new ListNode(val) or new ListNode(val, next).\nclass Solution {\n  ListNode lateArrival(ListNode head, int time) {\n    // return the head with the new time inserted in order\n  }\n}"
+  },
+  "similarLeetCode": "Insert into a Sorted Linked List",
+  "tests": [
+    {
+      "input": [
+        [
+          10,
+          30,
+          50
+        ],
+        40
+      ],
+      "expected": [
+        10,
+        30,
+        40,
+        50
+      ]
+    },
+    {
+      "input": [
+        [],
+        15
+      ],
+      "expected": [
+        15
+      ]
+    },
+    {
+      "input": [
+        [
+          10,
+          30
+        ],
+        5
+      ],
+      "expected": [
+        5,
+        10,
+        30
+      ]
+    },
+    {
+      "input": [
+        [
+          10,
+          30
+        ],
+        60
+      ],
+      "expected": [
+        10,
+        30,
+        60
+      ]
+    },
+    {
+      "input": [
+        [
+          10,
+          20,
+          20,
+          30
+        ],
+        20
+      ],
+      "expected": [
+        10,
+        20,
+        20,
+        20,
+        30
+      ]
+    },
+    {
+      "input": [
+        [
+          7
+        ],
+        7
+      ],
+      "expected": [
+        7,
+        7
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        0
+      ],
+      "expected": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          0,
+          10000
+        ],
+        5000
+      ],
+      "expected": [
+        0,
+        5000,
+        10000
+      ]
+    },
+    {
+      "input": [
+        [
+          5,
+          5,
+          5
+        ],
+        6
+      ],
+      "expected": [
+        5,
+        5,
+        5,
+        6
+      ]
+    }
+  ]
+}
