@@ -28,7 +28,9 @@ export function AppFooter() {
           </a>
         </nav>
       </div>
-      <p className={styles.copy}>© {year} {APP_NAME}</p>
+      <p className={styles.copy}>
+        © {year} {APP_NAME}
+      </p>
     </footer>
   );
 }
