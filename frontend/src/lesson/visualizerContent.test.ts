@@ -151,7 +151,8 @@ describe("lesson visualizers match their reference algorithms", () => {
   it("Level 8: the tree is a valid BST and the search follows the BST rule", () => {
     const steps = walkthrough("8-trees-and-bst");
     const cells = steps[0]!.visual!.cells;
-    const at = (i: number) => (i < cells.length && cells[i] !== "" ? Number(cells[i]) : null);
+    const at = (i: number) =>
+      i < cells.length && cells[i] !== "" ? Number(cells[i]) : null;
     // In-order values of a BST increase.
     const inOrder: number[] = [];
     const walk = (i: number) => {
@@ -165,7 +166,7 @@ describe("lesson visualizers match their reference algorithms", () => {
     // The search path for the target, by the BST rule.
     const target = Number(value(steps[0]!, "target"));
     const path: number[] = [];
-    for (let i = 0; at(i) !== null; ) {
+    for (let i = 0; at(i) !== null;) {
       path.push(i);
       if (at(i) === target) break;
       i = target < at(i)! ? 2 * i + 1 : 2 * i + 2;
