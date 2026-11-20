@@ -159,12 +159,13 @@ function Tree({ visual }: { visual: Visual }) {
   };
   const present = (i: number) => i < cells.length && cells[i] !== "";
   return (
+    <div className={styles.treeWrap}>
     <svg
       className={styles.tree}
       viewBox={`0 0 ${width} ${height}`}
       role="img"
       aria-label={t("walkthrough.items")}
-      style={{ maxWidth: Math.max(width, 240) }}
+      style={{ maxWidth: `min(100%, ${Math.max(width, 240)}px)` }}
     >
       {cells.map((_, i) =>
         [2 * i + 1, 2 * i + 2]
@@ -212,6 +213,7 @@ function Tree({ visual }: { visual: Visual }) {
         );
       })}
     </svg>
+    </div>
   );
 }
 

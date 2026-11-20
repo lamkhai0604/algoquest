@@ -391,9 +391,16 @@
   }
 }
 
+.treeWrap {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
 .tree {
   display: block;
   width: 100%;
+  height: auto;
   margin: var(--space-3) auto;
 }
 
@@ -424,6 +431,11 @@
   fill: var(--color-xp);
   font: 700 12px var(--font-body);
   text-anchor: middle;
+  /* A halo in the card colour keeps the label readable over edges. */
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 5px;
+  stroke-linejoin: round;
 }
 
 .cellIndex {
