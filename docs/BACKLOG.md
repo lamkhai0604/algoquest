@@ -152,10 +152,10 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-533 | Level 9 Heap & Priority Queue content | FR-03, FR-04, D-048 | P1 | In progress |
-| T-534 | Level 9 pattern challenges | D-057 | P2 | In progress |
-| T-535 | Level 11 Bit Manipulation & Basic Math content | FR-03, FR-04, D-048 | P1 | In progress |
-| T-536 | Level 11 pattern challenges | D-057 | P2 | In progress |
+| T-533 | Level 9 Heap & Priority Queue content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test. PO review open |
+| T-534 | Level 9 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check). PO review open |
+| T-535 | Level 11 Bit Manipulation & Basic Math content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test. PO review open |
+| T-536 | Level 11 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check). PO review open |
 | T-537 | Sprint 10 report | D-007 | P2 | Proposed |
 
 ## Later (unscheduled)

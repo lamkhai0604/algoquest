@@ -1,7 +1,7 @@
 [
   {
     "title": "The task",
-    "body": "Count the 1 bits of **44**, which is **101100** in binary. Each box is one bit. The trick: `n & (n - 1)` removes exactly the lowest 1 bit, so we count how many times we can do that before n becomes 0.",
+    "body": "Count the 1 bits of **44**, which is **101100** in binary. Each box is one bit. The trick: `n & (n - 1)` removes exactly the lowest 1 bit, so we count how many times we can do that before n becomes 0. Read the boxes left to right as one binary number; the small numbers above them are box positions, so bit 0 (worth 1) is the rightmost box.",
     "code": "let count = 0;\nwhile (n !== 0) { n &= n - 1; count++; }",
     "visual": {
       "cells": [
