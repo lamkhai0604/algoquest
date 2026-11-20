@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Approved — PO, 2026-11-19** |
+| Status | **Closed 2026-11-19** ([report](../reports/sprint-6-report.md)). Approved by the PO on 2026-11-19 |
 | Goal | Level 5 (Linked Lists) is playable in the five-step lesson format at the Level 4 standard, with a visualizer that draws nodes and their `next` pointers, list arguments in code runs, and pattern challenges |
 | Duration | About 1 week from approval |
 | Tasks | T-511, T-518, T-519, T-520 ([BACKLOG.md](../BACKLOG.md)) |

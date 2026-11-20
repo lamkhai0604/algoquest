@@ -1,0 +1,175 @@
+{
+  "id": "L6-pocket-calculator",
+  "level": 6,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Pocket Calculator",
+  "statement": "An old pocket calculator uses postfix order: numbers come first and the operator after them, so `3 4 +` means 3 + 4. You get the key presses as an array `tokens` of whole numbers and the operators `+`, `-`, `*`, `/`. Each operator uses the two most recent results, in order (the earlier one first). Division drops the fraction toward zero. Return the final result.",
+  "examples": [
+    {
+      "input": "tokens = [\"3\", \"4\", \"+\", \"2\", \"*\"]",
+      "output": "14",
+      "explanation": "(3 + 4) * 2"
+    },
+    {
+      "input": "tokens = [\"9\", \"2\", \"-\", \"-7\", \"/\"]",
+      "output": "-1",
+      "explanation": "(9 - 2) / -7 = -1"
+    }
+  ],
+  "constraints": [
+    "1 <= tokens.length <= 10^4",
+    "The expression is valid and never divides by zero",
+    "Every result fits in a 32-bit integer"
+  ],
+  "answerKey": {
+    "pattern": "Stack of numbers; an operator pops two and pushes the result",
+    "keyPoints": [
+      "Push each number",
+      "For an operator, pop b (the top) and then a, compute a op b, push the result",
+      "Order matters for - and /: the earlier number is a",
+      "Division truncates toward zero (Math.trunc in JavaScript)",
+      "The one number left is the answer"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "A single number",
+      "Negative numbers as tokens",
+      "Division of a negative number"
+    ],
+    "acceptableSlowerApproaches": []
+  },
+  "hints": [
+    "When an operator arrives, which two numbers does it use?",
+    "The two most recent results are on top of a stack. Pop the second operand first.",
+    "Compute a op b with a popped second, push the result, and keep going."
+  ],
+  "starterCode": {
+    "javascript": "function calculate(tokens) {\n  // return the result as a whole number\n}",
+    "java": "class Solution {\n  int calculate(String[] tokens) {\n    // return the result as a whole number\n  }\n}"
+  },
+  "similarLeetCode": "Evaluate Reverse Polish Notation",
+  "tests": [
+    {
+      "input": [
+        [
+          "3",
+          "4",
+          "+",
+          "2",
+          "*"
+        ]
+      ],
+      "expected": 14
+    },
+    {
+      "input": [
+        [
+          "9",
+          "2",
+          "-",
+          "-7",
+          "/"
+        ]
+      ],
+      "expected": -1
+    },
+    {
+      "input": [
+        [
+          "42"
+        ]
+      ],
+      "expected": 42
+    },
+    {
+      "input": [
+        [
+          "-5"
+        ]
+      ],
+      "expected": -5
+    },
+    {
+      "input": [
+        [
+          "2",
+          "3",
+          "4",
+          "*",
+          "+"
+        ]
+      ],
+      "expected": 14
+    },
+    {
+      "input": [
+        [
+          "10",
+          "3",
+          "/"
+        ]
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          "-10",
+          "3",
+          "/"
+        ]
+      ],
+      "expected": -3
+    },
+    {
+      "input": [
+        [
+          "4",
+          "13",
+          "5",
+          "/",
+          "+"
+        ]
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        [
+          "10",
+          "6",
+          "9",
+          "3",
+          "+",
+          "-11",
+          "*",
+          "/",
+          "*",
+          "17",
+          "+",
+          "5",
+          "+"
+        ]
+      ],
+      "expected": 22
+    },
+    {
+      "input": [
+        [
+          "1",
+          "2",
+          "-",
+          "3",
+          "-",
+          "4",
+          "-"
+        ]
+      ],
+      "expected": -8
+    }
+  ]
+}

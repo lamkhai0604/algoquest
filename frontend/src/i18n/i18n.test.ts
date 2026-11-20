@@ -1,3 +1,4 @@
+import { APP_NAME } from "../config/brand";
 import { afterEach, describe, expect, it } from "vitest";
 import en from "./locales/en.json";
 import vi from "./locales/vi.json";
@@ -21,6 +22,12 @@ describe("i18n foundation", () => {
     expect(translate("vi", "nav.profile")).toBe("Hồ sơ");
     setLocale("en");
     expect(translate("en", "nav.profile")).toBe("Profile");
+  });
+
+  it("puts the site name into text that names the site", () => {
+    expect(translate("en", "auth.title")).toBe(`Sign in to ${APP_NAME}`);
+    expect(translate("vi", "misc.vipTitle")).toBe(`${APP_NAME} VIP`);
+    expect(APP_NAME).toBe("AlgoQuest");
   });
 
   it("retains the exact English wording used in the existing UI", () => {
