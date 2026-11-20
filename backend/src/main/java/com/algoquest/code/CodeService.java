@@ -79,8 +79,7 @@ public class CodeService {
   /**
    * What the code panel needs: the JavaScript function to call, the hidden test inputs (never the
    * expected outputs), which arguments and whether the result are linked lists (D-058) or binary
-   * trees (D-059), whether
-   * Java can run here at all, and the Java runs left today.
+   * trees (D-059), whether Java can run here at all, and the Java runs left today.
    */
   public record CodeSetup(
       String functionName,

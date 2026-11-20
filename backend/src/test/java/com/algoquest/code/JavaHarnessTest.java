@@ -148,7 +148,8 @@ class JavaHarnessTest {
         problem(
             "class Solution {\n  TreeNode mirror(TreeNode root) {\n  }\n}",
             List.of(
-                new TestCase(List.of(Arrays.asList(4, 2, 7, 1, 3, 6, 9)), List.of(4, 7, 2, 9, 6, 3, 1)),
+                new TestCase(
+                    List.of(Arrays.asList(4, 2, 7, 1, 3, 6, 9)), List.of(4, 7, 2, 9, 6, 3, 1)),
                 new TestCase(List.of(Arrays.asList(1, null, 2)), List.of(1, 2)),
                 new TestCase(List.of(List.of()), List.of())));
     String code =

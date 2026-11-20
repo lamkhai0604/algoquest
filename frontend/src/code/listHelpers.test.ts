@@ -76,7 +76,9 @@ describe("binary-tree helpers (D-059)", () => {
   it("treats an empty array as null and drops trailing nulls", () => {
     expect(trees.toTree([])).toBeNull();
     expect(trees.fromTree(null)).toEqual([]);
-    expect(trees.fromTree(new trees.TreeNode(1, null, new trees.TreeNode(2)))).toEqual([1, null, 2]);
+    expect(
+      trees.fromTree(new trees.TreeNode(1, null, new trees.TreeNode(2))),
+    ).toEqual([1, null, 2]);
   });
 
   it("leaves results that are not trees as they are, and stops at a cycle", () => {

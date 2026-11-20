@@ -144,7 +144,10 @@ function Tree({ visual }: { visual: Visual }) {
   const height = TREE_ROW * levels + 8;
   const labels = new Map<number, string[]>();
   for (const marker of visual.markers ?? []) {
-    labels.set(marker.index, [...(labels.get(marker.index) ?? []), marker.label]);
+    labels.set(marker.index, [
+      ...(labels.get(marker.index) ?? []),
+      marker.label,
+    ]);
   }
   const place = (i: number) => {
     const level = Math.floor(Math.log2(i + 1));
@@ -197,7 +200,11 @@ function Tree({ visual }: { visual: Visual }) {
               {cell}
             </text>
             {marks && (
-              <text className={styles.treeMarker} x={x} y={y + TREE_RADIUS + 14}>
+              <text
+                className={styles.treeMarker}
+                x={x}
+                y={y + TREE_RADIUS + 14}
+              >
                 {marks.join(", ")}
               </text>
             )}
