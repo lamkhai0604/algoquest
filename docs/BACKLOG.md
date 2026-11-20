@@ -112,15 +112,23 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-517 | Pattern Recognition pilot: content schema and validator, six Level 3–4 challenges, API with label-decided correctness and AI-graded reasoning, `pattern_attempt` table, level page section | FR-03, FR-05, D-057 | P1 | Done 2026-11-17: live Gemini check 6 of 6 as expected |
 | T-513 | Sprint 5 report | D-007 | P2 | Done 2026-11-19: [report](reports/sprint-5-report.md) |
 
-## Sprint 6 — Level 5 Linked Lists ([plan](sprints/sprint-6.md), approved 2026-11-19)
+## Sprint 6 — Level 5 Linked Lists ([plan](sprints/sprint-6.md), closed 2026-11-19)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
 | T-518 | Visualizer: linked nodes (`next` pointers) | FR-03, D-049 | P1 | Done 2026-11-19 (content check for pointers; frontend test replays the Level 5 reversal; screenshots on desktop and phone) |
 | T-519 | List arguments in code runs (`ListNode`) | FR-07, D-058 | P1 | Done 2026-11-19 (worker helper tests; harness test compiles and runs list code and stops at a cycle) |
-| T-511 | Level 5 Linked Lists content (deferred from Sprint 5) | FR-03, FR-04, D-048 | P1 | Done 2026-11-19: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles. PO content review open |
-| T-520 | Level 5 pattern challenges | D-057 | P2 | Done 2026-11-19 (content check). PO review open |
-| T-521 | Sprint 6 report | D-007 | P2 | Proposed |
+| T-511 | Level 5 Linked Lists content (deferred from Sprint 5) | FR-03, FR-04, D-048 | P1 | Done 2026-11-19: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles; PO review OK |
+| T-520 | Level 5 pattern challenges | D-057 | P2 | Done 2026-11-19 (content check; PO review OK) |
+| T-521 | Sprint 6 report | D-007 | P2 | Done 2026-11-19: [report](reports/sprint-6-report.md) |
+
+## Sprint 7 — Level 6 Stack, Queue & Deque ([plan](sprints/sprint-7.md), approved 2026-11-19)
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-522 | Level 6 Stack, Queue & Deque content | FR-03, FR-04, D-048 | P1 | In progress |
+| T-523 | Level 6 pattern challenges | D-057 | P2 | In progress |
+| T-524 | Sprint 7 report | D-007 | P2 | Proposed |
 
 ## Later (unscheduled)
 
