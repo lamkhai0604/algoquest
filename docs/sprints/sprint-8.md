@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Approved — PO, 2026-11-19** |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-8-report.md)). Approved by the PO on 2026-11-19 |
 | Goal | Level 7 (Recursion & Divide and Conquer) is playable in the five-step lesson format at the standard of Levels 4–6, with pattern challenges |
 | Duration | About 1 week from approval |
 | Tasks | T-525, T-526, T-527 ([BACKLOG.md](../BACKLOG.md)) |

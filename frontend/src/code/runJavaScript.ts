@@ -37,14 +37,59 @@ function toValues(head) {
 `;
 
 /**
+ * Binary-tree helpers for the worker (D-059), kept as source text like the
+ * list helpers. `TreeNode` is the node class the player's code uses;
+ * `toTree` builds a tree from a level-order array with nulls for missing
+ * children; `fromTree` turns a returned tree back into that array without
+ * trailing nulls, leaves anything that is not a node as it is, and throws on
+ * a cycle or a very large tree.
+ */
+export const TREE_HELPERS = `
+function TreeNode(val, left, right) {
+  this.val = val === undefined ? 0 : val;
+  this.left = left === undefined ? null : left;
+  this.right = right === undefined ? null : right;
+}
+function toTree(values) {
+  if (!Array.isArray(values) || values.length === 0 || values[0] === null) return Array.isArray(values) ? null : values;
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let head = 0;
+  let k = 1;
+  while (head < queue.length && k < values.length) {
+    const node = queue[head++];
+    if (k < values.length && values[k] !== null) { node.left = new TreeNode(values[k]); queue.push(node.left); }
+    k++;
+    if (k < values.length && values[k] !== null) { node.right = new TreeNode(values[k]); queue.push(node.right); }
+    k++;
+  }
+  return root;
+}
+function fromTree(root) {
+  if (root !== null && (typeof root !== "object" || !("val" in root))) return root;
+  const values = [];
+  const order = [root];
+  for (let k = 0; k < order.length; k++) {
+    if (order.length > ${MAX_LIST_LENGTH}) throw new Error("The returned tree has a cycle or is too large.");
+    const node = order[k];
+    values.push(node === null || node === undefined ? null : node.val);
+    if (node !== null && node !== undefined) order.push(node.left === undefined ? null : node.left, node.right === undefined ? null : node.right);
+  }
+  while (values.length > 0 && values[values.length - 1] === null) values.pop();
+  return values;
+}
+`;
+
+/**
  * The worker runs the player's code in its own thread with no access to the
  * page. It reports each test as it finishes, so a timeout keeps the earlier
  * results.
  */
 const WORKER = `
 ${LIST_HELPERS}
+${TREE_HELPERS}
 self.onmessage = (event) => {
-  const { code, functionName, inputs, listArguments, returnsList } = event.data;
+  const { code, functionName, inputs, listArguments, returnsList, treeArguments, returnsTree } = event.data;
   let fn;
   try {
     fn = new Function(code + "\\n;return typeof " + functionName + " === 'function' ? " + functionName + " : undefined;")();
@@ -60,8 +105,10 @@ self.onmessage = (event) => {
     try {
       const args = JSON.parse(JSON.stringify(input));
       for (const position of listArguments || []) args[position] = toNodes(args[position]);
+      for (const position of treeArguments || []) args[position] = toTree(args[position]);
       let value = fn(...args);
       if (returnsList) value = toValues(value === undefined ? null : value);
+      if (returnsTree) value = fromTree(value === undefined ? null : value);
       const output = value === undefined ? null : JSON.parse(JSON.stringify(value));
       self.postMessage({ type: "result", index, output });
     } catch (error) {
@@ -81,6 +128,9 @@ type Message =
 export interface ListShape {
   listArguments: number[];
   returnsList: boolean;
+  /** Which arguments are binary trees, and whether the result is one (D-059). */
+  treeArguments?: number[];
+  returnsTree?: boolean;
 }
 
 export type JavaScriptRunner = (

@@ -78,7 +78,8 @@ public class CodeService {
 
   /**
    * What the code panel needs: the JavaScript function to call, the hidden test inputs (never the
-   * expected outputs), which arguments and whether the result are linked lists (D-058), whether
+   * expected outputs), which arguments and whether the result are linked lists (D-058) or binary
+   * trees (D-059), whether
    * Java can run here at all, and the Java runs left today.
    */
   public record CodeSetup(
@@ -86,6 +87,8 @@ public class CodeService {
       List<List<Object>> inputs,
       List<Integer> listArguments,
       boolean returnsList,
+      List<Integer> treeArguments,
+      boolean returnsTree,
       boolean javaAvailable,
       int javaRunsLeft,
       int javaDailyLimit,
@@ -142,6 +145,8 @@ public class CodeService {
         inputs,
         signature.listArguments(),
         signature.returnsList(),
+        signature.treeArguments(),
+        signature.returnsTree(),
         javaRunner.available(),
         javaRunsLeft(),
         javaDailyLimit,

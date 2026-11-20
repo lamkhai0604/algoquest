@@ -1,7 +1,16 @@
 [
   {
     "title": "Start",
-    "body": "Set best to the first value."
+    "body": "Set best to the first value.",
+    "visual": {
+      "cells": [
+        "8",
+        "3",
+        "10",
+        "1"
+      ],
+      "tree": true
+    }
   },
   {
     "title": "Scan",

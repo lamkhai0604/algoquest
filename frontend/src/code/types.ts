@@ -8,6 +8,10 @@ export interface CodeSetup {
   listArguments: number[];
   /** True when the function returns a linked list (D-058). */
   returnsList: boolean;
+  /** Positions of the arguments that are binary trees (D-059). */
+  treeArguments: number[];
+  /** True when the function returns a binary tree (D-059). */
+  returnsTree: boolean;
   /** False when the site has no Java runner; the editor then offers JavaScript only. */
   javaAvailable: boolean;
   javaRunsLeft: number;
