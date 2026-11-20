@@ -1,0 +1,128 @@
+[
+  {
+    "id": "P6-recipe-undo",
+    "level": 6,
+    "title": "Recipe Undo",
+    "statement": "A recipe app records steps a cook adds, and an Undo button that removes the most recently added step still in the recipe. Given the list of actions, return the final steps in order.",
+    "examples": [
+      "add flour, add eggs, undo, add milk gives flour, milk",
+      "undo with no steps does nothing"
+    ],
+    "constraints": [
+      "Up to 100,000 actions"
+    ],
+    "approaches": [
+      {
+        "id": "stack",
+        "name": "Keep the steps on a stack",
+        "hint": "The newest item is the one that leaves",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Add pushes, Undo pops: each action is O(1), and the stack holds exactly the steps that remain, in order."
+      },
+      {
+        "id": "replay",
+        "name": "After each undo, rebuild the recipe from all actions so far",
+        "hint": "Recompute from the start",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(n)",
+        "why": "Correct, but every undo replays the whole history."
+      },
+      {
+        "id": "queue",
+        "name": "Keep the steps in a queue and remove from the front on undo",
+        "hint": "First in, first out",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Undo would remove the oldest step instead of the newest, which gives the wrong recipe."
+      }
+    ]
+  },
+  {
+    "id": "P6-print-room",
+    "level": 6,
+    "title": "Print Room",
+    "statement": "A library printer receives jobs during the day and must print them in the order they arrived. Each job may be sent back to the end of the line if the paper runs out. Choose how to store the waiting jobs so the day's 100,000 jobs run fast.",
+    "examples": [
+      "jobs A, B, C print as A, B, C",
+      "a job sent back prints after the jobs already waiting"
+    ],
+    "constraints": [
+      "Up to 100,000 jobs"
+    ],
+    "approaches": [
+      {
+        "id": "queue",
+        "name": "A queue: an array with a head index, or a deque",
+        "hint": "Take from the front without moving the rest",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Adding at the back and taking from the front are both O(1), and the order is first in, first out."
+      },
+      {
+        "id": "shift",
+        "name": "An array with push() and shift()",
+        "hint": "Use the built-in methods as they are",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(n)",
+        "why": "The order is right, but each shift() moves every waiting job, so a busy day becomes slow."
+      },
+      {
+        "id": "stack",
+        "name": "A stack: push and pop at the end",
+        "hint": "Last in, first out",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "The newest job would print first, which breaks arrival order."
+      }
+    ]
+  },
+  {
+    "id": "P6-tag-check",
+    "level": 6,
+    "title": "Tag Check",
+    "statement": "A simple web page editor checks that tags such as <b>, <i>, and <p> are closed in the right order: inner tags close before outer ones. Given the list of opening and closing tags, decide whether the page is well formed.",
+    "examples": [
+      "<b> <i> </i> </b> is well formed",
+      "<b> <i> </b> </i> is not"
+    ],
+    "constraints": [
+      "Up to 100,000 tags"
+    ],
+    "approaches": [
+      {
+        "id": "stack",
+        "name": "A stack of open tags; each closing tag must match the top",
+        "hint": "Check against the most recent open item",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "The tag that must close next is always the most recently opened one, which is the top of the stack."
+      },
+      {
+        "id": "pairs",
+        "name": "Repeatedly delete a matching open-close pair that sit next to each other",
+        "hint": "Shrink the list until nothing changes",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(n)",
+        "why": "Correct, but each pass scans the list again."
+      },
+      {
+        "id": "count",
+        "name": "Count opening and closing tags of each kind",
+        "hint": "Compare totals",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(k)",
+        "why": "Equal counts do not prove the order: <b> <i> </b> </i> has equal counts but is not well formed."
+      }
+    ]
+  }
+]

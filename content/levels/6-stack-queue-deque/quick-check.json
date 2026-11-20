@@ -1,0 +1,35 @@
+[
+  {
+    "question": "A JavaScript queue uses push() to add and shift() to remove, over 100,000 items. What is the problem?",
+    "options": [
+      "Nothing: both are O(1)",
+      "shift() moves every remaining item, so the whole run is about O(n²)",
+      "push() is O(n)",
+      "Arrays cannot hold 100,000 items"
+    ],
+    "answer": 1,
+    "explanation": "shift() removes the first item and moves every other item down one place. Keep a head index, or use a deque, so taking from the front is O(1)."
+  },
+  {
+    "question": "Tickets must be handled in the order customers sent them. Which structure fits?",
+    "options": [
+      "A stack",
+      "A queue",
+      "A deque used only from one end",
+      "A sorted array"
+    ],
+    "answer": 1,
+    "explanation": "Arrival order is first in, first out: a queue. A stack would serve the newest ticket first."
+  },
+  {
+    "question": "While checking brackets, the text ends and the stack still holds one ( . What does that mean?",
+    "options": [
+      "The text is balanced",
+      "One bracket was opened and never closed, so it is not balanced",
+      "The last bracket was the wrong kind",
+      "The stack had a bug"
+    ],
+    "answer": 1,
+    "explanation": "Every opener waits on the stack until its closer arrives. Anything left at the end was never closed, so check that the stack is empty."
+  }
+]

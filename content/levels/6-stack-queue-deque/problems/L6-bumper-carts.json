@@ -1,0 +1,187 @@
+{
+  "id": "L6-bumper-carts",
+  "level": 6,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Bumper Carts",
+  "statement": "Carts roll along a straight track. `carts[i]` describes cart `i` from left to right: its size is the absolute value, and a positive value rolls right while a negative value rolls left. All carts move at the same speed. When a right-rolling cart meets a left-rolling cart, the smaller one is knocked off the track; if they are the same size, both are. Carts rolling the same way never meet. Return the carts left at the end, from left to right.",
+  "examples": [
+    {
+      "input": "carts = [5, 10, -5]",
+      "output": "[5, 10]"
+    },
+    {
+      "input": "carts = [8, -8]",
+      "output": "[]"
+    },
+    {
+      "input": "carts = [-2, -1, 1, 2]",
+      "output": "[-2, -1, 1, 2]"
+    }
+  ],
+  "constraints": [
+    "2 <= carts.length <= 10^4",
+    "1 <= |carts[i]| <= 1000"
+  ],
+  "answerKey": {
+    "pattern": "Stack of surviving carts; a left-rolling cart fights the right-rolling carts on top",
+    "keyPoints": [
+      "Only a right-rolling cart on the left meets a left-rolling cart on the right",
+      "Push right-rolling carts",
+      "For a left-rolling cart, while the top rolls right and is smaller, pop it",
+      "If the top is the same size, pop it and drop the new cart; if the top is bigger, drop the new cart",
+      "If no right-rolling cart is left on top, push the new cart"
+    ],
+    "timeComplexity": "O(n): each cart is pushed and popped at most once",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Equal sizes",
+      "Left-rolling carts at the start never meet anything",
+      "One big left-rolling cart knocks off many"
+    ],
+    "acceptableSlowerApproaches": [
+      "Simulate the track step by step: much slower"
+    ]
+  },
+  "hints": [
+    "Which pairs of carts can meet at all?",
+    "Keep the carts that survive so far on a stack. A new left-rolling cart meets the top first.",
+    "Pop smaller right-rolling carts in a loop; handle equal sizes and a bigger top; push only if the new cart survives."
+  ],
+  "starterCode": {
+    "javascript": "function bumperCarts(carts) {\n  // return the carts left, left to right\n}",
+    "java": "class Solution {\n  int[] bumperCarts(int[] carts) {\n    // return the carts left, left to right\n  }\n}"
+  },
+  "similarLeetCode": "Asteroid Collision",
+  "tests": [
+    {
+      "input": [
+        [
+          5,
+          10,
+          -5
+        ]
+      ],
+      "expected": [
+        5,
+        10
+      ]
+    },
+    {
+      "input": [
+        [
+          8,
+          -8
+        ]
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          -2,
+          -1,
+          1,
+          2
+        ]
+      ],
+      "expected": [
+        -2,
+        -1,
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        [
+          10,
+          2,
+          -5
+        ]
+      ],
+      "expected": [
+        10
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          -10
+        ]
+      ],
+      "expected": [
+        -10
+      ]
+    },
+    {
+      "input": [
+        [
+          3,
+          -1,
+          -2,
+          -3,
+          4
+        ]
+      ],
+      "expected": [
+        4
+      ]
+    },
+    {
+      "input": [
+        [
+          -5,
+          5
+        ]
+      ],
+      "expected": [
+        -5,
+        5
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          -1,
+          1,
+          -2
+        ]
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          1,
+          -1,
+          2,
+          -2,
+          3,
+          -3
+        ]
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          7,
+          7,
+          7,
+          -7,
+          -7,
+          -6
+        ]
+      ],
+      "expected": [
+        7
+      ]
+    }
+  ]
+}

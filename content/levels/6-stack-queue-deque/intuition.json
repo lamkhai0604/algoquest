@@ -1,0 +1,11 @@
+{
+  "question": "You visit pages A, then B, then C in a browser. You press Back twice. Which structure gives the right pages, in the right order?",
+  "options": [
+    "A queue: first B, then C",
+    "A stack: first B, then A",
+    "A sorted list: first A, then B",
+    "A hash map: any order"
+  ],
+  "answer": 1,
+  "explanation": "Back always returns to the most recent page before the current one: last in, first out. From C, Back gives B, then A. That is a stack."
+}

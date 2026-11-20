@@ -1,0 +1,114 @@
+{
+  "id": "L6-twin-letters",
+  "level": 6,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Pop the Twins",
+  "statement": "In a word game, two equal letters standing next to each other pop and disappear, and the letters around them close the gap, which may make new twins pop. Keep going until no twins are left. Return the final string for `word`.",
+  "examples": [
+    {
+      "input": "word = \"abbaca\"",
+      "output": "\"ca\"",
+      "explanation": "bb pops to give aaca, then aa pops to give ca"
+    },
+    {
+      "input": "word = \"abc\"",
+      "output": "\"abc\""
+    }
+  ],
+  "constraints": [
+    "1 <= word.length <= 10^5",
+    "word has lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Stack: a letter equal to the top pops it, otherwise it is pushed",
+    "keyPoints": [
+      "The only letter a new letter can pair with is the last one still standing",
+      "If the stack's top equals the letter, pop; otherwise push",
+      "Join the stack"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Everything pops",
+      "Nothing pops",
+      "Three equal letters in a row: two pop, one stays"
+    ],
+    "acceptableSlowerApproaches": [
+      "Search and remove pairs repeatedly: O(n^2)"
+    ]
+  },
+  "hints": [
+    "After some pops, which letter is the new letter next to?",
+    "The last letter still standing is the top of a stack.",
+    "Pop when the new letter equals the top, push otherwise, and join at the end."
+  ],
+  "starterCode": {
+    "javascript": "function popTwins(word) {\n  // return the string after all pops\n}",
+    "java": "class Solution {\n  String popTwins(String word) {\n    // return the string after all pops\n  }\n}"
+  },
+  "similarLeetCode": "Remove All Adjacent Duplicates In String",
+  "tests": [
+    {
+      "input": [
+        "abbaca"
+      ],
+      "expected": "ca"
+    },
+    {
+      "input": [
+        "abc"
+      ],
+      "expected": "abc"
+    },
+    {
+      "input": [
+        "aa"
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "aaa"
+      ],
+      "expected": "a"
+    },
+    {
+      "input": [
+        "abccba"
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "a"
+      ],
+      "expected": "a"
+    },
+    {
+      "input": [
+        "aabbccd"
+      ],
+      "expected": "d"
+    },
+    {
+      "input": [
+        "abcddcbx"
+      ],
+      "expected": "ax"
+    },
+    {
+      "input": [
+        "abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab"
+      ],
+      "expected": "abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab"
+    },
+    {
+      "input": [
+        "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+      ],
+      "expected": "z"
+    }
+  ]
+}

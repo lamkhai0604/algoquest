@@ -1,0 +1,141 @@
+{
+  "id": "L6-score-sheet",
+  "level": 6,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Score Sheet",
+  "statement": "A quiz host keeps a score sheet. You get the host's notes in order as an array `notes`. A whole number adds a new score. `D` adds double the last score. `S` adds the sum of the last two scores. `X` crosses out the last score. Every note is valid (there are always enough scores). Return the sum of the scores still on the sheet.",
+  "examples": [
+    {
+      "input": "notes = [\"5\", \"2\", \"X\", \"D\", \"S\"]",
+      "output": "30",
+      "explanation": "Scores 5, then 10 (double), then 15 (5 + 10)"
+    },
+    {
+      "input": "notes = [\"4\", \"X\"]",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "1 <= notes.length <= 1000",
+    "Numbers are from -30000 to 30000",
+    "Every note is valid"
+  ],
+  "answerKey": {
+    "pattern": "Stack of scores",
+    "keyPoints": [
+      "Every note works on the most recent scores: keep them on a stack",
+      "A number pushes it; D pushes twice the top; S pushes the sum of the top two; X pops",
+      "Sum what is left"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Everything crossed out",
+      "Negative scores",
+      "S right after an X"
+    ],
+    "acceptableSlowerApproaches": []
+  },
+  "hints": [
+    "Which scores do D, S, and X look at?",
+    "They only use the latest scores, so a stack fits.",
+    "Push, double the top, add the top two, or pop; then add up the stack."
+  ],
+  "starterCode": {
+    "javascript": "function scoreSheet(notes) {\n  // return the sum of the scores left\n}",
+    "java": "class Solution {\n  int scoreSheet(String[] notes) {\n    // return the sum of the scores left\n  }\n}"
+  },
+  "similarLeetCode": "Baseball Game",
+  "tests": [
+    {
+      "input": [
+        [
+          "5",
+          "2",
+          "X",
+          "D",
+          "S"
+        ]
+      ],
+      "expected": 30
+    },
+    {
+      "input": [
+        [
+          "4",
+          "X"
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          "7"
+        ]
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        [
+          "1",
+          "2",
+          "S",
+          "S",
+          "S"
+        ]
+      ],
+      "expected": 19
+    },
+    {
+      "input": [
+        [
+          "-3",
+          "D",
+          "S"
+        ]
+      ],
+      "expected": -18
+    },
+    {
+      "input": [
+        [
+          "10",
+          "20",
+          "X",
+          "X"
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          "3",
+          "D",
+          "D",
+          "X",
+          "S"
+        ]
+      ],
+      "expected": 18
+    },
+    {
+      "input": [
+        [
+          "1",
+          "1",
+          "S",
+          "D",
+          "X",
+          "S",
+          "-30000"
+        ]
+      ],
+      "expected": -29993
+    }
+  ]
+}

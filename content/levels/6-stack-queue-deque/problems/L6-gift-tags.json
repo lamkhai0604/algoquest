@@ -1,0 +1,118 @@
+{
+  "id": "L6-gift-tags",
+  "level": 6,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Unpack the Gift Tags",
+  "statement": "A shop prints short codes on gift tags to save space: `k[text]` means `text` repeated `k` times, and codes can sit inside each other. For example `2[ab3[c]]` unpacks to `abcccabccc`. Return the unpacked string for `code`.",
+  "examples": [
+    {
+      "input": "code = \"3[x]y\"",
+      "output": "\"xxxy\""
+    },
+    {
+      "input": "code = \"2[ab3[c]]\"",
+      "output": "\"abcccabccc\""
+    }
+  ],
+  "constraints": [
+    "1 <= code.length <= 30",
+    "code is valid; k is from 1 to 300",
+    "Letters are lowercase",
+    "The unpacked string has at most 10^5 characters"
+  ],
+  "answerKey": {
+    "pattern": "Stack of (text so far, repeat count) pairs, one per open bracket",
+    "keyPoints": [
+      "Build the current text and the current number as you read",
+      "On '[', push the current text and the number, then start fresh",
+      "On ']', pop the pair: the new current text is the popped text plus the current text repeated the popped number of times",
+      "Numbers can have several digits"
+    ],
+    "timeComplexity": "O(length of the output)",
+    "spaceComplexity": "O(length of the output)",
+    "edgeCases": [
+      "No brackets at all",
+      "Numbers with two or three digits",
+      "Brackets inside brackets",
+      "Letters after a closing bracket"
+    ],
+    "acceptableSlowerApproaches": [
+      "Recursion on each bracket group: same time, uses the call stack instead"
+    ]
+  },
+  "hints": [
+    "When you reach ']', what do you need to remember from before the matching '['?",
+    "At '[', save the text built so far and the repeat count on a stack, then start a new text.",
+    "At ']', pop them and combine: saved text + current text repeated count times."
+  ],
+  "starterCode": {
+    "javascript": "function unpack(code) {\n  // return the unpacked string\n}",
+    "java": "class Solution {\n  String unpack(String code) {\n    // return the unpacked string\n  }\n}"
+  },
+  "similarLeetCode": "Decode String",
+  "tests": [
+    {
+      "input": [
+        "3[x]y"
+      ],
+      "expected": "xxxy"
+    },
+    {
+      "input": [
+        "2[ab3[c]]"
+      ],
+      "expected": "abcccabccc"
+    },
+    {
+      "input": [
+        "abc"
+      ],
+      "expected": "abc"
+    },
+    {
+      "input": [
+        "10[a]"
+      ],
+      "expected": "aaaaaaaaaa"
+    },
+    {
+      "input": [
+        "2[a]2[b]c"
+      ],
+      "expected": "aabbc"
+    },
+    {
+      "input": [
+        "3[a2[b]]"
+      ],
+      "expected": "abbabbabb"
+    },
+    {
+      "input": [
+        "x2[y3[z]]w"
+      ],
+      "expected": "xyzzzyzzzw"
+    },
+    {
+      "input": [
+        "1[1[1[q]]]"
+      ],
+      "expected": "q"
+    },
+    {
+      "input": [
+        "12[ab]"
+      ],
+      "expected": "abababababababababababab"
+    },
+    {
+      "input": [
+        "2[3[4[d]]e]"
+      ],
+      "expected": "ddddddddddddedddddddddddde"
+    }
+  ]
+}

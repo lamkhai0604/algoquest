@@ -1,0 +1,115 @@
+{
+  "id": "L6-undo-typing",
+  "level": 6,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Undo Key",
+  "statement": "A cheap phone keyboard records every key press in a string `keys`. Letters are typed as they are; the character `<` is the undo key and deletes the last letter still on the screen (it does nothing if the screen is empty). Return the text left on the screen.",
+  "examples": [
+    {
+      "input": "keys = \"cat<<ow\"",
+      "output": "\"cow\""
+    },
+    {
+      "input": "keys = \"<<a\"",
+      "output": "\"a\""
+    }
+  ],
+  "constraints": [
+    "0 <= keys.length <= 10^5",
+    "keys has lowercase letters and '<' only"
+  ],
+  "answerKey": {
+    "pattern": "Stack: push each letter, pop on undo",
+    "keyPoints": [
+      "The undo key removes the most recent letter still there: last in, first out",
+      "Push each letter onto a stack (an array used from its end)",
+      "On '<', pop if the stack is not empty",
+      "Join the stack from bottom to top for the answer"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "Undo with an empty screen",
+      "Every letter undone",
+      "No undo at all"
+    ],
+    "acceptableSlowerApproaches": [
+      "Rebuild the string after each undo with slice: O(n^2) in the worst case"
+    ]
+  },
+  "hints": [
+    "Which letter does the undo key remove: the oldest or the newest one still on screen?",
+    "Keep the letters in an array and only add or remove at its end.",
+    "Push letters, pop on '<' when the array is not empty, then join the array."
+  ],
+  "starterCode": {
+    "javascript": "function undoKey(keys) {\n  // return the text left on the screen\n}",
+    "java": "class Solution {\n  String undoKey(String keys) {\n    // return the text left on the screen\n  }\n}"
+  },
+  "similarLeetCode": "Backspace String Compare (one side)",
+  "tests": [
+    {
+      "input": [
+        "cat<<ow"
+      ],
+      "expected": "cow"
+    },
+    {
+      "input": [
+        "<<a"
+      ],
+      "expected": "a"
+    },
+    {
+      "input": [
+        ""
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "abc"
+      ],
+      "expected": "abc"
+    },
+    {
+      "input": [
+        "abc<<<"
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "a<b<c<"
+      ],
+      "expected": ""
+    },
+    {
+      "input": [
+        "ab<<<cd<e"
+      ],
+      "expected": "ce"
+    },
+    {
+      "input": [
+        "hello<<<p"
+      ],
+      "expected": "hep"
+    },
+    {
+      "input": [
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+      ],
+      "expected": "x"
+    },
+    {
+      "input": [
+        "<<<<"
+      ],
+      "expected": ""
+    }
+  ]
+}

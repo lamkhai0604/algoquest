@@ -1,0 +1,242 @@
+[
+  {
+    "title": "The task",
+    "body": "Is **([]{})** balanced? Read it left to right. Every opening bracket goes on a stack; every closing bracket must match the bracket on **top**, the most recent one still open.",
+    "visual": {
+      "cells": [
+        "(",
+        "[",
+        "]",
+        "{",
+        "}",
+        ")"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack (bottom → top)",
+          "value": "empty"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Push (",
+    "body": "`(` opens something. Push it: it waits on the stack until a `)` closes it.",
+    "code": "stack.push(\"(\");",
+    "visual": {
+      "cells": [
+        "(",
+        "[",
+        "]",
+        "{",
+        "}",
+        ")"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack (bottom → top)",
+          "value": "("
+        }
+      ]
+    }
+  },
+  {
+    "title": "Push [",
+    "body": "`[` opens another bracket inside the first. It goes on top of `(`.",
+    "code": "stack.push(\"[\");",
+    "visual": {
+      "cells": [
+        "(",
+        "[",
+        "]",
+        "{",
+        "}",
+        ")"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack (bottom → top)",
+          "value": "( ["
+        }
+      ]
+    }
+  },
+  {
+    "title": "Close with ]",
+    "body": "`]` is a closing bracket. The top of the stack is `[`, the same kind, so pop it. The `(` underneath is still open.",
+    "code": "stack.pop(); // \"[\" matches \"]\"",
+    "visual": {
+      "cells": [
+        "(",
+        "[",
+        "]",
+        "{",
+        "}",
+        ")"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack (bottom → top)",
+          "value": "("
+        }
+      ],
+      "predict": {
+        "question": "The next character is ]. What happens?",
+        "options": [
+          "Push ] on the stack",
+          "Pop [ from the top, because it matches",
+          "Fail: ( is at the bottom"
+        ],
+        "answer": 1,
+        "explanation": "A closing bracket is checked against the top only. The top is [, the same kind as ], so it is popped.",
+        "hides": [
+          "stack (bottom → top)"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Push {",
+    "body": "`{` opens a new bracket. Push it on top of `(`.",
+    "code": "stack.push(\"{\");",
+    "visual": {
+      "cells": [
+        "(",
+        "[",
+        "]",
+        "{",
+        "}",
+        ")"
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack (bottom → top)",
+          "value": "( {"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Close with }",
+    "body": "`}` matches the `{` on top. Pop it.",
+    "code": "stack.pop(); // \"{\" matches \"}\"",
+    "visual": {
+      "cells": [
+        "(",
+        "[",
+        "]",
+        "{",
+        "}",
+        ")"
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack (bottom → top)",
+          "value": "("
+        }
+      ]
+    }
+  },
+  {
+    "title": "Close with )",
+    "body": "`)` matches the `(` on top. Pop it. The stack is now empty.",
+    "code": "stack.pop(); // \"(\" matches \")\"",
+    "visual": {
+      "cells": [
+        "(",
+        "[",
+        "]",
+        "{",
+        "}",
+        ")"
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack (bottom → top)",
+          "value": "empty"
+        }
+      ],
+      "predict": {
+        "question": "After the last character ), what is on the stack?",
+        "options": [
+          "( only",
+          "Nothing: it is empty",
+          "( and {"
+        ],
+        "answer": 1,
+        "explanation": "The ( on top matches ) and is popped. Every bracket that opened has now closed.",
+        "hides": [
+          "stack (bottom → top)"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Balanced",
+    "body": "The text is read and the stack is empty, so every bracket was closed in the right order: **balanced**. For `([)]`, the `)` would find `[` on top and fail at once. Each character is pushed or popped once: O(n) time, O(n) space.",
+    "code": "return stack.length === 0;",
+    "visual": {
+      "cells": [
+        "(",
+        "[",
+        "]",
+        "{",
+        "}",
+        ")"
+      ],
+      "markers": [],
+      "vars": [
+        {
+          "name": "stack (bottom → top)",
+          "value": "empty"
+        },
+        {
+          "name": "result",
+          "value": "true"
+        }
+      ]
+    }
+  }
+]
