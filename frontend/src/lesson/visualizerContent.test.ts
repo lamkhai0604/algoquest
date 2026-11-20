@@ -189,7 +189,7 @@ describe("lesson visualizers match their reference algorithms", () => {
     // Reference sift-up, recording the array after each change.
     const heap = [...start, pushed];
     const states = [start, [...heap]];
-    for (let i = heap.length - 1; i > 0; ) {
+    for (let i = heap.length - 1; i > 0;) {
       const parent = (i - 1) >> 1;
       if (heap[i]! >= heap[parent]!) break;
       [heap[i], heap[parent]] = [heap[parent]!, heap[i]!];
@@ -200,7 +200,8 @@ describe("lesson visualizers match their reference algorithms", () => {
     for (const step of steps) {
       expect(step.visual!.tree).toBe(true);
       const cells = step.visual!.cells.map(Number);
-      if (JSON.stringify(shown.at(-1)) !== JSON.stringify(cells)) shown.push(cells);
+      if (JSON.stringify(shown.at(-1)) !== JSON.stringify(cells))
+        shown.push(cells);
     }
     expect(shown).toEqual(states);
     const last = states.at(-1)!;

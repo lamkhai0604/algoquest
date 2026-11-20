@@ -77,10 +77,18 @@ describe("parseMarkdown tables", () => {
 
   it("keeps an escaped pipe inside a cell", () => {
     const blocks = parseMarkdown(
-      ["| Operator | Example |", "| --- | --- |", "| `a \\| b` | 1100 \\| 1010 |"].join("\n"),
+      [
+        "| Operator | Example |",
+        "| --- | --- |",
+        "| `a \\| b` | 1100 \\| 1010 |",
+      ].join("\n"),
     );
     expect(blocks).toEqual([
-      { type: "table", header: ["Operator", "Example"], rows: [["`a | b`", "1100 | 1010"]] },
+      {
+        type: "table",
+        header: ["Operator", "Example"],
+        rows: [["`a | b`", "1100 | 1010"]],
+      },
     ]);
   });
 
