@@ -1,0 +1,193 @@
+[
+  {
+    "title": "A min-heap",
+    "body": "This min-heap is stored as an array, **[2, 5, 3, 8, 9, 7]**, drawn as a tree: the children of position i are positions 2i + 1 and 2i + 2. The rule: every parent is **no larger** than its children, so the smallest value is always at the root.",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "3",
+        "8",
+        "9",
+        "7"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 0,
+          "label": "min"
+        }
+      ],
+      "vars": [
+        {
+          "name": "array",
+          "value": "[2, 5, 3, 8, 9, 7]"
+        },
+        {
+          "name": "push",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Add at the end",
+    "body": "To push **1**, put it in the next free spot: position 6, the right child of 3. The shape stays a complete tree, but 1 is smaller than its parent, so the order rule is broken.",
+    "code": "heap.push(1); let i = heap.length - 1;",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "3",
+        "8",
+        "9",
+        "7",
+        "1"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 6,
+          "label": "new"
+        }
+      ],
+      "vars": [
+        {
+          "name": "array",
+          "value": "[2, 5, 3, 8, 9, 7, 1]"
+        },
+        {
+          "name": "i",
+          "value": "6"
+        },
+        {
+          "name": "parent",
+          "value": "(6 − 1) / 2 = 2 → 3"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sift up: swap with 3",
+    "body": "1 is smaller than its parent 3, so they swap. 1 moves up to position 2.",
+    "code": "const p = (i - 1) >> 1;\nif (heap[i] < heap[p]) swap(i, p);",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "1",
+        "8",
+        "9",
+        "7",
+        "3"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 2,
+          "label": "new"
+        }
+      ],
+      "vars": [
+        {
+          "name": "array",
+          "value": "[2, 5, 1, 8, 9, 7, 3]"
+        },
+        {
+          "name": "i",
+          "value": "2"
+        },
+        {
+          "name": "parent",
+          "value": "(2 − 1) / 2 = 0 → 2"
+        }
+      ],
+      "predict": {
+        "question": "1 is now at position 2, under the root 2. What happens next?",
+        "options": [
+          "Stop: 1 is in place",
+          "Swap 1 with the root 2",
+          "Swap 1 with its new child 7"
+        ],
+        "answer": 1,
+        "explanation": "1 is still smaller than its parent 2, so sift-up swaps them once more.",
+        "hides": [
+          "parent"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Sift up: swap with 2",
+    "body": "1 is smaller than 2, so they swap. 1 is now the root.",
+    "code": "swap(i, p); i = p;",
+    "visual": {
+      "cells": [
+        "1",
+        "5",
+        "2",
+        "8",
+        "9",
+        "7",
+        "3"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 0,
+          "label": "new"
+        }
+      ],
+      "vars": [
+        {
+          "name": "array",
+          "value": "[1, 5, 2, 8, 9, 7, 3]"
+        },
+        {
+          "name": "i",
+          "value": "0"
+        },
+        {
+          "name": "parent",
+          "value": "none: at the root"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Done",
+    "body": "1 reached the root, so sift-up stops. The rule holds everywhere again, and `peek()` now gives 1. The value moved up at most one level per swap, so a push takes **O(log n)** for a heap of n items. Pop works the other way: move the last item to the root and **sift down**, swapping with the smaller child.",
+    "visual": {
+      "cells": [
+        "1",
+        "5",
+        "2",
+        "8",
+        "9",
+        "7",
+        "3"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 0,
+          "label": "min"
+        }
+      ],
+      "vars": [
+        {
+          "name": "array",
+          "value": "[1, 5, 2, 8, 9, 7, 3]"
+        },
+        {
+          "name": "swaps",
+          "value": "2"
+        },
+        {
+          "name": "result",
+          "value": "root = 1"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,136 @@
+[
+  {
+    "id": "P11-lost-ticket",
+    "level": 11,
+    "title": "Lost Ticket",
+    "statement": "A ferry sold tickets numbered 0 to 1,000,000; every ticket was scanned at the gate except one. The scans arrive in random order on a device with almost no free memory. Find the unscanned ticket.",
+    "examples": [
+      "Scans 3, 0, 1 for tickets 0 to 3: ticket 2 is missing"
+    ],
+    "constraints": [
+      "1,000,000 scans; O(1) extra memory"
+    ],
+    "approaches": [
+      {
+        "id": "xor",
+        "name": "XOR every ticket number 0..n and every scan",
+        "hint": "Let matching numbers cancel",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Each scanned ticket cancels its own number; only the missing number is left, with no overflow risk."
+      },
+      {
+        "id": "sum",
+        "name": "Subtract the sum of the scans from n(n + 1) / 2",
+        "hint": "Compare totals",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Also correct, but the sum needs a 64-bit number for large n."
+      },
+      {
+        "id": "set",
+        "name": "Put every scan in a set, then check 0..n",
+        "hint": "Remember what you have seen",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Correct, but it needs memory for a million numbers, which the device does not have."
+      },
+      {
+        "id": "last",
+        "name": "Report the scan that arrived last plus one",
+        "hint": "Use the order of arrival",
+        "label": "unsuitable",
+        "time": "O(1)",
+        "space": "O(1)",
+        "why": "Scans arrive in random order, so the last one says nothing about the missing ticket."
+      }
+    ]
+  },
+  {
+    "id": "P11-feature-flags",
+    "level": 11,
+    "title": "Feature Flags",
+    "statement": "An app has 30 on/off features per user and must store millions of users' settings compactly, then check and change single features quickly.",
+    "examples": [
+      "Turn on feature 5 for a user",
+      "Check whether feature 12 is on"
+    ],
+    "constraints": [
+      "30 features per user; millions of users"
+    ],
+    "approaches": [
+      {
+        "id": "mask",
+        "name": "One 32-bit number per user, one bit per feature",
+        "hint": "Pack yes/no answers into bits",
+        "label": "best",
+        "time": "O(1) per check or change",
+        "space": "4 bytes per user",
+        "why": "flags | (1 << i) turns a feature on, flags & ~(1 << i) turns it off, and (flags >> i) & 1 reads it."
+      },
+      {
+        "id": "booleans",
+        "name": "An array of 30 booleans per user",
+        "hint": "One value per feature",
+        "label": "valid",
+        "time": "O(1) per check or change",
+        "space": "30+ bytes per user",
+        "why": "Simple and correct, but it uses many times more memory across millions of users."
+      },
+      {
+        "id": "string",
+        "name": "A comma-separated string of the features that are on",
+        "hint": "Store the names",
+        "label": "unsuitable",
+        "time": "O(k) per check",
+        "space": "Varies",
+        "why": "Every check and change has to parse and rebuild the string, and the size grows with the features turned on."
+      }
+    ]
+  },
+  {
+    "id": "P11-prime-check",
+    "level": 11,
+    "title": "Prime Table",
+    "statement": "A math game must answer \"is this number prime?\" for 100,000 questions about numbers below 10,000,000.",
+    "examples": [
+      "Is 9,999,991 prime?",
+      "Is 1,000,000 prime?"
+    ],
+    "constraints": [
+      "100,000 questions; numbers below 10^7"
+    ],
+    "approaches": [
+      {
+        "id": "sieve",
+        "name": "Build a sieve of Eratosthenes once, then look each answer up",
+        "hint": "Prepare a table once, answer many times",
+        "label": "best",
+        "time": "O(n log log n) once, O(1) per question",
+        "space": "O(n)",
+        "why": "One sieve pass marks every number below 10^7; each question is then a single array read."
+      },
+      {
+        "id": "trial",
+        "name": "For each question, try dividing by every number up to its square root",
+        "hint": "Check one number at a time",
+        "label": "valid",
+        "time": "O(√n) per question",
+        "space": "O(1)",
+        "why": "Correct, but about 3,000 divisions per question, 300 million in total."
+      },
+      {
+        "id": "odd",
+        "name": "Answer \"prime\" for every odd number",
+        "hint": "Primes above 2 are odd",
+        "label": "unsuitable",
+        "time": "O(1)",
+        "space": "O(1)",
+        "why": "Many odd numbers, such as 9 and 15, are not prime."
+      }
+    ]
+  }
+]

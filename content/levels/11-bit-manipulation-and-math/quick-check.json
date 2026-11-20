@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What does x & 1 tell you about a whole number x?",
+    "options": [
+      "Whether x is positive",
+      "Whether x is odd (1) or even (0)",
+      "The number of 1 bits",
+      "x divided by 2"
+    ],
+    "answer": 1,
+    "explanation": "The last bit of a binary number is 1 for odd numbers and 0 for even numbers, and x & 1 keeps only that bit."
+  },
+  {
+    "question": "In JavaScript, what is 1 << 31?",
+    "options": [
+      "2147483648",
+      "-2147483648",
+      "0",
+      "An error"
+    ],
+    "answer": 1,
+    "explanation": "JavaScript bit operators work on 32-bit signed integers, so bit 31 is the sign bit and the result is negative. Use >>> 0 to read it as unsigned, or keep values below 2^31."
+  },
+  {
+    "question": "How does the sieve of Eratosthenes find the primes below n?",
+    "options": [
+      "It divides every number by every smaller number",
+      "It crosses out the multiples of each prime, starting at p * p, and keeps what is left",
+      "It checks whether each number is odd",
+      "It uses XOR"
+    ],
+    "answer": 1,
+    "explanation": "Every multiple of a prime p is composite. Crossing them out for each prime with p * p < n leaves only primes, in O(n log log n)."
+  }
+]
