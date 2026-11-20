@@ -1,0 +1,417 @@
+{
+  "id": "L8-floor-by-floor",
+  "level": 8,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Floor by Floor",
+  "statement": "A company's org chart is a binary tree. To print it floor by floor, return the values level by level: a list of levels from the root down, each level listed from left to right.",
+  "examples": [
+    {
+      "input": "root = [3, 9, 20, null, null, 15, 7]",
+      "output": "[[3], [9, 20], [15, 7]]"
+    },
+    {
+      "input": "root = []",
+      "output": "[]"
+    }
+  ],
+  "constraints": [
+    "0 <= number of nodes <= 2000",
+    "Trees are written in level order; null marks a missing child"
+  ],
+  "answerKey": {
+    "pattern": "Level-order traversal (breadth-first) with a queue, one level per round",
+    "keyPoints": [
+      "Start the queue with the root",
+      "At the start of each round, the queue holds exactly one level: remember its size",
+      "Take that many nodes, record their values, and add their children to the queue",
+      "Each round produces one level"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(w), the widest level",
+    "edgeCases": [
+      "Empty tree",
+      "One node",
+      "A chain leaning to one side"
+    ],
+    "acceptableSlowerApproaches": [
+      "Depth-first search that passes the depth and appends to levels[depth]: also O(n)"
+    ]
+  },
+  "hints": [
+    "Which structure gives nodes in the order they were found: first in, first out?",
+    "Use a queue. How do you know where one level ends and the next begins?",
+    "Read the queue's size at the start of each round; process exactly that many nodes for this level."
+  ],
+  "starterCode": {
+    "javascript": "// A node is { val, left, right }. Make one with new TreeNode(val, left, right).\nfunction floorByFloor(root) {\n  // return an array of levels\n}",
+    "java": "// TreeNode has: int val; TreeNode left, right; and new TreeNode(val).\nclass Solution {\n  List<List<Integer>> floorByFloor(TreeNode root) {\n    // return a list of levels\n  }\n}"
+  },
+  "similarLeetCode": "Binary Tree Level Order Traversal",
+  "tests": [
+    {
+      "input": [
+        [
+          3,
+          9,
+          20,
+          null,
+          null,
+          15,
+          7
+        ]
+      ],
+      "expected": [
+        [
+          3
+        ],
+        [
+          9,
+          20
+        ],
+        [
+          15,
+          7
+        ]
+      ]
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          1
+        ]
+      ],
+      "expected": [
+        [
+          1
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": [
+        [
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          null,
+          3,
+          null,
+          4
+        ]
+      ],
+      "expected": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          5,
+          2,
+          8,
+          1,
+          3,
+          7,
+          9,
+          null,
+          null,
+          null,
+          4,
+          6
+        ]
+      ],
+      "expected": [
+        [
+          5
+        ],
+        [
+          2,
+          8
+        ],
+        [
+          1,
+          3,
+          7,
+          9
+        ],
+        [
+          4,
+          6
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          58,
+          43,
+          59,
+          27,
+          49,
+          null,
+          60,
+          14,
+          39,
+          47,
+          55,
+          null,
+          null,
+          12,
+          20,
+          36,
+          42,
+          46,
+          48,
+          50,
+          56,
+          7,
+          13,
+          15,
+          24,
+          29,
+          37,
+          41,
+          null,
+          44,
+          null,
+          null,
+          null,
+          null,
+          53,
+          null,
+          57,
+          3,
+          8,
+          null,
+          null,
+          null,
+          18,
+          22,
+          26,
+          28,
+          32,
+          null,
+          38,
+          40,
+          null,
+          null,
+          45,
+          52,
+          54,
+          null,
+          null,
+          2,
+          5,
+          null,
+          9,
+          16,
+          19,
+          21,
+          23,
+          25,
+          null,
+          null,
+          null,
+          30,
+          33,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          51,
+          null,
+          null,
+          null,
+          1,
+          null,
+          4,
+          6,
+          null,
+          10,
+          null,
+          17,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          31,
+          null,
+          34,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          11,
+          null,
+          null,
+          null,
+          null,
+          null,
+          35
+        ]
+      ],
+      "expected": [
+        [
+          58
+        ],
+        [
+          43,
+          59
+        ],
+        [
+          27,
+          49,
+          60
+        ],
+        [
+          14,
+          39,
+          47,
+          55
+        ],
+        [
+          12,
+          20,
+          36,
+          42,
+          46,
+          48,
+          50,
+          56
+        ],
+        [
+          7,
+          13,
+          15,
+          24,
+          29,
+          37,
+          41,
+          44,
+          53,
+          57
+        ],
+        [
+          3,
+          8,
+          18,
+          22,
+          26,
+          28,
+          32,
+          38,
+          40,
+          45,
+          52,
+          54
+        ],
+        [
+          2,
+          5,
+          9,
+          16,
+          19,
+          21,
+          23,
+          25,
+          30,
+          33,
+          51
+        ],
+        [
+          1,
+          4,
+          6,
+          10,
+          17,
+          31,
+          34
+        ],
+        [
+          11,
+          35
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          1,
+          null,
+          2,
+          null,
+          3
+        ]
+      ],
+      "expected": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ]
+      ]
+    }
+  ]
+}

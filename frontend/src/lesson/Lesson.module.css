@@ -391,6 +391,53 @@
   }
 }
 
+.treeWrap {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.tree {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: var(--space-3) auto;
+}
+
+.treeEdge {
+  stroke: var(--color-border-strong);
+  stroke-width: 2;
+}
+
+.treeNode {
+  fill: var(--color-bg-sunken);
+  stroke: var(--color-border);
+  stroke-width: 2;
+}
+
+.treeNodeCurrent {
+  fill: var(--color-xp-soft);
+  stroke: var(--color-xp);
+}
+
+.treeValue {
+  fill: var(--color-text);
+  font: 700 16px var(--font-mono);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.treeMarker {
+  fill: var(--color-xp);
+  font: 700 12px var(--font-body);
+  text-anchor: middle;
+  /* A halo in the card colour keeps the label readable over edges. */
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
 .cellIndex {
   color: var(--color-text-muted);
   font-size: var(--text-xs);

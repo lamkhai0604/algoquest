@@ -143,6 +143,42 @@ class JavaHarnessTest {
   }
 
   @Test
+  void runsTreeCodeWithLevelOrderArrays() throws Exception {
+    Problem p =
+        problem(
+            "class Solution {\n  TreeNode mirror(TreeNode root) {\n  }\n}",
+            List.of(
+                new TestCase(
+                    List.of(Arrays.asList(4, 2, 7, 1, 3, 6, 9)), List.of(4, 7, 2, 9, 6, 3, 1)),
+                new TestCase(List.of(Arrays.asList(1, null, 2)), List.of(1, 2)),
+                new TestCase(List.of(List.of()), List.of())));
+    String code =
+        "class Solution {\n"
+            + "  TreeNode mirror(TreeNode root) {\n"
+            + "    if (root == null) return null;\n"
+            + "    TreeNode left = mirror(root.left);\n"
+            + "    root.left = mirror(root.right);\n"
+            + "    root.right = left;\n"
+            + "    return root;\n"
+            + "  }\n"
+            + "}";
+
+    JavaHarness.Signature signature = JavaHarness.signature(p);
+    assertThat(signature.treeArguments()).containsExactly(0);
+    assertThat(signature.returnsTree()).isTrue();
+    assertThat(JavaHarness.literal("TreeNode", JSON.valueToTree(Arrays.asList(1, null, 2))))
+        .isEqualTo("TreeNode.of(new Integer[]{1, null, 2})");
+
+    JavaHarness.Program program = JavaHarness.build(p, code);
+    List<TestOutcome> outcomes =
+        JavaHarness.outcomes(compileAndRun(program.source()), program.marker(), 3);
+
+    assertThat(outcomes.get(0).output()).isEqualTo(JSON.valueToTree(List.of(4, 7, 2, 9, 6, 3, 1)));
+    assertThat(outcomes.get(1).output()).isEqualTo(JSON.valueToTree(Arrays.asList(1, 2)));
+    assertThat(outcomes.get(2).output()).isEqualTo(JSON.valueToTree(List.of()));
+  }
+
+  @Test
   void leavesTheListClassOutWhenNoListIsUsed() {
     Problem p = problem("class Solution {\n  int f(int[] a) {\n  }\n}", List.of());
 

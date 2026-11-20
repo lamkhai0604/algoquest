@@ -84,6 +84,8 @@ class ContentLoaderTest {
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().swap()).containsExactly(0, 2);
     assertThat(levels.get(1).lesson().walkthrough().get(2).visual().next())
         .containsExactly(1, 2, -1);
+    assertThat(levels.get(1).lesson().walkthrough().get(0).visual().drawsTree()).isTrue();
+    assertThat(levels.get(1).lesson().walkthrough().get(1).visual().drawsTree()).isFalse();
     assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
     PatternChallenge challenge = levels.get(1).patterns().getFirst();
     assertThat(challenge.best().id()).isEqualTo("hash");
@@ -261,6 +263,7 @@ class ContentLoaderTest {
     replace(walkthrough, "0,\n        2\n      ]", "0,\n        0\n      ]");
     replace(walkthrough, "\"answer\": 1", "\"answer\": 4");
     replace(walkthrough, "2,\n        -1\n      ]", "2,\n        2\n      ]");
+    replace(walkthrough, "\"3\",\n        \"10\"", "\"\",\n        \"10\"");
     replace(walkthrough, "\"hides\": [\n          \"best\"", "\"hides\": [\n          \"worst\"");
     replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
 
@@ -272,6 +275,7 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("step 2") && p.contains("hides"))
         .anyMatch(p -> p.contains("step 2") && p.contains("swap"))
         .anyMatch(p -> p.contains("step 3") && p.contains("next needs"))
+        .anyMatch(p -> p.contains("step 1") && p.contains("needs its parent"))
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Edge cases"));
   }
 }

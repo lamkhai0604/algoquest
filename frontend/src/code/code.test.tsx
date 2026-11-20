@@ -12,6 +12,8 @@ const SETUP: CodeSetup = {
   inputs: [[[3, -2, 9]], [[]]],
   listArguments: [],
   returnsList: false,
+  treeArguments: [],
+  returnsTree: false,
   javaAvailable: true,
   javaRunsLeft: 45,
   javaDailyLimit: 45,

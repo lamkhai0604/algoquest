@@ -1,0 +1,11 @@
+{
+  "question": "A binary search tree holds 1,000,000 numbers and is well balanced. About how many nodes does a search look at?",
+  "options": [
+    "About 1,000,000",
+    "About 500,000",
+    "About 20",
+    "Exactly 1"
+  ],
+  "answer": 2,
+  "explanation": "Each step goes down one level and skips half of what is left. A balanced tree of a million nodes is about 20 levels tall, since 2^20 ≈ 1,000,000."
+}

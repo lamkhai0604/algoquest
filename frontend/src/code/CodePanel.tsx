@@ -130,6 +130,8 @@ function CodeRunner({
           {
             listArguments: setup.listArguments ?? [],
             returnsList: setup.returnsList ?? false,
+            treeArguments: setup.treeArguments ?? [],
+            returnsTree: setup.returnsTree ?? false,
           },
         );
         body = { ...body, outputs: browser.outputs, errors: browser.errors };

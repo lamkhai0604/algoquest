@@ -7,7 +7,9 @@ import java.util.List;
  * characters), labelled markers on cells, variable values, an optional prediction asked before the
  * step is revealed, an optional swap: the indices of two cells whose values this step exchanged,
  * and optional linked-list pointers: for each cell, the index of the cell its {@code next} points
- * to, or -1 for {@code null}. Everything except {@code cells} is optional.
+ * to, or -1 for {@code null}, and an optional tree flag: the cells are a binary tree in array
+ * positions, where the children of cell i are cells 2i + 1 and 2i + 2 and an empty cell is no node
+ * (D-059). Everything except {@code cells} is optional.
  */
 public record Visual(
     List<String> cells,
@@ -15,7 +17,15 @@ public record Visual(
     List<Variable> vars,
     Prediction predict,
     List<Integer> swap,
-    List<Integer> next) {
+    List<Integer> next,
+    Boolean tree) {
+
+  /** The most cells a tree may have: five levels. */
+  public static final int MAX_TREE_CELLS = 31;
+
+  public boolean drawsTree() {
+    return Boolean.TRUE.equals(tree);
+  }
 
   /** A label drawn on one cell, such as {@code i} for the current index. */
   public record Marker(int index, String label) {}

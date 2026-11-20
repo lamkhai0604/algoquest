@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { LIST_HELPERS, MAX_LIST_LENGTH } from "./runJavaScript";
+import { LIST_HELPERS, MAX_LIST_LENGTH, TREE_HELPERS } from "./runJavaScript";
 
 interface Node {
   val: number;
@@ -47,5 +47,44 @@ describe("linked-list helpers (D-058)", () => {
     head!.next!.next = head;
     expect(() => helpers.toValues(head)).toThrow(/cycle/);
     expect(MAX_LIST_LENGTH).toBe(100_000);
+  });
+});
+
+interface Tree {
+  val: number;
+  left: Tree | null;
+  right: Tree | null;
+}
+
+const trees = new Function(
+  `${TREE_HELPERS}\nreturn { TreeNode, toTree, fromTree };`,
+)() as {
+  TreeNode: new (val?: number, left?: Tree | null, right?: Tree | null) => Tree;
+  toTree: (values: unknown) => Tree | null;
+  fromTree: (root: unknown) => unknown;
+};
+
+describe("binary-tree helpers (D-059)", () => {
+  it("builds a tree from level order and reads it back", () => {
+    const root = trees.toTree([3, 9, 20, null, null, 15, 7]);
+    expect(root?.val).toBe(3);
+    expect(root?.left?.left).toBeNull();
+    expect(root?.right?.left?.val).toBe(15);
+    expect(trees.fromTree(root)).toEqual([3, 9, 20, null, null, 15, 7]);
+  });
+
+  it("treats an empty array as null and drops trailing nulls", () => {
+    expect(trees.toTree([])).toBeNull();
+    expect(trees.fromTree(null)).toEqual([]);
+    expect(
+      trees.fromTree(new trees.TreeNode(1, null, new trees.TreeNode(2))),
+    ).toEqual([1, null, 2]);
+  });
+
+  it("leaves results that are not trees as they are, and stops at a cycle", () => {
+    expect(trees.fromTree([1, 2])).toEqual([1, 2]);
+    const root = trees.toTree([1, 2]);
+    root!.left!.left = root;
+    expect(() => trees.fromTree(root)).toThrow(/cycle/);
   });
 });
