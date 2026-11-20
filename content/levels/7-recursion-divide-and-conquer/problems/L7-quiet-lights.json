@@ -1,0 +1,116 @@
+{
+  "id": "L7-quiet-lights",
+  "level": 7,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Quiet Lights",
+  "statement": "A row of `n` decorative lights can each be on or off, but two lights that are on may never stand next to each other (they would be too bright). Return how many on/off patterns of the row are allowed.",
+  "examples": [
+    {
+      "input": "n = 3",
+      "output": "5",
+      "explanation": "off-off-off, on-off-off, off-on-off, off-off-on, on-off-on"
+    },
+    {
+      "input": "n = 1",
+      "output": "2"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 44",
+    "The answer fits in a 32-bit integer"
+  ],
+  "answerKey": {
+    "pattern": "Recursion on the last light, with remembered results",
+    "keyPoints": [
+      "If the last light is off, the rest is any allowed row of n - 1",
+      "If the last light is on, the one before must be off, so the rest is any allowed row of n - 2",
+      "patterns(n) = patterns(n - 1) + patterns(n - 2), with patterns(1) = 2 and patterns(2) = 3",
+      "Remember results so each n is computed once"
+    ],
+    "timeComplexity": "O(n) with memoization",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "n = 1",
+      "n = 2",
+      "n = 44 (plain recursion is far too slow)"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try all 2^n rows and check each: far too slow",
+      "A loop keeping the last two counts: O(1) space"
+    ]
+  },
+  "hints": [
+    "Look at the last light. What are its two choices, and what does each mean for the light before it?",
+    "Off at the end leaves a row of n - 1; on at the end forces off before it and leaves a row of n - 2.",
+    "Add the two counts and store each result so it is not computed again."
+  ],
+  "starterCode": {
+    "javascript": "function quietLights(n) {\n  // return the number of allowed patterns\n}",
+    "java": "class Solution {\n  int quietLights(int n) {\n    // return the number of allowed patterns\n  }\n}"
+  },
+  "similarLeetCode": "Count Binary Strings Without Consecutive 1s",
+  "tests": [
+    {
+      "input": [
+        3
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        4
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        5
+      ],
+      "expected": 13
+    },
+    {
+      "input": [
+        10
+      ],
+      "expected": 144
+    },
+    {
+      "input": [
+        25
+      ],
+      "expected": 196418
+    },
+    {
+      "input": [
+        40
+      ],
+      "expected": 267914296
+    },
+    {
+      "input": [
+        43
+      ],
+      "expected": 1134903170
+    },
+    {
+      "input": [
+        44
+      ],
+      "expected": 1836311903
+    }
+  ]
+}

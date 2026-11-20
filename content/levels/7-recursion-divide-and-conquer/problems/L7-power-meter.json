@@ -1,0 +1,126 @@
+{
+  "id": "L7-power-meter",
+  "level": 7,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Power Meter",
+  "statement": "A science game multiplies a starting number `base` by itself `exp` times. The numbers get huge, so the game only shows the remainder after dividing by 1,000,000,007. Return `base^exp mod 1,000,000,007`. `exp` can be up to a billion, so multiplying one step at a time is far too slow.",
+  "examples": [
+    {
+      "input": "base = 2, exp = 10",
+      "output": "1024"
+    },
+    {
+      "input": "base = 3, exp = 0",
+      "output": "1"
+    }
+  ],
+  "constraints": [
+    "0 <= base <= 10^9",
+    "0 <= exp <= 10^9",
+    "Take the remainder after every multiplication; in JavaScript, use BigInt or split the product, because products can exceed 2^53"
+  ],
+  "answerKey": {
+    "pattern": "Divide and conquer: square the half power (fast exponentiation)",
+    "keyPoints": [
+      "Base case: exp = 0 gives 1",
+      "Compute half = power(base, floor(exp / 2)) once",
+      "If exp is even, the answer is half * half; if odd, half * half * base",
+      "Take the remainder after each multiplication",
+      "The exponent halves each call, so there are about log2(exp) calls"
+    ],
+    "timeComplexity": "O(log exp)",
+    "spaceComplexity": "O(log exp) for the call stack",
+    "edgeCases": [
+      "exp = 0",
+      "base = 0",
+      "base larger than the modulus",
+      "Products above 2^53 in JavaScript"
+    ],
+    "acceptableSlowerApproaches": []
+  },
+  "hints": [
+    "How does 2^10 relate to 2^5?",
+    "x^n = (x^(n/2))^2 when n is even; multiply by x once more when n is odd. Compute the half only once.",
+    "Keep every product under the modulus. In JavaScript, (a * b) can lose digits; BigInt(a) * BigInt(b) % MOD does not."
+  ],
+  "starterCode": {
+    "javascript": "function powerMeter(base, exp) {\n  // return base^exp mod 1,000,000,007\n}",
+    "java": "class Solution {\n  int powerMeter(int base, int exp) {\n    // return base^exp mod 1,000,000,007\n  }\n}"
+  },
+  "similarLeetCode": "Pow(x, n)",
+  "tests": [
+    {
+      "input": [
+        2,
+        10
+      ],
+      "expected": 1024
+    },
+    {
+      "input": [
+        3,
+        0
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        0,
+        0
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        0,
+        5
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        7,
+        1
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        2,
+        30
+      ],
+      "expected": 73741817
+    },
+    {
+      "input": [
+        1000000000,
+        2
+      ],
+      "expected": 49
+    },
+    {
+      "input": [
+        123456789,
+        987654321
+      ],
+      "expected": 652541198
+    },
+    {
+      "input": [
+        2,
+        1000000000
+      ],
+      "expected": 140625001
+    },
+    {
+      "input": [
+        999999999,
+        999999999
+      ],
+      "expected": 266078474
+    }
+  ]
+}

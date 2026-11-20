@@ -1,0 +1,115 @@
+{
+  "id": "L7-stair-hops",
+  "level": 7,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Stair Hops",
+  "statement": "A child climbs a staircase of `n` steps, hopping up either 1 or 2 steps at a time. Return how many different hop sequences reach the top exactly. For example, 3 steps can be climbed as 1+1+1, 1+2, or 2+1.",
+  "examples": [
+    {
+      "input": "n = 3",
+      "output": "3"
+    },
+    {
+      "input": "n = 5",
+      "output": "8"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 45",
+    "The answer fits in a 32-bit integer"
+  ],
+  "answerKey": {
+    "pattern": "Recursion with remembered results (memoization)",
+    "keyPoints": [
+      "The last hop is 1 or 2 steps, so ways(n) = ways(n - 1) + ways(n - 2)",
+      "Base cases: ways(1) = 1 and ways(2) = 2",
+      "Plain recursion repeats the same calls and takes about 2^n steps",
+      "Remember each answer in a map or array so each n is computed once: O(n)"
+    ],
+    "timeComplexity": "O(n) with memoization",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "n = 1",
+      "n = 2",
+      "n = 45 (plain recursion is far too slow)"
+    ],
+    "acceptableSlowerApproaches": [
+      "A loop keeping the last two answers: O(n) time, O(1) space"
+    ]
+  },
+  "hints": [
+    "Think about the last hop. What could it be?",
+    "If the last hop is 1 step, the child was on step n - 1; if it is 2, on step n - 2. Add the two counts.",
+    "Plain recursion recomputes ways(k) many times. Store each result the first time you compute it."
+  ],
+  "starterCode": {
+    "javascript": "function stairHops(n) {\n  // return the number of hop sequences\n}",
+    "java": "class Solution {\n  int stairHops(int n) {\n    // return the number of hop sequences\n  }\n}"
+  },
+  "similarLeetCode": "Climbing Stairs",
+  "tests": [
+    {
+      "input": [
+        3
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        5
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        4
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        10
+      ],
+      "expected": 89
+    },
+    {
+      "input": [
+        20
+      ],
+      "expected": 10946
+    },
+    {
+      "input": [
+        30
+      ],
+      "expected": 1346269
+    },
+    {
+      "input": [
+        44
+      ],
+      "expected": 1134903170
+    },
+    {
+      "input": [
+        45
+      ],
+      "expected": 1836311903
+    }
+  ]
+}

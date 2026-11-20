@@ -126,6 +126,24 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(steps.at(-1)!, "result")).toBe("true");
   });
 
+  it("Level 7: the call stack grows to the base case, then each call returns its sum", () => {
+    const steps = walkthrough("7-recursion-divide-and-conquer");
+    const a = [3, 1, 4];
+    const depths = steps.map((step) => step.visual!.cells.length);
+    expect(depths).toEqual([1, 2, 3, 4, 3, 2, 1, 0]);
+    for (const step of steps) {
+      step.visual!.cells.forEach((cell, i) => expect(cell).toBe(`sum(${i})`));
+      expect(value(step, "call stack depth")).toBe(String(step.visual!.cells.length));
+    }
+    // Returns arrive newest call first: sum(3), sum(2), sum(1), sum(0).
+    const returned = steps
+      .map((step) => value(step, "last return"))
+      .filter((v) => v !== "·")
+      .map((v) => Number(v!.split("=").at(-1)));
+    const expected = [3, 2, 1, 0].map((i) => a.slice(i).reduce((x, y) => x + y, 0));
+    expect(returned).toEqual(expected);
+  });
+
   it("every prediction's answer is one of its options", () => {
     for (const folder of [
       "1-big-o-and-basics",
@@ -134,6 +152,7 @@ describe("lesson visualizers match their reference algorithms", () => {
       "4-sorting-fundamentals",
       "5-linked-lists",
       "6-stack-queue-deque",
+      "7-recursion-divide-and-conquer",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;
