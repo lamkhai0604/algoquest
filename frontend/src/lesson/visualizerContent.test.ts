@@ -107,6 +107,25 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(last, "result")).toBe(`[${values.join(", ")}]`);
   });
 
+  it("Level 6: the stack after each character matches a bracket check", () => {
+    const steps = walkthrough("6-stack-queue-deque");
+    const text = steps[0]!.visual!.cells;
+    const stack: string[] = [];
+    const after: string[] = [];
+    for (const ch of text) {
+      if (ch === "(" || ch === "[" || ch === "{") stack.push(ch);
+      else stack.pop();
+      after.push(stack.length === 0 ? "empty" : stack.join(" "));
+    }
+    const shown = steps.map((step) => value(step, "stack (bottom → top)"));
+    expect(shown).toEqual(["empty", ...after, "empty"]);
+    // Each middle step points at the character it just read.
+    steps.slice(1, -1).forEach((step, i) => {
+      expect(step.visual!.markers![0]!.index).toBe(i);
+    });
+    expect(value(steps.at(-1)!, "result")).toBe("true");
+  });
+
   it("every prediction's answer is one of its options", () => {
     for (const folder of [
       "1-big-o-and-basics",
@@ -114,6 +133,7 @@ describe("lesson visualizers match their reference algorithms", () => {
       "3-hashing",
       "4-sorting-fundamentals",
       "5-linked-lists",
+      "6-stack-queue-deque",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

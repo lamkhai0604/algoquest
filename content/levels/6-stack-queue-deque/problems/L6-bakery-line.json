@@ -1,0 +1,254 @@
+{
+  "id": "L6-bakery-line",
+  "level": 6,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Bakery Line",
+  "statement": "Customers wait in a line at a bakery. `loaves[i]` is how many loaves customer `i` wants. The baker serves one loaf per minute to the customer at the front; if that customer still wants more, they go to the back of the line. Customers who have all their loaves leave. Return the minute (counting from 1) when customer `k` gets their last loaf.",
+  "examples": [
+    {
+      "input": "loaves = [2, 1, 2], k = 2",
+      "output": "5"
+    },
+    {
+      "input": "loaves = [3], k = 0",
+      "output": "3"
+    }
+  ],
+  "constraints": [
+    "1 <= loaves.length <= 1000",
+    "1 <= loaves[i] <= 100",
+    "0 <= k < loaves.length"
+  ],
+  "answerKey": {
+    "pattern": "Queue simulation (or count directly)",
+    "keyPoints": [
+      "The line is first in, first out: take from the front, add to the back",
+      "Store customer indices in a queue; each minute, serve the front customer and lower their count",
+      "If their count is 0 and they are customer k, return the minute; if it is above 0, put them at the back",
+      "A direct count also works: customers before k take at most loaves[k] minutes, customers after k at most loaves[k] - 1"
+    ],
+    "timeComplexity": "O(total loaves) for the simulation, O(n) for the direct count",
+    "spaceComplexity": "O(n) for the queue, O(1) for the direct count",
+    "edgeCases": [
+      "k is the only customer",
+      "k is first in line",
+      "Others want fewer loaves than k"
+    ],
+    "acceptableSlowerApproaches": [
+      "Simulate with array.shift(): correct, but each shift costs O(n)"
+    ]
+  },
+  "hints": [
+    "Who is served next, and where does a customer go if they still want loaves?",
+    "Use a queue of customer positions. In JavaScript, a head index avoids the slow shift().",
+    "Count minutes as you serve. Stop when customer k's count reaches 0."
+  ],
+  "starterCode": {
+    "javascript": "function bakeryLine(loaves, k) {\n  // return the minute customer k gets their last loaf\n}",
+    "java": "class Solution {\n  int bakeryLine(int[] loaves, int k) {\n    // return the minute customer k gets their last loaf\n  }\n}"
+  },
+  "similarLeetCode": "Time Needed to Buy Tickets",
+  "tests": [
+    {
+      "input": [
+        [
+          2,
+          1,
+          2
+        ],
+        2
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        [
+          3
+        ],
+        0
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          1,
+          1,
+          1
+        ],
+        0
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          1,
+          1
+        ],
+        2
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          5,
+          1,
+          1,
+          1
+        ],
+        0
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        [
+          2,
+          3,
+          2
+        ],
+        1
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        [
+          4,
+          4,
+          4,
+          4
+        ],
+        3
+      ],
+      "expected": 16
+    },
+    {
+      "input": [
+        [
+          10,
+          1,
+          10,
+          1,
+          10
+        ],
+        2
+      ],
+      "expected": 31
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          1
+        ],
+        50
+      ],
+      "expected": 407
+    }
+  ]
+}

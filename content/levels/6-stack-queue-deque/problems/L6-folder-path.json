@@ -1,0 +1,117 @@
+{
+  "id": "L6-folder-path",
+  "level": 6,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Tidy the Folder Path",
+  "statement": "A file manager shows paths like `/school/./notes//../photos/`. Tidy the path: parts are separated by one or more `/`; a part `.` means stay in the same folder; `..` means go up one folder (and does nothing at the top folder `/`); any other part is a folder name. Return the tidy path: it starts with `/`, has single `/` between folder names, and no `/` at the end (the top folder alone is `/`).",
+  "examples": [
+    {
+      "input": "path = \"/school/./notes//../photos/\"",
+      "output": "\"/school/photos\""
+    },
+    {
+      "input": "path = \"/../\"",
+      "output": "\"/\""
+    }
+  ],
+  "constraints": [
+    "1 <= path.length <= 3000",
+    "path starts with '/'",
+    "Folder names use letters, digits, '_' and '.'; a name like '...' is a normal folder"
+  ],
+  "answerKey": {
+    "pattern": "Split into parts, keep a stack of folder names",
+    "keyPoints": [
+      "Split on '/' and skip empty parts and '.'",
+      "'..' pops the last folder if there is one",
+      "Any other part is pushed as a folder name",
+      "Join the stack with '/' and put '/' in front"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "'..' at the top folder",
+      "Several '/' in a row",
+      "A trailing '/'",
+      "Names like '...' that are not special"
+    ],
+    "acceptableSlowerApproaches": [
+      "Repeated string replacements of '/./' and '/name/../': O(n^2) and easy to get wrong"
+    ]
+  },
+  "hints": [
+    "Which folder does '..' remove?",
+    "The most recently entered folder is the one to leave: keep folder names on a stack.",
+    "Split the path on '/', skip '' and '.', pop on '..', push anything else, then join."
+  ],
+  "starterCode": {
+    "javascript": "function tidyPath(path) {\n  // return the tidy path\n}",
+    "java": "class Solution {\n  String tidyPath(String path) {\n    // return the tidy path\n  }\n}"
+  },
+  "similarLeetCode": "Simplify Path",
+  "tests": [
+    {
+      "input": [
+        "/school/./notes//../photos/"
+      ],
+      "expected": "/school/photos"
+    },
+    {
+      "input": [
+        "/../"
+      ],
+      "expected": "/"
+    },
+    {
+      "input": [
+        "/"
+      ],
+      "expected": "/"
+    },
+    {
+      "input": [
+        "/a/b/c"
+      ],
+      "expected": "/a/b/c"
+    },
+    {
+      "input": [
+        "/a/../../b/"
+      ],
+      "expected": "/b"
+    },
+    {
+      "input": [
+        "//home//user///docs/"
+      ],
+      "expected": "/home/user/docs"
+    },
+    {
+      "input": [
+        "/.../a/../b/./c/.."
+      ],
+      "expected": "/.../b"
+    },
+    {
+      "input": [
+        "/a/./b/../../c/"
+      ],
+      "expected": "/c"
+    },
+    {
+      "input": [
+        "/x/y/z/../../../.."
+      ],
+      "expected": "/"
+    },
+    {
+      "input": [
+        "/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/../../../../../../../../../../../../../../../../../../../../"
+      ],
+      "expected": "/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir/dir"
+    }
+  ]
+}
