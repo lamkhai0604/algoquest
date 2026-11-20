@@ -1,0 +1,295 @@
+[
+  {
+    "title": "The task",
+    "body": "Find **7** in this binary search tree. In every node, smaller values live in the left subtree and larger values in the right subtree. Start at the root.",
+    "code": "let node = root;",
+    "visual": {
+      "cells": [
+        "8",
+        "3",
+        "10",
+        "1",
+        "6",
+        "",
+        "14",
+        "",
+        "",
+        "4",
+        "7",
+        "",
+        "",
+        "13"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 0,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "7"
+        },
+        {
+          "name": "comparison",
+          "value": "·"
+        },
+        {
+          "name": "visited",
+          "value": "8"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Compare at 8",
+    "body": "7 is smaller than 8, so 7 can only be in the left subtree. The whole right side (10, 14, 13) is skipped.",
+    "code": "if (target < node.val) node = node.left;",
+    "visual": {
+      "cells": [
+        "8",
+        "3",
+        "10",
+        "1",
+        "6",
+        "",
+        "14",
+        "",
+        "",
+        "4",
+        "7",
+        "",
+        "",
+        "13"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 0,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "7"
+        },
+        {
+          "name": "comparison",
+          "value": "7 < 8 → go left"
+        },
+        {
+          "name": "visited",
+          "value": "8"
+        }
+      ],
+      "predict": {
+        "question": "The target is 7 and the current node is 8. Where does the search go?",
+        "options": [
+          "Left, to 3",
+          "Right, to 10",
+          "Stop: 7 is not here"
+        ],
+        "answer": 0,
+        "explanation": "7 < 8, and in a binary search tree every smaller value is in the left subtree.",
+        "hides": [
+          "comparison"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Compare at 3",
+    "body": "7 is larger than 3, so go right. Node 1, on the left, is skipped.",
+    "code": "else if (target > node.val) node = node.right;",
+    "visual": {
+      "cells": [
+        "8",
+        "3",
+        "10",
+        "1",
+        "6",
+        "",
+        "14",
+        "",
+        "",
+        "4",
+        "7",
+        "",
+        "",
+        "13"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 1,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "7"
+        },
+        {
+          "name": "comparison",
+          "value": "7 > 3 → go right"
+        },
+        {
+          "name": "visited",
+          "value": "8, 3"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Compare at 6",
+    "body": "7 is larger than 6, so go right again.",
+    "code": "else if (target > node.val) node = node.right;",
+    "visual": {
+      "cells": [
+        "8",
+        "3",
+        "10",
+        "1",
+        "6",
+        "",
+        "14",
+        "",
+        "",
+        "4",
+        "7",
+        "",
+        "",
+        "13"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 4,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "7"
+        },
+        {
+          "name": "comparison",
+          "value": "7 > 6 → go right"
+        },
+        {
+          "name": "visited",
+          "value": "8, 3, 6"
+        }
+      ],
+      "predict": {
+        "question": "The current node is 6. Where does the search go next?",
+        "options": [
+          "Left, to 4",
+          "Right, to 7",
+          "Back up to 3"
+        ],
+        "answer": 1,
+        "explanation": "7 > 6, so the search continues in 6's right subtree, where 7 is.",
+        "hides": [
+          "comparison"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Found 7",
+    "body": "The node's value equals the target: found. Only 4 of the 9 nodes were looked at.",
+    "code": "else return node; // target === node.val",
+    "visual": {
+      "cells": [
+        "8",
+        "3",
+        "10",
+        "1",
+        "6",
+        "",
+        "14",
+        "",
+        "",
+        "4",
+        "7",
+        "",
+        "",
+        "13"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 10,
+          "label": "found"
+        }
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "7"
+        },
+        {
+          "name": "comparison",
+          "value": "7 = 7 → found"
+        },
+        {
+          "name": "visited",
+          "value": "8, 3, 6, 7"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Why it is fast",
+    "body": "Each comparison goes down one level and skips a whole subtree, so a search takes O(h) steps for a tree of height h. A balanced tree with n nodes has height about log2(n); a tree built from sorted input becomes a chain with height n.",
+    "visual": {
+      "cells": [
+        "8",
+        "3",
+        "10",
+        "1",
+        "6",
+        "",
+        "14",
+        "",
+        "",
+        "4",
+        "7",
+        "",
+        "",
+        "13"
+      ],
+      "tree": true,
+      "markers": [
+        {
+          "index": 10,
+          "label": "found"
+        }
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "7"
+        },
+        {
+          "name": "comparison",
+          "value": "7 = 7 → found"
+        },
+        {
+          "name": "visited",
+          "value": "8, 3, 6, 7"
+        },
+        {
+          "name": "result",
+          "value": "found after 4 nodes"
+        }
+      ]
+    }
+  }
+]

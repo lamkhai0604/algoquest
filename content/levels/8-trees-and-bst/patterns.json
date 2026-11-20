@@ -1,0 +1,127 @@
+[
+  {
+    "id": "P8-price-lookup",
+    "level": 8,
+    "title": "Price Lookup",
+    "statement": "A store keeps 500,000 product prices and checks thousands of times a second whether a given price exists. Prices are also added during the day, and the store sometimes needs them in increasing order.",
+    "examples": [
+      "Is 19.99 in the catalog?",
+      "List every price from cheapest to most expensive"
+    ],
+    "constraints": [
+      "500,000 prices; frequent lookups and inserts"
+    ],
+    "approaches": [
+      {
+        "id": "bst",
+        "name": "A balanced binary search tree",
+        "hint": "Keep the data ordered as you insert",
+        "label": "best",
+        "time": "O(log n) per lookup and insert",
+        "space": "O(n)",
+        "why": "Lookups and inserts stay logarithmic, and an in-order walk gives the prices in order whenever needed."
+      },
+      {
+        "id": "sorted",
+        "name": "A sorted array with binary search",
+        "hint": "Search by halving",
+        "label": "valid",
+        "time": "O(log n) lookup, O(n) insert",
+        "space": "O(n)",
+        "why": "Fast lookups and ordered output, but each insert shifts many elements."
+      },
+      {
+        "id": "unsorted",
+        "name": "An unsorted list, scanned for each lookup",
+        "hint": "Check every item",
+        "label": "unsuitable",
+        "time": "O(n) per lookup",
+        "space": "O(n)",
+        "why": "Thousands of full scans of 500,000 prices each second is far too slow, and the order is lost."
+      }
+    ]
+  },
+  {
+    "id": "P8-tree-depth",
+    "level": 8,
+    "title": "Deepest Folder",
+    "statement": "A file browser stores folders as a binary tree (each folder has at most two subfolders). Report how many levels deep the deepest folder is.",
+    "examples": [
+      "A root with two empty subfolders has depth 2",
+      "An empty drive has depth 0"
+    ],
+    "constraints": [
+      "Up to 10,000 folders"
+    ],
+    "approaches": [
+      {
+        "id": "recursion",
+        "name": "Recursion: 1 + the deeper of the two subtrees",
+        "hint": "Solve the children, then combine",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(h)",
+        "why": "Every folder is visited once, and only the current path is kept on the call stack."
+      },
+      {
+        "id": "bfs",
+        "name": "Level-order traversal with a queue, counting levels",
+        "hint": "Visit level by level",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(w)",
+        "why": "Also correct and linear; it holds a whole level in the queue instead of one path."
+      },
+      {
+        "id": "count",
+        "name": "Count the folders and take log2 of the count",
+        "hint": "Use the size of the tree",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "That only matches a perfectly balanced tree; a chain of 10 folders has depth 10, not about 3."
+      }
+    ]
+  },
+  {
+    "id": "P8-org-levels",
+    "level": 8,
+    "title": "Org Chart Floors",
+    "statement": "An org chart is a binary tree. The company wants to print every manager level on its own line, from the CEO down, left to right.",
+    "examples": [
+      "CEO; then two vice presidents; then their reports"
+    ],
+    "constraints": [
+      "Up to 5,000 people"
+    ],
+    "approaches": [
+      {
+        "id": "queue",
+        "name": "Breadth-first with a queue, one level per round",
+        "hint": "First found, first visited",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(w)",
+        "why": "The queue holds exactly one level at the start of each round, so levels come out in order."
+      },
+      {
+        "id": "dfsdepth",
+        "name": "Depth-first, passing the depth and appending to that level's list",
+        "hint": "Remember how deep you are",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(h)",
+        "why": "Also correct: visiting left before right keeps each level in left-to-right order."
+      },
+      {
+        "id": "inorder",
+        "name": "In-order traversal printed as one list",
+        "hint": "Left, node, right",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(h)",
+        "why": "In-order mixes the levels together; it does not group people by level."
+      }
+    ]
+  }
+]

@@ -1,0 +1,361 @@
+{
+  "id": "L8-valid-catalog",
+  "level": 8,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Check the Catalog Tree",
+  "statement": "A library catalog should be a binary search tree: for every node, all values in its left subtree are smaller and all values in its right subtree are larger (no repeats). A volunteer edited the tree by hand. Return true if it is still a valid binary search tree.",
+  "examples": [
+    {
+      "input": "root = [5, 3, 8, 1, 4, 7, 9]",
+      "output": "true"
+    },
+    {
+      "input": "root = [5, 3, 8, 1, 6]",
+      "output": "false",
+      "explanation": "6 is in the left subtree of 5 but is larger than 5"
+    }
+  ],
+  "constraints": [
+    "0 <= number of nodes <= 10^4",
+    "-2^31 <= node value <= 2^31 - 1"
+  ],
+  "answerKey": {
+    "pattern": "Recursion with an allowed (low, high) range passed down",
+    "keyPoints": [
+      "Checking only a node against its children is not enough: the rule is about whole subtrees",
+      "Pass down the range a node's value must be in, starting unbounded",
+      "Going left, the upper bound becomes the node's value; going right, the lower bound does",
+      "A value equal to a bound breaks the rule",
+      "An in-order traversal must also be strictly increasing, which is another valid check"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(h)",
+    "edgeCases": [
+      "Empty tree (valid)",
+      "A node deep in a subtree breaking an ancestor's bound",
+      "Equal values",
+      "Values at the 32-bit limits"
+    ],
+    "acceptableSlowerApproaches": [
+      "Collect the in-order values in an array and check they increase: O(n) time, O(n) space"
+    ]
+  },
+  "hints": [
+    "Is it enough to compare each node with its two children?",
+    "Every node has a range it must fall in, set by its ancestors.",
+    "Recurse with (low, high): left child gets (low, node.val), right child gets (node.val, high)."
+  ],
+  "starterCode": {
+    "javascript": "// A node is { val, left, right }. Make one with new TreeNode(val, left, right).\nfunction isValidCatalog(root) {\n  // return true or false\n}",
+    "java": "// TreeNode has: int val; TreeNode left, right; and new TreeNode(val).\nclass Solution {\n  boolean isValidCatalog(TreeNode root) {\n    // return true or false\n  }\n}"
+  },
+  "similarLeetCode": "Validate Binary Search Tree",
+  "tests": [
+    {
+      "input": [
+        [
+          5,
+          3,
+          8,
+          1,
+          4,
+          7,
+          9
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          5,
+          3,
+          8,
+          1,
+          6
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        []
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          1
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          2,
+          2
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          2,
+          1,
+          3
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          5,
+          4,
+          6,
+          null,
+          null,
+          3,
+          7
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          42,
+          2,
+          98,
+          1,
+          37,
+          82,
+          100,
+          null,
+          null,
+          10,
+          40,
+          47,
+          96,
+          99,
+          null,
+          9,
+          22,
+          39,
+          41,
+          46,
+          50,
+          92,
+          97,
+          null,
+          null,
+          6,
+          null,
+          11,
+          31,
+          38,
+          null,
+          null,
+          null,
+          43,
+          null,
+          49,
+          51,
+          91,
+          94,
+          null,
+          null,
+          5,
+          7,
+          null,
+          18,
+          24,
+          32,
+          null,
+          null,
+          null,
+          45,
+          48,
+          null,
+          null,
+          73,
+          87,
+          null,
+          93,
+          95,
+          4,
+          null,
+          null,
+          8,
+          16,
+          20,
+          23,
+          26,
+          null,
+          35,
+          44,
+          null,
+          null,
+          null,
+          61,
+          79,
+          83,
+          89,
+          null,
+          null,
+          null,
+          null,
+          3,
+          null,
+          null,
+          null,
+          14,
+          17,
+          19,
+          21,
+          null,
+          null,
+          25,
+          27,
+          33,
+          36,
+          null,
+          null,
+          60,
+          67,
+          75,
+          81,
+          null,
+          86,
+          88,
+          90,
+          null,
+          null,
+          12,
+          15,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          29,
+          null,
+          34,
+          null,
+          null,
+          59,
+          null,
+          62,
+          71,
+          74,
+          76,
+          80,
+          null,
+          84,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          13,
+          null,
+          null,
+          28,
+          30,
+          null,
+          null,
+          56,
+          null,
+          null,
+          66,
+          69,
+          72,
+          null,
+          null,
+          null,
+          78,
+          null,
+          null,
+          null,
+          85,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          52,
+          58,
+          64,
+          null,
+          68,
+          70,
+          null,
+          null,
+          77,
+          null,
+          null,
+          null,
+          null,
+          53,
+          57,
+          null,
+          63,
+          65,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          54,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          55
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          -2147483648,
+          null,
+          2147483647
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          10,
+          5,
+          15,
+          null,
+          null,
+          6,
+          20
+        ]
+      ],
+      "expected": false
+    }
+  ]
+}
