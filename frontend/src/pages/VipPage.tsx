@@ -9,7 +9,7 @@ export function VipPage() {
     <div className={styles.page}>
       <div className={styles.topBar}>
         <BackButton to="/" label={t("profile.back")} />
-        <h1 className={styles.title}>AlgoQuest VIP</h1>
+        <h1 className={styles.title}>{t("misc.vipTitle")}</h1>
       </div>
       <Card>
         <Badge tone="warning">{t("common.comingSoon")}</Badge>
