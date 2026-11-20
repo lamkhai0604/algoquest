@@ -122,13 +122,21 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-520 | Level 5 pattern challenges | D-057 | P2 | Done 2026-11-19 (content check; PO review OK) |
 | T-521 | Sprint 6 report | D-007 | P2 | Done 2026-11-19: [report](reports/sprint-6-report.md) |
 
-## Sprint 7 — Level 6 Stack, Queue & Deque ([plan](sprints/sprint-7.md), approved 2026-11-19)
+## Sprint 7 — Level 6 Stack, Queue & Deque ([plan](sprints/sprint-7.md), closed 2026-11-19)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-522 | Level 6 Stack, Queue & Deque content | FR-03, FR-04, D-048 | P1 | Done 2026-11-19: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test. PO review open |
-| T-523 | Level 6 pattern challenges | D-057 | P2 | Done 2026-11-19 (content check). PO review open |
-| T-524 | Sprint 7 report | D-007 | P2 | Proposed |
+| T-522 | Level 6 Stack, Queue & Deque content | FR-03, FR-04, D-048 | P1 | Done 2026-11-19: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-523 | Level 6 pattern challenges | D-057 | P2 | Done 2026-11-19 (content check; PO review OK) |
+| T-524 | Sprint 7 report | D-007 | P2 | Done 2026-11-19: [report](reports/sprint-7-report.md) |
+
+## Sprint 8 — Level 7 Recursion & Divide and Conquer ([plan](sprints/sprint-8.md), approved 2026-11-19)
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-525 | Level 7 Recursion & Divide and Conquer content | FR-03, FR-04, D-048 | P1 | In progress |
+| T-526 | Level 7 pattern challenges | D-057 | P2 | In progress |
+| T-527 | Sprint 8 report | D-007 | P2 | Proposed |
 
 ## Later (unscheduled)
 
