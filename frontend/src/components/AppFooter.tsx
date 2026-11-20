@@ -1,3 +1,4 @@
+import { APP_INITIAL, APP_NAME } from "../config/brand";
 import { Link } from "react-router";
 import styles from "./AppFooter.module.css";
 import { useTranslation } from "../i18n";
@@ -14,9 +15,9 @@ export function AppFooter() {
         <div className={styles.brandBlock}>
           <span className={styles.brand}>
             <span className={styles.logo} aria-hidden="true">
-              A
+              {APP_INITIAL}
             </span>
-            AlgoQuest
+            {APP_NAME}
           </span>
           <span className={styles.tagline}>{t("footer.tagline")}</span>
         </div>
@@ -27,7 +28,7 @@ export function AppFooter() {
           </a>
         </nav>
       </div>
-      <p className={styles.copy}>© {year} AlgoQuest</p>
+      <p className={styles.copy}>© {year} {APP_NAME}</p>
     </footer>
   );
 }

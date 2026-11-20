@@ -1,3 +1,4 @@
+import { APP_INITIAL, APP_NAME } from "../config/brand";
 import { Link, NavLink } from "react-router";
 import styles from "./AppHeader.module.css";
 import { setLocale, useTranslation } from "../i18n";
@@ -31,9 +32,9 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
       <div className={styles.left}>
         <Link to="/" className={styles.brand}>
           <span className={styles.logo} aria-hidden="true">
-            A
+            {APP_INITIAL}
           </span>
-          AlgoQuest
+          {APP_NAME}
         </Link>
         {account && (
           <nav className={styles.nav} aria-label={t("common.main")}>

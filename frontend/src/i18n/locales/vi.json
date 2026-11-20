@@ -168,7 +168,7 @@
     "keyboard": "Bàn phím: ← và → để chuyển bước, R để đặt lại."
   },
   "auth": {
-    "title": "Đăng nhập AlgoQuest",
+    "title": "Đăng nhập {appName}",
     "lead": "Đừng để thuật toán đánh bại bạn.",
     "google": "Tiếp tục với Google",
     "github": "Tiếp tục với GitHub",
@@ -183,7 +183,7 @@
     "backQuest": "Quay lại hành trình học",
     "themeLight": "Chuyển sang giao diện sáng",
     "themeDark": "Chuyển sang giao diện tối",
-    "vipTitle": "AlgoQuest VIP",
+    "vipTitle": "{appName} VIP",
     "vipLead": "Gói thuê bao tương lai dành cho người học muốn có thêm hỗ trợ. Hiện chưa thể mua dịch vụ nào tại đây.",
     "vipHints": "10 gợi ý mỗi 5 giờ thay vì 3",
     "vipHard": "Bài khó và chế độ kiểm tra khó khi được phát hành",

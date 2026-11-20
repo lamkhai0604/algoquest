@@ -58,7 +58,7 @@ Deploys run automatically after each merge to `main`, once the GitHub checks pas
 ## 3. Frontend — Vercel
 
 1. **Add New → Project**, import the repository, **Root Directory** `frontend`. The framework (Vite) and build settings come from `frontend/vercel.json`.
-2. Add the environment variable `VITE_API_URL` = backend URL from step 2 (no trailing slash), for Production.
+2. Add the environment variable `VITE_API_URL` = backend URL from step 2 (no trailing slash), for Production. Optional: `VITE_APP_NAME` changes the site name shown in the header, footer, page title, and sign-in page (default `AlgoQuest`); redeploy after changing it.
 3. Deploy. Note the production URL, for example `https://algoquest.vercel.app`.
 
 Pushes to `main` deploy to production. Other branches create preview deployments; previews cannot sign in, because the backend allows only the production origin.

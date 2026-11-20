@@ -1,3 +1,4 @@
+import { APP_NAME } from "../config/brand";
 import { useCallback, useSyncExternalStore } from "react";
 import en from "./locales/en.json";
 import vi from "./locales/vi.json";
@@ -83,7 +84,8 @@ export function translate(locale: Locale, key: TranslationKey): string {
     Record<string, string>
   >;
   const fallback = en as unknown as Record<string, Record<string, string>>;
-  return dict[section]?.[item] ?? fallback[section]?.[item] ?? key;
+  const text = dict[section]?.[item] ?? fallback[section]?.[item] ?? key;
+  return text.replaceAll("{appName}", APP_NAME);
 }
 export function useTranslation() {
   const locale = useLocale();

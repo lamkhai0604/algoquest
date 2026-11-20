@@ -168,7 +168,7 @@
     "keyboard": "Keyboard: ← and → to step, R to reset."
   },
   "auth": {
-    "title": "Sign in to AlgoQuest",
+    "title": "Sign in to {appName}",
     "lead": "Don't let Algorithm beat you.",
     "google": "Continue with Google",
     "github": "Continue with GitHub",
@@ -183,7 +183,7 @@
     "backQuest": "Back to your quest",
     "themeLight": "Switch to light theme",
     "themeDark": "Switch to dark theme",
-    "vipTitle": "AlgoQuest VIP",
+    "vipTitle": "{appName} VIP",
     "vipLead": "A future monthly plan for players who want more help. Nothing on this page can be bought yet.",
     "vipHints": "10 hints every 5 hours instead of 3",
     "vipHard": "Hard problems and hard test mode as soon as they are ready",
