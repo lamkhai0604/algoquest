@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Plain recursion for stair hops, ways(n) = ways(n - 1) + ways(n - 2), is very slow for n = 45. Why?",
+    "options": [
+      "Recursion is always slow",
+      "The same smaller answers are computed again and again, about 2^n calls",
+      "The base case is wrong",
+      "Addition is O(n)"
+    ],
+    "answer": 1,
+    "explanation": "ways(43) is computed for both ways(45) and ways(44), and so on down. Remembering each answer the first time makes it O(n)."
+  },
+  {
+    "question": "Fast power computes x^n from x^(n/2). How many recursive calls does x^1,000,000 need?",
+    "options": [
+      "About 1,000,000",
+      "About 1,000",
+      "About 20",
+      "Exactly 2"
+    ],
+    "answer": 2,
+    "explanation": "The exponent halves each call, so it takes about log2(1,000,000) ≈ 20 calls."
+  },
+  {
+    "question": "Merge sort splits an array in half, sorts each half, and merges them. What are the three parts of divide and conquer here?",
+    "options": [
+      "Loop, check, return",
+      "Split into halves, solve each half recursively, combine by merging",
+      "Sort, search, count",
+      "Push, pop, peek"
+    ],
+    "answer": 1,
+    "explanation": "Divide (split), conquer (solve the smaller copies recursively), and combine (merge the results)."
+  }
+]

@@ -1,0 +1,114 @@
+{
+  "id": "L7-halving-game",
+  "level": 7,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Halving Game",
+  "statement": "In a number game you start with a whole number `n`. Each move: if the number is even, halve it; if it is odd, subtract 1. Return how many moves it takes to reach 0. Write the count recursively: moves(n) is one move plus moves of the next number.",
+  "examples": [
+    {
+      "input": "n = 14",
+      "output": "6",
+      "explanation": "14 → 7 → 6 → 3 → 2 → 1 → 0"
+    },
+    {
+      "input": "n = 0",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "0 <= n <= 10^9"
+  ],
+  "answerKey": {
+    "pattern": "Recursion with one base case and one smaller call",
+    "keyPoints": [
+      "Base case: moves(0) = 0",
+      "Even n: 1 + moves(n / 2); odd n: 1 + moves(n - 1)",
+      "The number at least halves every two moves, so there are O(log n) calls"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(log n) for the call stack",
+    "edgeCases": [
+      "n = 0",
+      "n = 1",
+      "Powers of two",
+      "A large odd number"
+    ],
+    "acceptableSlowerApproaches": [
+      "A loop that simulates the moves: same time, O(1) space"
+    ]
+  },
+  "hints": [
+    "What is the answer when n is already 0?",
+    "After one move, the problem is the same game with a smaller number.",
+    "Return 1 + moves(next), where next is n / 2 or n - 1."
+  ],
+  "starterCode": {
+    "javascript": "function halvingMoves(n) {\n  // return the number of moves to reach 0\n}",
+    "java": "class Solution {\n  int halvingMoves(int n) {\n    // return the number of moves to reach 0\n  }\n}"
+  },
+  "similarLeetCode": "Number of Steps to Reduce a Number to Zero",
+  "tests": [
+    {
+      "input": [
+        14
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        8
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        123
+      ],
+      "expected": 12
+    },
+    {
+      "input": [
+        1024
+      ],
+      "expected": 11
+    },
+    {
+      "input": [
+        1023
+      ],
+      "expected": 19
+    },
+    {
+      "input": [
+        999999999
+      ],
+      "expected": 50
+    },
+    {
+      "input": [
+        1000000000
+      ],
+      "expected": 42
+    }
+  ]
+}

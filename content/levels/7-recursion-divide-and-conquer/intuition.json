@@ -1,0 +1,11 @@
+{
+  "question": "A recursive function f(n) calls f(n - 1) and never stops at a base case. What happens when you run it?",
+  "options": [
+    "It returns 0",
+    "It runs forever without using memory",
+    "The calls pile up on the call stack until it overflows and the program fails",
+    "It returns n"
+  ],
+  "answer": 2,
+  "explanation": "Each call waits on the call stack for the next one. With no base case nothing ever returns, so the stack grows until it runs out of room: a stack overflow."
+}

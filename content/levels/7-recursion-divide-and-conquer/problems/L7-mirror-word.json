@@ -1,0 +1,116 @@
+{
+  "id": "L7-mirror-word",
+  "level": 7,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Mirror Word",
+  "statement": "A word puzzle asks whether a word of lowercase letters reads the same forwards and backwards. Use recursion: a word is a mirror word if its first and last letters match and the part between them is a mirror word. Return true or false.",
+  "examples": [
+    {
+      "input": "word = \"racecar\"",
+      "output": "true"
+    },
+    {
+      "input": "word = \"rocket\"",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "0 <= word.length <= 2000",
+    "Lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Recursion on a shrinking range (two indices), base case of length 0 or 1",
+    "keyPoints": [
+      "Base case: a range of 0 or 1 letters is a mirror word",
+      "If the outer letters differ, return false",
+      "Otherwise recurse on the range one step in from each end",
+      "Pass indices instead of slicing to avoid copying the string"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n) for the call stack",
+    "edgeCases": [
+      "Empty word",
+      "One letter",
+      "Even and odd lengths"
+    ],
+    "acceptableSlowerApproaches": [
+      "Slicing the string each call: O(n^2) because each slice copies",
+      "A loop with two indices: same idea, O(1) space"
+    ]
+  },
+  "hints": [
+    "Which word is obviously a mirror word without checking anything?",
+    "Compare the first and last letters. If they match, what is left to check?",
+    "Recurse on indices (left + 1, right - 1) and stop when left >= right."
+  ],
+  "starterCode": {
+    "javascript": "function isMirror(word) {\n  // return true or false\n}",
+    "java": "class Solution {\n  boolean isMirror(String word) {\n    // return true or false\n  }\n}"
+  },
+  "similarLeetCode": "Valid Palindrome (recursive)",
+  "tests": [
+    {
+      "input": [
+        "racecar"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "rocket"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        ""
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "a"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "ab"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "aa"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abba"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abca"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab"
+      ],
+      "expected": false
+    }
+  ]
+}

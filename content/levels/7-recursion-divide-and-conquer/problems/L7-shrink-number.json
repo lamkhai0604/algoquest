@@ -1,0 +1,115 @@
+{
+  "id": "L7-shrink-number",
+  "level": 7,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Shrink the Number",
+  "statement": "A lucky-number machine shrinks any whole number `n`: it adds up the digits, and if the result still has more than one digit, it does the same again, until one digit is left. Return that digit. Write it with recursion: the answer for `n` is the answer for the sum of its digits.",
+  "examples": [
+    {
+      "input": "n = 9875",
+      "output": "2",
+      "explanation": "9 + 8 + 7 + 5 = 29, then 2 + 9 = 11, then 1 + 1 = 2"
+    },
+    {
+      "input": "n = 7",
+      "output": "7"
+    }
+  ],
+  "constraints": [
+    "0 <= n <= 2,000,000,000"
+  ],
+  "answerKey": {
+    "pattern": "Recursion with a base case of one digit",
+    "keyPoints": [
+      "Base case: if n < 10, return n",
+      "Recursive case: compute the digit sum of n and return the answer for that smaller number",
+      "Each call works on a much smaller number, so the recursion ends quickly"
+    ],
+    "timeComplexity": "O(d) per round for d digits; only a few rounds",
+    "spaceComplexity": "O(number of rounds) for the call stack, a handful",
+    "edgeCases": [
+      "n = 0",
+      "A single digit",
+      "A sum that needs several rounds"
+    ],
+    "acceptableSlowerApproaches": [
+      "A loop instead of recursion is equally fine",
+      "The 1 + (n - 1) % 9 formula is faster but skips the recursion this problem practises"
+    ]
+  },
+  "hints": [
+    "When does the machine stop?",
+    "The stopping point is your base case: a number below 10 is its own answer.",
+    "Otherwise add the digits (n % 10, then n / 10 rounded down) and call the same function on the sum."
+  ],
+  "starterCode": {
+    "javascript": "function shrink(n) {\n  // return the single digit left\n}",
+    "java": "class Solution {\n  int shrink(int n) {\n    // return the single digit left\n  }\n}"
+  },
+  "similarLeetCode": "Add Digits",
+  "tests": [
+    {
+      "input": [
+        9875
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        7
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        10
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        99
+      ],
+      "expected": 9
+    },
+    {
+      "input": [
+        123456789
+      ],
+      "expected": 9
+    },
+    {
+      "input": [
+        2000000000
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        1999999999
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        38
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        100000
+      ],
+      "expected": 1
+    }
+  ]
+}
