@@ -23,12 +23,13 @@ const HEADING = /^(#{1,4}) (.*)$/;
 const TABLE_ROW = /^\|.*\|\s*$/;
 const TABLE_RULE = /^\|(\s*:?-+:?\s*\|)+\s*$/;
 
+/** Splits a table row on its pipes; `\|` is a literal pipe inside a cell, as in GitHub Markdown. */
 function cellsOf(row: string): string[] {
   return row
     .trim()
     .slice(1, -1)
-    .split("|")
-    .map((cell) => cell.trim());
+    .split(/(?<!\\)\|/)
+    .map((cell) => cell.trim().replace(/\\\|/g, "|"));
 }
 
 export function parseMarkdown(source: string): Block[] {

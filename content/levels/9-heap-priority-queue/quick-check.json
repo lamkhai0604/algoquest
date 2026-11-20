@@ -1,0 +1,35 @@
+[
+  {
+    "question": "In a heap stored as an array, where are the children of the item at index 4?",
+    "options": [
+      "Indexes 5 and 6",
+      "Indexes 8 and 9",
+      "Indexes 9 and 10",
+      "Index 2"
+    ],
+    "answer": 2,
+    "explanation": "Children of index i are at 2i + 1 and 2i + 2: 9 and 10. The parent of i is at (i − 1) / 2 rounded down."
+  },
+  {
+    "question": "You need the 10 largest numbers from a stream of a million. Which heap keeps the work smallest?",
+    "options": [
+      "A max-heap of all million numbers",
+      "A min-heap of size 10, popping its smallest when it grows past 10",
+      "A sorted array of all numbers",
+      "A stack"
+    ],
+    "answer": 1,
+    "explanation": "The min-heap's root is the weakest of the current top 10, so it is the one to drop. Each number costs O(log 10): O(n log k) overall."
+  },
+  {
+    "question": "What does a min-heap NOT give you quickly?",
+    "options": [
+      "The smallest item",
+      "Removing the smallest item",
+      "Adding a new item",
+      "Searching for an arbitrary value"
+    ],
+    "answer": 3,
+    "explanation": "A heap only orders parents against children, not left against right, so finding an arbitrary value still means checking up to every item: O(n)."
+  }
+]

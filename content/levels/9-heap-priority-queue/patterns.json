@@ -1,0 +1,143 @@
+[
+  {
+    "id": "P9-top-sellers",
+    "level": 9,
+    "title": "Top Sellers",
+    "statement": "A store with 5,000,000 products shows the 20 best-selling products on its home page, from a list of each product's sales count.",
+    "examples": [
+      "Return the 20 product IDs with the highest sales"
+    ],
+    "constraints": [
+      "n = 5,000,000, k = 20"
+    ],
+    "approaches": [
+      {
+        "id": "heapk",
+        "name": "A min-heap of size 20 over all products",
+        "hint": "Keep only the current best k",
+        "label": "best",
+        "time": "O(n log k)",
+        "space": "O(k)",
+        "why": "Each product costs O(log 20); the heap never grows past 20 items."
+      },
+      {
+        "id": "sort",
+        "name": "Sort all products by sales and take the first 20",
+        "hint": "Put everything in order first",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Correct, but it orders 5,000,000 items when only 20 matter."
+      },
+      {
+        "id": "scan20",
+        "name": "Scan for the maximum 20 times, removing it each time",
+        "hint": "Find the best, then the next best",
+        "label": "valid",
+        "time": "O(n k)",
+        "space": "O(1)",
+        "why": "Correct and fine for k = 20, but it grows linearly with k."
+      },
+      {
+        "id": "first20",
+        "name": "Take the first 20 products in the list",
+        "hint": "Use what comes first",
+        "label": "unsuitable",
+        "time": "O(k)",
+        "space": "O(k)",
+        "why": "The list is not ordered by sales, so the first 20 are not the best sellers."
+      }
+    ]
+  },
+  {
+    "id": "P9-news-feeds",
+    "level": 9,
+    "title": "Merge News Feeds",
+    "statement": "A reader follows 500 news sources. Each source gives its stories already sorted by time. Build one timeline sorted by time from all 2,000,000 stories.",
+    "examples": [
+      "Three sorted feeds become one sorted timeline"
+    ],
+    "constraints": [
+      "k = 500 sorted lists, N = 2,000,000 stories"
+    ],
+    "approaches": [
+      {
+        "id": "kway",
+        "name": "K-way merge with a min-heap of each feed's next story",
+        "hint": "Compare only the front of each list",
+        "label": "best",
+        "time": "O(N log k)",
+        "space": "O(k)",
+        "why": "The heap holds one story per feed; each story is pushed and popped once at a cost of log 500."
+      },
+      {
+        "id": "concat",
+        "name": "Join all feeds and sort the result",
+        "hint": "Sort everything together",
+        "label": "valid",
+        "time": "O(N log N)",
+        "space": "O(N)",
+        "why": "Correct, but it ignores that each feed is already sorted."
+      },
+      {
+        "id": "pairwise",
+        "name": "Merge the feeds two at a time, one after another",
+        "hint": "Combine lists step by step",
+        "label": "valid",
+        "time": "O(N k)",
+        "space": "O(N)",
+        "why": "Correct, but early stories are copied again in every later merge."
+      },
+      {
+        "id": "roundrobin",
+        "name": "Take one story from each feed in turn",
+        "hint": "Go round the feeds",
+        "label": "unsuitable",
+        "time": "O(N)",
+        "space": "O(N)",
+        "why": "Taking turns ignores the times, so the timeline is not sorted."
+      }
+    ]
+  },
+  {
+    "id": "P9-charging-bays",
+    "level": 9,
+    "title": "Charging Bays",
+    "statement": "Electric buses arrive at a depot with fixed charging start and end times. Find the fewest charging bays so that no two buses share a bay at the same time.",
+    "examples": [
+      "[0, 30], [5, 10], [15, 20] need 2 bays"
+    ],
+    "constraints": [
+      "Up to 100,000 buses"
+    ],
+    "approaches": [
+      {
+        "id": "heapends",
+        "name": "Sort by start; min-heap of end times of busy bays",
+        "hint": "Reuse the bay that frees up first",
+        "label": "best",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "The heap root is the bay that frees up earliest, so each bus either reuses it or opens a new bay."
+      },
+      {
+        "id": "twolists",
+        "name": "Sort starts and ends separately and sweep with two pointers",
+        "hint": "Count buses arriving and leaving",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Also correct and just as fast; it counts how many buses charge at each start time."
+      },
+      {
+        "id": "pairs",
+        "name": "Compare every pair of buses for overlap",
+        "hint": "Check each pair",
+        "label": "unsuitable",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Counting overlapping pairs does not give the number of bays, and it is too slow for 100,000 buses."
+      }
+    ]
+  }
+]

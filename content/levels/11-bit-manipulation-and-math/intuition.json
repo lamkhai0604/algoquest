@@ -1,0 +1,11 @@
+{
+  "question": "Every number in a list appears twice except one. Which single operation, applied to all of them, leaves exactly that one number?",
+  "options": [
+    "Adding them all",
+    "XOR-ing them all",
+    "AND-ing them all",
+    "Multiplying them all"
+  ],
+  "answer": 1,
+  "explanation": "x ^ x = 0 and x ^ 0 = x, and XOR does not care about order. Every pair cancels, and the number that appears once is what remains."
+}

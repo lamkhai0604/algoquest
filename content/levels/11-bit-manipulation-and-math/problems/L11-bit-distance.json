@@ -1,0 +1,108 @@
+{
+  "id": "L11-bit-distance",
+  "level": 11,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Switch Distance",
+  "statement": "A panel of switches is stored as a whole number: bit i is switch i, 1 for on. Return how many switches must be flipped to change panel `a` into panel `b`.",
+  "examples": [
+    {
+      "input": "a = 1, b = 4",
+      "output": "2",
+      "explanation": "001 → 100: two switches differ"
+    },
+    {
+      "input": "a = 3, b = 1",
+      "output": "1"
+    }
+  ],
+  "constraints": [
+    "0 <= a, b <= 2^31 - 1"
+  ],
+  "answerKey": {
+    "pattern": "XOR marks the differing bits; count its 1 bits",
+    "keyPoints": [
+      "a ^ b has a 1 exactly where a and b differ",
+      "Count the 1 bits of a ^ b, for example with n & (n - 1)"
+    ],
+    "timeComplexity": "O(1): at most 31 bits",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "a equals b",
+      "One of them is 0",
+      "Values near 2^31 − 1"
+    ],
+    "acceptableSlowerApproaches": [
+      "Compare the two binary strings character by character after padding"
+    ]
+  },
+  "hints": [
+    "Which bit operation is 1 exactly where two bits differ?",
+    "XOR. Now count the 1 bits of the result.",
+    "Use the lit-windows trick: x = x & (x − 1) until x is 0."
+  ],
+  "starterCode": {
+    "javascript": "function switchDistance(a, b) {\n  // return the number of differing bits\n}",
+    "java": "class Solution {\n  int switchDistance(int a, int b) {\n    // return the number of differing bits\n  }\n}"
+  },
+  "similarLeetCode": "Hamming Distance",
+  "tests": [
+    {
+      "input": [
+        1,
+        4
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        3,
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        0,
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        7,
+        7
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        0,
+        2147483647
+      ],
+      "expected": 31
+    },
+    {
+      "input": [
+        2147483647,
+        1073741824
+      ],
+      "expected": 30
+    },
+    {
+      "input": [
+        123456,
+        654321
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        1,
+        2
+      ],
+      "expected": 2
+    }
+  ]
+}

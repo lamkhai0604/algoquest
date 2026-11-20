@@ -1,0 +1,108 @@
+{
+  "id": "L11-prime-lanterns",
+  "level": 11,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Prime Lanterns",
+  "statement": "A festival hangs lanterns on poles numbered 2 to n − 1 and lights only the poles whose number is prime. Return how many lanterns are lit, that is, how many prime numbers are less than `n`.",
+  "examples": [
+    {
+      "input": "n = 10",
+      "output": "4",
+      "explanation": "2, 3, 5, 7"
+    },
+    {
+      "input": "n = 2",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "0 <= n <= 5 * 10^6"
+  ],
+  "answerKey": {
+    "pattern": "Sieve of Eratosthenes",
+    "keyPoints": [
+      "Start with every number from 2 to n − 1 marked as possibly prime",
+      "For each p from 2 while p * p < n: if p is still marked, cross out p*p, p*p + p, ... below n",
+      "Starting at p * p works because smaller multiples were crossed out by smaller primes",
+      "Count what is still marked"
+    ],
+    "timeComplexity": "O(n log log n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "n <= 2 gives 0",
+      "n = 3 gives 1",
+      "Large n near 5 million"
+    ],
+    "acceptableSlowerApproaches": [
+      "Test each number by trial division up to its square root: O(n √n), too slow for 5 million"
+    ]
+  },
+  "hints": [
+    "Checking each number on its own repeats a lot of work. What can one prime tell you about many other numbers?",
+    "Every multiple of a prime p (other than p) is not prime. Cross them out.",
+    "Use a boolean array; for p with p * p < n, if p is unmarked, cross out from p * p in steps of p. Count the rest."
+  ],
+  "starterCode": {
+    "javascript": "function primeLanterns(n) {\n  // return the number of primes below n\n}",
+    "java": "class Solution {\n  int primeLanterns(int n) {\n    // return the number of primes below n\n  }\n}"
+  },
+  "similarLeetCode": "Count Primes",
+  "tests": [
+    {
+      "input": [
+        10
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        3
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        100
+      ],
+      "expected": 25
+    },
+    {
+      "input": [
+        1000
+      ],
+      "expected": 168
+    },
+    {
+      "input": [
+        100000
+      ],
+      "expected": 9592
+    },
+    {
+      "input": [
+        5000000
+      ],
+      "expected": 348513
+    }
+  ]
+}

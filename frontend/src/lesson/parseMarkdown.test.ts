@@ -75,6 +75,15 @@ describe("parseMarkdown tables", () => {
     ]);
   });
 
+  it("keeps an escaped pipe inside a cell", () => {
+    const blocks = parseMarkdown(
+      ["| Operator | Example |", "| --- | --- |", "| `a \\| b` | 1100 \\| 1010 |"].join("\n"),
+    );
+    expect(blocks).toEqual([
+      { type: "table", header: ["Operator", "Example"], rows: [["`a | b`", "1100 | 1010"]] },
+    ]);
+  });
+
   it("keeps a lone pipe line as a paragraph", () => {
     expect(parseMarkdown("| not a table |")).toEqual([
       { type: "paragraph", text: "| not a table |" },
