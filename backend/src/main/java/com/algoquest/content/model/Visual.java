@@ -14,8 +14,8 @@ import java.util.List;
  * step travels, the queue as vertex indices, and each vertex's ring (its distance, or -1) for
  * animation (D-061), and an optional window: the first and last index of a range of cells to shade
  * (D-063), an optional stack drawn as a strip, bottom first (D-065), and an explore flag that makes
- * a graph step interactive (D-064), and optional intervals: one {@code [start, end]} per cell, drawn
- * as bars on a shared time axis, with the indexes of kept intervals and a sweep line (D-066).
+ * a graph step interactive (D-064), and optional intervals: one {@code [start, end]} per cell,
+ * drawn as bars on a shared time axis, with the indexes of kept intervals and a sweep line (D-066).
  * Everything except {@code cells} is optional.
  */
 public record Visual(

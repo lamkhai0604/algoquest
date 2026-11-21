@@ -660,7 +660,8 @@ function Timeline({
   const height = TIMELINE_TOP + intervals.length * TIMELINE_ROW + 8;
   const every = span <= 16 ? 1 : span <= 32 ? 2 : 5;
   const ticks: number[] = [];
-  for (let v = Math.ceil(lo / every) * every; v <= hi; v += every) ticks.push(v);
+  for (let v = Math.ceil(lo / every) * every; v <= hi; v += every)
+    ticks.push(v);
   const chosen = new Set(shown.chosen ?? []);
   const marks = new Map<number, string[]>();
   for (const m of visual.markers ?? []) {
@@ -689,7 +690,11 @@ function Timeline({
     for (const m of visual.markers ?? []) {
       const from = was.get(m.label);
       if (from === undefined || from === m.index) continue;
-      shift(svg.querySelector(`[data-marker="${m.index}"]`), 0, (from - m.index) * TIMELINE_ROW);
+      shift(
+        svg.querySelector(`[data-marker="${m.index}"]`),
+        0,
+        (from - m.index) * TIMELINE_ROW,
+      );
     }
     if (
       visual.line !== null &&
@@ -697,7 +702,11 @@ function Timeline({
       previous.line !== null &&
       previous.line !== undefined
     ) {
-      shift(svg.querySelector("[data-line]"), (previous.line - visual.line) * unit, 0);
+      shift(
+        svg.querySelector("[data-line]"),
+        (previous.line - visual.line) * unit,
+        0,
+      );
     }
   }, [visual, previous, masked, width, unit]);
   return (
@@ -719,13 +728,18 @@ function Timeline({
               y1={TIMELINE_TOP - 4}
               y2={height - 4}
             />
-            <text className={styles.timelineTime} x={x(v)} y={TIMELINE_TOP - 10}>
+            <text
+              className={styles.timelineTime}
+              x={x(v)}
+              y={TIMELINE_TOP - 10}
+            >
               {v}
             </text>
           </g>
         ))}
         {intervals.map(([a = 0, b = 0], i) => {
-          const y = TIMELINE_TOP + i * TIMELINE_ROW + (TIMELINE_ROW - TIMELINE_BAR) / 2;
+          const y =
+            TIMELINE_TOP + i * TIMELINE_ROW + (TIMELINE_ROW - TIMELINE_BAR) / 2;
           const kept = chosen.has(i);
           const current = marks.has(i);
           return (
