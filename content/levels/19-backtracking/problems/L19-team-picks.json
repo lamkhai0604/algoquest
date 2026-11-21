@@ -1,0 +1,182 @@
+{
+  "id": "L19-team-picks",
+  "level": 19,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Team Picks",
+  "statement": "A coach has n players with skill ratings and must pick exactly k of them. Return how many different teams have a total rating of at least minTotal.",
+  "examples": [
+    {
+      "input": "ratings = [5, 3, 8, 1], k = 2, minTotal = 9",
+      "output": "3"
+    },
+    {
+      "input": "ratings = [1, 1], k = 2, minTotal = 3",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "1 <= k <= n <= 16",
+    "1 <= ratings[i] <= 100"
+  ],
+  "answerKey": {
+    "pattern": "Backtracking over combinations of size k",
+    "keyPoints": [
+      "Choose players with a start index so each team is built once",
+      "Stop when k players are chosen and check the total",
+      "Prune when too few players are left to reach k"
+    ],
+    "timeComplexity": "O(C(n, k) · k)",
+    "spaceComplexity": "O(k)",
+    "edgeCases": [
+      "k = n",
+      "k = 1",
+      "No team reaches the minimum"
+    ],
+    "acceptableSlowerApproaches": [
+      "Check every subset and keep those of size k: O(n · 2ⁿ)"
+    ]
+  },
+  "hints": [
+    "A team is a set: order does not matter. How do you build each set once?",
+    "Choose players in increasing index order with a start index.",
+    "Recurse with (start, chosen, total); at k chosen, count it if the total is high enough."
+  ],
+  "starterCode": {
+    "javascript": "function teamPicks(ratings, k, minTotal) {\n  // return the number of teams\n}",
+    "java": "class Solution {\n  int teamPicks(int[] ratings, int k, int minTotal) {\n    // return the number of teams\n  }\n}"
+  },
+  "similarLeetCode": "Combinations (count with a condition)",
+  "tests": [
+    {
+      "input": [
+        [
+          5,
+          3,
+          8,
+          1
+        ],
+        2,
+        9
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          1,
+          1
+        ],
+        2,
+        3
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          4
+        ],
+        1,
+        4
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        5,
+        15
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          10,
+          20,
+          30
+        ],
+        1,
+        25
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          43,
+          48,
+          24,
+          57,
+          43,
+          93,
+          13,
+          82,
+          86,
+          85,
+          68,
+          58
+        ],
+        4,
+        250
+      ],
+      "expected": 178
+    },
+    {
+      "input": [
+        [
+          53,
+          80,
+          6,
+          47,
+          12,
+          41,
+          56,
+          47,
+          59,
+          76,
+          94,
+          47,
+          6,
+          38,
+          34,
+          36
+        ],
+        8,
+        400
+      ],
+      "expected": 3378
+    },
+    {
+      "input": [
+        [
+          12,
+          29,
+          51,
+          5,
+          22,
+          22,
+          61,
+          85,
+          92,
+          71,
+          14,
+          91,
+          77,
+          66
+        ],
+        7,
+        300
+      ],
+      "expected": 2711
+    }
+  ]
+}

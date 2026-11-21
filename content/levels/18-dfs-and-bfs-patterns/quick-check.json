@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Kahn's algorithm finishes with 7 vertices in the order, but the graph has 9. What does that mean?",
+    "options": [
+      "Two vertices are on or behind a cycle, so no valid order exists",
+      "The order is still valid; add the 2 at the end",
+      "The graph has two components",
+      "A vertex has no edges"
+    ],
+    "answer": 0,
+    "explanation": "Vertices on a cycle never reach in-degree 0, so they never join the queue."
+  },
+  {
+    "question": "Edges have travel times (all positive). Why is BFS not enough for the fastest route?",
+    "options": [
+      "BFS counts edges, not total time; Dijkstra takes the cheapest known vertex first",
+      "BFS cannot handle directed edges",
+      "BFS is slower than Dijkstra",
+      "BFS needs a sorted graph"
+    ],
+    "answer": 0,
+    "explanation": "Two short hops can take longer than one long road. Dijkstra uses a min-heap of distances so each vertex is final when it leaves the heap."
+  },
+  {
+    "question": "While two-colouring with BFS, a neighbour already has the same colour as the current vertex. What does that tell you?",
+    "options": [
+      "The graph cannot be split into two groups: it has an odd cycle",
+      "Recolour the neighbour and continue",
+      "The graph is a tree",
+      "Nothing: skip it"
+    ],
+    "answer": 0,
+    "explanation": "An edge between two vertices of the same colour cannot be fixed by recolouring; it comes from a cycle of odd length."
+  }
+]

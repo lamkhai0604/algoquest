@@ -5,7 +5,7 @@
 | Updated | 2026-11-20 |
 | Sprint | Sprint 16 — Levels 18 and 19: approved 2026-11-20 ([plan](sprints/sprint-16.md)); Sprint 15 closed ([report](reports/sprint-15-report.md)) |
 | Repository | `lamkhai0604/algoquest` (public, D-039); branches `main` (protected by ruleset) and `dev` |
-| Active work | Graph explorer, Level 18 DFS & BFS Patterns and Level 19 Backtracking (T-543, T-566 to T-569) |
+| Active work | Graph explorer, motion in every view, Level 18 DFS & BFS Patterns and Level 19 Backtracking built (T-543, T-571, T-566 to T-569); waiting on the PO review |
 | Source revision | `dev` (see `git log dev`) |
 | Outstanding changes | Sprint 15 report and Sprint 16 work, in the `dev → main` pull request |
 | Verification | GitHub Actions on 2026-11-19: backend verify (203 tests), frontend, smoke (6 passed) |

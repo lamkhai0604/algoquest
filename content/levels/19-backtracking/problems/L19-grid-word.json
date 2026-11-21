@@ -1,0 +1,170 @@
+{
+  "id": "L19-grid-word",
+  "level": 19,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Grid Word",
+  "statement": "A word puzzle is a grid of letters, given as one string per row. Return true if word can be traced by starting at any cell and moving up, down, left or right to a neighbouring cell for each next letter, never using a cell twice.",
+  "examples": [
+    {
+      "input": "rows = [\"ABCE\", \"SFCS\", \"ADEE\"], word = \"ABCCED\"",
+      "output": "true"
+    },
+    {
+      "input": "rows = [\"ABCE\", \"SFCS\", \"ADEE\"], word = \"ABCB\"",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "1 <= rows, columns <= 6",
+    "1 <= word.length <= 12",
+    "Uppercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Backtracking DFS on a grid",
+    "keyPoints": [
+      "Try every cell as the start",
+      "DFS: the cell must match word[i] and be unused",
+      "Mark it used, explore the four neighbours for word[i + 1], then unmark",
+      "Return true as soon as the whole word matches"
+    ],
+    "timeComplexity": "O(R · C · 4^L)",
+    "spaceComplexity": "O(L)",
+    "edgeCases": [
+      "Word longer than the grid",
+      "Reusing a cell is not allowed",
+      "One-letter word"
+    ],
+    "acceptableSlowerApproaches": [
+      "List every path of length L and compare: same worst case, no pruning"
+    ]
+  },
+  "hints": [
+    "The path can bend, but each cell is used once. What must you undo when a branch fails?",
+    "The \"used\" mark on the cell, so other paths can use it.",
+    "DFS(r, c, i): check bounds, letter and use; mark; try four neighbours with i + 1; unmark; return the result."
+  ],
+  "starterCode": {
+    "javascript": "function gridWord(rows, word) {\n  // return true or false\n}",
+    "java": "class Solution {\n  boolean gridWord(String[] rows, String word) {\n    // return true or false\n  }\n}"
+  },
+  "similarLeetCode": "Word Search",
+  "tests": [
+    {
+      "input": [
+        [
+          "ABCE",
+          "SFCS",
+          "ADEE"
+        ],
+        "ABCCED"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "ABCE",
+          "SFCS",
+          "ADEE"
+        ],
+        "ABCB"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          "A"
+        ],
+        "A"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "AB"
+        ],
+        "BA"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "AA"
+        ],
+        "AAA"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          "ABCE",
+          "SFCS",
+          "ADEE"
+        ],
+        "SEE"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "DCDDCB",
+          "DDCCAA",
+          "BCDADA",
+          "DEDABD",
+          "CAABBD"
+        ],
+        "DAAACAAB"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "CDABED",
+          "ADBADE",
+          "CAEEEC",
+          "CBCECA",
+          "ACBABC",
+          "EDEBCE"
+        ],
+        "BABDAEEECE"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "CDABED",
+          "ADBADE",
+          "CAEEEC",
+          "CBCECA",
+          "ACBABC",
+          "EDEBCE"
+        ],
+        "EEEEEEEEEEEE"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          "DCDDCB",
+          "DDCCAA",
+          "BCDADA",
+          "DEDABD",
+          "CAABBD"
+        ],
+        "ABCDEABCDEAB"
+      ],
+      "expected": false
+    }
+  ]
+}

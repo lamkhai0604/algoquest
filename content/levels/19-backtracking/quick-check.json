@@ -1,0 +1,35 @@
+[
+  {
+    "question": "In the subsets template, why does the loop start at `start` instead of 0?",
+    "options": [
+      "So each subset is built once, with items in index order",
+      "To make the search faster for permutations",
+      "Because index 0 is always included",
+      "To skip duplicates"
+    ],
+    "answer": 0,
+    "explanation": "Choosing only later items means {1, 2} is built once and never again as {2, 1}."
+  },
+  {
+    "question": "You store `result.push(path)` instead of a copy. What happens?",
+    "options": [
+      "Every stored answer is the same array, which ends up empty after all the undos",
+      "The search runs forever",
+      "Only the last answer is lost",
+      "Nothing: it works the same"
+    ],
+    "answer": 0,
+    "explanation": "All entries point to one array that keeps changing; push a copy such as [...path]."
+  },
+  {
+    "question": "Looking for combinations that add up to a target, the path sum is already above the target and all numbers are positive. What should the search do?",
+    "options": [
+      "Return at once: no deeper choice can bring the sum down",
+      "Keep going until the path is full",
+      "Undo two choices",
+      "Restart from the top"
+    ],
+    "answer": 0,
+    "explanation": "That is pruning: the whole subtree below can only add more, so exploring it is wasted work."
+  }
+]

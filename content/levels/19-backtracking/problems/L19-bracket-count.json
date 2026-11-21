@@ -1,0 +1,99 @@
+{
+  "id": "L19-bracket-count",
+  "level": 19,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Bracket Count",
+  "statement": "A code formatter wants to know how many different strings of n pairs of brackets are balanced (every \"(\" is closed by a later \")\" and no prefix has more \")\" than \"(\"). Return that number.",
+  "examples": [
+    {
+      "input": "n = 3",
+      "output": "5"
+    },
+    {
+      "input": "n = 1",
+      "output": "1"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 12"
+  ],
+  "answerKey": {
+    "pattern": "Backtracking with counts of open and close brackets",
+    "keyPoints": [
+      "Add \"(\" while fewer than n are open",
+      "Add \")\" only when it would not exceed the opens so far",
+      "Count when the string has 2n characters"
+    ],
+    "timeComplexity": "O(answer · n)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "n = 1",
+      "Larger n grows fast"
+    ],
+    "acceptableSlowerApproaches": [
+      "Generate all 2^(2n) strings and check each: much slower"
+    ]
+  },
+  "hints": [
+    "When may you add a closing bracket?",
+    "Only when more \"(\" than \")\" have been placed so far.",
+    "Recurse on (open, close); add \"(\" while open < n, \")\" while close < open; count at length 2n."
+  ],
+  "starterCode": {
+    "javascript": "function bracketCount(n) {\n  // return the number of balanced strings\n}",
+    "java": "class Solution {\n  int bracketCount(int n) {\n    // return the number of balanced strings\n  }\n}"
+  },
+  "similarLeetCode": "Generate Parentheses",
+  "tests": [
+    {
+      "input": [
+        3
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        4
+      ],
+      "expected": 14
+    },
+    {
+      "input": [
+        5
+      ],
+      "expected": 42
+    },
+    {
+      "input": [
+        8
+      ],
+      "expected": 1430
+    },
+    {
+      "input": [
+        10
+      ],
+      "expected": 16796
+    },
+    {
+      "input": [
+        12
+      ],
+      "expected": 208012
+    }
+  ]
+}

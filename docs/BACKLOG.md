@@ -217,12 +217,12 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-543 | Interactive graph explorer: pick the start vertex, compare BFS and DFS on the same graph | FR-03, D-064 | P1 | To do |
-| T-566 | Level 18 DFS & BFS Patterns content | FR-03, FR-04, D-048 | P1 | To do |
-| T-567 | Level 18 pattern challenges | D-057 | P2 | To do |
-| T-568 | Level 19 Backtracking content | FR-03, FR-04, D-048 | P1 | To do |
-| T-569 | Level 19 pattern challenges | D-057 | P2 | To do |
-| T-571 | Motion in every walkthrough view: sliding markers, swaps, growing tree nodes, path highlight, pointer flips, stack strip | FR-03, D-065 | P1 | To do |
+| T-543 | Interactive graph explorer: pick the start vertex, compare BFS and DFS on the same graph | FR-03, D-064 | P1 | Built 2026-11-20: trace unit tests, rendering test; PO review pending |
+| T-566 | Level 18 DFS & BFS Patterns content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-567 | Level 18 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-568 | Level 19 Backtracking content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-569 | Level 19 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-571 | Motion in every walkthrough view: sliding markers, swaps, growing tree nodes, path highlight, pointer flips, stack strip | FR-03, D-065 | P1 | Built 2026-11-20: frontend tests; motion checked in a recording; PO review pending |
 | T-570 | Sprint 16 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
