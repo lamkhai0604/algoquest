@@ -1,0 +1,107 @@
+{
+  "id": "L21-stair-ways",
+  "level": 21,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Stair Ways",
+  "statement": "A staircase has n steps. Each move climbs 1 step or 2 steps. Return the number of different ways to reach the top.",
+  "examples": [
+    {
+      "input": "n = 3",
+      "output": "3"
+    },
+    {
+      "input": "n = 5",
+      "output": "8"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 45"
+  ],
+  "answerKey": {
+    "pattern": "1-D DP: ways(i) = ways(i − 1) + ways(i − 2)",
+    "keyPoints": [
+      "The last move is either 1 step (from i − 1) or 2 steps (from i − 2)",
+      "Base cases ways(0) = 1 and ways(1) = 1",
+      "Only the last two values are needed"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "n = 1",
+      "n = 2",
+      "n = 45 still fits in an int"
+    ],
+    "acceptableSlowerApproaches": [
+      "Plain recursion without memo: O(2^n)"
+    ]
+  },
+  "hints": [
+    "What was the last move to reach step i?",
+    "ways(i) = ways(i − 1) + ways(i − 2).",
+    "Fill from the bottom keeping two numbers: a = ways(i − 2), b = ways(i − 1)."
+  ],
+  "starterCode": {
+    "javascript": "function stairWays(n) {\n  // return the number of ways\n}",
+    "java": "class Solution {\n  int stairWays(int n) {\n    // return the number of ways\n  }\n}"
+  },
+  "similarLeetCode": "Climbing Stairs",
+  "tests": [
+    {
+      "input": [
+        3
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        5
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        10
+      ],
+      "expected": 89
+    },
+    {
+      "input": [
+        20
+      ],
+      "expected": 10946
+    },
+    {
+      "input": [
+        30
+      ],
+      "expected": 1346269
+    },
+    {
+      "input": [
+        44
+      ],
+      "expected": 1134903170
+    },
+    {
+      "input": [
+        45
+      ],
+      "expected": 1836311903
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+[
+  {
+    "id": "P20-conference-talks",
+    "level": 20,
+    "title": "Conference Talk Picker",
+    "statement": "A one-track conference received 5,000 talk proposals, each with a fixed time slot. The organizers want to accept as many talks as possible with no two at the same time.",
+    "examples": [
+      "[9:00–10:00], [9:30–11:00], [10:00–11:00] → 2 talks"
+    ],
+    "constraints": [
+      "n = 5,000 talks"
+    ],
+    "approaches": [
+      {
+        "id": "by-end",
+        "name": "Sort by end time and keep each talk that starts after the last kept one ends",
+        "hint": "Earliest finish first",
+        "label": "best",
+        "time": "O(n log n)",
+        "space": "O(1) extra",
+        "why": "Finishing first always leaves the most room; one sort and one pass."
+      },
+      {
+        "id": "dp",
+        "name": "Sort by end and use DP: best(i) = max(best(i − 1), 1 + best(last talk that ends before i starts))",
+        "hint": "Weighted scheduling",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Correct and needed when talks have different values, but more work than the greedy rule here."
+      },
+      {
+        "id": "shortest",
+        "name": "Keep the shortest talks first",
+        "hint": "Short is good",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Wrong: a short talk across the boundary of two long talks blocks both of them."
+      },
+      {
+        "id": "subsets",
+        "name": "Try every set of talks",
+        "hint": "All combinations",
+        "label": "unsuitable",
+        "time": "O(2ⁿ · n)",
+        "space": "O(n)",
+        "why": "Correct but impossible for 5,000 talks."
+      }
+    ]
+  },
+  {
+    "id": "P20-room-booking",
+    "level": 20,
+    "title": "Office Room Planner",
+    "statement": "A company has tomorrow's 20,000 meetings with start and end times. Facilities needs the smallest number of rooms so that every meeting has a room.",
+    "examples": [
+      "[9–11], [10–12], [11–13] → 2 rooms"
+    ],
+    "constraints": [
+      "n = 20,000 meetings",
+      "Times in minutes of the day"
+    ],
+    "approaches": [
+      {
+        "id": "sweep",
+        "name": "Sort start times and end times separately and sweep, counting rooms in use",
+        "hint": "Two sorted lists",
+        "label": "best",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "The answer is the most meetings running at once; a sweep finds it after two sorts."
+      },
+      {
+        "id": "heap",
+        "name": "Sort by start and keep a min-heap of end times of rooms in use",
+        "hint": "Earliest free room",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Same bound, and it can also say which room each meeting gets."
+      },
+      {
+        "id": "minutes",
+        "name": "Count meetings at every minute of the day",
+        "hint": "Timeline array",
+        "label": "valid",
+        "time": "O(n + T)",
+        "space": "O(T)",
+        "why": "Fine for 1,440 minutes with a difference array; breaks when times are large or fractional."
+      },
+      {
+        "id": "pairs",
+        "name": "Compare every pair of meetings for overlap",
+        "hint": "All pairs",
+        "label": "unsuitable",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Counting overlapping pairs does not even give the number of rooms, and is slow."
+      }
+    ]
+  },
+  {
+    "id": "P20-calendar-merge",
+    "level": 20,
+    "title": "Shared Calendar Busy Times",
+    "statement": "A team calendar shows the busy times of 8 people, 50,000 events in total, in no order. The app must show the merged busy blocks for the whole team.",
+    "examples": [
+      "[1–3], [2–6], [8–10] → [1–6], [8–10]"
+    ],
+    "constraints": [
+      "n = 50,000 events"
+    ],
+    "approaches": [
+      {
+        "id": "sort-merge",
+        "name": "Sort by start and merge each event into the last block when they overlap",
+        "hint": "One sort, one pass",
+        "label": "best",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "After sorting, only the last block can meet the next event."
+      },
+      {
+        "id": "kway",
+        "name": "Sort each person's events, then merge the 8 lists with a min-heap",
+        "hint": "k-way merge",
+        "label": "valid",
+        "time": "O(n log k)",
+        "space": "O(n)",
+        "why": "Slightly faster when each person's list is already sorted."
+      },
+      {
+        "id": "repeat",
+        "name": "Repeatedly scan all pairs and merge two overlapping events until nothing changes",
+        "hint": "Merge until stable",
+        "label": "unsuitable",
+        "time": "O(n³) worst case",
+        "space": "O(n)",
+        "why": "Correct but far too slow for 50,000 events."
+      },
+      {
+        "id": "by-end",
+        "name": "Sort by end and keep events that do not overlap",
+        "hint": "Activity selection",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "why": "Answers a different question: it drops events instead of merging them."
+      }
+    ]
+  }
+]

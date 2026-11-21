@@ -464,6 +464,44 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(leaves).toBe(2 ** numbers.length);
   });
 
+  it("Level 20: activity selection keeps each meeting that starts after the last kept end", () => {
+    const steps = walkthrough("20-greedy-and-intervals");
+    const intervals = steps[0]!.visual!.intervals!;
+    const ends = intervals.map(([, e = 0]) => e);
+    expect(ends).toEqual([...ends].sort((a, b) => a - b));
+    let last = -Infinity;
+    const kept: number[] = [];
+    steps.slice(1).forEach((step, i) => {
+      const [s = 0, e = 0] = intervals[i]!;
+      if (s >= last) {
+        kept.push(i);
+        last = e;
+      }
+      expect(step.visual!.markers![0]!.index).toBe(i);
+      expect(step.visual!.chosen).toEqual(kept);
+      expect(step.visual!.line).toBe(last);
+      expect(Number(value(step, "kept"))).toBe(kept.length);
+    });
+    expect(kept).toHaveLength(3);
+  });
+
+  it("Level 21: each dp cell is the better of skipping or taking the house", () => {
+    const steps = walkthrough("21-dynamic-programming-fundamentals");
+    const gifts = JSON.parse(value(steps[0]!, "gifts")!) as number[];
+    const dp: number[] = [];
+    gifts.forEach((g, i) => {
+      dp.push(
+        i === 0 ? g : i === 1 ? Math.max(gifts[0]!, g) : Math.max(dp[i - 1]!, dp[i - 2]! + g),
+      );
+      const step = steps[i + 1]!;
+      expect(step.visual!.markers![0]!.index).toBe(i);
+      expect(step.visual!.cells.slice(0, i + 1)).toEqual(dp.map(String));
+      expect(step.visual!.cells.slice(i + 1).every((c) => c === "?")).toBe(true);
+      if (i >= 2) expect(step.visual!.window).toEqual([i - 2, i - 1]);
+    });
+    expect(value(steps.at(-1)!, "result")).toBe(String(dp.at(-1)));
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -503,6 +541,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "17-monotonic-stack",
       "18-dfs-and-bfs-patterns",
       "19-backtracking",
+      "20-greedy-and-intervals",
+      "21-dynamic-programming-fundamentals",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

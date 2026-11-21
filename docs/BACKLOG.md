@@ -229,11 +229,11 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-572 | Interval timeline view: intervals as bars on a time axis, kept intervals, a sweep line | FR-03, D-066 | P1 | To do |
-| T-573 | Level 20 Greedy & Intervals content | FR-03, FR-04, D-048 | P1 | To do |
-| T-574 | Level 20 pattern challenges | D-057 | P2 | To do |
-| T-575 | Level 21 Dynamic Programming Fundamentals content | FR-03, FR-04, D-048 | P1 | To do |
-| T-576 | Level 21 pattern challenges | D-057 | P2 | To do |
+| T-572 | Interval timeline view: intervals as bars on a time axis, kept intervals, a sweep line | FR-03, D-066 | P1 | Built 2026-11-21: content check rules, rendering and loader tests; PO review pending |
+| T-573 | Level 20 Greedy & Intervals content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; greedy rules checked against brute force on small random inputs; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-574 | Level 20 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
+| T-575 | Level 21 Dynamic Programming Fundamentals content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-576 | Level 21 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
 | T-577 | Sprint 17 report and Phase 2 summary | D-007 | P2 | To do |
 
 ## Later (unscheduled)

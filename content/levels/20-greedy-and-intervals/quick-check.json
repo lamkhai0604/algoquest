@@ -1,0 +1,35 @@
+[
+  {
+    "question": "To keep the most non-overlapping intervals, the intervals are sorted by…",
+    "options": [
+      "End time, then kept when they start after the last kept end",
+      "Start time, then kept when they start after the last kept start",
+      "Length, shortest first",
+      "Nothing: try every subset"
+    ],
+    "answer": 0,
+    "explanation": "Sorting by end makes each choice leave as much room as possible; the exchange argument shows it is never worse than any other plan."
+  },
+  {
+    "question": "After sorting bookings by start, a booking [6, 9] meets the last merged block [2, 7]. What happens?",
+    "options": [
+      "The block becomes [2, 9]",
+      "A new block [6, 9] starts",
+      "The block stays [2, 7]",
+      "The block becomes [6, 7]"
+    ],
+    "answer": 0,
+    "explanation": "6 ≤ 7, so they overlap; the block's end grows to max(7, 9) = 9."
+  },
+  {
+    "question": "Meetings [1, 4], [2, 5], [4, 6] (a room is free again at its end). How many rooms are needed?",
+    "options": [
+      "2",
+      "3",
+      "1",
+      "4"
+    ],
+    "answer": 0,
+    "explanation": "At time 2, [1, 4] and [2, 5] both run. At 4 the first room frees up for [4, 6], so two rooms are enough."
+  }
+]

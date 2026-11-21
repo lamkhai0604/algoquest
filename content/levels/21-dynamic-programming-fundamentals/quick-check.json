@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What makes a problem a good fit for dynamic programming?",
+    "options": [
+      "Overlapping subproblems whose best answers combine into the best answer for the whole",
+      "Any problem that uses recursion",
+      "Problems on sorted input",
+      "Problems where a greedy rule always works"
+    ],
+    "answer": 0,
+    "explanation": "DP pays off when the same subproblems repeat (so storing them saves work) and the best whole answer is built from best sub-answers."
+  },
+  {
+    "question": "Coins [1, 3, 4], amount 6. Taking the largest coin first gives 4 + 1 + 1. What does DP find?",
+    "options": [
+      "2 coins: 3 + 3",
+      "3 coins: 4 + 1 + 1",
+      "1 coin",
+      "6 coins"
+    ],
+    "answer": 0,
+    "explanation": "best(6) = 1 + min(best(5), best(3), best(2)) = 1 + best(3) = 2. Greedy is not safe for this coin system."
+  },
+  {
+    "question": "In the house-gifts DP, dp[i] = max(dp[i − 1], dp[i − 2] + gifts[i]). How much memory does it really need?",
+    "options": [
+      "Two numbers: the previous two dp values",
+      "The whole dp array always",
+      "A 2-D table",
+      "n² cells"
+    ],
+    "answer": 0,
+    "explanation": "Each cell reads only the two before it, so two rolling variables are enough: O(1) extra space."
+  }
+]
