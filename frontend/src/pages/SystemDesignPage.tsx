@@ -4,12 +4,12 @@ import { useTranslation } from "../i18n";
 import styles from "./Pages.module.css";
 
 const TOPICS = [
-  "topic1",
-  "topic2",
-  "topic3",
-  "topic4",
-  "topic5",
-  "topic6",
+  "misc.systemDesignTopic1",
+  "misc.systemDesignTopic2",
+  "misc.systemDesignTopic3",
+  "misc.systemDesignTopic4",
+  "misc.systemDesignTopic5",
+  "misc.systemDesignTopic6",
 ] as const;
 
 /** Placeholder for the planned System Design track (D-067). */
@@ -18,18 +18,18 @@ export function SystemDesignPage() {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>
-        {t("systemDesign.title")} <Badge>{t("common.comingSoon")}</Badge>
+        {t("misc.systemDesignTitle")} <Badge>{t("common.comingSoon")}</Badge>
       </h1>
-      <p className={styles.lead}>{t("systemDesign.lead")}</p>
+      <p className={styles.lead}>{t("misc.systemDesignLead")}</p>
       <Card>
-        <h2 className={styles.planned}>{t("systemDesign.planned")}</h2>
+        <h2 className={styles.planned}>{t("misc.systemDesignPlanned")}</h2>
         <ul className={styles.topics}>
           {TOPICS.map((key) => (
-            <li key={key}>{t(`systemDesign.${key}`)}</li>
+            <li key={key}>{t(key)}</li>
           ))}
         </ul>
       </Card>
-      <p className={styles.muted}>{t("systemDesign.note")}</p>
+      <p className={styles.muted}>{t("misc.systemDesignNote")}</p>
       <p>
         <Link to="/">{t("misc.backQuest")}</Link>
       </p>
