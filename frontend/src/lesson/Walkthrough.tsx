@@ -310,7 +310,9 @@ function Graph({ visual }: { visual: Visual }) {
               <circle
                 className={cx(
                   styles.treeNode,
-                  marks ? styles.treeNodeCurrent : visited.has(i) && styles.graphVisited,
+                  marks
+                    ? styles.treeNodeCurrent
+                    : visited.has(i) && styles.graphVisited,
                 )}
                 cx={x}
                 cy={y}
