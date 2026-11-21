@@ -426,6 +426,40 @@ describe("lesson page", () => {
     expect(document.querySelectorAll('[data-window="true"]')).toHaveLength(3);
   });
 
+  it("draws intervals on a time axis with kept bars and a sweep line", async () => {
+    const lesson = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Meetings",
+          body: "Keep B.",
+          visual: {
+            cells: ["A", "B", "C"],
+            intervals: [
+              [1, 4],
+              [2, 3],
+              [5, 7],
+            ],
+            chosen: [1],
+            line: 3,
+            markers: [{ index: 2, label: "next" }],
+          },
+        },
+      ],
+    };
+    open(lesson, 2);
+
+    expect(
+      await screen.findByRole("img", { name: "Intervals on a time axis" }),
+    ).toBeInTheDocument();
+    expect(document.querySelectorAll("[data-bar]")).toHaveLength(3);
+    expect(document.querySelectorAll('[data-kept="true"]')).toHaveLength(1);
+    expect(document.querySelector('[data-marker="2"]')).toHaveTextContent(
+      "next",
+    );
+    expect(document.querySelector("[data-line]")).not.toBeNull();
+  });
+
   it("draws a stack strip and lets the explorer switch to DFS", async () => {
     const lesson = {
       ...LESSON,

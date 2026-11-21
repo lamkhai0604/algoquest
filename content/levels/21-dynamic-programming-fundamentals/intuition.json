@@ -1,0 +1,11 @@
+{
+  "question": "A naive recursive function computes the number of ways to climb 40 stairs by calling itself for 39 and 38 stairs, again and again. Roughly how many calls does it make?",
+  "options": [
+    "Hundreds of millions: the same smaller cases are solved over and over",
+    "About 40: one per stair",
+    "About 1,600: 40 squared",
+    "About 80: two per stair"
+  ],
+  "answer": 0,
+  "explanation": "The call tree doubles almost every level, so it makes about 330 million calls. Storing each stair's answer once (memoization or a table) cuts it to 40 steps. That is dynamic programming."
+}

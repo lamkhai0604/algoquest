@@ -1,0 +1,153 @@
+[
+  {
+    "id": "P21-change-maker",
+    "level": 21,
+    "title": "Arcade Token Change",
+    "statement": "An arcade's token machine uses coin values that change by country, such as [1, 7, 10]. For any amount up to 50,000 it must pay out the fewest coins.",
+    "examples": [
+      "coins [1, 7, 10], amount 14 → 2 coins (7 + 7)"
+    ],
+    "constraints": [
+      "Up to 10 coin values",
+      "amount ≤ 50,000"
+    ],
+    "approaches": [
+      {
+        "id": "dp",
+        "name": "DP over amounts: best(a) = 1 + min best(a − coin)",
+        "hint": "Table of amounts",
+        "label": "best",
+        "time": "O(amount · coins)",
+        "space": "O(amount)",
+        "why": "Exact for every coin system and fast enough: 500,000 steps."
+      },
+      {
+        "id": "bfs",
+        "name": "BFS from 0, adding one coin per level",
+        "hint": "Fewest steps",
+        "label": "valid",
+        "time": "O(amount · coins)",
+        "space": "O(amount)",
+        "why": "Same bound; each level is one more coin."
+      },
+      {
+        "id": "greedy",
+        "name": "Always pay the largest coin that fits",
+        "hint": "Biggest first",
+        "label": "unsuitable",
+        "time": "O(amount / coin)",
+        "space": "O(1)",
+        "why": "Wrong for [1, 7, 10]: 14 becomes 10 + 1 + 1 + 1 + 1 instead of 7 + 7."
+      },
+      {
+        "id": "recursion",
+        "name": "Plain recursion over the last coin without storing results",
+        "hint": "Try everything",
+        "label": "unsuitable",
+        "time": "Exponential",
+        "space": "O(amount)",
+        "why": "Solves the same amounts again and again."
+      }
+    ]
+  },
+  {
+    "id": "P21-route-count",
+    "level": 21,
+    "title": "Warehouse Robot Routes",
+    "statement": "A warehouse floor is a 200 × 200 grid with some shelves blocking cells. A robot moves only right or down from the loading dock (top-left) to the shipping door (bottom-right). The planner needs the number of routes modulo 1,000,000,007.",
+    "examples": [
+      "3 × 3 floor, centre blocked → 2 routes"
+    ],
+    "constraints": [
+      "200 × 200 cells"
+    ],
+    "approaches": [
+      {
+        "id": "grid-dp",
+        "name": "Grid DP: routes(r, c) = routes from above + routes from the left",
+        "hint": "Fill row by row",
+        "label": "best",
+        "time": "O(rows · columns)",
+        "space": "O(columns)",
+        "why": "40,000 cells, each filled once from two neighbours."
+      },
+      {
+        "id": "memo",
+        "name": "Recursion with memoization from the door back to the dock",
+        "hint": "Top-down",
+        "label": "valid",
+        "time": "O(rows · columns)",
+        "space": "O(rows · columns)",
+        "why": "Same work; deep recursion may need care."
+      },
+      {
+        "id": "dfs",
+        "name": "Walk every route with DFS and count",
+        "hint": "Enumerate paths",
+        "label": "unsuitable",
+        "time": "Exponential",
+        "space": "O(rows + columns)",
+        "why": "There are astronomically many routes."
+      },
+      {
+        "id": "formula",
+        "name": "Use the binomial formula C(r + c, r)",
+        "hint": "Combinatorics",
+        "label": "unsuitable",
+        "time": "O(r + c)",
+        "space": "O(1)",
+        "why": "Only correct when no cell is blocked."
+      }
+    ]
+  },
+  {
+    "id": "P21-text-diff",
+    "level": 21,
+    "title": "Document Diff Tool",
+    "statement": "A writing app compares two drafts of up to 3,000 words each and must report the longest sequence of words that appears in both drafts in the same order, to highlight what was kept.",
+    "examples": [
+      "\"the cat sat\" vs \"the dog sat\" → \"the sat\" (2 words)"
+    ],
+    "constraints": [
+      "Each draft ≤ 3,000 words"
+    ],
+    "approaches": [
+      {
+        "id": "lcs",
+        "name": "2-D DP: lcs(i, j) from lcs(i − 1, j − 1) + 1 on a match, else the larger of lcs(i − 1, j) and lcs(i, j − 1)",
+        "hint": "Table of prefixes",
+        "label": "best",
+        "time": "O(n · m)",
+        "space": "O(n · m), or O(m) for the length only",
+        "why": "9 million cells is fine, and the table can be walked back to show the kept words."
+      },
+      {
+        "id": "greedy-match",
+        "name": "Walk both drafts and match each word with its next occurrence",
+        "hint": "First match",
+        "label": "unsuitable",
+        "time": "O(n · m)",
+        "space": "O(1)",
+        "why": "An early match can skip a much longer common run later."
+      },
+      {
+        "id": "subsets",
+        "name": "Try every subsequence of one draft and check it in the other",
+        "hint": "All subsequences",
+        "label": "unsuitable",
+        "time": "O(2ⁿ · m)",
+        "space": "O(n)",
+        "why": "Impossible for 3,000 words."
+      },
+      {
+        "id": "memo",
+        "name": "Recursion on (i, j) with memoization",
+        "hint": "Top-down",
+        "label": "valid",
+        "time": "O(n · m)",
+        "space": "O(n · m)",
+        "why": "Same table filled lazily; recursion depth up to 6,000 needs care."
+      }
+    ]
+  }
+]

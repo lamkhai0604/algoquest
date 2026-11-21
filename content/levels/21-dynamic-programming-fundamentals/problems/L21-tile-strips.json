@@ -1,0 +1,106 @@
+{
+  "id": "L21-tile-strips",
+  "level": 21,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Tile Strips",
+  "statement": "A hallway is 2 units wide and n units long. It is covered with 2 × 1 tiles that can lie across or along the hallway. Return the number of different tilings modulo 1,000,000,007.",
+  "examples": [
+    {
+      "input": "n = 3",
+      "output": "3"
+    },
+    {
+      "input": "n = 1",
+      "output": "1"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 1000"
+  ],
+  "answerKey": {
+    "pattern": "1-D DP: tile(n) = tile(n − 1) + tile(n − 2), modulo 1,000,000,007",
+    "keyPoints": [
+      "The last column is one tile across (from n − 1) or two tiles along (from n − 2)",
+      "tile(0) = 1, tile(1) = 1",
+      "Take the modulo at every addition"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "n = 1",
+      "n = 2",
+      "Large n needs the modulo"
+    ],
+    "acceptableSlowerApproaches": [
+      "Recursion without memo: O(2^n)"
+    ]
+  },
+  "hints": [
+    "Look at the right end of the hallway: how can it be covered?",
+    "Either one tile across, or two tiles along it side by side.",
+    "Same recurrence as the stairs; apply % 1,000,000,007 at each step."
+  ],
+  "starterCode": {
+    "javascript": "function tileStrips(n) {\n  // return the number of tilings mod 1,000,000,007\n}",
+    "java": "class Solution {\n  int tileStrips(int n) {\n    // return the number of tilings mod 1,000,000,007\n  }\n}"
+  },
+  "similarLeetCode": "Domino and Tromino Tiling",
+  "tests": [
+    {
+      "input": [
+        3
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        4
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        10
+      ],
+      "expected": 89
+    },
+    {
+      "input": [
+        50
+      ],
+      "expected": 365010934
+    },
+    {
+      "input": [
+        100
+      ],
+      "expected": 782204094
+    },
+    {
+      "input": [
+        500
+      ],
+      "expected": 523068127
+    },
+    {
+      "input": [
+        1000
+      ],
+      "expected": 107579939
+    }
+  ]
+}

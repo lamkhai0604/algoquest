@@ -145,5 +145,40 @@
       ],
       "explore": true
     }
+  },
+  {
+    "title": "Meetings",
+    "body": "Keep the meeting that ends first.",
+    "visual": {
+      "cells": [
+        "A",
+        "B",
+        "C"
+      ],
+      "intervals": [
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          5,
+          7
+        ]
+      ],
+      "chosen": [
+        1
+      ],
+      "line": 3,
+      "markers": [
+        {
+          "index": 2,
+          "label": "next"
+        }
+      ]
+    }
   }
 ]

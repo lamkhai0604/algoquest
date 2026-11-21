@@ -1,0 +1,157 @@
+{
+  "id": "L21-fewest-coins",
+  "level": 21,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Fewest Coins",
+  "statement": "A ticket machine gives change with coins of the given values, each value available any number of times. Return the fewest coins that add up to exactly amount, or −1 if it cannot be done.",
+  "examples": [
+    {
+      "input": "coins = [1, 3, 4], amount = 6",
+      "output": "2"
+    },
+    {
+      "input": "coins = [2], amount = 3",
+      "output": "-1"
+    }
+  ],
+  "constraints": [
+    "1 <= coins.length <= 12",
+    "1 <= coins[i] <= 10^4",
+    "0 <= amount <= 10^4"
+  ],
+  "answerKey": {
+    "pattern": "1-D DP over amounts: best(a) = 1 + min over coins c of best(a − c)",
+    "keyPoints": [
+      "best(0) = 0",
+      "For every amount from 1 up, try each coin as the last coin",
+      "Unreachable amounts stay infinite; answer −1 if best(amount) is infinite"
+    ],
+    "timeComplexity": "O(amount · coins)",
+    "spaceComplexity": "O(amount)",
+    "edgeCases": [
+      "amount = 0: 0 coins",
+      "No way: −1",
+      "Greedy (largest coin first) fails, e.g. [1, 3, 4] for 6"
+    ],
+    "acceptableSlowerApproaches": [
+      "Recursion without memo: exponential",
+      "BFS over amounts: same bound, more code"
+    ]
+  },
+  "hints": [
+    "Why does taking the largest coin first fail for coins [1, 3, 4] and amount 6?",
+    "Think about the last coin used: best(a) = 1 + best(a − c) for the best c.",
+    "Fill best[0..amount] from small to large; initialize with Infinity."
+  ],
+  "starterCode": {
+    "javascript": "function fewestCoins(coins, amount) {\n  // return the fewest coins or -1\n}",
+    "java": "class Solution {\n  int fewestCoins(int[] coins, int amount) {\n    // return the fewest coins or -1\n  }\n}"
+  },
+  "similarLeetCode": "Coin Change",
+  "tests": [
+    {
+      "input": [
+        [
+          1,
+          3,
+          4
+        ],
+        6
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          2
+        ],
+        3
+      ],
+      "expected": -1
+    },
+    {
+      "input": [
+        [
+          1
+        ],
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          5,
+          10,
+          25
+        ],
+        30
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          3,
+          7
+        ],
+        11
+      ],
+      "expected": -1
+    },
+    {
+      "input": [
+        [
+          2,
+          5,
+          10,
+          1
+        ],
+        27
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        [
+          186,
+          419,
+          83,
+          408
+        ],
+        6249
+      ],
+      "expected": 20
+    },
+    {
+      "input": [
+        [
+          365,
+          37,
+          216,
+          115,
+          380,
+          193,
+          201,
+          10
+        ],
+        9999
+      ],
+      "expected": 29
+    },
+    {
+      "input": [
+        [
+          7,
+          13,
+          29
+        ],
+        10000
+      ],
+      "expected": 348
+    }
+  ]
+}
