@@ -172,10 +172,10 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-544 | Demo sign-in for visitors | FR-01, FR-17, D-062 | P1 | To do |
-| T-545 | Landing section on the sign-in page | FR-01 | P2 | To do |
-| T-546 | Link previews (Open Graph) | — | P2 | To do |
-| T-547 | Portfolio README | D-007 | P1 | To do |
+| T-544 | Demo sign-in for visitors | FR-01, FR-17, D-062 | P1 | Built 2026-11-20: API and frontend tests; PO review pending |
+| T-545 | Landing section on the sign-in page | FR-01 | P2 | Built 2026-11-20: frontend tests and screenshots; PO review pending |
+| T-546 | Link previews (Open Graph) | — | P2 | Built 2026-11-20: tags and preview image; check after deploy |
+| T-547 | Portfolio README | D-007 | P1 | Built 2026-11-20: PO review pending |
 | T-548 | Sprint 12 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
