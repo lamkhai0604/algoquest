@@ -165,7 +165,16 @@
     "items": "Các phần tử",
     "state": "Trạng thái sau từng bước",
     "step": "Bước",
-    "keyboard": "Bàn phím: ← và → để chuyển bước, R để đặt lại."
+    "keyboard": "Bàn phím: ← và → để chuyển bước, Space để tự chạy hoặc dừng, R để đặt lại.",
+    "play": "Tự chạy",
+    "pause": "Tạm dừng",
+    "speed": "Tốc độ",
+    "slow": "Chậm",
+    "normal": "Vừa",
+    "fast": "Nhanh",
+    "queue": "Hàng đợi (đầu → cuối)",
+    "empty": "trống",
+    "rings": "Khoảng cách từ điểm xuất phát:"
   },
   "auth": {
     "title": "Đăng nhập {appName}",

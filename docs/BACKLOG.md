@@ -165,6 +165,7 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-538 | Graph view in the walkthrough | FR-03, D-060 | P1 | Built 2026-11-20: content check rules, rendering and replay tests; PO review pending |
 | T-539 | Level 10 Graph Fundamentals content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
 | T-540 | Level 10 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-542 | Animated walkthroughs: playback for every level; travelled edges, queue strip and rings for graphs | FR-03, D-061 | P1 | Built 2026-11-20: rendering and playback tests; PO review pending |
 | T-541 | Sprint 11 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
@@ -179,3 +180,4 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-505 | Move JavaScript checking to Judge0 or a server sandbox before graded organization use | D-035 |
 | T-506 | Voice answers | Excluded this release |
 | T-507 | Battle mode | FR-16 |
+| T-543 | Interactive graph explorer: pick the start vertex, compare BFS and DFS on the same graph (Level 18) | FR-03, D-061 |

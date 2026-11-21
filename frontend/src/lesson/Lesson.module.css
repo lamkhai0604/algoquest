@@ -121,6 +121,8 @@
 
 .stepButtons {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-4);
 }
@@ -668,4 +670,218 @@
 
 .learnBody {
   padding: 0 var(--space-4) var(--space-4);
+}
+
+/* Graph animation and rings (D-061). */
+.graphEdgeActive {
+  stroke: var(--color-xp);
+  stroke-width: 3.5;
+}
+
+.ring0 {
+  fill: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface));
+  stroke: var(--color-primary);
+}
+
+.ring1 {
+  fill: color-mix(in srgb, var(--color-success) 30%, var(--color-surface));
+  stroke: var(--color-success);
+}
+
+.ring2 {
+  fill: color-mix(in srgb, var(--color-xp) 30%, var(--color-surface));
+  stroke: var(--color-xp);
+}
+
+.ring3 {
+  fill: color-mix(in srgb, var(--color-warning) 30%, var(--color-surface));
+  stroke: var(--color-warning);
+}
+
+.ring4 {
+  fill: color-mix(in srgb, var(--color-text-muted) 30%, var(--color-surface));
+  stroke: var(--color-text-muted);
+}
+
+.ringLegend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.ringKey {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  color: var(--color-text);
+}
+
+.ringSwatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid;
+  border-radius: 50%;
+}
+
+.ringSwatch.ring0 {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface));
+}
+
+.ringSwatch.ring1 {
+  border-color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 30%, var(--color-surface));
+}
+
+.ringSwatch.ring2 {
+  border-color: var(--color-xp);
+  background: color-mix(in srgb, var(--color-xp) 30%, var(--color-surface));
+}
+
+.ringSwatch.ring3 {
+  border-color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 30%, var(--color-surface));
+}
+
+.ringSwatch.ring4 {
+  border-color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 30%, var(--color-surface));
+}
+
+.queue {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-3);
+}
+
+.queueLabel {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.queueItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.queueItem {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--space-2);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-sunken);
+  font: 700 15px var(--font-mono);
+}
+
+.queueEmpty {
+  color: var(--color-text-faint);
+  font-size: var(--text-sm);
+}
+
+.queueIn {
+  border-color: var(--color-success);
+}
+
+.queueOut {
+  border-style: dashed;
+  color: var(--color-text-faint);
+  opacity: 0.45;
+}
+
+.speed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.speed select {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font: inherit;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .treeNode,
+  .treeEdge {
+    transition:
+      fill 0.35s ease,
+      stroke 0.35s ease,
+      stroke-width 0.35s ease;
+  }
+
+  .graphFresh {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: vertex-pulse 0.7s ease-out;
+  }
+
+  .graphEdgeActive {
+    stroke-dasharray: 6 5;
+    animation: edge-flow 0.8s linear infinite;
+  }
+
+  .queueIn {
+    animation: queue-in 0.4s ease-out;
+  }
+
+  .queueOut {
+    animation: queue-out 0.5s ease-in forwards;
+  }
+
+  @keyframes vertex-pulse {
+    0% {
+      transform: scale(0.6);
+    }
+    60% {
+      transform: scale(1.25);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes edge-flow {
+    to {
+      stroke-dashoffset: -22;
+    }
+  }
+
+  @keyframes queue-in {
+    from {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+  }
+
+  @keyframes queue-out {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0.35;
+      transform: translateX(-12px);
+    }
+  }
 }

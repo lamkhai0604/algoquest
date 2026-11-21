@@ -1,6 +1,6 @@
-import { screen, within } from "@testing-library/react";
+import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { fakeApi, json, ME } from "../test/fakeApi";
 import { setLocale } from "../i18n";
 import { LEVELS } from "../test/gameData";
@@ -361,6 +361,75 @@ describe("lesson page", () => {
     expect(document.querySelectorAll("svg line")).toHaveLength(2);
     expect(document.querySelectorAll("svg marker")).toHaveLength(1);
     expect(document.querySelectorAll('[data-visited="true"]')).toHaveLength(1);
+  });
+
+  it("animates a graph step: new vertices, travelled edges, queue and rings", async () => {
+    const steps = [
+      {
+        title: "Start",
+        body: "0 is in the queue.",
+        visual: {
+          cells: ["0", "1", "2"],
+          edges: [
+            [0, 1],
+            [0, 2],
+          ],
+          visited: [0],
+          queue: [0],
+        },
+      },
+      {
+        title: "Visit 0",
+        body: "1 and 2 join.",
+        visual: {
+          cells: ["0", "1", "2"],
+          edges: [
+            [0, 1],
+            [0, 2],
+          ],
+          visited: [0, 1, 2],
+          activeEdges: [
+            [0, 1],
+            [0, 2],
+          ],
+          queue: [1, 2],
+          rings: [0, 1, 1],
+          markers: [{ index: 0, label: "curr" }],
+        },
+      },
+    ];
+    open({ ...LESSON, walkthrough: steps }, 2);
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Next step" }),
+    );
+
+    expect(document.querySelectorAll('[data-active="true"]')).toHaveLength(2);
+    const queue = screen.getByRole("list", { name: "Queue (front → back)" });
+    expect(queue).toHaveTextContent("12");
+    expect(screen.getByText("Distance from the start:")).toBeInTheDocument();
+  });
+
+  it("plays the steps by itself and pauses", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const steps = [1, 2, 3].map((k) => ({ title: `Step ${k}`, body: "." }));
+      open({ ...LESSON, walkthrough: steps }, 2);
+      const user = userEvent.setup({
+        advanceTimers: vi.advanceTimersByTime.bind(vi),
+      });
+      await user.click(await screen.findByRole("button", { name: "Play" }));
+      await act(async () => {
+        vi.advanceTimersByTime(1500);
+      });
+      expect(screen.getByText("Step 2")).toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: "Pause" }));
+      await act(async () => {
+        vi.advanceTimersByTime(3000);
+      });
+      expect(screen.getByText("Step 2")).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("asks for a prediction before showing the step", async () => {
