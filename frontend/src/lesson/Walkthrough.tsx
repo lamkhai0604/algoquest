@@ -1356,9 +1356,9 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
               hidden={hidden}
             />
           ) : visual.rows ? (
-            <Table visual={shownCells} previous={previousVisual} />
+            <Table visual={shownCells ?? visual} previous={previousVisual} />
           ) : (
-            <Cells visual={shownCells} previous={previousVisual} />
+            <Cells visual={shownCells ?? visual} previous={previousVisual} />
           ))}
         {visual?.queue && (
           <QueueStrip
