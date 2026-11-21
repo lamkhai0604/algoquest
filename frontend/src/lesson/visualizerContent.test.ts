@@ -556,7 +556,8 @@ describe("lesson visualizers match their reference algorithms", () => {
         expect(predict.options[predict.answer]).toBeDefined();
         for (const name of predict.hides ?? []) {
           if (name === "next") expect(step.visual?.next).toBeTruthy();
-          else if (name === "cell") expect(step.visual?.markers?.length).toBeTruthy();
+          else if (name === "cell")
+            expect(step.visual?.markers?.length).toBeTruthy();
           else expect(value(step, name)).toBeDefined();
         }
       }
