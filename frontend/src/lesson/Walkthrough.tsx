@@ -875,9 +875,7 @@ function Table({
                       marks && styles.tableCurrent,
                     )}
                   >
-                    <span className={styles.tableValue}>
-                      {visual.cells[i]}
-                    </span>
+                    <span className={styles.tableValue}>{visual.cells[i]}</span>
                     <span className={styles.tableMarker}>
                       {marks?.join(", ") ?? (read ? "•" : "")}
                     </span>

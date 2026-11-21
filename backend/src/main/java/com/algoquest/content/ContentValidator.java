@@ -419,8 +419,7 @@ final class ContentValidator {
         || (visual.rowLabels() != null
             && (visual.rowLabels().size() != rows || visual.rowLabels().contains(null)))
         || (visual.columnLabels() != null
-            && (visual.columnLabels().size() != columns
-                || visual.columnLabels().contains(null)))) {
+            && (visual.columnLabels().size() != columns || visual.columnLabels().contains(null)))) {
       problems.add(
           where
               + ": a table needs rows dividing the cell count, labels matching rows and columns,"
