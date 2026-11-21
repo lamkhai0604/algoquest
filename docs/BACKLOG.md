@@ -245,11 +245,11 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
 | T-578 | System Design tab marked "Coming soon": last item of the main navigation and a page listing the planned topics | D-067 | P2 | Built 2026-11-21: frontend test; screenshots on desktop and phone (header wraps below 480 px); PO review pending |
-| T-579 | Table view for 2-D walkthroughs: rows and columns of cells, the cell being filled, the cells it reads | FR-03, D-068 | P1 | To do |
-| T-580 | Level 22 Mixed Pattern Problems content | FR-03, FR-04, D-048 | P1 | To do |
-| T-581 | Level 22 pattern challenges | D-057 | P2 | To do |
-| T-582 | Level 23 1D & 2D Dynamic Programming content | FR-03, FR-04, D-048 | P1 | To do |
-| T-583 | Level 23 pattern challenges | D-057 | P2 | To do |
+| T-579 | Table view for 2-D walkthroughs: rows and columns of cells, the cell being filled, the cells it reads | FR-03, D-068 | P1 | Built 2026-11-21: content check rules, loader and rendering tests; a prediction can also hide the marked cell; PO review pending |
+| T-580 | Level 22 Mixed Pattern Problems content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-581 | Level 22 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
+| T-582 | Level 23 1D & 2D Dynamic Programming content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against the LCS recurrence; PO review pending |
+| T-583 | Level 23 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
 | T-584 | Sprint 18 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)

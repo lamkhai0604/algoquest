@@ -1,0 +1,117 @@
+{
+  "id": "L23-shared-letters",
+  "level": 23,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Shared Letters",
+  "statement": "Two versions of a word list were saved as strings a and b. Return the length of the longest sequence of letters that appears in both, in the same order (the letters do not have to be next to each other).",
+  "examples": [
+    {
+      "input": "a = \"abcde\", b = \"ace\"",
+      "output": "3"
+    },
+    {
+      "input": "a = \"abc\", b = \"def\"",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "1 <= a.length, b.length <= 1000",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "2-D DP over prefixes: lcs(i, j) = lcs(i − 1, j − 1) + 1 on a match, else max(lcs(i − 1, j), lcs(i, j − 1))",
+    "keyPoints": [
+      "State: the answer for the first i letters of a and the first j letters of b",
+      "Row 0 and column 0 are 0 (an empty prefix)",
+      "Fill row by row; one previous row is enough"
+    ],
+    "timeComplexity": "O(n · m)",
+    "spaceComplexity": "O(m) with one row, O(n · m) with the full table",
+    "edgeCases": [
+      "One string empty-like: no shared letters",
+      "Identical strings",
+      "Repeated letters"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try every subsequence: O(2^n · m)"
+    ]
+  },
+  "hints": [
+    "Compare the last letters of the two prefixes.",
+    "If they match, they can both end the shared sequence: 1 + lcs(i − 1, j − 1).",
+    "Otherwise drop the last letter of one string: max(lcs(i − 1, j), lcs(i, j − 1))."
+  ],
+  "starterCode": {
+    "javascript": "function sharedLetters(a, b) {\n  // return the length of the longest common subsequence\n}",
+    "java": "class Solution {\n  int sharedLetters(String a, String b) {\n    // return the length of the longest common subsequence\n  }\n}"
+  },
+  "similarLeetCode": "Longest Common Subsequence",
+  "tests": [
+    {
+      "input": [
+        "abcde",
+        "ace"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "abc",
+        "def"
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        "a",
+        "a"
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "abc",
+        "abc"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "aaaa",
+        "aa"
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        "bdcaba",
+        "abcbdab"
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        "caaecddecbbcdabedaaaddaedcabaecbebcececc",
+        "eadbdedbbbecebeaaadaecececaccecdebc"
+      ],
+      "expected": 24
+    },
+    {
+      "input": [
+        "baeadbcebeadbdaaddabbabaedacaddbaacdebdcbaaeebeebcadbadcdbedabecddceeeacaabcedbbaceeabeddcacdabdbabddadcdeeebeeccabaddadedccdccccbdaddececadbcbecaedacedaacabedadacbcebeabedeccaeebaababebcdceaaeeacabcabbbdcebeedcebecdbcdcaddcbebbcddaacddbedcbcacdbdcedaeedebdbdadaddcaaddccbbeaeedeaaddbcaeaeebebccccddeeccabeebabaccaeaaadaecceedababbbdabcaedaeedaabbaceeedadadcceabbcabbbeaedebbeeeebaceaebaedcabedcabbcd",
+        "dbbeebcaeeabbaecaadabccbdccaddadeddabeaaacbacdbdcbeceeeeeeedbecdcbacceaddcadacbaaeebcdbeaeccbbbebdcdccebedadceaaababadcbcbacccedebedeeceabadedabdacdbebbacebacdeaccdedbeddbabdadacbcbbbacebdabdbbaebaaabcaeaedcedabcabaaabaabbadecddeaaebaceedaedbceeaceeebdcabcceccbdbaaacdeddbeaebbbdaeadeadcadaebacbedaec"
+      ],
+      "expected": 206
+    },
+    {
+      "input": [
+        "aabaaabbabaaabaabababaabbaabbbbaababbaabbbaaaaaabaaaaabababaabbaababbabbaabbaabbbbababaaaabaababbbbbbbbababbbaaabababbaaabbaaaabbaabbababbbaabbbaaabaabaabaaababbbaabaabbabaaaababbbbabaaababbaaaaababbbbaaabbbbbabaabbaabbaabbaabbaaabbabbbbabababaaaaaabbbbbaaaaabbbaabbbaabbaabbaaabababbabbbbabaabaabaabaaaaabbbbbbbbbbbbaababbbababbbbbbaabaabbaabbbbabaaaaabbaabbbabaaaaababaaabbabbbaaaabaabbbabaababbabaababbbbbbbbbaaaababaaaaababbaaabbabaabbbaabaaabababaabbabbbabbbbaaaabaabbbbbaaaaaaabbaaaaabaaaaaaaaaabababbaaaabbbbbababbbbabbbabbabbbbbababaaaaaabbabbabbaaaaaaaaaabbabbababbaaaaaabbbbbbbabaabbaaaaaaababbbbbabbabbbaaabbbabbbbbabbbbbbbbbbbbbbbababaaabababaaabbaabbaabaaababbbabbaaabbbaaaaabababbbaabbbabbbaaabbababbbabaaabaabbaaababbaabababbbbbbabaabbbbbaaabaabbbbaaabbbaaabbbabbaaabaabaaabaabaabbaabbaaabbabaabbabbbbbbabbabbababaabbbabbbabbaaabaaabbbbbaaaaabbabababbaaaaabbababbaaaabaaabbbbbbbabbabbbbbbbaabbaababbabaabbbaabbbabbaaaababbabbbaaaabbaabaababbabaaaaaabaababbabaabbbabbbababbbaaabbbbbabab",
+        "bbbaaaababaaaabaabbbababbbaaababbababaabbaababbabaaabbabababbbabbbabaabaababbbbbbbabaabbbbbbbbbbbaaabaaaaaaabbbbbbbbbbaababbaaaababbaaabaabbabbaabababbaababbaabbbaaaabbaaaabbabbbabbbbaaaabbbaaabbbabbbabaababbabbbbaababaaabbbababaabaabbaaaabbbbbabbaaaaabaabaababbbbbbbabbbabbbaabbbabbbbbbaabbaaababbaabaaaabbabaabbaaababaabbbbaababaabaababaaababaabbaaaaabaabaabababbabaaaaaaaababbbaabbabbaabaaaabaababbbaabbbaaabaaabaabaaaababbaabaaabbbbbaaaaaabaaabbabababaaaaabbaaaaaabaaaaabaabbaaabaababbabbbbbabbbaabaaaaababbaaaaaaababaababaabbaabbabbbbaaaabbbbbbaababbabaaabbbbaaabbaabaaaabababbaaabbbbabababbbaaabbbbbbbbaabaabbabaaabbbbbaaabbaabbbaabbbaaaaaaababbbbabbabbbaaaabaaabaabbbaaabbbabbababbbaabbbabaabaabaababbbaaabbbabbaaaababbaabbbbbbbbabaaabaaaaaaaaaabaabbabaabbbababbababababaaaaaaaaabbaaabaababbaabbabababbaaaababbbaabbabababbabababbababbaaabbaaabaabbbabbbbbbbaaaaaaabaaababbabaababaaabaabaaaabbbb"
+      ],
+      "expected": 762
+    }
+  ]
+}

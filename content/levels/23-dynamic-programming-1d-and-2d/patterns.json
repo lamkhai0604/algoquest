@@ -1,0 +1,154 @@
+[
+  {
+    "id": "P23-spell-check",
+    "level": 23,
+    "title": "Search Box Spell Check",
+    "statement": "A shop's search box suggests the closest product name when a customer makes a typo. For a typed word and each of 5,000 product names (up to 30 letters each), it needs the fewest insertions, deletions and replacements.",
+    "examples": [
+      "\"blendr\" → \"blender\": 1 edit"
+    ],
+    "constraints": [
+      "5,000 names",
+      "Words up to 30 letters"
+    ],
+    "approaches": [
+      {
+        "id": "edit-dp",
+        "name": "Edit-distance DP on a table of prefixes for each name",
+        "hint": "Table of (i, j)",
+        "label": "best",
+        "time": "O(names · n · m)",
+        "space": "O(m) per comparison",
+        "why": "About 4.5 million cells in total; exact and fast."
+      },
+      {
+        "id": "memo",
+        "name": "Recursion on (i, j) with memoization",
+        "hint": "Top-down",
+        "label": "valid",
+        "time": "O(names · n · m)",
+        "space": "O(n · m)",
+        "why": "Same bound; more memory and call overhead."
+      },
+      {
+        "id": "common-letters",
+        "name": "Count letters the two words share",
+        "hint": "Letter overlap",
+        "label": "unsuitable",
+        "time": "O(n + m)",
+        "space": "O(1)",
+        "why": "Ignores order: \"listen\" and \"silent\" look identical."
+      },
+      {
+        "id": "all-edits",
+        "name": "Generate every edit sequence until the words match",
+        "hint": "Brute force",
+        "label": "unsuitable",
+        "time": "Exponential",
+        "space": "Exponential",
+        "why": "Far too many sequences even for short words."
+      }
+    ]
+  },
+  {
+    "id": "P23-cargo-loader",
+    "level": 23,
+    "title": "Delivery Van Loader",
+    "statement": "A courier van carries at most 2,000 kg. Today there are 150 parcels, each with a weight and a delivery fee; each parcel goes in whole or waits for tomorrow. The dispatcher wants the largest total fee.",
+    "examples": [
+      "Weights [3, 4, 5], fees [30, 50, 60], limit 8 → 90"
+    ],
+    "constraints": [
+      "150 parcels",
+      "Limit 2,000 kg, whole kilograms"
+    ],
+    "approaches": [
+      {
+        "id": "knapsack",
+        "name": "0/1 knapsack DP over capacities, capacities from high to low",
+        "hint": "Take or leave",
+        "label": "best",
+        "time": "O(n · capacity)",
+        "space": "O(capacity)",
+        "why": "300,000 updates; exact."
+      },
+      {
+        "id": "ratio",
+        "name": "Take parcels by highest fee per kilogram until full",
+        "hint": "Best ratio first",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "why": "Wrong for whole parcels: a high-ratio parcel can waste space that two others would fill."
+      },
+      {
+        "id": "table",
+        "name": "Full 2-D table over parcels and capacities",
+        "hint": "n × capacity",
+        "label": "valid",
+        "time": "O(n · capacity)",
+        "space": "O(n · capacity)",
+        "why": "Same time, more memory; useful to list which parcels were taken."
+      },
+      {
+        "id": "subsets",
+        "name": "Try every set of parcels",
+        "hint": "All subsets",
+        "label": "unsuitable",
+        "time": "O(2ⁿ)",
+        "space": "O(n)",
+        "why": "2^150 sets is impossible."
+      }
+    ]
+  },
+  {
+    "id": "P23-dna-match",
+    "level": 23,
+    "title": "Gene Sequence Similarity",
+    "statement": "A biology lab compares two gene sequences of up to 5,000 letters (A, C, G, T) and wants the length of the longest sequence of letters that appears in both in the same order, with gaps allowed.",
+    "examples": [
+      "ACGTA vs AGTCA → 4 (AGTA)"
+    ],
+    "constraints": [
+      "Each sequence ≤ 5,000 letters"
+    ],
+    "approaches": [
+      {
+        "id": "lcs",
+        "name": "Longest-common-subsequence DP with one or two rows",
+        "hint": "Table of prefixes",
+        "label": "best",
+        "time": "O(n · m)",
+        "space": "O(m)",
+        "why": "25 million cells, fast in a compiled language; two rows keep memory small."
+      },
+      {
+        "id": "full-table",
+        "name": "LCS with the full n × m table",
+        "hint": "Keep everything",
+        "label": "valid",
+        "time": "O(n · m)",
+        "space": "O(n · m)",
+        "why": "Needed to print the shared sequence, but 25 million cells of memory."
+      },
+      {
+        "id": "substring",
+        "name": "Longest common substring with a sliding comparison",
+        "hint": "Contiguous match",
+        "label": "unsuitable",
+        "time": "O(n · m)",
+        "space": "O(m)",
+        "why": "Answers a different question: gaps are not allowed."
+      },
+      {
+        "id": "subsequences",
+        "name": "Enumerate subsequences of one sequence",
+        "hint": "All subsequences",
+        "label": "unsuitable",
+        "time": "O(2ⁿ · m)",
+        "space": "O(n)",
+        "why": "Impossible for 5,000 letters."
+      }
+    ]
+  }
+]

@@ -1,0 +1,153 @@
+[
+  {
+    "id": "P22-ride-matching",
+    "level": 22,
+    "title": "Ride Share Price Check",
+    "statement": "A ride app keeps the last 200,000 fares in sorted order. Support wants to know whether any two fares add up to exactly a refund amount, to spot duplicate refunds.",
+    "examples": [
+      "fares [4, 7, 11, 15], refund 18 → true (7 + 11)"
+    ],
+    "constraints": [
+      "n = 200,000 sorted fares"
+    ],
+    "approaches": [
+      {
+        "id": "two-pointers",
+        "name": "Two pointers from both ends of the sorted fares",
+        "hint": "Sorted + pair",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "The sort is already done; each step drops one fare."
+      },
+      {
+        "id": "hash",
+        "name": "A hash set of fares seen so far",
+        "hint": "Look for the complement",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Also linear, but ignores the order you already have and uses memory."
+      },
+      {
+        "id": "binary",
+        "name": "For each fare, binary search for refund − fare",
+        "hint": "Search the rest",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "why": "Correct and fast enough, just slower than two pointers."
+      },
+      {
+        "id": "pairs",
+        "name": "Check every pair",
+        "hint": "All pairs",
+        "label": "unsuitable",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "2 × 10¹⁰ pairs is too slow."
+      }
+    ]
+  },
+  {
+    "id": "P22-server-alerts",
+    "level": 22,
+    "title": "Server Alert Window",
+    "statement": "A monitoring tool reads CPU load once a second for a day (86,400 readings). It must find the longest period in which the load stayed under the limit for all but at most 3 readings.",
+    "examples": [
+      "Readings [ok, high, ok, ok, high, ok], at most 1 high → 4"
+    ],
+    "constraints": [
+      "86,400 readings"
+    ],
+    "approaches": [
+      {
+        "id": "window",
+        "name": "Sliding window that tracks high readings inside it",
+        "hint": "Grow and shrink",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Each reading enters and leaves the window once."
+      },
+      {
+        "id": "prefix-binary",
+        "name": "Prefix counts of high readings and binary search for each start",
+        "hint": "Prefix + search",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Correct, a bit slower and more memory."
+      },
+      {
+        "id": "all-periods",
+        "name": "Check every start and end",
+        "hint": "All periods",
+        "label": "unsuitable",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "About 3.7 × 10⁹ periods: too slow."
+      },
+      {
+        "id": "dp",
+        "name": "DP over readings and allowed highs",
+        "hint": "Table",
+        "label": "unsuitable",
+        "time": "O(n · k)",
+        "space": "O(n · k)",
+        "why": "Works, but builds a table for a problem one window solves."
+      }
+    ]
+  },
+  {
+    "id": "P22-delivery-rate",
+    "level": 22,
+    "title": "Warehouse Packing Speed",
+    "statement": "A warehouse must pack 50,000 orders of different sizes within 10 hours, packing at most one order at a time. The manager wants the slowest packing speed (items per hour, a whole number) that still finishes in time.",
+    "examples": [
+      "Order sizes [3, 6, 7, 11], 8 hours → speed 4"
+    ],
+    "constraints": [
+      "50,000 orders",
+      "Sizes up to 10⁹"
+    ],
+    "approaches": [
+      {
+        "id": "binary-answer",
+        "name": "Binary search on the speed, checking each speed with one pass",
+        "hint": "Smallest value that works",
+        "label": "best",
+        "time": "O(n log max)",
+        "space": "O(1)",
+        "why": "About 50,000 × 30 checks; if a speed works, every faster one does too."
+      },
+      {
+        "id": "linear-speed",
+        "name": "Try speeds 1, 2, 3, … until one works",
+        "hint": "Count up",
+        "label": "unsuitable",
+        "time": "O(n · max)",
+        "space": "O(1)",
+        "why": "Up to 10⁹ speeds times 50,000 orders."
+      },
+      {
+        "id": "greedy-average",
+        "name": "Divide the total size by the hours",
+        "hint": "Average speed",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Wrong: each order takes whole hours, so the average can be too slow."
+      },
+      {
+        "id": "heap",
+        "name": "Use a max-heap and always speed up for the largest order",
+        "hint": "Largest first",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "No clear rule for when to stop; does not answer the question."
+      }
+    ]
+  }
+]

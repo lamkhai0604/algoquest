@@ -1,0 +1,154 @@
+{
+  "id": "L22-split-the-slogan",
+  "level": 22,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Split the Slogan",
+  "statement": "A sign maker has a slogan written with no spaces and a list of allowed words. Words can be used any number of times. Return true if the slogan can be split into a sequence of allowed words.",
+  "examples": [
+    {
+      "input": "slogan = \"leetcode\", words = [\"leet\", \"code\"]",
+      "output": "true"
+    },
+    {
+      "input": "slogan = \"catsandog\", words = [\"cats\", \"dog\", \"sand\", \"and\", \"cat\"]",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "1 <= slogan.length <= 300",
+    "1 <= words.length <= 1000",
+    "1 <= words[i].length <= 20",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "DP over prefixes: ok(i) is true if some word ends at i and ok(i − word length) is true",
+    "keyPoints": [
+      "ok(0) = true for the empty prefix",
+      "For each end position try every word (or every start up to 20 back) with a set lookup",
+      "The answer is ok(slogan length)"
+    ],
+    "timeComplexity": "O(n · L) set lookups (L = longest word)",
+    "spaceComplexity": "O(n + total word length)",
+    "edgeCases": [
+      "One word equal to the slogan",
+      "A word that is a prefix of another",
+      "Greedy longest-word-first fails"
+    ],
+    "acceptableSlowerApproaches": [
+      "Recursion without memo: exponential",
+      "BFS over positions: same bound"
+    ]
+  },
+  "hints": [
+    "Why can taking the longest matching word first go wrong?",
+    "Define ok[i]: can the first i letters be split?",
+    "ok[i] = true if for some word w, the slogan ends with w at i and ok[i − |w|] is true."
+  ],
+  "starterCode": {
+    "javascript": "function splitTheSlogan(slogan, words) {\n  // return whether the slogan can be split\n}",
+    "java": "class Solution {\n  boolean splitTheSlogan(String slogan, String[] words) {\n    // return whether the slogan can be split\n  }\n}"
+  },
+  "similarLeetCode": "Word Break",
+  "tests": [
+    {
+      "input": [
+        "leetcode",
+        [
+          "leet",
+          "code"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "catsandog",
+        [
+          "cats",
+          "dog",
+          "sand",
+          "and",
+          "cat"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "applepenapple",
+        [
+          "apple",
+          "pen"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "a",
+        [
+          "b"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "aaaaaaa",
+        [
+          "aaaa",
+          "aaa"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "cars",
+        [
+          "car",
+          "ca",
+          "rs"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
+        [
+          "a",
+          "aa",
+          "aaa",
+          "aaaa"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "goododggoodgdogdoggooddoggoodgodgodgodggogooddogdogdoggodogdoggoodgodggoodgogoodgoodggoodgoodgogoodgodgdoggoododgodggoodgdogodgdoggooddogodgodgdoggoododggogoodgodogdogdoggodogodg",
+        [
+          "go",
+          "good",
+          "odg",
+          "dog"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab",
+        [
+          "a",
+          "b",
+          "abab"
+        ]
+      ],
+      "expected": true
+    }
+  ]
+}

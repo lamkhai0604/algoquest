@@ -508,6 +508,44 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(steps.at(-1)!, "result")).toBe(String(dp.at(-1)));
   });
 
+  it("Level 22: each problem names a signal and a pattern, in order", () => {
+    const steps = walkthrough("22-mixed-pattern-problems");
+    const problems = steps.slice(1);
+    expect(problems).toHaveLength(steps[0]!.visual!.cells.length);
+    problems.forEach((step, i) => {
+      expect(step.visual!.markers![0]!.index).toBe(i);
+      expect(step.visual!.window).toEqual([0, i]);
+      expect(value(step, "signal")).toBeTruthy();
+      expect(value(step, "pattern")).toBeTruthy();
+    });
+    expect(value(problems[2]!, "pattern")).toBe("BFS");
+    expect(value(problems[5]!, "pattern")).toBe("Dynamic programming");
+  });
+
+  it("Level 23: the table fills the longest common subsequence cell by cell", () => {
+    const steps = walkthrough("23-dynamic-programming-1d-and-2d");
+    const first = steps[0]!.visual!;
+    const a = first.rowLabels!.slice(1).join("");
+    const b = first.columnLabels!.slice(1).join("");
+    const cols = b.length + 1;
+    const dp = Array.from({ length: a.length + 1 }, () => new Array<number>(cols).fill(0));
+    let k = 1;
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        const match = a[i - 1] === b[j - 1];
+        dp[i]![j] = match ? dp[i - 1]![j - 1]! + 1 : Math.max(dp[i - 1]![j]!, dp[i]![j - 1]!);
+        const v = steps[k++]!.visual!;
+        expect(v.markers![0]!.index).toBe(i * cols + j);
+        expect(v.cells[i * cols + j]).toBe(String(dp[i]![j]));
+        expect(v.reads).toEqual(
+          match ? [(i - 1) * cols + j - 1] : [(i - 1) * cols + j, i * cols + j - 1],
+        );
+      }
+    }
+    expect(k).toBe(steps.length);
+    expect(value(steps.at(-1)!, "result")).toBe(String(dp[a.length]![b.length]));
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -549,6 +587,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "19-backtracking",
       "20-greedy-and-intervals",
       "21-dynamic-programming-fundamentals",
+      "22-mixed-pattern-problems",
+      "23-dynamic-programming-1d-and-2d",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

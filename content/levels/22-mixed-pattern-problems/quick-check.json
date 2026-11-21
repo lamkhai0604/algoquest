@@ -1,0 +1,35 @@
+[
+  {
+    "question": "n can be 200,000. Which running time should you aim for?",
+    "options": [
+      "O(n log n) or O(n)",
+      "O(n²)",
+      "O(2ⁿ)",
+      "O(n³)"
+    ],
+    "answer": 0,
+    "explanation": "About 10⁸ simple steps run in a second; n² = 4 × 10¹⁰ is far too many."
+  },
+  {
+    "question": "\"Return every possible arrangement of the 6 guests.\" Which pattern fits?",
+    "options": [
+      "Backtracking",
+      "Binary search",
+      "Sliding window",
+      "Prefix sums"
+    ],
+    "answer": 0,
+    "explanation": "Listing every option means exploring every choice: 6! = 720 arrangements built by choose, explore, undo."
+  },
+  {
+    "question": "\"How many ways to climb n stairs if you can take 1, 2 or 3 steps?\" What gives it away?",
+    "options": [
+      "Count ways with choices that repeat: dynamic programming",
+      "A sorted input: two pointers",
+      "Fewest steps: BFS",
+      "A next greater value: monotonic stack"
+    ],
+    "answer": 0,
+    "explanation": "Counting ways where the same smaller question (ways to reach step k) comes up again and again is the DP signal."
+  }
+]
