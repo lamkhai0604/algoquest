@@ -780,6 +780,7 @@
 }
 
 .queueLabel {
+  margin-right: var(--space-2);
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
@@ -897,7 +898,7 @@
     }
     to {
       opacity: 0.35;
-      transform: translateX(-12px);
+      transform: scale(0.85);
     }
   }
 }
