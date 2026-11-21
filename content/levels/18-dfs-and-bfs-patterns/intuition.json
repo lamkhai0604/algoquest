@@ -1,0 +1,11 @@
+{
+  "question": "A city map has 500 fire stations and 1,000,000 street corners. For every corner you need the fewest blocks to the nearest station. What is the best plan?",
+  "options": [
+    "One BFS that starts with all 500 stations in the queue",
+    "One BFS from each station, keeping the smallest distance",
+    "One BFS from each corner until it reaches a station",
+    "DFS from each station"
+  ],
+  "answer": 0,
+  "explanation": "Starting all stations at distance 0 lets one BFS grow from all of them together; each corner is first reached from its nearest station. That is one pass, O(V + E), instead of 500 or a million searches."
+}

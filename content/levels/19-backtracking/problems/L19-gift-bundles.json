@@ -1,0 +1,198 @@
+{
+  "id": "L19-gift-bundles",
+  "level": 19,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Gift Bundles",
+  "statement": "A shop has n gifts with prices. Return how many different bundles (sets of gifts, each gift used at most once) cost exactly budget. Gifts are different items even when their prices are equal.",
+  "examples": [
+    {
+      "input": "prices = [2, 3, 5, 5], budget = 10",
+      "output": "3"
+    },
+    {
+      "input": "prices = [4], budget = 3",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 18",
+    "1 <= prices[i] <= 100",
+    "1 <= budget <= 1000"
+  ],
+  "answerKey": {
+    "pattern": "Backtracking over take or skip, with pruning",
+    "keyPoints": [
+      "For each gift, branch on taking it or skipping it",
+      "Count a bundle when all gifts are decided and the total equals the budget",
+      "Prune when the running total passes the budget"
+    ],
+    "timeComplexity": "O(2ⁿ)",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "No bundle works",
+      "Equal prices count as different gifts",
+      "The whole set is the only bundle"
+    ],
+    "acceptableSlowerApproaches": [
+      "Dynamic programming over totals: O(n · budget)"
+    ]
+  },
+  "hints": [
+    "Every gift is either in the bundle or not. How many bundles are there to check?",
+    "2ⁿ, one per take-or-skip choice for each gift. Backtracking walks them.",
+    "Recurse on (index, total): take gift i or skip it; count when index reaches n with total equal to the budget; stop early when total exceeds it."
+  ],
+  "starterCode": {
+    "javascript": "function giftBundles(prices, budget) {\n  // return the number of bundles\n}",
+    "java": "class Solution {\n  int giftBundles(int[] prices, int budget) {\n    // return the number of bundles\n  }\n}"
+  },
+  "similarLeetCode": "Subsets (count with a target sum)",
+  "tests": [
+    {
+      "input": [
+        [
+          2,
+          3,
+          5,
+          5
+        ],
+        10
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        [
+          4
+        ],
+        3
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        [
+          1
+        ],
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        2
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        [
+          5,
+          5,
+          5
+        ],
+        15
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        [
+          3,
+          34,
+          4,
+          12,
+          5,
+          2
+        ],
+        9
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        [
+          87,
+          6,
+          67,
+          16,
+          66,
+          26,
+          51,
+          45,
+          68,
+          38,
+          75,
+          19,
+          77,
+          34,
+          14,
+          34
+        ],
+        400
+      ],
+      "expected": 233
+    },
+    {
+      "input": [
+        [
+          14,
+          11,
+          9,
+          4,
+          11,
+          10,
+          1,
+          19,
+          20,
+          7,
+          3,
+          7,
+          4,
+          18,
+          15,
+          13,
+          3,
+          4
+        ],
+        90
+      ],
+      "expected": 4238
+    },
+    {
+      "input": [
+        [
+          54,
+          3,
+          13,
+          75,
+          94,
+          55,
+          97,
+          51,
+          57,
+          85,
+          39,
+          74,
+          65,
+          21,
+          82,
+          53,
+          30,
+          100
+        ],
+        1000
+      ],
+      "expected": 0
+    }
+  ]
+}

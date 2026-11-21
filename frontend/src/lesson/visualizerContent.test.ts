@@ -413,6 +413,57 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(steps.at(-1)!, "result")).toBe(`[${answer.join(", ")}]`);
   });
 
+  it("Level 18: Kahn's algorithm frees courses in the order shown", () => {
+    const steps = walkthrough("18-dfs-and-bfs-patterns");
+    const first = steps[0]!.visual!;
+    const n = first.cells.length;
+    const out: number[][] = Array.from({ length: n }, () => []);
+    const indegree = new Array<number>(n).fill(0);
+    for (const [a = 0, b = 0] of first.edges!) {
+      out[a]!.push(b);
+      indegree[b]!++;
+    }
+    const queue = indegree.flatMap((d, v) => (d === 0 ? [v] : []));
+    expect(first.queue).toEqual(queue);
+    const order: number[] = [];
+    for (const step of steps.slice(1).filter((s) => !s.visual!.explore)) {
+      const v = queue.shift()!;
+      order.push(v);
+      for (const w of out[v]!) if (--indegree[w]! === 0) queue.push(w);
+      expect(step.visual!.markers![0]!.index).toBe(v);
+      expect(step.visual!.queue).toEqual(queue);
+      expect(value(step, "order")).toBe(order.join(" → "));
+    }
+    expect(order).toHaveLength(n);
+    expect(steps.at(-1)!.visual!.explore).toBe(true);
+  });
+
+  it("Level 19: the decision tree grows in depth-first order, one subset per leaf", () => {
+    const steps = walkthrough("19-backtracking");
+    const numbers = [1, 2, 3];
+    const visits: { index: number; path: number[] }[] = [];
+    const walk = (i: number, depth: number, path: number[]) => {
+      visits.push({ index: i, path });
+      if (depth === numbers.length) return;
+      walk(2 * i + 1, depth + 1, [...path, numbers[depth]!]);
+      walk(2 * i + 2, depth + 1, path);
+    };
+    walk(0, 0, []);
+    expect(steps).toHaveLength(visits.length);
+    let leaves = 0;
+    steps.forEach((step, k) => {
+      const { index, path } = visits[k]!;
+      expect(step.visual!.markers![0]!.index).toBe(index);
+      expect(value(step, "path")).toBe(`[${path.join(", ")}]`);
+      // Only nodes reached so far are drawn.
+      const drawn = step.visual!.cells.filter((c) => c !== "").length;
+      expect(drawn).toBe(k + 1);
+      if (index >= 7) leaves++;
+      expect(Number(value(step, "subsets found"))).toBe(leaves);
+    });
+    expect(leaves).toBe(2 ** numbers.length);
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -450,6 +501,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "15-binary-search",
       "16-fast-and-slow-pointers",
       "17-monotonic-stack",
+      "18-dfs-and-bfs-patterns",
+      "19-backtracking",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

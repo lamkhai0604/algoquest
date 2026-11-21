@@ -13,7 +13,8 @@ import java.util.List;
  * graph, with optional arrows, visited vertices and grid positions (D-060), plus the edges this
  * step travels, the queue as vertex indices, and each vertex's ring (its distance, or -1) for
  * animation (D-061), and an optional window: the first and last index of a range of cells to shade
- * (D-063). Everything except {@code cells} is optional.
+ * (D-063), an optional stack drawn as a strip, bottom first (D-065), and an explore flag that makes
+ * a graph step interactive (D-064). Everything except {@code cells} is optional.
  */
 public record Visual(
     List<String> cells,
@@ -30,7 +31,9 @@ public record Visual(
     List<List<Integer>> activeEdges,
     List<Integer> queue,
     List<Integer> rings,
-    List<Integer> window) {
+    List<Integer> window,
+    List<String> stack,
+    Boolean explore) {
 
   /** The most cells a tree may have: five levels. */
   public static final int MAX_TREE_CELLS = 31;
@@ -49,6 +52,10 @@ public record Visual(
 
   public boolean drawsGraph() {
     return edges != null;
+  }
+
+  public boolean explores() {
+    return Boolean.TRUE.equals(explore);
   }
 
   public boolean drawsDirected() {

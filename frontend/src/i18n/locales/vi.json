@@ -177,7 +177,14 @@
     "empty": "trống",
     "rings": "Khoảng cách từ điểm xuất phát:",
     "window": "Cửa sổ",
-    "windowSize": "độ dài"
+    "windowSize": "độ dài",
+    "stack": "Ngăn xếp (đáy → đỉnh)",
+    "exploreTitle": "Tự thử: chọn đỉnh bắt đầu và cách duyệt",
+    "startAt": "Bắt đầu từ",
+    "search": "Cách duyệt",
+    "bfs": "BFS (hàng đợi)",
+    "dfs": "DFS (ngăn xếp)",
+    "visitOrder": "Thứ tự thăm"
   },
   "auth": {
     "title": "Đăng nhập {appName}",

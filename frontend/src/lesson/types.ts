@@ -45,6 +45,10 @@ export interface Visual {
   rings?: number[] | null;
   /** [start, end] of a range of cells to shade, such as a sliding window (D-063). */
   window?: number[] | null;
+  /** A stack drawn as a strip, bottom first (D-065). */
+  stack?: string[] | null;
+  /** Makes a graph step an interactive BFS/DFS explorer (D-064). */
+  explore?: boolean | null;
 }
 
 export interface WalkthroughStep {
