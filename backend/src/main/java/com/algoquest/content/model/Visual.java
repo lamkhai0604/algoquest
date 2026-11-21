@@ -15,7 +15,8 @@ import java.util.List;
  * animation (D-061), and an optional window: the first and last index of a range of cells to shade
  * (D-063), an optional stack drawn as a strip, bottom first (D-065), and an explore flag that makes
  * a graph step interactive (D-064), and optional intervals: one {@code [start, end]} per cell,
- * drawn as bars on a shared time axis, with the indexes of kept intervals and a sweep line (D-066).
+ * drawn as bars on a shared time axis, with the indexes of kept intervals and a sweep line (D-066), and an optional table layout: the cells
+ * in {@code rows} rows with row and column labels and the indexes of the cells a step reads (D-068).
  * Everything except {@code cells} is optional.
  */
 public record Visual(
@@ -38,7 +39,11 @@ public record Visual(
     Boolean explore,
     List<List<Integer>> intervals,
     List<Integer> chosen,
-    Integer line) {
+    Integer line,
+    Integer rows,
+    List<String> rowLabels,
+    List<String> columnLabels,
+    List<Integer> reads) {
 
   /** The most cells a tree may have: five levels. */
   public static final int MAX_TREE_CELLS = 31;
@@ -61,6 +66,10 @@ public record Visual(
 
   public boolean drawsIntervals() {
     return intervals != null;
+  }
+
+  public boolean drawsTable() {
+    return rows != null;
   }
 
   public boolean explores() {

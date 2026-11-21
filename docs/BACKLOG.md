@@ -244,7 +244,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-578 | System Design tab marked "Coming soon": last item of the main navigation and a page listing the planned topics | D-067 | P2 | To do |
+| T-578 | System Design tab marked "Coming soon": last item of the main navigation and a page listing the planned topics | D-067 | P2 | Built 2026-11-21: frontend test; screenshots on desktop and phone (header wraps below 480 px); PO review pending |
 | T-579 | Table view for 2-D walkthroughs: rows and columns of cells, the cell being filled, the cells it reads | FR-03, D-068 | P1 | To do |
 | T-580 | Level 22 Mixed Pattern Problems content | FR-03, FR-04, D-048 | P1 | To do |
 | T-581 | Level 22 pattern challenges | D-057 | P2 | To do |

@@ -181,6 +181,7 @@
     "window": "Window",
     "windowSize": "size",
     "stack": "Stack (bottom → top)",
+    "table": "Table of values",
     "timeline": "Intervals on a time axis",
     "exploreTitle": "Try it yourself: pick a start vertex and a search",
     "startAt": "Start at",

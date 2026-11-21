@@ -802,6 +802,96 @@ function Timeline({
   );
 }
 
+/**
+ * Table view (D-068): the cells in rows, with optional row and column
+ * labels. The marked cell is outlined and the cells it reads are shaded and
+ * marked with a dot, so the view does not rely on colour alone.
+ */
+function Table({
+  visual,
+  previous,
+}: {
+  visual: Visual;
+  previous: Visual | null;
+}) {
+  const { t } = useTranslation();
+  const tableRef = useRef<HTMLTableElement>(null);
+  useLayoutEffect(() => {
+    const table = tableRef.current;
+    if (!table) return;
+    animateRow(
+      Array.from(table.querySelectorAll("td[data-cell]")),
+      visual,
+      previous,
+      styles.tableValue ?? "",
+      styles.tableMarker ?? "",
+    );
+  }, [visual, previous]);
+  const rows = Math.max(1, visual.rows ?? 1);
+  const columns = Math.ceil(visual.cells.length / rows);
+  const reads = new Set(visual.reads ?? []);
+  const labels = new Map<number, string[]>();
+  for (const m of visual.markers ?? []) {
+    labels.set(m.index, [...(labels.get(m.index) ?? []), m.label]);
+  }
+  const rowLabels = visual.rowLabels ?? null;
+  const columnLabels = visual.columnLabels ?? null;
+  return (
+    <div className={styles.tableWrap}>
+      <table
+        ref={tableRef}
+        className={styles.dpTable}
+        aria-label={t("walkthrough.table")}
+      >
+        {columnLabels && (
+          <thead>
+            <tr>
+              {rowLabels && <th aria-hidden="true" />}
+              {columnLabels.map((label, c) => (
+                <th key={c} scope="col">
+                  {label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )}
+        <tbody>
+          {Array.from({ length: rows }, (_, r) => (
+            <tr key={r}>
+              {rowLabels && <th scope="row">{rowLabels[r]}</th>}
+              {Array.from({ length: columns }, (_, c) => {
+                const i = r * columns + c;
+                const marks = labels.get(i);
+                const read = reads.has(i);
+                return (
+                  <td
+                    key={c}
+                    data-cell={i}
+                    data-read={read ? "true" : undefined}
+                    aria-current={marks ? "true" : undefined}
+                    className={cx(
+                      styles.tableCell,
+                      read && styles.tableRead,
+                      marks && styles.tableCurrent,
+                    )}
+                  >
+                    <span className={styles.tableValue}>
+                      {visual.cells[i]}
+                    </span>
+                    <span className={styles.tableMarker}>
+                      {marks?.join(", ") ?? (read ? "•" : "")}
+                    </span>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function QueueStrip({
   visual,
   previous,
@@ -1231,6 +1321,15 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
     setPlaying(true);
   };
   const previousVisual = steps[index - 1]?.visual ?? null;
+  // A prediction can hide the value of the marked cell until it is answered.
+  const markedCells = new Set((visual?.markers ?? []).map((m) => m.index));
+  const shownCells: Visual | null =
+    visual && hidden.includes("cell")
+      ? {
+          ...visual,
+          cells: visual.cells.map((c, i) => (markedCells.has(i) ? "?" : c)),
+        }
+      : visual;
 
   return (
     <div className={styles.visualizer}>
@@ -1258,8 +1357,10 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
               previous={steps[index - 1]?.visual ?? null}
               hidden={hidden}
             />
+          ) : visual.rows ? (
+            <Table visual={shownCells} previous={previousVisual} />
           ) : (
-            <Cells visual={visual} previous={previousVisual} />
+            <Cells visual={shownCells} previous={previousVisual} />
           ))}
         {visual?.queue && (
           <QueueStrip
