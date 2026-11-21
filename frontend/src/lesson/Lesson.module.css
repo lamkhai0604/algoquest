@@ -732,12 +732,20 @@
 
 .ringSwatch.ring0 {
   border-color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface));
+  background: color-mix(
+    in srgb,
+    var(--color-primary) 30%,
+    var(--color-surface)
+  );
 }
 
 .ringSwatch.ring1 {
   border-color: var(--color-success);
-  background: color-mix(in srgb, var(--color-success) 30%, var(--color-surface));
+  background: color-mix(
+    in srgb,
+    var(--color-success) 30%,
+    var(--color-surface)
+  );
 }
 
 .ringSwatch.ring2 {
@@ -747,12 +755,20 @@
 
 .ringSwatch.ring3 {
   border-color: var(--color-warning);
-  background: color-mix(in srgb, var(--color-warning) 30%, var(--color-surface));
+  background: color-mix(
+    in srgb,
+    var(--color-warning) 30%,
+    var(--color-surface)
+  );
 }
 
 .ringSwatch.ring4 {
   border-color: var(--color-text-muted);
-  background: color-mix(in srgb, var(--color-text-muted) 30%, var(--color-surface));
+  background: color-mix(
+    in srgb,
+    var(--color-text-muted) 30%,
+    var(--color-surface)
+  );
 }
 
 .queue {
