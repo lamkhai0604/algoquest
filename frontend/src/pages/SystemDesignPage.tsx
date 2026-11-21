@@ -3,7 +3,14 @@ import { Badge, Card } from "../components";
 import { useTranslation } from "../i18n";
 import styles from "./Pages.module.css";
 
-const TOPICS = ["topic1", "topic2", "topic3", "topic4", "topic5", "topic6"] as const;
+const TOPICS = [
+  "topic1",
+  "topic2",
+  "topic3",
+  "topic4",
+  "topic5",
+  "topic6",
+] as const;
 
 /** Placeholder for the planned System Design track (D-067). */
 export function SystemDesignPage() {
