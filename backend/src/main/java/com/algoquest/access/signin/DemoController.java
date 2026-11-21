@@ -51,10 +51,10 @@ public class DemoController {
   @PostMapping("/demo")
   public synchronized DemoCode demo() {
     if (!enabled) {
-      throw new ApiException(
-          HttpStatus.NOT_FOUND, "Not Found", "The demo sign-in is turned off.");
+      throw new ApiException(HttpStatus.NOT_FOUND, "Not Found", "The demo sign-in is turned off.");
     }
-    Instant dayStart = LocalDate.now(clock.withZone(ZoneOffset.UTC)).atStartOfDay().toInstant(ZoneOffset.UTC);
+    Instant dayStart =
+        LocalDate.now(clock.withZone(ZoneOffset.UTC)).atStartOfDay().toInstant(ZoneOffset.UTC);
     if (access.demoUsersSince(dayStart) >= dailyLimit) {
       throw new ApiException(
           HttpStatus.TOO_MANY_REQUESTS,

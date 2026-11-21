@@ -46,7 +46,9 @@ describe("sign-in", () => {
     renderAt("/sign-in");
 
     expect(
-      screen.getByText("Explain your approach in words; an AI grades it like an interviewer"),
+      screen.getByText(
+        "Explain your approach in words; an AI grades it like an interviewer",
+      ),
     ).toBeVisible();
     await userEvent.click(
       await screen.findByRole("button", {
