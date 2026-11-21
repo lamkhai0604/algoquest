@@ -245,7 +245,9 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.activeEdges(), b.activeEdges())
               || !java.util.Objects.equals(a.queue(), b.queue())
               || !java.util.Objects.equals(a.rings(), b.rings())
-              || !java.util.Objects.equals(a.window(), b.window())) {
+              || !java.util.Objects.equals(a.window(), b.window())
+              || !java.util.Objects.equals(a.stack(), b.stack())
+              || a.explores() != b.explores()) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -427,9 +429,15 @@ final class ContentValidator {
         || visual.positions() != null
         || visual.activeEdges() != null
         || visual.queue() != null
-        || visual.rings() != null) {
+        || visual.rings() != null
+        || visual.explore() != null) {
       problems.add(
-          where + ": directed, visited, positions, activeEdges, queue and rings need edges");
+          where
+              + ": directed, visited, positions, activeEdges, queue, rings and explore need"
+              + " edges");
+    }
+    if (visual.stack() != null && visual.stack().contains(null)) {
+      problems.add(where + ": stack items must be text");
     }
     List<Integer> window = visual.window();
     if (window != null && !window.isEmpty()) {
@@ -473,6 +481,9 @@ final class ContentValidator {
     }
     if (visual.next() != null) {
       names.add("next");
+    }
+    if (visual.stack() != null) {
+      names.add("stack");
     }
     Visual.Prediction predict = visual.predict();
     if (predict != null) {

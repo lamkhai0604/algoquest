@@ -97,6 +97,8 @@ class ContentLoaderTest {
     assertThat(graph.activeEdges()).hasSize(1);
     assertThat(graph.queue()).containsExactly(1, 2);
     assertThat(graph.rings()).containsExactly(0, 1, 1, -1);
+    assertThat(graph.explores()).isTrue();
+    assertThat(levels.get(1).lesson().walkthrough().get(1).visual().stack()).containsExactly("3", "9");
     assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
     PatternChallenge challenge = levels.get(1).patterns().getFirst();
     assertThat(challenge.best().id()).isEqualTo("hash");

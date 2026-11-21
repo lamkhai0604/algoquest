@@ -1,14 +1,118 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "../i18n";
 import { Button, Card, cx } from "../components";
 import styles from "./Lesson.module.css";
 import { CodeBlock, InlineText } from "./Markdown";
 import { Predict } from "./Predict";
 import type { Answer } from "./Predict";
+import { traceSearch } from "./traceSearch";
+import type { TraceState } from "./traceSearch";
 import type { Visual, WalkthroughStep } from "./types";
 
-function Cells({ visual }: { visual: Visual }) {
+/**
+ * Motion helpers (D-065). They use the Web Animations API on top of the final
+ * layout, so the drawing is always correct and the motion is only a bonus:
+ * nothing moves when the browser lacks the API or asks for reduced motion.
+ */
+function canAnimate(): boolean {
+  if (typeof window === "undefined" || typeof Element === "undefined") {
+    return false;
+  }
+  if (!("animate" in Element.prototype)) return false;
+  return !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+}
+
+/** Slides an element from where `from` was to where it is now. */
+function slideFrom(el: Element | null | undefined, from: DOMRect) {
+  if (!el) return;
+  const to = el.getBoundingClientRect();
+  const dx = from.left + from.width / 2 - (to.left + to.width / 2);
+  const dy = from.top + from.height / 2 - (to.top + to.height / 2);
+  if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+  el.animate(
+    [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "none" }],
+    { duration: 380, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
+  );
+}
+
+/** A short pop for a value that changed in place. */
+function pop(el: Element | null | undefined) {
+  el?.animate(
+    [
+      { transform: "scale(0.6)", opacity: 0.3 },
+      { transform: "scale(1.15)", opacity: 1, offset: 0.6 },
+      { transform: "none" },
+    ],
+    { duration: 420, easing: "ease-out" },
+  );
+}
+
+/** Where each marker label sits, by label. */
+function markerIndexes(visual: Visual | null): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const m of visual?.markers ?? []) out.set(m.label, m.index);
+  return out;
+}
+
+/**
+ * Animates a row of cells or nodes after a step: marker labels slide from
+ * their previous cell, swapped values trade places, and changed values pop.
+ * `items` are the row's elements in index order.
+ */
+function animateRow(
+  items: Element[],
+  visual: Visual,
+  previous: Visual | null,
+  valueClass: string,
+  markerClass: string,
+) {
+  if (!canAnimate() || !previous) return;
+  if (previous.cells.length !== visual.cells.length) return;
+  const rects = items.map((el) => el.getBoundingClientRect());
+  const before = markerIndexes(previous);
+  for (const m of visual.markers ?? []) {
+    const from = before.get(m.label);
+    if (from === undefined || from === m.index) continue;
+    const rect = rects[from];
+    const marker = items[m.index]?.querySelector(`.${markerClass}`);
+    if (rect) slideFrom(marker, rect);
+  }
+  const swap = visual.swap ?? [];
+  if (swap.length === 2) {
+    const [a = 0, b = 0] = swap;
+    const ra = rects[a];
+    const rb = rects[b];
+    if (ra && rb) {
+      slideFrom(items[a]?.querySelector(`.${valueClass}`), rb);
+      slideFrom(items[b]?.querySelector(`.${valueClass}`), ra);
+    }
+  }
+  visual.cells.forEach((cell, i) => {
+    if (swap.includes(i) || previous.cells[i] === cell) return;
+    pop(items[i]?.querySelector(`.${valueClass}`));
+  });
+}
+
+function Cells({
+  visual,
+  previous,
+}: {
+  visual: Visual;
+  previous: Visual | null;
+}) {
   const { t } = useTranslation();
+  const listRef = useRef<HTMLOListElement>(null);
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    animateRow(
+      Array.from(list.children),
+      visual,
+      previous,
+      styles.cellValue ?? "",
+      styles.cellMarker ?? "",
+    );
+  }, [visual, previous]);
   const labels = new Map<number, string[]>();
   for (const marker of visual.markers ?? []) {
     labels.set(marker.index, [
@@ -25,7 +129,11 @@ function Cells({ visual }: { visual: Visual }) {
     from !== undefined && to !== undefined && index >= from && index <= to;
   return (
     <>
-      <ol className={styles.cells} aria-label={t("walkthrough.items")}>
+      <ol
+        ref={listRef}
+        className={styles.cells}
+        aria-label={t("walkthrough.items")}
+      >
         {visual.cells.map((cell, index) => {
           const marks = labels.get(index);
           const swapped = swap.includes(index);
@@ -82,8 +190,53 @@ function Nodes({
   hidden: string[];
 }) {
   const { t } = useTranslation();
+  const listRef = useRef<HTMLOListElement>(null);
   const next = visual.next ?? [];
   const masked = hidden.includes("next");
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const nodes = Array.from(list.children).map(
+      (item) => item.firstElementChild ?? item,
+    );
+    animateRow(
+      nodes,
+      visual,
+      previous,
+      styles.cellValue ?? "",
+      styles.cellMarker ?? "",
+    );
+    // A pointer that changed flips into place.
+    if (!canAnimate() || masked || !previous?.next) return;
+    const prevNext = previous.next;
+    nodes.forEach((node, i) => {
+      if (prevNext[i] === next[i]) return;
+      node
+        .querySelector(`.${styles.nodeNext}`)
+        ?.animate(
+          [
+            { transform: "rotateX(90deg)", opacity: 0 },
+            { transform: "none", opacity: 1 },
+          ],
+          { duration: 380, easing: "ease-out" },
+        );
+    });
+    Array.from(list.querySelectorAll(`.${styles.nodeLink}`)).forEach(
+      (link, i) => {
+        const was = prevNext[i] === i + 1 || prevNext[i + 1] === i;
+        const is = next[i] === i + 1 || next[i + 1] === i;
+        if (was !== is || prevNext[i] !== next[i] || prevNext[i + 1] !== next[i + 1]) {
+          link.animate(
+            [
+              { transform: "scale(0.2) rotate(-180deg)", opacity: 0 },
+              { transform: "none", opacity: 1 },
+            ],
+            { duration: 420, easing: "ease-out" },
+          );
+        }
+      },
+    );
+  }, [visual, previous, masked, next]);
   const labels = new Map<number, string[]>();
   for (const marker of visual.markers ?? []) {
     labels.set(marker.index, [
@@ -104,7 +257,11 @@ function Nodes({
     return forward && back ? "⇄" : forward ? "→" : back ? "←" : "";
   };
   return (
-    <ol className={styles.nodes} aria-label={t("walkthrough.items")}>
+    <ol
+      ref={listRef}
+      className={styles.nodes}
+      aria-label={t("walkthrough.items")}
+    >
       {visual.cells.map((cell, index) => {
         const marks = labels.get(index);
         const changed =
@@ -149,9 +306,48 @@ const TREE_RADIUS = 20;
  * 2i + 1 and 2i + 2, and an empty cell is no node. Drawn as an SVG that
  * scales to the width, so five levels still fit on a phone.
  */
-function Tree({ visual }: { visual: Visual }) {
+function Tree({
+  visual,
+  previous,
+}: {
+  visual: Visual;
+  previous: Visual | null;
+}) {
   const { t } = useTranslation();
+  const svgRef = useRef<SVGSVGElement>(null);
   const cells = visual.cells;
+  const sameShape =
+    previous?.tree === true && previous.cells.length === cells.length;
+  // Nodes that appeared since the previous step grow in; values that changed pop.
+  const grown = (i: number) =>
+    previous !== null &&
+    sameShape === true &&
+    (previous.cells[i] ?? "") === "" &&
+    (cells[i] ?? "") !== "";
+  // Edges on the way from the root to each marked node light up.
+  const onPath = new Set<number>();
+  for (const m of visual.markers ?? []) {
+    for (let i = m.index; i > 0; i = Math.floor((i - 1) / 2)) onPath.add(i);
+  }
+  useLayoutEffect(() => {
+    const svg = svgRef.current;
+    if (!svg || !canAnimate() || !previous?.tree) return;
+    const before = markerIndexes(previous);
+    for (const m of visual.markers ?? []) {
+      const from = before.get(m.label);
+      if (from === undefined || from === m.index) continue;
+      const a = svg.querySelector(`[data-node="${from}"] circle`);
+      const label = svg.querySelector(`[data-marker="${m.index}"]`);
+      if (a && label) slideFrom(label, a.getBoundingClientRect());
+    }
+    if (previous.cells.length !== visual.cells.length) return;
+    visual.cells.forEach((cell, i) => {
+      const was = previous.cells[i] ?? "";
+      if (was !== "" && cell !== "" && was !== cell) {
+        pop(svg.querySelector(`[data-node="${i}"] text`));
+      }
+    });
+  }, [visual, previous]);
   const levels = Math.max(1, Math.floor(Math.log2(cells.length)) + 1);
   const width = TREE_SLOT * 2 ** (levels - 1);
   const height = TREE_ROW * levels + 8;
@@ -174,6 +370,7 @@ function Tree({ visual }: { visual: Visual }) {
   return (
     <div className={styles.treeWrap}>
       <svg
+        ref={svgRef}
         className={styles.tree}
         viewBox={`0 0 ${width} ${height}`}
         role="img"
@@ -189,7 +386,11 @@ function Tree({ visual }: { visual: Visual }) {
               return (
                 <line
                   key={`${i}-${child}`}
-                  className={styles.treeEdge}
+                  className={cx(
+                    styles.treeEdge,
+                    onPath.has(child) && styles.graphEdgeActive,
+                  )}
+                  data-path={onPath.has(child) ? "true" : undefined}
                   x1={from.x}
                   y1={from.y}
                   x2={to.x}
@@ -203,19 +404,33 @@ function Tree({ visual }: { visual: Visual }) {
           const { x, y } = place(i);
           const marks = labels.get(i);
           return (
-            <g key={i} aria-current={marks ? "true" : undefined}>
+            <g
+              key={i}
+              data-node={i}
+              aria-current={marks ? "true" : undefined}
+            >
               <circle
-                className={cx(styles.treeNode, marks && styles.treeNodeCurrent)}
+                className={cx(
+                  styles.treeNode,
+                  marks && styles.treeNodeCurrent,
+                  grown(i) && styles.graphFresh,
+                )}
                 cx={x}
                 cy={y}
                 r={TREE_RADIUS}
               />
-              <text className={styles.treeValue} x={x} y={y}>
+              <text
+                className={styles.treeValue}
+                x={x}
+                y={y}
+                style={{ transformBox: "fill-box", transformOrigin: "center" }}
+              >
                 {cell}
               </text>
               {marks && (
                 <text
                   className={styles.treeMarker}
+                  data-marker={i}
                   x={x}
                   y={y + TREE_RADIUS + 14}
                 >
@@ -468,6 +683,214 @@ function QueueStrip({
   );
 }
 
+/**
+ * A stack as a row of items, bottom on the left and top on the right (D-065).
+ * Pushed items drop in on the right; items popped in this step fade out after
+ * the top. While a prediction hides "stack", it shows "?".
+ */
+function StackStrip({
+  visual,
+  previous,
+  masked,
+}: {
+  visual: Visual;
+  previous: Visual | null;
+  masked: boolean;
+}) {
+  const { t } = useTranslation();
+  const stack = visual.stack ?? [];
+  const before = previous?.stack ?? [];
+  let common = 0;
+  while (
+    common < stack.length &&
+    common < before.length &&
+    stack[common] === before[common]
+  ) {
+    common++;
+  }
+  const popped = previous ? before.slice(common) : [];
+  return (
+    <div className={styles.queue}>
+      <span className={styles.queueLabel}>{t("walkthrough.stack")}</span>
+      <ol className={styles.queueItems} aria-label={t("walkthrough.stack")}>
+        {masked ? (
+          <li className={styles.queueItem}>?</li>
+        ) : (
+          <>
+            {stack.map((item, i) => (
+              <li
+                key={`${i}-${item}`}
+                className={cx(
+                  styles.queueItem,
+                  previous && i >= common && styles.stackIn,
+                  i === stack.length - 1 && styles.stackTop,
+                )}
+              >
+                {item}
+              </li>
+            ))}
+            {popped.map((item, i) => (
+              <li
+                key={`out-${i}-${item}`}
+                className={cx(styles.queueItem, styles.queueOut)}
+                aria-hidden="true"
+              >
+                {item}
+              </li>
+            ))}
+            {stack.length === 0 && popped.length === 0 && (
+              <li className={styles.queueEmpty}>{t("walkthrough.empty")}</li>
+            )}
+          </>
+        )}
+      </ol>
+    </div>
+  );
+}
+
+/**
+ * An interactive graph (D-064): pick a start vertex and BFS or DFS, then step
+ * or play through the search.
+ */
+function Explorer({ visual }: { visual: Visual }) {
+  const { t } = useTranslation();
+  const [start, setStart] = useState(0);
+  const [kind, setKind] = useState<"bfs" | "dfs">("bfs");
+  const [at, setAt] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const states = traceSearch(
+    visual.cells.length,
+    visual.edges ?? [],
+    visual.directed === true,
+    start,
+    kind,
+  );
+  const last = states.length - 1;
+  const running = playing && at < last;
+  useEffect(() => {
+    if (!running) return;
+    const timer = setTimeout(() => setAt((i) => Math.min(last, i + 1)), 900);
+    return () => clearTimeout(timer);
+  }, [running, at, last]);
+  const state = states[Math.min(at, last)]!;
+  const prev = at > 0 ? states[at - 1]! : null;
+  const label = (v: number) => visual.cells[v] ?? String(v);
+  const toVisual = (s: TraceState): Visual => ({
+    ...visual,
+    predict: null,
+    queue: null,
+    rings: null,
+    visited: s.order,
+    activeEdges: s.active,
+    markers: s.curr >= 0 ? [{ index: s.curr, label: "curr" }] : [],
+  });
+  const shown = toVisual(state);
+  const restart = (nextStart: number, nextKind: "bfs" | "dfs") => {
+    setStart(nextStart);
+    setKind(nextKind);
+    setAt(0);
+    setPlaying(false);
+  };
+  return (
+    <div className={styles.explorer}>
+      <p className={styles.explorerTitle}>{t("walkthrough.exploreTitle")}</p>
+      <div className={styles.explorerControls}>
+        <label className={styles.speed}>
+          <span>{t("walkthrough.startAt")}</span>
+          <select
+            value={start}
+            onChange={(e) => restart(Number(e.target.value), kind)}
+          >
+            {visual.cells.map((cell, i) => (
+              <option key={i} value={i}>
+                {cell}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div role="group" aria-label={t("walkthrough.search")}>
+          <Button
+            size="sm"
+            variant={kind === "bfs" ? "primary" : "secondary"}
+            aria-pressed={kind === "bfs"}
+            onClick={() => restart(start, "bfs")}
+          >
+            {t("walkthrough.bfs")}
+          </Button>{" "}
+          <Button
+            size="sm"
+            variant={kind === "dfs" ? "primary" : "secondary"}
+            aria-pressed={kind === "dfs"}
+            onClick={() => restart(start, "dfs")}
+          >
+            {t("walkthrough.dfs")}
+          </Button>
+        </div>
+      </div>
+      <Graph
+        visual={shown}
+        previous={prev ? toVisual(prev) : null}
+        masked={false}
+      />
+      {kind === "bfs" ? (
+        <QueueStrip
+          visual={{ ...shown, queue: state.frontier }}
+          previous={prev ? { ...shown, queue: prev.frontier } : null}
+          masked={false}
+        />
+      ) : (
+        <StackStrip
+          visual={{ ...shown, stack: state.frontier.map(label) }}
+          previous={prev ? { ...shown, stack: prev.frontier.map(label) } : null}
+          masked={false}
+        />
+      )}
+      <p className={styles.visitOrder}>
+        {t("walkthrough.visitOrder")}:{" "}
+        <strong>{state.order.map(label).join(" → ") || "·"}</strong>
+      </p>
+      <div className={styles.stepButtons}>
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={at === 0}
+          onClick={() => {
+            setPlaying(false);
+            setAt(at - 1);
+          }}
+        >
+          {t("lesson.previous")}
+        </Button>
+        <Button
+          size="sm"
+          disabled={at >= last}
+          onClick={() => {
+            setPlaying(false);
+            setAt(at + 1);
+          }}
+        >
+          {t("lessonMore.nextStep")}
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          aria-pressed={running}
+          onClick={() => {
+            if (running) {
+              setPlaying(false);
+              return;
+            }
+            if (at >= last) setAt(0);
+            setPlaying(true);
+          }}
+        >
+          {running ? t("walkthrough.pause") : t("walkthrough.play")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function Variables({ visual, hidden }: { visual: Visual; hidden: string[] }) {
   if (!visual.vars?.length) return null;
   return (
@@ -641,10 +1064,12 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           {steps.length}
         </span>
         {visual &&
-          (visual.edges ? (
+          (visual.edges && visual.explore ? (
+            <Explorer key={index} visual={visual} />
+          ) : visual.edges ? (
             <Graph visual={visual} previous={previousVisual} masked={waiting} />
           ) : visual.tree ? (
-            <Tree visual={visual} />
+            <Tree visual={visual} previous={previousVisual} />
           ) : visual.next ? (
             <Nodes
               visual={visual}
@@ -652,13 +1077,20 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
               hidden={hidden}
             />
           ) : (
-            <Cells visual={visual} />
+            <Cells visual={visual} previous={previousVisual} />
           ))}
         {visual?.queue && (
           <QueueStrip
             visual={visual}
             previous={previousVisual}
             masked={hidden.includes("queue")}
+          />
+        )}
+        {visual?.stack && (
+          <StackStrip
+            visual={visual}
+            previous={previousVisual}
+            masked={hidden.includes("stack")}
           />
         )}
         {visual && <Variables visual={visual} hidden={hidden} />}
