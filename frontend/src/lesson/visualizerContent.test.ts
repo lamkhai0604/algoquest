@@ -514,7 +514,6 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(problems).toHaveLength(steps[0]!.visual!.cells.length);
     problems.forEach((step, i) => {
       expect(step.visual!.markers![0]!.index).toBe(i);
-      expect(step.visual!.window).toEqual([0, i]);
       expect(value(step, "signal")).toBeTruthy();
       expect(value(step, "pattern")).toBeTruthy();
     });

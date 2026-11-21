@@ -15,10 +15,6 @@
       ],
       "vars": [
         {
-          "name": "problem",
-          "value": "·"
-        },
-        {
           "name": "signal",
           "value": "·"
         },
@@ -53,15 +49,7 @@
           "label": "now"
         }
       ],
-      "window": [
-        0,
-        0
-      ],
       "vars": [
-        {
-          "name": "problem",
-          "value": "A sorted list of prices: find two that add up to exactly 50."
-        },
         {
           "name": "signal",
           "value": "sorted + a pair"
@@ -97,15 +85,7 @@
           "label": "now"
         }
       ],
-      "window": [
-        0,
-        1
-      ],
       "vars": [
-        {
-          "name": "problem",
-          "value": "The longest run of days with at most 2 rainy days."
-        },
         {
           "name": "signal",
           "value": "contiguous + at most k"
@@ -141,15 +121,7 @@
           "label": "now"
         }
       ],
-      "window": [
-        0,
-        2
-      ],
       "vars": [
-        {
-          "name": "problem",
-          "value": "The fewest moves for a knight to reach a square."
-        },
         {
           "name": "signal",
           "value": "fewest steps, equal cost"
@@ -200,15 +172,7 @@
           "label": "now"
         }
       ],
-      "window": [
-        0,
-        3
-      ],
       "vars": [
-        {
-          "name": "problem",
-          "value": "List every way to choose 3 of 10 toppings."
-        },
         {
           "name": "signal",
           "value": "list all choices"
@@ -244,15 +208,7 @@
           "label": "now"
         }
       ],
-      "window": [
-        0,
-        4
-      ],
       "vars": [
-        {
-          "name": "problem",
-          "value": "The slowest reading speed that finishes a book list in 8 hours."
-        },
         {
           "name": "signal",
           "value": "smallest value that works; works stays true as it grows"
@@ -303,15 +259,7 @@
           "label": "now"
         }
       ],
-      "window": [
-        0,
-        5
-      ],
       "vars": [
-        {
-          "name": "problem",
-          "value": "The number of ways to make 100 cents from coins."
-        },
         {
           "name": "signal",
           "value": "count ways; choices overlap"
@@ -347,15 +295,7 @@
           "label": "now"
         }
       ],
-      "window": [
-        0,
-        6
-      ],
       "vars": [
-        {
-          "name": "problem",
-          "value": "For each day, how many days until a warmer one."
-        },
         {
           "name": "signal",
           "value": "next greater to the right"
