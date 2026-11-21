@@ -24,7 +24,8 @@ describe("traceSearch", () => {
   it("goes deep first in DFS, smallest neighbour first", () => {
     const states = traceSearch(5, EDGES, false, 0, "dfs");
     expect(states.at(-1)!.order).toEqual([0, 1, 3, 2, 4]);
-    expect(states[2]!.active).toEqual([[1, 3]]);
+    expect(states[2]!.active).toEqual([[0, 1]]);
+    expect(states[3]!.active).toEqual([[1, 3]]);
   });
 
   it("follows edge direction in a directed graph and can start anywhere", () => {
