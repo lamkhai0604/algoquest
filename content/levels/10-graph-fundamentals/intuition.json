@@ -1,0 +1,11 @@
+{
+  "question": "A social network has 2,000,000 members. You want the fewest \"friend of a friend\" steps between two members. What is the best plan?",
+  "options": [
+    "Try every possible chain of friends and keep the shortest",
+    "Spread out from the first member one ring of friends at a time until the second appears",
+    "Sort the members by name and use binary search",
+    "Follow one friend after another as deep as possible, then report that path"
+  ],
+  "answer": 1,
+  "explanation": "That is breadth-first search. Each ring is one step further away, so the first time the second member appears is along the fewest steps. Every member and friendship is checked at most once: O(V + E). Going deep first finds a path, but not necessarily the shortest."
+}
