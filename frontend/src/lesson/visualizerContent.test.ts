@@ -528,22 +528,30 @@ describe("lesson visualizers match their reference algorithms", () => {
     const a = first.rowLabels!.slice(1).join("");
     const b = first.columnLabels!.slice(1).join("");
     const cols = b.length + 1;
-    const dp = Array.from({ length: a.length + 1 }, () => new Array<number>(cols).fill(0));
+    const dp = Array.from({ length: a.length + 1 }, () =>
+      new Array<number>(cols).fill(0),
+    );
     let k = 1;
     for (let i = 1; i <= a.length; i++) {
       for (let j = 1; j <= b.length; j++) {
         const match = a[i - 1] === b[j - 1];
-        dp[i]![j] = match ? dp[i - 1]![j - 1]! + 1 : Math.max(dp[i - 1]![j]!, dp[i]![j - 1]!);
+        dp[i]![j] = match
+          ? dp[i - 1]![j - 1]! + 1
+          : Math.max(dp[i - 1]![j]!, dp[i]![j - 1]!);
         const v = steps[k++]!.visual!;
         expect(v.markers![0]!.index).toBe(i * cols + j);
         expect(v.cells[i * cols + j]).toBe(String(dp[i]![j]));
         expect(v.reads).toEqual(
-          match ? [(i - 1) * cols + j - 1] : [(i - 1) * cols + j, i * cols + j - 1],
+          match
+            ? [(i - 1) * cols + j - 1]
+            : [(i - 1) * cols + j, i * cols + j - 1],
         );
       }
     }
     expect(k).toBe(steps.length);
-    expect(value(steps.at(-1)!, "result")).toBe(String(dp[a.length]![b.length]));
+    expect(value(steps.at(-1)!, "result")).toBe(
+      String(dp[a.length]![b.length]),
+    );
   });
 
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
