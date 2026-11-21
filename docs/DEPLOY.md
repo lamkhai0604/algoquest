@@ -1,6 +1,6 @@
 # Deployment Runbook — AlgoQuest
 
-Status: first deployment (T-307), approved by the PO on 2026-11-09. Hosting follows D-037; free tiers only (D-006).
+Status: deployed since 2026-11-09 (T-307, approved by the PO); every merge to `main` deploys both parts. Hosting follows D-037; free tiers only (D-006). Use this runbook to set up a new environment or to recover one.
 
 | Part | Host | Plan | Notes |
 | --- | --- | --- | --- |
@@ -93,7 +93,7 @@ The local apps stay as they are. Production uses separate apps so local and prod
    | 5 | Open Level 1, read the lesson, explain one Easy problem | A score and feedback from Gemini; XP on the bar |
    | 6 | Open Profile and Admin → grading log | Totals and streak; the attempt from step 5 with `gemini` as grader |
 
-3. Record the result in the Sprint 3 report and close T-307.
+3. Record the result in the current sprint report.
 
 ## Troubleshooting
 

@@ -1,5 +1,7 @@
 .page {
   display: grid;
+  /* One column that may shrink below its content's widest line (long code, wide visuals). */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
   max-width: 1080px;
   margin: 0 auto;
