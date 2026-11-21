@@ -1,0 +1,11 @@
+{
+  "question": "A linked list may loop back on itself, and you may use only a constant amount of extra memory. How can you tell whether it loops?",
+  "options": [
+    "Count nodes until the count passes a big number",
+    "Run two pointers, one twice as fast; if they ever meet, it loops",
+    "Store every node you visit in a set",
+    "Reverse the list and compare"
+  ],
+  "answer": 1,
+  "explanation": "In a loop the faster pointer gains one node per step and must catch the slower one; without a loop it reaches the end. A set also works but uses O(n) memory, and a count limit can give the wrong answer."
+}

@@ -1,0 +1,397 @@
+[
+  {
+    "title": "The task",
+    "body": "Does this list loop? Node [5] points back to node [2], so it does, but the code cannot see that. Floyd's algorithm starts `slow` and `fast` at the head.",
+    "code": "let slow = head, fast = head;",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "1",
+        "5",
+        "9"
+      ],
+      "next": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        2
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "slow, fast"
+        }
+      ],
+      "vars": [
+        {
+          "name": "slow",
+          "value": "[0]"
+        },
+        {
+          "name": "fast",
+          "value": "[0]"
+        },
+        {
+          "name": "phase",
+          "value": "find a meeting"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Step 1",
+    "body": "slow moves one step to [1]; fast moves two steps to [2].",
+    "code": "slow = slow.next;\nfast = fast.next.next;\nif (slow === fast) break;",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "1",
+        "5",
+        "9"
+      ],
+      "next": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        2
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "slow"
+        },
+        {
+          "index": 2,
+          "label": "fast"
+        }
+      ],
+      "vars": [
+        {
+          "name": "slow",
+          "value": "[1]"
+        },
+        {
+          "name": "fast",
+          "value": "[2]"
+        },
+        {
+          "name": "phase",
+          "value": "find a meeting"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Step 2",
+    "body": "slow moves one step to [2]; fast moves two steps to [4].",
+    "code": "slow = slow.next;\nfast = fast.next.next;\nif (slow === fast) break;",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "1",
+        "5",
+        "9"
+      ],
+      "next": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        2
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "slow"
+        },
+        {
+          "index": 4,
+          "label": "fast"
+        }
+      ],
+      "vars": [
+        {
+          "name": "slow",
+          "value": "[2]"
+        },
+        {
+          "name": "fast",
+          "value": "[4]"
+        },
+        {
+          "name": "phase",
+          "value": "find a meeting"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Step 3",
+    "body": "slow moves one step to [3]; fast moves two steps to [2].",
+    "code": "slow = slow.next;\nfast = fast.next.next;\nif (slow === fast) break;",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "1",
+        "5",
+        "9"
+      ],
+      "next": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        2
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "fast"
+        },
+        {
+          "index": 3,
+          "label": "slow"
+        }
+      ],
+      "vars": [
+        {
+          "name": "slow",
+          "value": "[3]"
+        },
+        {
+          "name": "fast",
+          "value": "[2]"
+        },
+        {
+          "name": "phase",
+          "value": "find a meeting"
+        }
+      ],
+      "predict": {
+        "question": "slow is at [2] and fast at [4]. Where does fast land after two steps: [4] → [5] → ?",
+        "options": [
+          "[6]: past the end",
+          "[2]: node 5 points back",
+          "[0]: the head"
+        ],
+        "answer": 1,
+        "explanation": "Node [5]'s next pointer goes back to [2]. fast never reaches null, which already hints at a loop.",
+        "hides": [
+          "fast"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Step 4",
+    "body": "slow moves one step to [4]; fast moves two steps to [4]. They are on the **same node**: the list has a cycle.",
+    "code": "slow = slow.next;\nfast = fast.next.next;\nif (slow === fast) break;",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "1",
+        "5",
+        "9"
+      ],
+      "next": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        2
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "slow, fast"
+        }
+      ],
+      "vars": [
+        {
+          "name": "slow",
+          "value": "[4]"
+        },
+        {
+          "name": "fast",
+          "value": "[4]"
+        },
+        {
+          "name": "phase",
+          "value": "cycle found"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Find the start",
+    "body": "To find where the cycle begins, `a` starts again at the head while `slow` stays at the meeting point [4]. Now both move **one** step at a time.",
+    "code": "let a = head;",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "1",
+        "5",
+        "9"
+      ],
+      "next": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        2
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "a"
+        },
+        {
+          "index": 4,
+          "label": "slow"
+        }
+      ],
+      "vars": [
+        {
+          "name": "a",
+          "value": "[0]"
+        },
+        {
+          "name": "slow",
+          "value": "[4]"
+        },
+        {
+          "name": "phase",
+          "value": "find the start"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Single step 1",
+    "body": "a moves to [1], slow moves to [5].",
+    "code": "a = a.next;\nslow = slow.next;",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "1",
+        "5",
+        "9"
+      ],
+      "next": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        2
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "a"
+        },
+        {
+          "index": 5,
+          "label": "slow"
+        }
+      ],
+      "vars": [
+        {
+          "name": "a",
+          "value": "[1]"
+        },
+        {
+          "name": "slow",
+          "value": "[5]"
+        },
+        {
+          "name": "phase",
+          "value": "find the start"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Single step 2",
+    "body": "a moves to [2], slow moves to [2]. They meet at **[2]**, the node where the cycle starts. O(n) time, and only two pointers: O(1) space.",
+    "code": "a = a.next;\nslow = slow.next;",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "1",
+        "5",
+        "9"
+      ],
+      "next": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        2
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "a, slow"
+        }
+      ],
+      "vars": [
+        {
+          "name": "a",
+          "value": "[2]"
+        },
+        {
+          "name": "slow",
+          "value": "[2]"
+        },
+        {
+          "name": "phase",
+          "value": "cycle starts here"
+        },
+        {
+          "name": "result",
+          "value": "[2]"
+        }
+      ],
+      "predict": {
+        "question": "a is at [0] and slow at [4]. After two single steps each, where are they?",
+        "options": [
+          "Both at [2]",
+          "a at [2], slow at [4]",
+          "Both at [5]"
+        ],
+        "answer": 0,
+        "explanation": "a goes [0] → [1] → [2]; slow goes [4] → [5] → [2]. They meet at the first node of the cycle.",
+        "hides": [
+          "a",
+          "slow"
+        ]
+      }
+    }
+  }
+]
