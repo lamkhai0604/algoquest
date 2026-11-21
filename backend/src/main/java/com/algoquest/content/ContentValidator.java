@@ -247,7 +247,10 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.rings(), b.rings())
               || !java.util.Objects.equals(a.window(), b.window())
               || !java.util.Objects.equals(a.stack(), b.stack())
-              || a.explores() != b.explores()) {
+              || a.explores() != b.explores()
+              || !java.util.Objects.equals(a.intervals(), b.intervals())
+              || !java.util.Objects.equals(a.chosen(), b.chosen())
+              || !java.util.Objects.equals(a.line(), b.line())) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -386,6 +389,43 @@ final class ContentValidator {
     }
   }
 
+  private static void checkIntervals(List<String> problems, String where, Visual visual) {
+    if (!visual.drawsIntervals()) {
+      if (visual.chosen() != null || visual.line() != null) {
+        problems.add(where + ": chosen and line need intervals");
+      }
+      return;
+    }
+    int n = visual.cells().size();
+    boolean valid =
+        visual.intervals().size() == n
+            && visual.next() == null
+            && !visual.drawsTree()
+            && !visual.drawsGraph()
+            && (visual.window() == null || visual.window().isEmpty());
+    for (List<Integer> interval : visual.intervals()) {
+      valid =
+          valid
+              && interval != null
+              && interval.size() == 2
+              && !interval.contains(null)
+              && interval.get(0) <= interval.get(1);
+    }
+    if (!valid) {
+      problems.add(
+          where
+              + ": intervals need one [start, end] with start <= end per cell, on the cell view"
+              + " without a window");
+    }
+    List<Integer> chosen = visual.chosen();
+    if (chosen != null
+        && (chosen.contains(null)
+            || chosen.stream().anyMatch(i -> i < 0 || i >= n)
+            || chosen.stream().distinct().count() != chosen.size())) {
+      problems.add(where + ": chosen needs distinct interval indexes");
+    }
+  }
+
   private static void checkVisual(List<String> problems, String where, Visual visual) {
     if (visual.cells() == null) {
       problems.add(where + ": visual needs cells (use [] for none)");
@@ -439,6 +479,7 @@ final class ContentValidator {
     if (visual.stack() != null && visual.stack().contains(null)) {
       problems.add(where + ": stack items must be text");
     }
+    checkIntervals(problems, where, visual);
     List<Integer> window = visual.window();
     if (window != null && !window.isEmpty()) {
       boolean valid =

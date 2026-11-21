@@ -1,0 +1,11 @@
+{
+  "question": "A festival has one stage and 200 acts, each with a fixed start and end time. To fit in the most acts, which act should the planner lock in first?",
+  "options": [
+    "The act that ends earliest",
+    "The shortest act",
+    "The act that starts earliest",
+    "The act that overlaps the fewest others"
+  ],
+  "answer": 0,
+  "explanation": "Ending first leaves the most time for everything else, and any plan can swap its first act for this one without losing an act. A short act or an early start can still block two acts that would both have fit."
+}
