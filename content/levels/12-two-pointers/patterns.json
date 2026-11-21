@@ -1,0 +1,154 @@
+[
+  {
+    "id": "P12-gift-budget",
+    "level": 12,
+    "title": "Gift Budget Pair",
+    "statement": "An online shop lists 2,000,000 gift prices sorted from cheapest to most expensive. A customer with a gift card wants two different gifts that use the card's exact value.",
+    "examples": [
+      "prices = [3, 8, 15, 21, 30], card = 36 → 15 and 21"
+    ],
+    "constraints": [
+      "n = 2,000,000, already sorted",
+      "Memory is tight: no second copy of the prices"
+    ],
+    "approaches": [
+      {
+        "id": "ends",
+        "name": "Two pointers from both ends, moving the one that fixes the sum",
+        "hint": "Cheapest and most expensive first",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "The sorted order tells which pointer may move; nothing is checked twice and no extra memory is used."
+      },
+      {
+        "id": "hash",
+        "name": "One pass with a hash set of prices seen so far",
+        "hint": "Remember what you have seen",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Also linear, but it stores up to 2,000,000 prices, which the memory limit rules out."
+      },
+      {
+        "id": "binary",
+        "name": "For each price, binary search for its partner",
+        "hint": "Search the rest of the list",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "why": "Correct and uses no extra memory, but slower than one pass."
+      },
+      {
+        "id": "pairs",
+        "name": "Check every pair of prices",
+        "hint": "Try all combinations",
+        "label": "unsuitable",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "About 2 trillion sums for 2,000,000 prices."
+      }
+    ]
+  },
+  {
+    "id": "P12-clean-log",
+    "level": 12,
+    "title": "Cleaning a Sensor Log",
+    "statement": "A sensor writes 10,000,000 readings into an array; a reading of -1 means a failed measurement. The device has no room for a second array and must drop the failed readings while keeping the rest in order.",
+    "examples": [
+      "[5, -1, 7, -1, 9] → [5, 7, 9]"
+    ],
+    "constraints": [
+      "n = 10,000,000",
+      "O(1) extra memory"
+    ],
+    "approaches": [
+      {
+        "id": "readwrite",
+        "name": "A read pointer over every reading and a write pointer for the next kept one",
+        "hint": "Pack the good ones at the front",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "One pass, order kept, and only two indexes of extra memory."
+      },
+      {
+        "id": "copy",
+        "name": "Copy the good readings into a new array",
+        "hint": "Build a clean list",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Correct and simple, but it needs a second array that the device does not have room for."
+      },
+      {
+        "id": "splice",
+        "name": "Delete each -1 from the array as soon as it is found",
+        "hint": "Remove it where it is",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Each deletion shifts every later reading, which is slow with many failures."
+      },
+      {
+        "id": "sort",
+        "name": "Sort the readings so the -1s come first, then skip them",
+        "hint": "Put them in order",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(1) to O(n)",
+        "why": "It loses the original order of the readings."
+      }
+    ]
+  },
+  {
+    "id": "P12-two-playlists",
+    "level": 12,
+    "title": "Two Sorted Playlists",
+    "statement": "Two music services each send a playlist of track IDs sorted ascending, 500,000 tracks each. The app needs the tracks that appear in both lists.",
+    "examples": [
+      "[2, 5, 9, 14], [1, 5, 9, 20] → [5, 9]"
+    ],
+    "constraints": [
+      "n = m = 500,000, both sorted"
+    ],
+    "approaches": [
+      {
+        "id": "walk",
+        "name": "Walk both lists with one pointer each, moving the pointer at the smaller ID",
+        "hint": "Like merging",
+        "label": "best",
+        "time": "O(n + m)",
+        "space": "O(1) beyond the output",
+        "why": "Each step moves at least one pointer, and the output comes out sorted."
+      },
+      {
+        "id": "set",
+        "name": "Put one list in a hash set and look up the other",
+        "hint": "Remember one list",
+        "label": "valid",
+        "time": "O(n + m)",
+        "space": "O(n)",
+        "why": "Also linear, but it ignores that both lists are sorted and stores 500,000 IDs."
+      },
+      {
+        "id": "binary",
+        "name": "For each ID in one list, binary search the other",
+        "hint": "Search the other list",
+        "label": "valid",
+        "time": "O(n log m)",
+        "space": "O(1)",
+        "why": "Correct, a little slower than one walk."
+      },
+      {
+        "id": "nested",
+        "name": "Compare every ID with every other ID",
+        "hint": "Check all pairs",
+        "label": "unsuitable",
+        "time": "O(n · m)",
+        "space": "O(1)",
+        "why": "250 billion comparisons."
+      }
+    ]
+  }
+]

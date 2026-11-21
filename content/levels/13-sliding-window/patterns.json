@@ -1,0 +1,152 @@
+[
+  {
+    "id": "P13-heart-rate",
+    "level": 13,
+    "title": "Highest Heart Rate Minute Block",
+    "statement": "A watch stores one heart-rate reading per second for a 24-hour day (86,400 readings). The coach wants the 5-minute block (300 consecutive readings) with the highest total.",
+    "examples": [
+      "k = 300 consecutive readings"
+    ],
+    "constraints": [
+      "n = 86,400, k = 300"
+    ],
+    "approaches": [
+      {
+        "id": "fixed",
+        "name": "A fixed window of 300: add the reading that enters, subtract the one that leaves",
+        "hint": "Update, do not recompute",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Two operations per step, whatever the block length."
+      },
+      {
+        "id": "prefix",
+        "name": "Prefix sums, then each block total as a difference",
+        "hint": "Precompute running totals",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Also linear, but stores 86,400 extra numbers for no gain here."
+      },
+      {
+        "id": "recompute",
+        "name": "Add up all 300 readings for every start",
+        "hint": "Sum each block",
+        "label": "valid",
+        "time": "O(n · k)",
+        "space": "O(1)",
+        "why": "About 26 million additions: correct, just slower."
+      },
+      {
+        "id": "top300",
+        "name": "Sort the readings and add the 300 largest",
+        "hint": "Take the biggest",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "The 300 largest readings are usually not consecutive."
+      }
+    ]
+  },
+  {
+    "id": "P13-unique-codes",
+    "level": 13,
+    "title": "Longest Run of Unique Codes",
+    "statement": "A scanner logs 1,000,000 product codes in the order they were scanned. Quality control wants the longest run of consecutive scans in which no code repeats.",
+    "examples": [
+      "[4, 7, 4, 9, 2, 7] → 4 (4, 9, 2, 7)"
+    ],
+    "constraints": [
+      "n = 1,000,000"
+    ],
+    "approaches": [
+      {
+        "id": "window",
+        "name": "A variable window with a hash map of counts: grow on the right, shrink on the left while a code repeats",
+        "hint": "Grow, then shrink",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(k)",
+        "why": "Each code enters and leaves the window once."
+      },
+      {
+        "id": "restart",
+        "name": "For each start, scan forward with a set until a repeat",
+        "hint": "Try every start",
+        "label": "valid",
+        "time": "O(n²) worst case",
+        "space": "O(k)",
+        "why": "Correct, but long runs are scanned again from every start."
+      },
+      {
+        "id": "sortunique",
+        "name": "Sort the codes and count the distinct ones",
+        "hint": "Count different codes",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "That counts distinct codes overall, not the longest consecutive run."
+      },
+      {
+        "id": "twosets",
+        "name": "Compare every pair of positions",
+        "hint": "Check all pairs",
+        "label": "unsuitable",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Finds repeats, but not the longest run without one, and is too slow."
+      }
+    ]
+  },
+  {
+    "id": "P13-fundraiser",
+    "level": 13,
+    "title": "Shortest Fundraising Stretch",
+    "statement": "A charity has 500,000 daily donation totals (never negative). It wants the shortest run of consecutive days that together raised at least $10,000.",
+    "examples": [
+      "[2000, 3000, 1000, 2000, 4000, 3000], goal 7000 → 2"
+    ],
+    "constraints": [
+      "n = 500,000, totals >= 0"
+    ],
+    "approaches": [
+      {
+        "id": "shrink",
+        "name": "A variable window: grow until the goal is reached, then shrink from the left while it still holds, recording the length",
+        "hint": "Shortest window that reaches a goal",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Totals are never negative, so shrinking always lowers the sum: each day enters and leaves once."
+      },
+      {
+        "id": "binsearch",
+        "name": "Prefix sums, then for each end binary search the latest start",
+        "hint": "Search the running totals",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Correct and fast, but more work and memory than one window."
+      },
+      {
+        "id": "allranges",
+        "name": "Try every start and every end",
+        "hint": "Check all stretches",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "About 125 billion ranges: correct but far too slow."
+      },
+      {
+        "id": "biggest",
+        "name": "Take the days with the largest totals until the goal is reached",
+        "hint": "Greedy on the biggest days",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "The biggest days are usually not consecutive."
+      }
+    ]
+  }
+]

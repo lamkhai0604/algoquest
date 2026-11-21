@@ -1,0 +1,110 @@
+{
+  "id": "L13-vowel-stretch",
+  "level": 13,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Vowel Stretch",
+  "statement": "A singer wants the k-letter stretch of a lyric line that has the most vowels to hold a long note. Return the largest number of vowels (a, e, i, o, u) in any k consecutive letters of line.",
+  "examples": [
+    {
+      "input": "line = \"rhythmicaudio\", k = 4",
+      "output": "3"
+    },
+    {
+      "input": "line = \"xyz\", k = 2",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "1 <= k <= line.length <= 100000",
+    "line has lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Fixed-size sliding window with a count",
+    "keyPoints": [
+      "Count vowels in the first k letters",
+      "Slide: add 1 if the entering letter is a vowel, subtract 1 if the leaving letter is",
+      "Keep the largest count"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "No vowels",
+      "Only vowels",
+      "k equals the length"
+    ],
+    "acceptableSlowerApproaches": [
+      "Count each window from scratch: O(n · k)"
+    ]
+  },
+  "hints": [
+    "The stretch always has k letters. How does the vowel count change when it moves by one letter?",
+    "Only the entering and the leaving letter matter.",
+    "Keep a count; add 1 for a vowel entering, subtract 1 for a vowel leaving, and track the maximum."
+  ],
+  "starterCode": {
+    "javascript": "function mostVowels(line, k) {\n  // return the largest vowel count in k letters\n}",
+    "java": "class Solution {\n  int mostVowels(String line, int k) {\n    // return the largest vowel count in k letters\n  }\n}"
+  },
+  "similarLeetCode": "Maximum Number of Vowels in a Substring of Given Length",
+  "tests": [
+    {
+      "input": [
+        "rhythmicaudio",
+        4
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "xyz",
+        2
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        "aeiou",
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        "a",
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "leetcode",
+        3
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        "bcdbcdaei",
+        3
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "ooxbeuittuoxitaedxiiytcuoaxixddciuauceziotctzdezbyxutxtxaoycexuxzuuebeabotydyutyiuztbddxbuezdictayieytbiozoozddtycbdtbzyizatdexiacuytccueyxccxtcdeodaxioieaouddiybxccyyuiicczdeieezyzdyaattzcibtctcyaebbdczabcteeozyeauiayyouyixzzeocaatioiieoycobaeauzcbziaieiouyzuytddaauxaaouubtdyczbccicztiidoocbuxezocuctyayzitutictytbideeeebxotxddyoxubextooctiudbdxuycbduycbyzxeiduzotxzeadozebeazodxyzyecxeaoyiuaooebiebtcdzaczodayddacddcyoetuttitycaauydeioctouebdyzbcuitxzbbcibotibzdebxdicucbibiadyibobduuieiecuooizidzczccubxtoizzyiiadyodxyuxoaiuocybtetiizxcizectatttdyoctbiyuceyezzcoztacyczaoxobieeyciczobbezbiiyicoxxitcdodbbtixyedeeuuteatdyexcuzddcutaaxxutxayizoyoyztctxxouyuuyeytyxxzotzabuxduycxyuxccedbtadbduyoobctxxtcoizoxuoibyuddyayzzteautiaauoyzuueczzuzucztcaoxyeeicctaiixucxzzyeicxaceyzaayiucduaiddtbtoyztudaxzoxbbxbdtdycxuxieitoyxbuitiydbycccczeietotcdoeuctydbzxabeiiottztduacuodcazbxazeuyeuddboeyeiztutzzdidu",
+        15
+      ],
+      "expected": 11
+    },
+    {
+      "input": [
+        "ooxbeuittuoxitaedxiiytcuoaxixddciuauceziotctzdezbyxutxtxaoycexuxzuuebeabotydyutyiuztbddxbuezdictayieytbiozoozddtycbdtbzyizatdexiacuytccueyxccxtcdeodaxioieaouddiybxccyyuiicczdeieezyzdyaattzcibtctcyaebbdczabcteeozyeauiayyouyixzzeocaatioiieoycobaeauzcbziaieiouyzuytddaauxaaouubtdyczbccicztiidoocbuxezocuctyayzitutictytbideeeebxotxddyoxubextooctiudbdxuycbduycbyzxeiduzotxzeadozebeazodxyzyecxeaoyiuaooebiebtcdzaczodayddacddcyoetuttitycaauydeioctouebdyzbcuitxzbbcibotibzdebxdicucbibiadyibobduuieiecuooizidzczccubxtoizzyiiadyodxyuxoaiuocybtetiizxcizectatttdyoctbiyuceyezzcoztacyczaoxobieeyciczobbezbiiyicoxxitcdodbbtixyedeeuuteatdyexcuzddcutaaxxutxayizoyoyztctxxouyuuyeytyxxzotzabuxduycxyuxccedbtadbduyoobctxxtcoizoxuoibyuddyayzzteautiaauoyzuueczzuzucztcaoxyeeicctaiixucxzzyeicxaceyzaayiucduaiddtbtoyztudaxzoxbbxbdtdycxuxieitoyxbuitiydbycccczeietotcdoeuctydbzxabeiiottztduacuodcazbxazeuyeuddboeyeiztutzzdidu",
+        900
+      ],
+      "expected": 370
+    }
+  ]
+}

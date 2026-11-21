@@ -83,6 +83,7 @@ class ContentLoaderTest {
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().predict().hides())
         .containsExactly("best");
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().swap()).containsExactly(0, 2);
+    assertThat(levels.get(1).lesson().walkthrough().get(1).visual().window()).containsExactly(0, 1);
     assertThat(levels.get(1).lesson().walkthrough().get(2).visual().next())
         .containsExactly(1, 2, -1);
     assertThat(levels.get(1).lesson().walkthrough().get(0).visual().drawsTree()).isTrue();
@@ -286,6 +287,10 @@ class ContentLoaderTest {
         "\"activeEdges\": [\n        [\n          1,\n          0",
         "\"activeEdges\": [\n        [\n          1,\n          3");
     replace(walkthrough, "\"rings\": [\n        0", "\"rings\": [\n        -2");
+    replace(
+        walkthrough,
+        "\"window\": [\n        0,\n        1",
+        "\"window\": [\n        0,\n        3");
     replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
 
     List<String> problems = problemsAfterLoad();
@@ -295,6 +300,7 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("step 2") && p.contains("prediction answer"))
         .anyMatch(p -> p.contains("step 2") && p.contains("hides"))
         .anyMatch(p -> p.contains("step 2") && p.contains("swap"))
+        .anyMatch(p -> p.contains("step 2") && p.contains("window needs"))
         .anyMatch(p -> p.contains("step 3") && p.contains("next needs"))
         .anyMatch(p -> p.contains("step 1") && p.contains("needs its parent"))
         .anyMatch(p -> p.contains("step 4") && p.contains("each edge"))
