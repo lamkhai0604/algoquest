@@ -180,7 +180,7 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 
 ## Phase 2 roadmap — Problem-Solving Patterns (Levels 12–21)
 
-About two levels per sprint, each at the standard of Levels 4–11 with pattern challenges. Planned order: Sprint 13 Levels 12–13, Sprint 14 Levels 14–15, Sprint 15 Levels 16–17, Sprint 16 Levels 18–19 (with the graph explorer, T-543), Sprint 17 Levels 20–21.
+About two levels per sprint, each at the standard of Levels 4–11 with pattern challenges. Planned order: Sprint 13 Levels 12–13, Sprint 14 Levels 14–15, Sprint 15 Levels 16–17, Sprint 16 Levels 18–19 (with the graph explorer, T-543), Sprint 17 Levels 20–21 (with the interval timeline view, T-572).
 
 ## Sprint 13 — Levels 12 and 13 ([plan](sprints/sprint-13.md), closed 2026-11-20)
 
@@ -213,17 +213,28 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 | T-564 | Level 17 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
 | T-565 | Sprint 15 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-15-report.md) |
 
-## Sprint 16 — Levels 18 and 19 ([plan](sprints/sprint-16.md))
+## Sprint 16 — Levels 18 and 19 ([plan](sprints/sprint-16.md), closed 2026-11-20)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-543 | Interactive graph explorer: pick the start vertex, compare BFS and DFS on the same graph | FR-03, D-064 | P1 | Built 2026-11-20: trace unit tests, rendering test; PO review pending |
-| T-566 | Level 18 DFS & BFS Patterns content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-567 | Level 18 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-568 | Level 19 Backtracking content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-569 | Level 19 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-571 | Motion in every walkthrough view: sliding markers, swaps, growing tree nodes, path highlight, pointer flips, stack strip | FR-03, D-065 | P1 | Built 2026-11-20: frontend tests; motion checked in a recording; PO review pending |
-| T-570 | Sprint 16 report | D-007 | P2 | To do |
+| T-543 | Interactive graph explorer: pick the start vertex, compare BFS and DFS on the same graph | FR-03, D-064 | P1 | Done 2026-11-20: trace unit tests, rendering test; PO review OK |
+| T-566 | Level 18 DFS & BFS Patterns content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-567 | Level 18 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
+| T-568 | Level 19 Backtracking content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-569 | Level 19 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
+| T-571 | Motion in every walkthrough view: sliding markers, swaps, growing tree nodes, path highlight, pointer flips, stack strip | FR-03, D-065 | P1 | Done 2026-11-20: frontend tests; motion checked in a recording; PO review OK |
+| T-570 | Sprint 16 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-16-report.md) |
+
+## Sprint 17 — Levels 20 and 21 ([plan](sprints/sprint-17.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-572 | Interval timeline view: intervals as bars on a time axis, kept intervals, a sweep line | FR-03, D-066 | P1 | To do |
+| T-573 | Level 20 Greedy & Intervals content | FR-03, FR-04, D-048 | P1 | To do |
+| T-574 | Level 20 pattern challenges | D-057 | P2 | To do |
+| T-575 | Level 21 Dynamic Programming Fundamentals content | FR-03, FR-04, D-048 | P1 | To do |
+| T-576 | Level 21 pattern challenges | D-057 | P2 | To do |
+| T-577 | Sprint 17 report and Phase 2 summary | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 

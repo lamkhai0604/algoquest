@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-20 |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-16-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | Levels 18 and 19 are playable in the five-step lesson format at the standard of Levels 4–17, with pattern challenges; learners can run BFS and DFS themselves on a graph from any start vertex |
 | Duration | About 1 week from approval |
 | Tasks | T-543, T-571, T-566, T-567, T-568, T-569, T-570 ([BACKLOG.md](../BACKLOG.md)) |
