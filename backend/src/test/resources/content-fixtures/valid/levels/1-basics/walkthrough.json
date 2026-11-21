@@ -67,5 +67,58 @@
         -1
       ]
     }
+  },
+  {
+    "title": "A graph",
+    "body": "Visit the neighbours of 0 first.",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "visited": [
+        0
+      ],
+      "positions": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "curr"
+        }
+      ]
+    }
   }
 ]

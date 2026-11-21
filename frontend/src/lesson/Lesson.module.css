@@ -420,6 +420,15 @@
   stroke: var(--color-xp);
 }
 
+.graphVisited {
+  fill: var(--color-success-soft);
+  stroke: var(--color-success);
+}
+
+.graphArrow {
+  fill: var(--color-border-strong);
+}
+
 .treeValue {
   fill: var(--color-text);
   font: 700 16px var(--font-mono);

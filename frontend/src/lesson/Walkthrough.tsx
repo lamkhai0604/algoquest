@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useTranslation } from "../i18n";
 import { Button, Card, cx } from "../components";
 import styles from "./Lesson.module.css";
@@ -217,6 +217,130 @@ function Tree({ visual }: { visual: Visual }) {
   );
 }
 
+/** Room per grid step in a graph drawing, and the vertex radius. */
+const GRAPH_STEP = 72;
+const GRAPH_RADIUS = 20;
+const GRAPH_MARGIN = 30;
+
+/**
+ * A graph (D-060): the cells are vertices, placed on a small grid by
+ * `positions` or on a circle, with edges, arrows for a directed graph, and
+ * visited vertices shaded. An SVG that scales to the width.
+ */
+function Graph({ visual }: { visual: Visual }) {
+  const { t } = useTranslation();
+  const cells = visual.cells;
+  const n = cells.length;
+  const grid = cells.map((_, i) => {
+    const at = visual.positions?.[i];
+    if (at) return { x: at[0] ?? 0, y: at[1] ?? 0 };
+    const angle = (2 * Math.PI * i) / Math.max(n, 1) - Math.PI / 2;
+    return { x: 3 + 2.6 * Math.cos(angle), y: 2 + 1.8 * Math.sin(angle) };
+  });
+  const minX = Math.min(...grid.map((g) => g.x));
+  const minY = Math.min(...grid.map((g) => g.y));
+  const maxX = Math.max(...grid.map((g) => g.x));
+  const maxY = Math.max(...grid.map((g) => g.y));
+  const point = (i: number) => {
+    const g = grid[i] ?? { x: minX, y: minY };
+    return {
+      x: GRAPH_MARGIN + (g.x - minX) * GRAPH_STEP,
+      y: GRAPH_MARGIN + (g.y - minY) * GRAPH_STEP,
+    };
+  };
+  const width = 2 * GRAPH_MARGIN + (maxX - minX) * GRAPH_STEP;
+  const height = 2 * GRAPH_MARGIN + (maxY - minY) * GRAPH_STEP + 14;
+  const visited = new Set(visual.visited ?? []);
+  const labels = new Map<number, string[]>();
+  for (const marker of visual.markers ?? []) {
+    labels.set(marker.index, [
+      ...(labels.get(marker.index) ?? []),
+      marker.label,
+    ]);
+  }
+  const arrowId = useId();
+  return (
+    <div className={styles.treeWrap}>
+      <svg
+        className={styles.tree}
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={t("walkthrough.items")}
+        style={{ maxWidth: `min(100%, ${Math.max(width, 240)}px)` }}
+      >
+        {visual.directed && (
+          <defs>
+            <marker
+              id={arrowId}
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path className={styles.graphArrow} d="M 0 0 L 10 5 L 0 10 z" />
+            </marker>
+          </defs>
+        )}
+        {(visual.edges ?? []).map(([a = 0, b = 0]) => {
+          const from = point(a);
+          const to = point(b);
+          const length = Math.hypot(to.x - from.x, to.y - from.y) || 1;
+          const dx = ((to.x - from.x) / length) * GRAPH_RADIUS;
+          const dy = ((to.y - from.y) / length) * GRAPH_RADIUS;
+          return (
+            <line
+              key={`${a}-${b}`}
+              className={styles.treeEdge}
+              x1={from.x + dx}
+              y1={from.y + dy}
+              x2={to.x - dx}
+              y2={to.y - dy}
+              markerEnd={visual.directed ? `url(#${arrowId})` : undefined}
+            />
+          );
+        })}
+        {cells.map((cell, i) => {
+          const { x, y } = point(i);
+          const marks = labels.get(i);
+          return (
+            <g
+              key={i}
+              aria-current={marks ? "true" : undefined}
+              data-visited={visited.has(i) ? "true" : undefined}
+            >
+              <circle
+                className={cx(
+                  styles.treeNode,
+                  marks
+                    ? styles.treeNodeCurrent
+                    : visited.has(i) && styles.graphVisited,
+                )}
+                cx={x}
+                cy={y}
+                r={GRAPH_RADIUS}
+              />
+              <text className={styles.treeValue} x={x} y={y}>
+                {cell}
+              </text>
+              {marks && (
+                <text
+                  className={styles.treeMarker}
+                  x={x}
+                  y={y + GRAPH_RADIUS + 14}
+                >
+                  {marks.join(", ")}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 function Variables({ visual, hidden }: { visual: Visual; hidden: string[] }) {
   if (!visual.vars?.length) return null;
   return (
@@ -351,7 +475,9 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           {steps.length}
         </span>
         {visual &&
-          (visual.tree ? (
+          (visual.edges ? (
+            <Graph visual={visual} />
+          ) : visual.tree ? (
             <Tree visual={visual} />
           ) : visual.next ? (
             <Nodes

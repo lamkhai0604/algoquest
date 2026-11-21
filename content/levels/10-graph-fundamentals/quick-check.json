@@ -1,0 +1,35 @@
+[
+  {
+    "question": "A graph has 4 vertices and the undirected edges [[0, 1], [1, 2], [1, 3]]. What is vertex 1's list in the adjacency list?",
+    "options": [
+      "[2, 3]",
+      "[0, 2, 3]",
+      "[0]",
+      "[0, 1, 2, 3]"
+    ],
+    "answer": 1,
+    "explanation": "An undirected edge goes both ways, so 1 is a neighbour of 0, 2 and 3, and each of them appears in 1's list."
+  },
+  {
+    "question": "Why does breadth-first search find the fewest edges to every vertex, while depth-first search may not?",
+    "options": [
+      "BFS visits vertices in order of their number",
+      "BFS visits all vertices 1 edge away before any 2 edges away, so it reaches each vertex first along a shortest route",
+      "DFS never reaches some vertices",
+      "BFS uses less memory"
+    ],
+    "answer": 1,
+    "explanation": "The queue keeps the rings in order. DFS follows one long branch first and can reach a vertex by a longer route before a shorter one."
+  },
+  {
+    "question": "A map has 500 rows and 400 columns of land and water cells. Counting the islands with a search from each unvisited land cell costs about how much?",
+    "options": [
+      "O(R · C): each cell is visited once",
+      "O((R · C)²): a search from every cell",
+      "O(R + C)",
+      "O(log(R · C))"
+    ],
+    "answer": 0,
+    "explanation": "A cell is marked when it is first visited, so no later search enters it again. All searches together touch each cell a constant number of times."
+  }
+]

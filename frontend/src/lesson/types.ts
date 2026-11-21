@@ -29,6 +29,14 @@ export interface Visual {
   next?: number[] | null;
   /** Binary tree in array positions: children of i are 2i + 1 and 2i + 2; "" is no node. */
   tree?: boolean | null;
+  /** Graph (D-060): pairs of cell indices; the cells are the vertices. */
+  edges?: number[][] | null;
+  /** Draw each edge as an arrow from its first vertex to its second. */
+  directed?: boolean | null;
+  /** Vertices drawn as visited. */
+  visited?: number[] | null;
+  /** [column, row] of each vertex on a 7 by 5 grid; a circle when absent. */
+  positions?: number[][] | null;
 }
 
 export interface WalkthroughStep {

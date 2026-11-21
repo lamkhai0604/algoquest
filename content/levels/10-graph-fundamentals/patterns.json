@@ -1,0 +1,152 @@
+[
+  {
+    "id": "P10-subway-stops",
+    "level": 10,
+    "title": "Subway Stops",
+    "statement": "A transit app finds the fewest stops between two of 400 stations joined by 600 tracks. Every stop counts the same.",
+    "examples": [
+      "From station 12 to station 205: 7 stops"
+    ],
+    "constraints": [
+      "V = 400, E = 600"
+    ],
+    "approaches": [
+      {
+        "id": "bfs",
+        "name": "Breadth-first search from the start station",
+        "hint": "Spread out one ring at a time",
+        "label": "best",
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "why": "The first time BFS reaches the target is along the fewest stops, and each station and track is handled once."
+      },
+      {
+        "id": "dfsall",
+        "name": "Depth-first search through every possible route, keeping the shortest",
+        "hint": "Try everything",
+        "label": "valid",
+        "time": "Exponential",
+        "space": "O(V)",
+        "why": "Correct, but the number of routes grows explosively with the network."
+      },
+      {
+        "id": "dfsone",
+        "name": "Depth-first search, returning the first route found",
+        "hint": "Go deep until you arrive",
+        "label": "unsuitable",
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "why": "Fast, but the first route found is often far from the shortest."
+      },
+      {
+        "id": "matrix",
+        "name": "Look up the answer in the adjacency matrix",
+        "hint": "One table cell",
+        "label": "unsuitable",
+        "time": "O(1)",
+        "space": "O(V²)",
+        "why": "The matrix only says whether two stations are directly joined, not how many stops apart they are."
+      }
+    ]
+  },
+  {
+    "id": "P10-lakes",
+    "level": 10,
+    "title": "Counting Lakes",
+    "statement": "A satellite image is a 2,000 × 2,000 grid of water and land pixels. Count the lakes: groups of water pixels joined up, down, left or right.",
+    "examples": [
+      "A grid with three separate water areas: 3"
+    ],
+    "constraints": [
+      "R = C = 2,000"
+    ],
+    "approaches": [
+      {
+        "id": "components",
+        "name": "Scan the grid; at each unvisited water pixel, count one lake and mark its whole area with BFS",
+        "hint": "One search per new group",
+        "label": "best",
+        "time": "O(R · C)",
+        "space": "O(R · C)",
+        "why": "Every pixel is marked once, so all the searches together cost one pass over the image. BFS avoids deep recursion on large lakes."
+      },
+      {
+        "id": "recursive",
+        "name": "The same scan, marking each lake with recursive DFS",
+        "hint": "Recursion into the four neighbours",
+        "label": "valid",
+        "time": "O(R · C)",
+        "space": "O(R · C)",
+        "why": "Same count of work, but a lake of millions of pixels can make the recursion too deep for the call stack."
+      },
+      {
+        "id": "everypixel",
+        "name": "Start a new search from every water pixel without a shared visited mark",
+        "hint": "Search from each pixel",
+        "label": "unsuitable",
+        "time": "O((R · C)²)",
+        "space": "O(R · C)",
+        "why": "Each lake is searched again from every one of its pixels and counted many times."
+      },
+      {
+        "id": "countwater",
+        "name": "Count the water pixels",
+        "hint": "Just add them up",
+        "label": "unsuitable",
+        "time": "O(R · C)",
+        "space": "O(1)",
+        "why": "That gives the total area of water, not the number of separate lakes."
+      }
+    ]
+  },
+  {
+    "id": "P10-power-grid",
+    "level": 10,
+    "title": "Power Grid Islands",
+    "statement": "A utility has 100,000 substations and 150,000 cables (each cable joins two substations both ways). It needs the number of separate networks, so it knows how many control centres to staff.",
+    "examples": [
+      "5 substations with cables 0–1 and 3–4: 3 networks"
+    ],
+    "constraints": [
+      "V = 100,000, E = 150,000"
+    ],
+    "approaches": [
+      {
+        "id": "components",
+        "name": "Build an adjacency list, then run BFS or DFS from each unvisited substation and count the starts",
+        "hint": "Each new start is a new network",
+        "label": "best",
+        "time": "O(V + E)",
+        "space": "O(V + E)",
+        "why": "Every substation and cable is handled once, and substations with no cables are counted as networks of their own."
+      },
+      {
+        "id": "pairs",
+        "name": "For every pair of substations, search whether they are connected",
+        "hint": "Check all pairs",
+        "label": "valid",
+        "time": "O(V² (V + E))",
+        "space": "O(V + E)",
+        "why": "It can work out the groups, but billions of searches are far too slow."
+      },
+      {
+        "id": "edgesonly",
+        "name": "Count the components found from the substations listed in the cables",
+        "hint": "Start from cable ends",
+        "label": "unsuitable",
+        "time": "O(V + E)",
+        "space": "O(V + E)",
+        "why": "Substations with no cables never appear in the cable list, so they are missed."
+      },
+      {
+        "id": "formula",
+        "name": "Return V − E",
+        "hint": "A quick formula",
+        "label": "unsuitable",
+        "time": "O(1)",
+        "space": "O(1)",
+        "why": "That only holds when there are no cycles; one loop of cables makes it wrong."
+      }
+    ]
+  }
+]
