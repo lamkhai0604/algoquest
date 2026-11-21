@@ -364,6 +364,55 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(looks).toBeLessThanOrEqual(Math.ceil(Math.log2(nums.length + 1)));
   });
 
+  it("Level 16: slow and fast follow Floyd's algorithm on the next pointers", () => {
+    const steps = walkthrough("16-fast-and-slow-pointers");
+    const next = steps[0]!.visual!.next!;
+    const at = (step: WalkthroughStep, label: string) =>
+      step.visual!.markers!.find((m) => m.label.split(", ").includes(label))!
+        .index;
+    let slow = 0;
+    let fast = 0;
+    let k = 1;
+    do {
+      slow = next[slow]!;
+      fast = next[next[fast]!]!;
+      expect([at(steps[k]!, "slow"), at(steps[k]!, "fast")]).toEqual([
+        slow,
+        fast,
+      ]);
+      k++;
+    } while (slow !== fast);
+    let a = 0;
+    k++; // the "find the start" step
+    while (a !== slow) {
+      a = next[a]!;
+      slow = next[slow]!;
+      expect([at(steps[k]!, "a"), at(steps[k]!, "slow")]).toEqual([a, slow]);
+      k++;
+    }
+    expect(k).toBe(steps.length);
+    expect(value(steps.at(-1)!, "result")).toBe(`[${a}]`);
+  });
+
+  it("Level 17: the stack and answers match a reference next-greater scan", () => {
+    const steps = walkthrough("17-monotonic-stack");
+    const nums = steps[0]!.visual!.cells.map(Number);
+    const answer: string[] = nums.map(() => "?");
+    const stack: number[] = [];
+    nums.forEach((x, i) => {
+      while (stack.length && x > nums[stack.at(-1)!]!)
+        answer[stack.pop()!] = String(x);
+      stack.push(i);
+      const step = steps[i + 1]!;
+      expect(value(step, "stack")).toBe(
+        `[${stack.map((j) => nums[j]).join(", ")}]`,
+      );
+      expect(value(step, "answer")).toBe(`[${answer.join(", ")}]`);
+    });
+    for (const j of stack) answer[j] = "-1";
+    expect(value(steps.at(-1)!, "result")).toBe(`[${answer.join(", ")}]`);
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -399,6 +448,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "13-sliding-window",
       "14-prefix-sum",
       "15-binary-search",
+      "16-fast-and-slow-pointers",
+      "17-monotonic-stack",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

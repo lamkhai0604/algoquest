@@ -1,0 +1,35 @@
+[
+  {
+    "question": "To find the next SMALLER number to the right of every number, the stack (bottom to top) should be…",
+    "options": [
+      "Increasing, popping while the current number is smaller than the top",
+      "Decreasing, popping while the current number is greater than the top",
+      "Sorted by index only",
+      "Any order"
+    ],
+    "answer": 0,
+    "explanation": "Items wait until a smaller number arrives; anything left on the stack is smaller than the items above it, so the stack increases."
+  },
+  {
+    "question": "Why store indexes on the stack instead of values?",
+    "options": [
+      "Indexes let you read the value and also measure distances, such as days to wait",
+      "Indexes use less memory than values",
+      "Values cannot be compared",
+      "It makes the stack sorted"
+    ],
+    "answer": 0,
+    "explanation": "nums[index] gives the value, and current − index gives the distance that \"how many days until…\" questions ask for."
+  },
+  {
+    "question": "In \"remove k digits to make the smallest number\", when do you pop the top digit?",
+    "options": [
+      "While k > 0 and the new digit is smaller than the top",
+      "Whenever the new digit is larger",
+      "Only at the end",
+      "Never: remove the k largest digits"
+    ],
+    "answer": 0,
+    "explanation": "A larger digit in front of a smaller one makes the number bigger, so it should go first, as long as removals are left."
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "question": "slow moves 1 step and fast 2 steps from the head of a 7-node list without a cycle. Where is slow when fast can no longer move?",
+    "options": [
+      "Node 3 (0-based): the middle",
+      "Node 6: the end",
+      "Node 2",
+      "Node 4"
+    ],
+    "answer": 0,
+    "explanation": "fast reaches node 6 after 3 moves; slow has moved 3 nodes, to the middle."
+  },
+  {
+    "question": "After slow and fast meet inside a cycle, how do you find the first node of the cycle?",
+    "options": [
+      "Move one pointer back to the head; then move both one step at a time until they meet",
+      "Keep moving fast until it meets slow again",
+      "Count the cycle and divide by two",
+      "The meeting node is always the start"
+    ],
+    "answer": 0,
+    "explanation": "The distance from the head to the start equals the distance from the meeting point to the start, measured along the cycle, so single steps meet there."
+  },
+  {
+    "question": "How do you find the 3rd node from the end in one pass?",
+    "options": [
+      "Move fast 3 nodes ahead, then move both until fast reaches the end",
+      "Move fast twice as fast as slow",
+      "Reverse the list, then walk 3 nodes",
+      "Store all nodes in an array"
+    ],
+    "answer": 0,
+    "explanation": "Keeping a gap of 3 nodes means slow is 3 from the end when fast reaches the end. Storing nodes also works but uses O(n) space."
+  }
+]

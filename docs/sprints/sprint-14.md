@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-20 |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-14-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | Levels 14 and 15 are playable in the five-step lesson format at the standard of Levels 4–13, with pattern challenges. Both reuse the cell view with markers and the window range |
 | Duration | About 1 week from approval |
 | Tasks | T-556, T-557, T-558, T-559, T-560 ([BACKLOG.md](../BACKLOG.md)) |

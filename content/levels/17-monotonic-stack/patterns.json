@@ -1,0 +1,152 @@
+[
+  {
+    "id": "P17-price-alert",
+    "level": 17,
+    "title": "Price Alert Days",
+    "statement": "A trading app has 2,000,000 daily closing prices. For every day it must show how many days later the price first goes higher (0 if never).",
+    "examples": [
+      "[73, 74, 75, 71, 69, 72, 76, 73] → [1, 1, 4, 2, 1, 1, 0, 0]"
+    ],
+    "constraints": [
+      "n = 2,000,000"
+    ],
+    "approaches": [
+      {
+        "id": "stack",
+        "name": "A monotonic stack of waiting day indexes; each new higher price answers the cheaper days on top",
+        "hint": "Days still waiting",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Each day is pushed and popped once."
+      },
+      {
+        "id": "scan",
+        "name": "For each day, scan forward until a higher price",
+        "hint": "Look ahead",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Correct, but up to 2 trillion comparisons on a falling market."
+      },
+      {
+        "id": "sorted",
+        "name": "Sort days by price and search later days",
+        "hint": "Order by price",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Can be made to work with a balanced tree of indexes, but is harder and slower than the stack."
+      },
+      {
+        "id": "max",
+        "name": "Compare each day with the overall highest price",
+        "hint": "One maximum",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Gives whether a higher price exists, not how many days until the first one."
+      }
+    ]
+  },
+  {
+    "id": "P17-shortest-code",
+    "level": 17,
+    "title": "Shortest Voucher Code",
+    "statement": "A shop prints 100,000-digit voucher numbers and must delete exactly 1,000 digits from each, keeping the order of the rest, so that the remaining number is as small as possible.",
+    "examples": [
+      "\"1432219\", remove 3 → \"1219\""
+    ],
+    "constraints": [
+      "n = 100,000, k = 1,000"
+    ],
+    "approaches": [
+      {
+        "id": "stack",
+        "name": "Scan the digits with a stack; while removals are left and the new digit is smaller than the top, pop",
+        "hint": "Drop a bigger digit before a smaller one",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Each digit is pushed and popped at most once, and each pop makes an earlier position smaller."
+      },
+      {
+        "id": "repeat",
+        "name": "Repeat k times: delete the first digit that is bigger than the next one",
+        "hint": "One deletion at a time",
+        "label": "valid",
+        "time": "O(n · k)",
+        "space": "O(n)",
+        "why": "Same result, but rescans the number for every deletion."
+      },
+      {
+        "id": "largest",
+        "name": "Delete the k largest digits",
+        "hint": "Remove the biggest",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Position matters more than size: in \"10200\" with k = 1, deleting the 2 leaves 1000, but deleting the 1 leaves 200."
+      },
+      {
+        "id": "allsubsets",
+        "name": "Try every way to delete k digits",
+        "hint": "All choices",
+        "label": "unsuitable",
+        "time": "Exponential",
+        "space": "O(n)",
+        "why": "Correct but impossible for these sizes."
+      }
+    ]
+  },
+  {
+    "id": "P17-skyline-view",
+    "level": 17,
+    "title": "Skyline Viewpoints",
+    "statement": "A city has 500,000 buildings in a row facing a park on the right. The planning office needs, for every building, the first building to its right that is at least as tall, which blocks its view.",
+    "examples": [
+      "[4, 2, 3, 1] → [-1, 2, -1, -1] as indexes"
+    ],
+    "constraints": [
+      "n = 500,000"
+    ],
+    "approaches": [
+      {
+        "id": "stack",
+        "name": "A monotonic stack of indexes still looking for a blocker",
+        "hint": "Waiting buildings",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Each building is pushed once and popped once, when its blocker arrives."
+      },
+      {
+        "id": "scan",
+        "name": "For each building, walk right until a building at least as tall",
+        "hint": "Look right",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "Correct, but slow for a skyline that keeps rising."
+      },
+      {
+        "id": "sorted",
+        "name": "Sort buildings by height first",
+        "hint": "Order by height",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Loses the left-to-right order that the question is about."
+      },
+      {
+        "id": "tallest",
+        "name": "Mark only the tallest building",
+        "hint": "One maximum",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Says nothing about the blocker of every other building."
+      }
+    ]
+  }
+]

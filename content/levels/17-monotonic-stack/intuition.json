@@ -1,0 +1,11 @@
+{
+  "question": "For each of 1,000,000 stock prices you need the next day with a higher price. Using a stack of days still waiting, how many push and pop operations happen in total, at most?",
+  "options": [
+    "About 2,000,000: each day is pushed once and popped at most once",
+    "About 1,000,000,000,000: each day compared with every later day",
+    "About 20,000,000: like sorting",
+    "Exactly 1,000,000 pops"
+  ],
+  "answer": 0,
+  "explanation": "Every day enters the stack once and leaves at most once, so the total work is linear even though there is a loop inside the loop."
+}
