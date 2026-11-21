@@ -8,7 +8,7 @@ A web app for learning the algorithm patterns used in coding interviews. Topics 
 
 ![Breadth-first search playing step by step: the queue, the travelled edges, and the vertices coloured by distance](docs/media/bfs-animation.gif)
 
-> **Status: Phase 2 under way.** Levels 1–13 are playable, from Big-O to graphs, two pointers and sliding windows. Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
+> **Status: Phase 2 under way.** Levels 1–15 are playable, from Big-O to graphs, two pointers, sliding windows, prefix sums and binary search. Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
 
 ## What it does
 

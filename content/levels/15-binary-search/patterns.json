@@ -1,0 +1,152 @@
+[
+  {
+    "id": "P15-order-lookup",
+    "level": 15,
+    "title": "Order Number Lookup",
+    "statement": "A warehouse system keeps 50,000,000 order numbers in a sorted array in memory. Each support call looks up one order number, about 2,000,000 times a day.",
+    "examples": [
+      "Is order 4,812,330 in the system?"
+    ],
+    "constraints": [
+      "n = 50,000,000, sorted; q = 2,000,000"
+    ],
+    "approaches": [
+      {
+        "id": "binary",
+        "name": "Binary search the sorted array for each lookup",
+        "hint": "Halve the range",
+        "label": "best",
+        "time": "O(q log n)",
+        "space": "O(1)",
+        "why": "About 26 looks per call, with no extra memory."
+      },
+      {
+        "id": "hashset",
+        "name": "Copy every order number into a hash set",
+        "hint": "Constant-time lookups",
+        "label": "valid",
+        "time": "O(n + q)",
+        "space": "O(n)",
+        "why": "Fast lookups, but a second copy of 50,000,000 numbers costs a lot of memory."
+      },
+      {
+        "id": "scan",
+        "name": "Scan the array for each call",
+        "hint": "Check every order",
+        "label": "valid",
+        "time": "O(q · n)",
+        "space": "O(1)",
+        "why": "Correct, but 100 trillion comparisons a day."
+      },
+      {
+        "id": "guess",
+        "name": "Look at the position proportional to the number's size",
+        "hint": "Jump straight to it",
+        "label": "unsuitable",
+        "time": "O(1) to O(n)",
+        "space": "O(1)",
+        "why": "Only works when the numbers are evenly spread; otherwise it misses or falls back to scanning."
+      }
+    ]
+  },
+  {
+    "id": "P15-print-speed",
+    "level": 15,
+    "title": "Slowest Printer Speed",
+    "statement": "A print shop must finish 10,000 jobs of different page counts within 8 hours. The printer runs at a whole number of pages per minute, one job at a time, and the shop wants the slowest speed that still finishes in time (it saves ink).",
+    "examples": [
+      "pages = [300, 1200, 500], 8 hours → the smallest speed that fits"
+    ],
+    "constraints": [
+      "n = 10,000; page counts up to 10⁹"
+    ],
+    "approaches": [
+      {
+        "id": "answer",
+        "name": "Binary search the speed: check \"does this speed finish in time?\" in one pass",
+        "hint": "Search on the answer",
+        "label": "best",
+        "time": "O(n log max)",
+        "space": "O(1)",
+        "why": "Faster speeds always finish if a slower one does, so the answer flips once; about 30 checks of 10,000 jobs."
+      },
+      {
+        "id": "linear",
+        "name": "Try speeds 1, 2, 3, … until one finishes in time",
+        "hint": "Count up",
+        "label": "valid",
+        "time": "O(n · max)",
+        "space": "O(1)",
+        "why": "Correct, but the speed can be in the millions, so millions of passes."
+      },
+      {
+        "id": "average",
+        "name": "Use the total pages divided by the minutes",
+        "hint": "Divide",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Ignores that jobs run one at a time with rounding, so the result can be too slow."
+      },
+      {
+        "id": "sort",
+        "name": "Sort the jobs by size and print the biggest first",
+        "hint": "Order the jobs",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(1)",
+        "why": "Order does not change the total time; it does not find the speed."
+      }
+    ]
+  },
+  {
+    "id": "P15-version-check",
+    "level": 15,
+    "title": "First Broken Release",
+    "statement": "An app has 2,000,000 releases in order. A bug appeared in one release and every release after it has the bug. Testing one release takes 3 minutes. Find the first broken release.",
+    "examples": [
+      "releases 1–2,000,000; release 1,384,002 is the first broken one"
+    ],
+    "constraints": [
+      "n = 2,000,000; each test takes 3 minutes"
+    ],
+    "approaches": [
+      {
+        "id": "binary",
+        "name": "Binary search: test the middle release and keep the half that must contain the first broken one",
+        "hint": "Halve the releases",
+        "label": "best",
+        "time": "O(log n) tests",
+        "space": "O(1)",
+        "why": "About 21 tests, roughly an hour."
+      },
+      {
+        "id": "linear",
+        "name": "Test releases one by one from the start",
+        "hint": "Check each release",
+        "label": "valid",
+        "time": "O(n) tests",
+        "space": "O(1)",
+        "why": "Correct, but up to 2,000,000 tests: years of testing."
+      },
+      {
+        "id": "backwards",
+        "name": "Test from the newest release backwards",
+        "hint": "Start at the end",
+        "label": "valid",
+        "time": "O(n) tests",
+        "space": "O(1)",
+        "why": "Still linear in the worst case."
+      },
+      {
+        "id": "random",
+        "name": "Test random releases until a broken one is found",
+        "hint": "Sample releases",
+        "label": "unsuitable",
+        "time": "Unbounded",
+        "space": "O(1)",
+        "why": "Finds a broken release, not the first one."
+      }
+    ]
+  }
+]

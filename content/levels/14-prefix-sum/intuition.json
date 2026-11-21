@@ -1,0 +1,11 @@
+{
+  "question": "A sales report has 1,000,000 daily totals and must answer 1,000,000 questions like \"total from day a to day b\". What is the best plan?",
+  "options": [
+    "Add up each range when asked",
+    "Store the running total for every day, then subtract two running totals per question",
+    "Sort the days by sales",
+    "Keep only the overall total"
+  ],
+  "answer": 1,
+  "explanation": "Running totals take one pass to build, and then each question is one subtraction: about 2 million operations instead of up to a trillion."
+}

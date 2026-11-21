@@ -319,6 +319,51 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(steps.at(-1)!, "result")).toBe(String(best));
   });
 
+  it("Level 14: the prefix array grows by one total per step and queries subtract two totals", () => {
+    const steps = walkthrough("14-prefix-sum");
+    const nums = steps[0]!.visual!.cells.map(Number);
+    const prefix = [0];
+    for (const x of nums) prefix.push(prefix.at(-1)! + x);
+    let built = 1;
+    for (const step of steps) {
+      const shown = JSON.parse(value(step, "prefix")!) as number[];
+      expect(shown).toEqual(prefix.slice(0, shown.length));
+      expect(shown.length).toBeGreaterThanOrEqual(built);
+      built = shown.length;
+      const w = step.visual!.window;
+      if (w && w.length === 2) {
+        const [l = 0, r = 0] = w;
+        const sum = prefix[r + 1]! - prefix[l]!;
+        expect(value(step, "query")).toBe(
+          `prefix[${r + 1}] − prefix[${l}] = ${prefix[r + 1]} − ${prefix[l]} = ${sum}`,
+        );
+      }
+    }
+    expect(built).toBe(nums.length + 1);
+  });
+
+  it("Level 15: each look halves the range like a reference binary search", () => {
+    const steps = walkthrough("15-binary-search");
+    const nums = steps[0]!.visual!.cells.map(Number);
+    const target = Number(value(steps[0]!, "target"));
+    let lo = 0;
+    let hi = nums.length - 1;
+    let looks = 0;
+    for (const step of steps.filter((s) => s.title.startsWith("Check"))) {
+      expect(step.visual!.window).toEqual([lo, hi]);
+      const mid = lo + Math.floor((hi - lo) / 2);
+      const at = step.visual!.markers!.find((m) => m.label.includes("mid"));
+      expect(at?.index).toBe(mid);
+      looks++;
+      if (nums[mid] === target) break;
+      if (nums[mid]! < target) lo = mid + 1;
+      else hi = mid - 1;
+      expect(Number(value(step, "left in range"))).toBe(hi - lo + 1);
+    }
+    expect(nums[lo + Math.floor((hi - lo) / 2)]).toBe(target);
+    expect(looks).toBeLessThanOrEqual(Math.ceil(Math.log2(nums.length + 1)));
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -352,6 +397,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "11-bit-manipulation-and-math",
       "12-two-pointers",
       "13-sliding-window",
+      "14-prefix-sum",
+      "15-binary-search",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

@@ -1,0 +1,35 @@
+[
+  {
+    "question": "With prefix = [0, 3, 4, 8, 10] for nums = [3, 1, 4, 2], what is the sum of nums[1..2]?",
+    "options": [
+      "prefix[2] − prefix[1] = 1",
+      "prefix[3] − prefix[1] = 5",
+      "prefix[3] − prefix[2] = 4",
+      "prefix[4] − prefix[1] = 7"
+    ],
+    "answer": 1,
+    "explanation": "The range l..r is prefix[r + 1] − prefix[l]: 8 − 3 = 5, which is 1 + 4."
+  },
+  {
+    "question": "Why does the \"subarray sums to k\" method start its hash map with {0: 1}?",
+    "options": [
+      "To count subarrays that start at index 0",
+      "To avoid division by zero",
+      "Because k is never 0",
+      "It is only needed for negative numbers"
+    ],
+    "answer": 0,
+    "explanation": "A subarray starting at index 0 has sum equal to the running total itself, which matches the empty prefix 0."
+  },
+  {
+    "question": "You must add 5 to every item from index 100 to 900, a thousand times with different ranges, then read the array once. What keeps this fast?",
+    "options": [
+      "Loop over each range every time",
+      "A difference array: diff[l] += v, diff[r + 1] −= v, then one prefix sum",
+      "Sort the ranges first",
+      "A hash map of ranges"
+    ],
+    "answer": 1,
+    "explanation": "Each update becomes two O(1) changes; one prefix sum at the end applies them all."
+  }
+]

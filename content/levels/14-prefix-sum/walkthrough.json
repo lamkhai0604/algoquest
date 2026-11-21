@@ -1,0 +1,254 @@
+[
+  {
+    "title": "The task",
+    "body": "Build the prefix array for **[3, 1, 4, 2, 5]**, then answer range sums with one subtraction. `prefix[i]` is the total of the first i items, so it starts with a 0 for \"nothing yet\".",
+    "code": "const prefix = [0];",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "2",
+        "5"
+      ],
+      "vars": [
+        {
+          "name": "prefix",
+          "value": "[0]"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Add nums[0] = 3",
+    "body": "prefix[1] = prefix[0] + nums[0] = 0 + 3 = 3.",
+    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "2",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prefix",
+          "value": "[0, 3]"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Add nums[1] = 1",
+    "body": "prefix[2] = prefix[1] + nums[1] = 3 + 1 = 4.",
+    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "2",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prefix",
+          "value": "[0, 3, 4]"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Add nums[2] = 4",
+    "body": "prefix[3] = prefix[2] + nums[2] = 4 + 4 = 8.",
+    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "2",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prefix",
+          "value": "[0, 3, 4, 8]"
+        }
+      ],
+      "predict": {
+        "question": "prefix is [0, 3, 4] and nums[2] is 4. What is the next prefix value?",
+        "options": [
+          "4",
+          "8",
+          "7"
+        ],
+        "answer": 1,
+        "explanation": "Each new total is the previous total plus the item: 4 + 4 = 8.",
+        "hides": [
+          "prefix"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Add nums[3] = 2",
+    "body": "prefix[4] = prefix[3] + nums[3] = 8 + 2 = 10.",
+    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "2",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prefix",
+          "value": "[0, 3, 4, 8, 10]"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Add nums[4] = 5",
+    "body": "prefix[5] = prefix[4] + nums[4] = 10 + 5 = 15. The array is built in one pass: O(n).",
+    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "2",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "prefix",
+          "value": "[0, 3, 4, 8, 10, 15]"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sum of nums[1..3]",
+    "body": "The sum of items 1 to 3 is everything up to index 3 minus everything before index 1: prefix[4] − prefix[1] = 10 − 3 = **7**. One subtraction, whatever the length of the range.",
+    "code": "return prefix[r + 1] - prefix[l];",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "2",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "l"
+        },
+        {
+          "index": 3,
+          "label": "r"
+        }
+      ],
+      "window": [
+        1,
+        3
+      ],
+      "vars": [
+        {
+          "name": "prefix",
+          "value": "[0, 3, 4, 8, 10, 15]"
+        },
+        {
+          "name": "query",
+          "value": "prefix[4] − prefix[1] = 10 − 3 = 7"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sum of nums[2..4]",
+    "body": "Another query, still O(1): prefix[5] − prefix[2] = 15 − 4 = **11**, which is 4 + 2 + 5.",
+    "code": "return prefix[r + 1] - prefix[l];",
+    "visual": {
+      "cells": [
+        "3",
+        "1",
+        "4",
+        "2",
+        "5"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "l"
+        },
+        {
+          "index": 4,
+          "label": "r"
+        }
+      ],
+      "window": [
+        2,
+        4
+      ],
+      "vars": [
+        {
+          "name": "prefix",
+          "value": "[0, 3, 4, 8, 10, 15]"
+        },
+        {
+          "name": "query",
+          "value": "prefix[5] − prefix[2] = 15 − 4 = 11"
+        }
+      ],
+      "predict": {
+        "question": "Which two prefix values give the sum of nums[2..4]?",
+        "options": [
+          "prefix[4] − prefix[2]",
+          "prefix[5] − prefix[2]",
+          "prefix[5] − prefix[1]"
+        ],
+        "answer": 1,
+        "explanation": "Up to index 4 is prefix[5]; before index 2 is prefix[2]. Using prefix[4] would drop nums[4].",
+        "hides": [
+          "query"
+        ]
+      }
+    }
+  }
+]
