@@ -166,3 +166,18 @@
   text-transform: uppercase;
   vertical-align: 1px;
 }
+
+@media (max-width: 480px) {
+  .left {
+    flex-wrap: wrap;
+    row-gap: var(--space-2);
+  }
+
+  .nav a {
+    white-space: nowrap;
+  }
+
+  .soon {
+    display: none;
+  }
+}
