@@ -1,0 +1,274 @@
+[
+  {
+    "title": "The task",
+    "body": "Find **23** in this sorted list of 10 numbers. The shaded range `lo..hi` is where 23 can still be; at first that is everything.",
+    "code": "let lo = 0, hi = nums.length - 1;",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "8",
+        "12",
+        "16",
+        "23",
+        "38",
+        "56",
+        "72",
+        "91"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "lo"
+        },
+        {
+          "index": 9,
+          "label": "hi"
+        }
+      ],
+      "window": [
+        0,
+        9
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "23"
+        },
+        {
+          "name": "compare",
+          "value": "·"
+        },
+        {
+          "name": "left in range",
+          "value": "10"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Check index 4",
+    "body": "mid = 0 + (9 − 0) / 2 = 4, and nums[4] = 16 < 23. Everything from 0 to 4 is too small, so lo = mid + 1 = 5.",
+    "code": "const mid = lo + Math.floor((hi - lo) / 2);\nif (nums[mid] < target) lo = mid + 1;\nelse hi = mid - 1;",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "8",
+        "12",
+        "16",
+        "23",
+        "38",
+        "56",
+        "72",
+        "91"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "lo"
+        },
+        {
+          "index": 4,
+          "label": "mid"
+        },
+        {
+          "index": 9,
+          "label": "hi"
+        }
+      ],
+      "window": [
+        0,
+        9
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "23"
+        },
+        {
+          "name": "compare",
+          "value": "16 < 23: lo = 5"
+        },
+        {
+          "name": "left in range",
+          "value": "5"
+        }
+      ],
+      "predict": {
+        "question": "The middle is 16, and 23 > 16. Which part can still hold 23?",
+        "options": [
+          "Indexes 0 to 3",
+          "Indexes 5 to 9",
+          "Indexes 4 to 9"
+        ],
+        "answer": 1,
+        "explanation": "Everything up to the middle is 16 or less, so 23 can only be to its right: lo = mid + 1 = 5.",
+        "hides": [
+          "left in range"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Check index 7",
+    "body": "mid = 5 + (9 − 5) / 2 = 7, and nums[7] = 56 > 23. Everything from 7 to 9 is too big, so hi = mid − 1 = 6.",
+    "code": "const mid = lo + Math.floor((hi - lo) / 2);\nif (nums[mid] < target) lo = mid + 1;\nelse hi = mid - 1;",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "8",
+        "12",
+        "16",
+        "23",
+        "38",
+        "56",
+        "72",
+        "91"
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "lo"
+        },
+        {
+          "index": 7,
+          "label": "mid"
+        },
+        {
+          "index": 9,
+          "label": "hi"
+        }
+      ],
+      "window": [
+        5,
+        9
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "23"
+        },
+        {
+          "name": "compare",
+          "value": "56 > 23: hi = 6"
+        },
+        {
+          "name": "left in range",
+          "value": "2"
+        }
+      ],
+      "predict": {
+        "question": "The middle is now 56, and 23 < 56. What is the new hi?",
+        "options": [
+          "7",
+          "6",
+          "4"
+        ],
+        "answer": 1,
+        "explanation": "56 and everything after it is too big, so hi = mid − 1 = 6. Five candidates became two.",
+        "hides": [
+          "left in range"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Check index 5",
+    "body": "mid = 5 + (6 − 5) / 2 = 5, and nums[5] = 23: found at index **5** after 3 looks.",
+    "code": "if (nums[mid] === target) return mid;",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "8",
+        "12",
+        "16",
+        "23",
+        "38",
+        "56",
+        "72",
+        "91"
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "lo, mid"
+        },
+        {
+          "index": 6,
+          "label": "hi"
+        }
+      ],
+      "window": [
+        5,
+        6
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "23"
+        },
+        {
+          "name": "compare",
+          "value": "23 = 23: found"
+        },
+        {
+          "name": "left in range",
+          "value": "2"
+        },
+        {
+          "name": "result",
+          "value": "5"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Why it is fast",
+    "body": "Each look halved the range: 10 → 5 → 2 → 1. A list of 1,000,000 needs at most 20 looks: **O(log n)** time and O(1) space. It only works because the list is sorted.",
+    "visual": {
+      "cells": [
+        "2",
+        "5",
+        "8",
+        "12",
+        "16",
+        "23",
+        "38",
+        "56",
+        "72",
+        "91"
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "lo, hi, mid"
+        }
+      ],
+      "window": [
+        5,
+        5
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "23"
+        },
+        {
+          "name": "compare",
+          "value": "23 = 23: found"
+        },
+        {
+          "name": "left in range",
+          "value": "1"
+        },
+        {
+          "name": "result",
+          "value": "5"
+        }
+      ]
+    }
+  }
+]

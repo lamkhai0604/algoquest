@@ -182,16 +182,26 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 
 About two levels per sprint, each at the standard of Levels 4–11 with pattern challenges. Planned order: Sprint 13 Levels 12–13, Sprint 14 Levels 14–15, Sprint 15 Levels 16–17, Sprint 16 Levels 18–19 (with the graph explorer, T-543), Sprint 17 Levels 20–21.
 
-## Sprint 13 — Levels 12 and 13 ([plan](sprints/sprint-13.md))
+## Sprint 13 — Levels 12 and 13 ([plan](sprints/sprint-13.md), closed 2026-11-20)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-550 | Window range in the cell view | FR-03, D-063 | P1 | Built 2026-11-20: content check rules, rendering test; PO review pending |
-| T-551 | Level 12 Two Pointers content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers recomputed by JavaScript and Java reference solutions (all earlier answers confirmed); lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-552 | Level 12 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-553 | Level 13 Sliding Window content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-554 | Level 13 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-555 | Sprint 13 report | D-007 | P2 | To do |
+| T-550 | Window range in the cell view | FR-03, D-063 | P1 | Done 2026-11-20: content check rules, rendering test; PO review OK |
+| T-551 | Level 12 Two Pointers content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers recomputed by JavaScript and Java reference solutions (all earlier answers confirmed); lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-552 | Level 12 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
+| T-553 | Level 13 Sliding Window content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-554 | Level 13 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
+| T-555 | Sprint 13 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-13-report.md) |
+
+## Sprint 14 — Levels 14 and 15 ([plan](sprints/sprint-14.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-556 | Level 14 Prefix Sum & Range Queries content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-557 | Level 14 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-558 | Level 15 Binary Search content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-559 | Level 15 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-560 | Sprint 14 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 

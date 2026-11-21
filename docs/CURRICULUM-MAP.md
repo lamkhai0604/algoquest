@@ -14,7 +14,7 @@ How the original 17-level list (D-012, SRS §6 before 2026-11-13) maps to the 27
 | --- | --- | --- |
 | 1 Big-O & Basics | 1 Big-O & Algorithm Basics | Progress kept; lesson extended |
 | 2 Arrays & Hashing | 2 Arrays & Strings (new content), 3 Hashing: HashMap & HashSet | Hashing problems moved to Level 3 and renamed `L2-*` → `L3-*`; V13 cleared level 2–3 progress (only the PO had any) |
-| 3 Two Pointers | 12 Two Pointers | Content moved from `content/parked/` into Level 12 in Sprint 13 |
+| 3 Two Pointers | 12 Two Pointers | Content was kept in a parked folder and moved into Level 12 in Sprint 13; the parked running-sum problem moved into Level 14 in Sprint 14 |
 | 4 Sliding Window | 13 Sliding Window | No content yet |
 | 5 Stack | 6 Stack, Queue & Deque; 17 Monotonic Stack | Split: the data structure first, the pattern in Phase 2 |
 | 6 Binary Search | 15 Binary Search | No content yet |

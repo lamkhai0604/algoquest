@@ -1,0 +1,11 @@
+{
+  "question": "A sorted list has 1,000,000,000 numbers. About how many looks does binary search need to find one of them?",
+  "options": [
+    "About 30",
+    "About 1,000",
+    "About 31,623 (the square root)",
+    "About 500,000,000"
+  ],
+  "answer": 0,
+  "explanation": "Each look halves the range, and 2³⁰ is just over a billion, so about 30 looks are enough: O(log n)."
+}

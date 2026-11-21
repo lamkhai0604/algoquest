@@ -1,0 +1,106 @@
+{
+  "id": "L15-perfect-square",
+  "level": 15,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Perfect Square Board",
+  "statement": "A board game asks whether n tiles can form a full square board. Return true if n is a perfect square (s × s = n for a whole s), without a square-root function.",
+  "examples": [
+    {
+      "input": "n = 16",
+      "output": "true"
+    },
+    {
+      "input": "n = 14",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 2^31 − 1"
+  ],
+  "answerKey": {
+    "pattern": "Binary search on the side length",
+    "keyPoints": [
+      "Search s in 1..n (or 1..46341)",
+      "Compare s × s with n using 64-bit products",
+      "Return true on equality"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "n = 1",
+      "The largest int",
+      "Numbers next to a square"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try s = 1, 2, 3, …: O(√n)"
+    ]
+  },
+  "hints": [
+    "Which number are you searching for, and between which bounds?",
+    "The side s: s × s grows with s, so binary search it.",
+    "Use 64-bit multiplication so s × s does not overflow."
+  ],
+  "starterCode": {
+    "javascript": "function isSquare(n) {\n  // return true or false\n}",
+    "java": "class Solution {\n  boolean isSquare(int n) {\n    // return true or false\n  }\n}"
+  },
+  "similarLeetCode": "Valid Perfect Square",
+  "tests": [
+    {
+      "input": [
+        16
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        14
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        2147483647
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        2147395600
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        808201
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        808200
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        1000000
+      ],
+      "expected": true
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+[
+  {
+    "id": "P14-stats-page",
+    "level": 14,
+    "title": "Game Stats Page",
+    "statement": "A game keeps each player's coins per day for 10 years (3,650 days). The stats page answers about 1,000,000 \"coins from day a to day b\" questions a day; the coin history never changes.",
+    "examples": [
+      "days 40 to 200 → 18,450 coins"
+    ],
+    "constraints": [
+      "n = 3,650, q = 1,000,000"
+    ],
+    "approaches": [
+      {
+        "id": "prefix",
+        "name": "Build running totals once, answer each question with one subtraction",
+        "hint": "Precompute, then subtract",
+        "label": "best",
+        "time": "O(n + q)",
+        "space": "O(n)",
+        "why": "One pass to build, then O(1) per question."
+      },
+      {
+        "id": "loop",
+        "name": "Add up the days for each question",
+        "hint": "Sum the range",
+        "label": "valid",
+        "time": "O(q · n)",
+        "space": "O(1)",
+        "why": "Correct, but up to 3.65 billion additions a day."
+      },
+      {
+        "id": "cache",
+        "name": "Cache the answer to each question asked before",
+        "hint": "Remember answers",
+        "label": "valid",
+        "time": "O(q · n) at first",
+        "space": "O(q)",
+        "why": "Helps only when the same ranges repeat."
+      },
+      {
+        "id": "total",
+        "name": "Return the overall total",
+        "hint": "One number",
+        "label": "unsuitable",
+        "time": "O(1)",
+        "space": "O(1)",
+        "why": "Answers the wrong question for any range shorter than all days."
+      }
+    ]
+  },
+  {
+    "id": "P14-ledger",
+    "level": 14,
+    "title": "Ledger Stretches",
+    "statement": "An accountant has 200,000 daily balance changes (positive or negative) and must count how many stretches of consecutive days changed the balance by exactly $0.",
+    "examples": [
+      "[5, -5, 3, -3] → 3"
+    ],
+    "constraints": [
+      "n = 200,000, values can be negative"
+    ],
+    "approaches": [
+      {
+        "id": "map",
+        "name": "Running total with a hash map of how often each total appeared",
+        "hint": "Equal totals mean a zero stretch",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "A stretch sums to 0 exactly when two running totals are equal."
+      },
+      {
+        "id": "prefixpairs",
+        "name": "Prefix array, then compare every pair of totals",
+        "hint": "Precompute, then check pairs",
+        "label": "valid",
+        "time": "O(n²)",
+        "space": "O(n)",
+        "why": "Correct but 20 billion comparisons."
+      },
+      {
+        "id": "window",
+        "name": "A sliding window that shrinks when the sum is too big",
+        "hint": "Grow and shrink",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "With negative values the sum does not change predictably, so the window misses stretches."
+      },
+      {
+        "id": "allranges",
+        "name": "Sum every stretch from scratch",
+        "hint": "Try everything",
+        "label": "valid",
+        "time": "O(n³)",
+        "space": "O(1)",
+        "why": "Correct, hopelessly slow."
+      }
+    ]
+  },
+  {
+    "id": "P14-map-tiles",
+    "level": 14,
+    "title": "Population Map Tiles",
+    "statement": "A census map is a 2,000 × 2,000 grid of population counts. A planning tool asks for the total population inside 50,000 different rectangles.",
+    "examples": [
+      "rows 10–40, columns 300–520"
+    ],
+    "constraints": [
+      "R = C = 2,000, q = 50,000"
+    ],
+    "approaches": [
+      {
+        "id": "prefix2d",
+        "name": "A 2D prefix-sum table; each rectangle is four lookups",
+        "hint": "Totals up to each cell",
+        "label": "best",
+        "time": "O(R · C + q)",
+        "space": "O(R · C)",
+        "why": "Build once, then O(1) per rectangle."
+      },
+      {
+        "id": "rows",
+        "name": "Prefix sums per row; add one range per row",
+        "hint": "Row by row",
+        "label": "valid",
+        "time": "O(R · C + q · R)",
+        "space": "O(R · C)",
+        "why": "Correct, up to 2,000 steps per rectangle."
+      },
+      {
+        "id": "loop",
+        "name": "Add every cell of each rectangle",
+        "hint": "Sum the cells",
+        "label": "valid",
+        "time": "O(q · R · C)",
+        "space": "O(1)",
+        "why": "Up to 200 billion additions."
+      },
+      {
+        "id": "sample",
+        "name": "Estimate from a sample of cells",
+        "hint": "Count a few",
+        "label": "unsuitable",
+        "time": "O(q)",
+        "space": "O(1)",
+        "why": "Fast, but the totals must be exact."
+      }
+    ]
+  }
+]
