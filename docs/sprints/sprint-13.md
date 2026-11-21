@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-20 |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-13-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | Phase 2 starts: Levels 12 and 13 are playable in the five-step lesson format at the standard of Levels 4–11, with pattern challenges |
 | Duration | About 1 week from approval |
 | Tasks | T-550, T-551, T-552, T-553, T-554, T-555 ([BACKLOG.md](../BACKLOG.md)) |

@@ -1,0 +1,113 @@
+{
+  "id": "L15-square-plot",
+  "level": 15,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Square Garden Plot",
+  "statement": "A gardener has n square tiles and wants the biggest square plot she can lay with them, side × side tiles. Return the largest whole side length s with s × s <= n, without a square-root function.",
+  "examples": [
+    {
+      "input": "n = 8",
+      "output": "2"
+    },
+    {
+      "input": "n = 49",
+      "output": "7"
+    }
+  ],
+  "constraints": [
+    "0 <= n <= 2^31 − 1"
+  ],
+  "answerKey": {
+    "pattern": "Binary search on the answer",
+    "keyPoints": [
+      "The answer is between 0 and n",
+      "s × s <= n is true for small s and false for large s",
+      "Find the largest s where it holds; use 64-bit products"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "n = 0 or 1",
+      "A perfect square",
+      "The largest n, where s × s overflows 32 bits"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try s = 1, 2, 3, …: O(√n)"
+    ]
+  },
+  "hints": [
+    "The answer is a number between 0 and n. Does \"s × s <= n\" flip only once as s grows?",
+    "Yes: true, true, …, true, false, false. Binary search the last true.",
+    "Keep lo..hi; compare mid × mid with n using a 64-bit product to avoid overflow."
+  ],
+  "starterCode": {
+    "javascript": "function squareSide(n) {\n  // return the largest s with s * s <= n\n}",
+    "java": "class Solution {\n  int squareSide(int n) {\n    // return the largest s with s * s <= n\n  }\n}"
+  },
+  "similarLeetCode": "Sqrt(x)",
+  "tests": [
+    {
+      "input": [
+        8
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        49
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        3
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        2147483647
+      ],
+      "expected": 46340
+    },
+    {
+      "input": [
+        1000000
+      ],
+      "expected": 1000
+    },
+    {
+      "input": [
+        999999999
+      ],
+      "expected": 31622
+    },
+    {
+      "input": [
+        65535
+      ],
+      "expected": 255
+    }
+  ]
+}

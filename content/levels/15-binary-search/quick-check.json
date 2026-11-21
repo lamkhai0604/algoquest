@@ -1,0 +1,35 @@
+[
+  {
+    "question": "In the \"first position where a condition holds\" template (lo = 0, hi = n, while lo < hi), the condition is true at mid. What happens?",
+    "options": [
+      "hi = mid",
+      "hi = mid − 1",
+      "lo = mid + 1",
+      "return mid"
+    ],
+    "answer": 0,
+    "explanation": "mid might be the first true position, so it stays in the range: hi = mid. Using mid − 1 could skip the answer."
+  },
+  {
+    "question": "For a sorted list, how do you count the copies of a value x in O(log n)?",
+    "options": [
+      "Upper bound of x minus lower bound of x",
+      "Find x, then scan left and right",
+      "Lower bound of x plus 1",
+      "Binary search twice for x"
+    ],
+    "answer": 0,
+    "explanation": "The lower bound is the first index with a value >= x and the upper bound the first with a value > x; the copies lie between them. Scanning can take O(n)."
+  },
+  {
+    "question": "\"Find the smallest daily capacity that ships all packages within D days.\" Why can binary search work here?",
+    "options": [
+      "If a capacity works, every larger capacity also works, so the yes/no answer flips once",
+      "The packages are sorted",
+      "Capacities are always powers of two",
+      "It cannot: you must try every capacity"
+    ],
+    "answer": 0,
+    "explanation": "A check that is false, then true, lets you binary search over the possible capacities, checking each one in O(n)."
+  }
+]
