@@ -8,7 +8,7 @@ Authoritative list of tools, services, and accounts for stack option B (D-030). 
 | --- | --- | --- | --- | --- |
 | **GitHub + GitHub Actions** | Public repository (D-039), CI, smoke tests, screenshots | Actions minutes are free for public repositories on standard runners | Heavy jobs (smoke test, screenshots) still run on PRs and on demand to keep feedback fast | Exists |
 | **Google Gemini API** (Flash-Lite) | AI grading (D-031) | Flash and Flash-Lite models free without billing; about 500 requests/day and 10/minute for 3.5 Flash-Lite, about 20/day and 5/minute for 3.8 Flash ([limits overview](https://www.scriptbyai.com/gemini-api-free-tier-limits/)); daily quota resets at midnight Pacific time | 3.8 Flash's daily quota is too small for regular use; free-tier prompts may be used by Google | API key from Google AI Studio |
-| **Judge0 CE via RapidAPI** | Running Java code (D-032) | Basic plan: 50 submissions/day ([Judge0 CE pricing](https://judge0.com/ce)) | 50 Java runs/day; JavaScript runs in the browser and does not count | RapidAPI account + key |
+| **Judge0 CE via RapidAPI** | Running Java code (D-032) | No free plan as of 2026-11-16; Java runs are off until a key is set (D-054) | JavaScript runs in the browser and does not need Judge0 | RapidAPI account + key (optional) |
 | **Google OAuth client** | Sign in with Google (D-036) | Free | Redirect URIs must list local and production backend URLs | Google Cloud console: OAuth client ID/secret |
 | **GitHub OAuth App** | Sign in with GitHub (D-036) | Free | One callback URL per app; use separate apps for local and production | GitHub developer settings |
 | **Vercel Hobby** | Frontend hosting (D-037), when deployment is approved | Free | Personal projects (D-022) | Existing account |
@@ -32,11 +32,10 @@ Not needed in this release: email sending, analytics.
 | Frontend | React + React DOM | 19.x | UI |
 | Frontend | Vite | 8.x | Dev server and build |
 | Frontend | TypeScript | 5.9.x (strict) | Types |
-| Frontend | React Router | 8.x | Pages |
-| Frontend | CodeMirror 6 | latest stable | Code editor (JavaScript, Java) |
-| Frontend | react-markdown | latest stable | Render lesson Markdown (no raw HTML) |
+| Frontend | React Router | 7.x | Pages |
+| Frontend | In-house code editor and Markdown renderer | — | Code editor with highlighting (JavaScript, Java); lesson Markdown without raw HTML. No third-party libraries for either |
 | Frontend | ESLint, Prettier | latest stable | Lint and format |
-| Frontend | Vitest + React Testing Library + jsdom | latest stable | Unit and component tests |
+| Frontend | Vitest + React Testing Library + jsdom | 5.x / 16.x / 31.x | Unit and component tests |
 | End to end | Playwright | latest stable | Smoke test in CI and review screenshots |
 | Local | Docker + Docker Compose | — | Postgres 16 for local development and the smoke test |
 
@@ -59,10 +58,11 @@ Claude's workspace may not reach package registries or external APIs, so install
 | Secret | Where it lives |
 | --- | --- |
 | `GEMINI_API_KEY` | Render env + GitHub Actions secret (for an optional real-grader check) |
-| `JUDGE0_API_KEY` | Render env |
+| `JUDGE0_API_KEY` | Render env (optional; Java runs stay off without it, D-054) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Render env; local `.env` |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | Render env; local `.env` |
 | `JWT_SECRET` | Render env; local `.env` |
 | `DATABASE_URL` / user / password | Render env; local `.env` |
 | `OWNER_EMAIL` | Render env; local `.env` (not secret, but configuration) |
 | `FRONTEND_URL` | Render env; local `.env` (not secret: sign-in redirects and CORS) |
+| `VITE_API_URL`, `VITE_APP_NAME` | Vercel env (not secret: backend URL and the site name shown in the app) |

@@ -1,0 +1,114 @@
+{
+  "id": "L11-power-badge",
+  "level": 11,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Power Badge",
+  "statement": "A coding site gives a badge to players whose score is a power of two (1, 2, 4, 8, ...). Return true if `score` is a power of two. Try to answer without a loop.",
+  "examples": [
+    {
+      "input": "score = 16",
+      "output": "true"
+    },
+    {
+      "input": "score = 12",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "-2^31 <= score <= 2^31 - 1"
+  ],
+  "answerKey": {
+    "pattern": "A power of two has exactly one 1 bit: n > 0 and n & (n - 1) === 0",
+    "keyPoints": [
+      "Powers of two in binary are a single 1 followed by zeros",
+      "n & (n - 1) clears the lowest 1 bit, which leaves 0 only when there was one 1 bit",
+      "Zero and negative numbers are not powers of two"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "score = 1 (2^0)",
+      "score = 0",
+      "Negative scores",
+      "2^30, the largest power of two that fits"
+    ],
+    "acceptableSlowerApproaches": [
+      "Divide by 2 while even and check the result is 1: O(log n)"
+    ]
+  },
+  "hints": [
+    "Write 1, 2, 4, 8, 16 in binary. What do they have in common?",
+    "Each has exactly one 1 bit. Which expression clears the lowest 1 bit?",
+    "Return n > 0 && (n & (n - 1)) === 0."
+  ],
+  "starterCode": {
+    "javascript": "function hasPowerBadge(score) {\n  // return true or false\n}",
+    "java": "class Solution {\n  boolean hasPowerBadge(int score) {\n    // return true or false\n  }\n}"
+  },
+  "similarLeetCode": "Power of Two",
+  "tests": [
+    {
+      "input": [
+        16
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        12
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        0
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        -8
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        1073741824
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        2147483647
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        -2147483648
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        6
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        1024
+      ],
+      "expected": true
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Version | 1.0 |
+| Version | 1.1 (updated 2026-11-20 to match the code after Sprint 10) |
 | Status | **Approved baseline** — PO, 2026-11-06 (T-002) |
 | Requirements baseline | [SRS.md](SRS.md) v1.0 |
 
@@ -25,14 +25,14 @@ flowchart LR
     DB[(Neon Postgres)]
     OA[Google / GitHub OAuth]
     G[Gemini API]
-    J[Judge0 CE<br/>RapidAPI]
+    J[Judge0 CE<br/>RapidAPI, optional D-054]
     ST -->|serves| FE
     FE -->|HTTPS JSON + Bearer JWT<br/>CORS: frontend origin only| BE
     FE -.-> W
     BE -->|Flyway, JPA| DB
     BE -->|OAuth2 login| OA
     BE -->|Grader adapter| G
-    BE -->|CodeRunner adapter, Java| J
+    BE -->|JavaRunner adapter| J
 ```
 
 **Selected style: API-first modular monolith** (D-030). One Spring Boot application split into feature modules with strict boundaries, and a separate React single-page app that only talks to the versioned REST API (`/api/v1`). A future mobile app or organization dashboard uses the same API. A module can be extracted into its own service later because modules only talk through their public service interfaces.
@@ -45,54 +45,62 @@ Rejected: Next.js + Supabase (option A) — faster to start but harder to extend
 
 ```text
 algoquest/
-  frontend/            React 19 + Vite + TypeScript SPA
+  frontend/            React 19 + Vite + TypeScript SPA (src/i18n: English and Vietnamese UI text)
   backend/             Spring Boot 4.1 (Java 21, Maven)
-  content/             levels, lessons (Markdown + JSON), problems (JSON with answer keys and tests)
+  content/             levels.json, then one folder per level: lesson, walkthrough, quick check,
+                       intuition question, problems (with answer keys and hidden tests), pattern
+                       challenges, and locales/vi translations
+  e2e/                 Playwright smoke test
+  scripts/             records check (D-038)
   tools/grading-test/  grading accuracy test (T-005)
   docs/                project records
   docker-compose.yml   local Postgres
-  .github/workflows/   backend, frontend, smoke
+  render.yaml          Render service definition
+  .github/workflows/   backend, frontend, docs, smoke, grader-check
 ```
 
-`content/` is packaged into the backend image at build time (D-033). Answer keys and hidden tests are only ever read by the backend.
+`content/` is packaged into the backend image at build time (D-033). Answer keys and hidden test outputs are only ever read by the backend.
 
 ## 3. Backend Modules (package `com.algoquest`)
 
 ```mermaid
 flowchart TB
     web[Controllers<br/>one per module]
-    A[access<br/>login, JWT, roles, permissions, audit log]
+    A[access<br/>sign-in, JWT, roles, permissions, audit log]
     C[content<br/>load + validate content, catalog]
-    GM[game<br/>services + persistence]
-    D[game.domain<br/>pure rules: XP, unlock, practice, hints, streak, test score]
-    GR[grading<br/>Grader: Gemini, Fake]
-    R[runner<br/>CodeRunner: Judge0 Java; JS output check]
-    AD[admin<br/>grading log, reset, config, users/roles]
-    CF[config<br/>game config: defaults + overrides]
+    GM[game<br/>services + persistence, game rules]
+    D[game.domain<br/>pure rules: XP, unlock, practice, hints, streak]
+    P[pattern<br/>pattern challenges]
+    GR[grading<br/>Grader, PatternGrader: Gemini, Fake]
+    CO[code<br/>code answers: JS outputs, Java harness, JavaRunner]
+    AD[admin<br/>grading log, reset, rules, users/roles, audit]
     web --> A
     web --> GM
+    web --> P
+    web --> CO
     web --> AD
     GM --> D
     GM --> C
     GM --> GR
-    GM --> R
-    GM --> CF
+    P --> C
+    P --> GR
+    CO --> C
+    CO --> GM
     AD --> GM
     AD --> A
-    AD --> CF
 ```
 
 | Module | Responsibility | Owns (tables / data) |
 | --- | --- | --- |
-| `access` | OAuth2 login (Google, GitHub), one-time login codes, JWT issuing and validation, users, role assignments with scope, permission catalogue, `PermissionEvaluator`, audit log | `app_user`, `login_code`, `role_assignment`, `audit_log` |
-| `content` | Load `content/` at startup, validate against the schema (startup fails on invalid content), expose a read-only catalog; public DTOs never include answer keys or test expectations | In-memory catalog |
-| `game.domain` | Pure Java rules with no Spring or I/O: problem XP (FR-08), level target, lock states (FR-10), practice gate (FR-09), hint quota (FR-06), streak (FR-13), test score | Nothing |
-| `game` | Use cases: attempts, hints, practice, tests, profile, leaderboard (dummy players from content) | `attempt`, `problem_progress`, `level_progress`, `test_attempt`, `hint_use`, `streak` |
+| `access` | OAuth2 sign-in (Google, GitHub), one-time login codes, JWT issuing and validation, users, role assignments with scope, permission catalogue, `PermissionEvaluator`, audit log, smoke-test sign-in | `app_user`, `login_code`, `role_assignment`, `audit_log` |
+| `content` | Load `content/` at startup, validate it (startup fails on invalid content), expose a read-only catalog; public views never include answer keys or hidden outputs | In-memory catalog |
+| `game.domain` | Pure Java rules with no Spring or I/O: problem XP (FR-08), level target, lock states (FR-10), practice gate (FR-09), hint quota (FR-06), streak (FR-13) | Nothing |
+| `game` | Use cases: attempts, hints, practice, active time, quick check, level-up tests, profile; game rules with file defaults and validated database overrides (`GameRulesService`) | `attempt`, `problem_progress`, `problem_start`, `hint_use`, `quick_check`, `test_attempt`, `test_answer`, `streak`, `game_config` |
 | `pattern` | Pattern Recognition pilot (D-057): list challenges, record an answer, compare approaches; the content label decides correctness and the AI grades only the reason; no XP; 5 answers per challenge per day | `pattern_attempt` |
 | `grading` | `Grader` and `PatternGrader` interfaces; `GeminiClient` (shared call, JSON schema, 20 s timeout); `GeminiGrader` and `GeminiPatternGrader` (prompts, score snapping); fakes for tests and smoke runs | Grading prompts |
-| `runner` | `CodeRunner` interface; `Judge0Runner` for Java (daily quota guard); JavaScript output checking (D-035) | Test harnesses |
+| `code` | Code answers (FR-07): JavaScript outputs checked against hidden tests (D-035); Java through `JavaHarness` and the `JavaRunner` adapter (`Judge0Runner`, off without a key, D-054); `ListNode` and `TreeNode` arguments (D-058, D-059); daily Java quota | `code_run` |
 | `admin` | Admin endpoints; every one guarded by a permission and audit-logged | Nothing |
-| `config` | Game config with file defaults and validated database overrides | `game_config` |
+| `shared` | RFC 9457 error handling (`ApiException`), clock configuration | Nothing |
 
 **Rules:** controllers are thin (validate, authorize, call one service). Modules call each other only through public service classes, never another module's repositories. `game.domain` depends on nothing. **Authorization happens in controllers/services through `access`; the domain never checks permissions** (NFR-10). Errors use RFC 9457 problem details; no stack traces or keys in responses.
 
@@ -102,24 +110,29 @@ flowchart TB
 
 | Folder | Content |
 | --- | --- |
-| `src/api` | Typed API client, JWT handling (memory + `sessionStorage`, D-036), retry and "waking the server" state |
-| `src/auth` | Sign-in page, OAuth callback (exchanges the one-time code), route guards |
-| `src/components` | Shared UI: buttons, cards, XP bar, timer, modal, toast, loading and error states |
-| `src/features/levels` | Level map, lesson page (Markdown + step walkthrough + quick check) |
-| `src/features/solve` | Problem list, solve page, feedback, hints, code editor (CodeMirror 6), JS Web Worker |
-| `src/features/practice`, `src/features/test` | Practice round, level-up test |
-| `src/features/profile` | Profile, streak, leaderboard |
-| `src/features/admin` | Admin panel (rendered only with admin permissions; the backend still enforces) |
-| `src/styles` | Design tokens (colors, type, spacing) in one place |
+| `src/api` | Typed API client, JWT handling (memory + `sessionStorage`, D-036), retry and "waking the server" state, `useApiGet` |
+| `src/auth` | Sign-in page, OAuth callback (exchanges the one-time code), route guard, session |
+| `src/components` | Shared UI: header, footer, buttons, cards, XP bar, badges, chips, modal, celebration, loading, error, and waking states |
+| `src/pages` | Learning path (home), level page, profile, VIP placeholder, UI kit, not found |
+| `src/lesson` | Five-step lesson: Markdown renderer (own parser, no raw HTML), walkthrough with cell, linked-node, and tree views, predictions, quick check, JavaScript/Java tabs |
+| `src/solve` | Solve page: explanation form, feedback, hints, timer, scoring guide |
+| `src/code` | Code editor with highlighting, code panel, JavaScript Web Worker with `ListNode`/`TreeNode` helpers |
+| `src/leveltest` | Level-up test |
+| `src/pattern` | Pattern challenge list and page |
+| `src/admin` | Admin panel (rendered only with admin permissions; the backend still enforces) |
+| `src/game` | Shared game state (levels, rules) |
+| `src/i18n` | UI text in English and Vietnamese (localization track) |
+| `src/theme`, `src/styles`, `src/config` | Light/dark theme, design tokens, site name (`VITE_APP_NAME`) |
+| `src/test` | Test helpers: fake API, game data, render helper |
 
-React Router for pages; plain `fetch` wrapper plus small hooks for data (no state library until needed). Reusable components for anything used in more than one place.
+React Router for pages; a small `fetch` wrapper plus hooks for data (no state library). No third-party editor or Markdown library: both are small in-house components.
 
 ## 5. Design Patterns
 
 | Pattern | Problem it solves | Simpler alternative | Tradeoff |
 | --- | --- | --- | --- |
-| Adapter (`Grader`, `CodeRunner`) | Providers may change; tests and smoke runs need fakes | Call Gemini/Judge0 directly in services | One interface each; failure paths become testable |
-| Strategy (runner per language) | JavaScript is checked from browser outputs, Java runs on Judge0 | `if (language)` inside one method | Two small classes instead of one branching method |
+| Adapter (`Grader`, `PatternGrader`, `JavaRunner`) | Providers may change; tests and smoke runs need fakes | Call Gemini/Judge0 directly in services | One interface each; failure paths become testable |
+| Language paths in `CodeService` | JavaScript runs in the browser and only its outputs are checked; Java runs on Judge0 | One generic remote runner for both | JavaScript costs the server nothing; Java needs a key and a daily quota |
 | Permission evaluator (Spring `@PreAuthorize("hasPermission(...)")`) | Same check style for global permissions now and organization scopes later | `if (user.isAdmin())` checks | Slight indirection; organizations add scopes without rewriting checks |
 
 ## 6. UML Views and Why They Were Selected
@@ -149,14 +162,16 @@ flowchart LR
       U5[Write code for 2x XP]
       U6[Practice round]
       U7[Level-up test]
-      U8[Profile and leaderboard]
+      U8[Profile]
+      U10[Pattern challenge]
       U9[Admin panel]
     end
-    L --- U1 & U2 & U3 & U4 & U5 & U6 & U7 & U8
+    L --- U1 & U2 & U3 & U4 & U5 & U6 & U7 & U8 & U10
     O --- U1 & U9
     U3 --> G[(Gemini)]
     U7 --> G
-    U5 --> J[(Judge0, Java)]
+    U10 --> G
+    U5 --> J[(Judge0, Java, optional)]
 ```
 
 ### 6.2 Level lifecycle (FR-02, FR-09, FR-10)
@@ -240,46 +255,57 @@ sequenceDiagram
 | GET | `/oauth2/authorization/{google\|github}` | — | FR-01 |
 | POST | `/api/v1/auth/exchange` | — (one-time code) | FR-01 |
 | GET | `/api/v1/me` | signed in | FR-01, FR-17 |
+| GET | `/api/v1/rules` | `game.play` | FR-08, FR-18.3 |
 | GET | `/api/v1/levels` | `game.play` | FR-02 |
 | GET | `/api/v1/levels/{n}/lesson` | `game.play` | FR-03 |
+| POST | `/api/v1/levels/{n}/quick-check` | `game.play` | FR-03 |
 | GET | `/api/v1/levels/{n}/problems` | `game.play` | FR-04 |
 | GET | `/api/v1/problems/{id}` | `game.play` | FR-04 |
+| POST | `/api/v1/problems/{id}/heartbeat` | `game.play` | FR-08 (active time) |
+| POST | `/api/v1/problems/{id}/restart` | `game.play` | FR-08 |
 | POST | `/api/v1/problems/{id}/attempts` | `game.play` | FR-05, FR-08, FR-09 |
 | GET | `/api/v1/problems/{id}/hints` | `game.play` | FR-06 (hints already opened) |
 | POST | `/api/v1/problems/{id}/hints` | `game.play` | FR-06 |
 | GET | `/api/v1/hints/quota` | `game.play` | FR-06 |
-| GET | `/api/v1/problems/{id}/js-inputs` | `game.play` | FR-07 (D-035) |
-| POST | `/api/v1/problems/{id}/code-runs` | `game.play` | FR-07 |
+| GET | `/api/v1/problems/{id}/code` | `game.play` | FR-07: hidden inputs, list and tree arguments, Java availability (D-035, D-058, D-059) |
+| POST | `/api/v1/problems/{id}/code` | `game.play` | FR-07: check JavaScript outputs or run Java |
 | POST | `/api/v1/levels/{n}/tests` | `game.play` | FR-10 |
 | GET | `/api/v1/tests/{id}` | `game.play` | FR-10 |
 | POST | `/api/v1/tests/{id}/answers` | `game.play` | FR-10 |
 | POST | `/api/v1/tests/{id}/submit` | `game.play` | FR-10 |
 | GET | `/api/v1/profile` | `game.play` | FR-12, FR-13 |
-| GET | `/api/v1/leaderboard` | `game.play` | FR-14 |
 | GET | `/api/v1/levels/{n}/patterns` | `game.play` | D-057 |
 | GET | `/api/v1/patterns/{id}` | `game.play` | D-057 |
 | POST | `/api/v1/patterns/{id}/answers` | `game.play` | D-057 |
 | GET | `/api/v1/admin/attempts` | `admin.gradingLog.view` | FR-18.1 |
 | GET | `/api/v1/admin/pattern-answers` | `admin.gradingLog.view` | FR-18.1, D-057 |
 | POST | `/api/v1/admin/users/{id}/progress-reset` | `admin.progress.reset` | FR-18.2 |
-| GET, PUT | `/api/v1/admin/config` | `admin.config.edit` | FR-18.3 |
+| GET, PUT | `/api/v1/admin/game-rules` | `admin.config.edit` | FR-18.3 |
 | GET | `/api/v1/admin/users` | `admin.users.view` | FR-18.4 |
-| PUT | `/api/v1/admin/users/{id}/roles` | `admin.roles.grant` | FR-17, FR-18.4 |
+| POST | `/api/v1/admin/users/{id}/roles` | `admin.roles.grant` | FR-17, FR-18.4 |
+| DELETE | `/api/v1/admin/users/{id}/roles/{role}` | `admin.roles.grant` | FR-17, FR-18.4 |
 | GET | `/api/v1/admin/audit-log` | `admin.auditLog.view` | FR-17.6 |
+| GET | `/test-login` | smoke profile only | Smoke test |
 | GET | `/actuator/health` | — | Hosting |
+
+The leaderboard (FR-14) has no endpoint yet (T-403). `game.allLevels` (Owner, D-055) changes what `/levels` and the play endpoints allow, rather than guarding an endpoint of its own.
 
 ## 8. Data Model (ER)
 
 ```mermaid
 erDiagram
-    APP_USER ||--o{ ATTEMPT : makes
-    APP_USER ||--o{ PROBLEM_PROGRESS : has
-    APP_USER ||--o{ LEVEL_PROGRESS : has
-    APP_USER ||--o{ TEST_ATTEMPT : takes
-    APP_USER ||--o{ HINT_USE : uses
-    APP_USER ||--|| STREAK : keeps
     APP_USER ||--o{ ROLE_ASSIGNMENT : holds
     APP_USER ||--o{ AUDIT_LOG : performs
+    APP_USER ||--o{ LOGIN_CODE : receives
+    APP_USER ||--o{ ATTEMPT : makes
+    APP_USER ||--o{ PROBLEM_PROGRESS : has
+    APP_USER ||--o{ PROBLEM_START : opens
+    APP_USER ||--o{ HINT_USE : uses
+    APP_USER ||--o{ QUICK_CHECK : completes
+    APP_USER ||--o{ TEST_ATTEMPT : takes
+    TEST_ATTEMPT ||--o{ TEST_ANSWER : holds
+    APP_USER ||--o| STREAK : keeps
+    APP_USER ||--o{ CODE_RUN : runs
     APP_USER ||--o{ PATTERN_ATTEMPT : answers
     APP_USER {
       uuid id PK
@@ -307,6 +333,13 @@ erDiagram
       jsonb after_value
       timestamptz at
     }
+    LOGIN_CODE {
+      uuid id PK
+      text code_hash UK
+      uuid user_id FK
+      timestamptz expires_at
+      timestamptz used_at
+    }
     ATTEMPT {
       uuid id PK
       uuid user_id FK
@@ -318,32 +351,31 @@ erDiagram
       int complexity
       int edge_cases
       int total
+      text feedback
       int hints_used
       int seconds_taken
+      int xp_gained
+      text grader
+      int grading_ms
       timestamptz created_at
     }
     PROBLEM_PROGRESS {
       uuid user_id PK
       text problem_id PK
+      int level
+      bool solved
       int xp_awarded
       bool code_bonus
       bool practice_done
+      int practice_xp
+      timestamptz updated_at
     }
-    LEVEL_PROGRESS {
+    PROBLEM_START {
       uuid user_id PK
-      int level PK
-      text lock_state
-      int xp
-      int best_test_score
-    }
-    TEST_ATTEMPT {
-      uuid id PK
-      uuid user_id FK
-      int level
-      text mode
-      int score
+      text problem_id PK
       timestamptz started_at
-      timestamptz submitted_at
+      int active_seconds
+      timestamptz last_beat_at
     }
     HINT_USE {
       uuid id PK
@@ -352,17 +384,52 @@ erDiagram
       int hint_number
       timestamptz used_at
     }
+    QUICK_CHECK {
+      uuid user_id PK
+      int level PK
+      int xp
+      timestamptz completed_at
+    }
+    TEST_ATTEMPT {
+      uuid id PK
+      uuid user_id FK
+      int level
+      text problem_ids
+      timestamptz started_at
+      timestamptz ends_at
+      timestamptz submitted_at
+      int score
+    }
+    TEST_ANSWER {
+      uuid test_id PK
+      text problem_id PK
+      text explanation
+      timestamptz saved_at
+      int total
+      text feedback
+    }
     STREAK {
       uuid user_id PK
       int current
       int best
       date last_active_day
     }
+    CODE_RUN {
+      uuid id PK
+      uuid user_id FK
+      text problem_id
+      text language
+      text code
+      int passed
+      int total
+      int xp_gained
+      timestamptz created_at
+    }
     GAME_CONFIG {
-      text key PK
-      jsonb value
-      uuid updated_by FK
+      smallint id PK
+      jsonb rules
       timestamptz updated_at
+      uuid updated_by FK
     }
     PATTERN_ATTEMPT {
       uuid id PK
@@ -378,15 +445,9 @@ erDiagram
       int grading_ms
       timestamptz created_at
     }
-    LOGIN_CODE {
-      text code_hash PK
-      uuid user_id FK
-      timestamptz expires_at
-      bool used
-    }
 ```
 
-Schema changes only through Flyway migrations. `PROBLEM_PROGRESS (user_id, problem_id)` being unique stops double XP. `ROLE_ASSIGNMENT.scope_type`/`scope_id` are empty in this release (§9.3). The app has no update or delete path for `AUDIT_LOG`. Problems, lessons, and levels live in `content/`, so tables store their text IDs; dummy players are a content file. `PATTERN_ATTEMPT.label` is copied from the content at answer time so the record stays readable if the content changes.
+Schema changes only through Flyway migrations. `PROBLEM_PROGRESS (user_id, problem_id)` being unique stops double XP. `ROLE_ASSIGNMENT.scope_type`/`scope_id` are empty in this release (§9.3). `AUDIT_LOG` is append-only: a database trigger rejects updates and deletes. Level unlocks are derived from the best `TEST_ATTEMPT` score, so no separate level table is stored. `GAME_CONFIG` holds one row of rule overrides. Problems, lessons, and levels live in `content/`, so tables store their text IDs. `PATTERN_ATTEMPT.label` is copied from the content at answer time so the record stays readable if the content changes.
 
 ## 9. Security and Access Control
 

@@ -48,3 +48,16 @@ a {
     transition: none !important;
   }
 }
+
+/* Text for screen readers only (used by labels that have a visible control). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
