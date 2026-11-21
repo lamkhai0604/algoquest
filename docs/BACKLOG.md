@@ -225,16 +225,32 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 | T-571 | Motion in every walkthrough view: sliding markers, swaps, growing tree nodes, path highlight, pointer flips, stack strip | FR-03, D-065 | P1 | Done 2026-11-20: frontend tests; motion checked in a recording; PO review OK |
 | T-570 | Sprint 16 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-16-report.md) |
 
-## Sprint 17 — Levels 20 and 21 ([plan](sprints/sprint-17.md))
+## Sprint 17 — Levels 20 and 21 ([plan](sprints/sprint-17.md), closed 2026-11-21)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-572 | Interval timeline view: intervals as bars on a time axis, kept intervals, a sweep line | FR-03, D-066 | P1 | Built 2026-11-21: content check rules, rendering and loader tests; PO review pending |
-| T-573 | Level 20 Greedy & Intervals content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; greedy rules checked against brute force on small random inputs; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-574 | Level 20 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-575 | Level 21 Dynamic Programming Fundamentals content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-576 | Level 21 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-577 | Sprint 17 report and Phase 2 summary | D-007 | P2 | To do |
+| T-572 | Interval timeline view: intervals as bars on a time axis, kept intervals, a sweep line | FR-03, D-066 | P1 | Done 2026-11-21: content check rules, rendering and loader tests; PO review OK |
+| T-573 | Level 20 Greedy & Intervals content | FR-03, FR-04, D-048 | P1 | Done 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; greedy rules checked against brute force on small random inputs; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-574 | Level 20 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
+| T-575 | Level 21 Dynamic Programming Fundamentals content | FR-03, FR-04, D-048 | P1 | Done 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-576 | Level 21 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
+| T-577 | Sprint 17 report and Phase 2 summary | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-17-report.md) |
+
+## Phase 3 roadmap — Interview Mastery (Levels 22–27)
+
+About two levels per sprint at the standard of Levels 12–21. Planned order: Sprint 18 Levels 22–23 (with the table view for 2-D DP, T-579, and the System Design placeholder, T-578), Sprint 19 Levels 24–25, Sprint 20 Levels 26–27.
+
+## Sprint 18 — Levels 22 and 23 ([plan](sprints/sprint-18.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-578 | System Design tab marked "Coming soon": last item of the main navigation and a page listing the planned topics | D-067 | P2 | To do |
+| T-579 | Table view for 2-D walkthroughs: rows and columns of cells, the cell being filled, the cells it reads | FR-03, D-068 | P1 | To do |
+| T-580 | Level 22 Mixed Pattern Problems content | FR-03, FR-04, D-048 | P1 | To do |
+| T-581 | Level 22 pattern challenges | D-057 | P2 | To do |
+| T-582 | Level 23 1D & 2D Dynamic Programming content | FR-03, FR-04, D-048 | P1 | To do |
+| T-583 | Level 23 pattern challenges | D-057 | P2 | To do |
+| T-584 | Sprint 18 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 
@@ -249,3 +265,4 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 | T-506 | Voice answers | Excluded this release |
 | T-507 | Battle mode | FR-16 |
 | T-549 | Admin action to delete old demo accounts | FR-17, D-062 |
+| T-585 | System Design track: lessons, animated architecture diagrams, design questions graded by AI | D-067 |
