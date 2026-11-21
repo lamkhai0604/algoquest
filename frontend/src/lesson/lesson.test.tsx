@@ -329,6 +329,40 @@ describe("lesson page", () => {
     expect(document.querySelectorAll("svg line")).toHaveLength(3);
   });
 
+  it("draws a graph with edges, arrows and visited vertices", async () => {
+    const graph = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Search",
+          body: "Visit 0, then its neighbours.",
+          visual: {
+            cells: ["0", "1", "2"],
+            edges: [
+              [0, 1],
+              [1, 2],
+            ],
+            directed: true,
+            visited: [0],
+            positions: [
+              [0, 0],
+              [2, 0],
+              [2, 2],
+            ],
+            markers: [{ index: 1, label: "curr" }],
+          },
+        },
+      ],
+    };
+    open(graph, 2);
+
+    expect(await screen.findByText("curr")).toBeInTheDocument();
+    expect(document.querySelectorAll("svg circle")).toHaveLength(3);
+    expect(document.querySelectorAll("svg line")).toHaveLength(2);
+    expect(document.querySelectorAll("svg marker")).toHaveLength(1);
+    expect(document.querySelectorAll('[data-visited="true"]')).toHaveLength(1);
+  });
+
   it("asks for a prediction before showing the step", async () => {
     open(LESSON, 2);
     await userEvent.click(

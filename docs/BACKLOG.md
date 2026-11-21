@@ -158,6 +158,15 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-536 | Level 11 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check; PO review OK) |
 | T-537 | Sprint 10 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-10-report.md) |
 
+## Sprint 11 — Level 10 ([plan](sprints/sprint-11.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-538 | Graph view in the walkthrough | FR-03, D-060 | P1 | Built 2026-11-20: content check rules, rendering and replay tests; PO review pending |
+| T-539 | Level 10 Graph Fundamentals content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-540 | Level 10 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-541 | Sprint 11 report | D-007 | P2 | To do |
+
 ## Later (unscheduled)
 
 | ID | Title | Req |

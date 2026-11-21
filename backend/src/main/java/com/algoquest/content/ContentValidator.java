@@ -237,7 +237,11 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.vars(), b.vars())
               || !java.util.Objects.equals(a.swap(), b.swap())
               || !java.util.Objects.equals(a.next(), b.next())
-              || a.drawsTree() != b.drawsTree()) {
+              || a.drawsTree() != b.drawsTree()
+              || !java.util.Objects.equals(a.edges(), b.edges())
+              || a.drawsDirected() != b.drawsDirected()
+              || !java.util.Objects.equals(a.visited(), b.visited())
+              || !java.util.Objects.equals(a.positions(), b.positions())) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -267,6 +271,71 @@ final class ContentValidator {
       }
     }
     return issues;
+  }
+
+  private static void checkGraph(List<String> problems, String where, Visual visual) {
+    int n = visual.cells().size();
+    if (visual.next() != null || visual.drawsTree()) {
+      problems.add(where + ": a graph cannot also be a linked list or a tree");
+    }
+    if (n > Visual.MAX_GRAPH_VERTICES) {
+      problems.add(where + ": a graph has at most " + Visual.MAX_GRAPH_VERTICES + " vertices");
+    }
+    Set<String> seen = new HashSet<>();
+    for (List<Integer> edge : visual.edges()) {
+      boolean valid =
+          edge != null
+              && edge.size() == 2
+              && !edge.contains(null)
+              && edge.get(0) >= 0
+              && edge.get(0) < n
+              && edge.get(1) >= 0
+              && edge.get(1) < n
+              && !edge.get(0).equals(edge.get(1));
+      if (valid) {
+        int a = edge.get(0);
+        int b = edge.get(1);
+        String key = visual.drawsDirected() ? a + ">" + b : Math.min(a, b) + "-" + Math.max(a, b);
+        valid = seen.add(key);
+      }
+      if (!valid) {
+        problems.add(
+            where + ": each edge needs the indices of two different vertices, and no edge repeats");
+        break;
+      }
+    }
+    List<Integer> visited = visual.visited();
+    if (visited != null
+        && (visited.contains(null)
+            || visited.stream().anyMatch(i -> i < 0 || i >= n)
+            || new HashSet<>(visited).size() != visited.size())) {
+      problems.add(where + ": visited lists distinct vertex indices");
+    }
+    List<List<Integer>> positions = visual.positions();
+    if (positions != null) {
+      boolean valid = positions.size() == n;
+      Set<List<Integer>> taken = new HashSet<>();
+      for (int i = 0; valid && i < positions.size(); i++) {
+        List<Integer> at = positions.get(i);
+        valid =
+            at != null
+                && at.size() == 2
+                && !at.contains(null)
+                && at.get(0) >= 0
+                && at.get(0) < Visual.GRAPH_COLUMNS
+                && at.get(1) >= 0
+                && at.get(1) < Visual.GRAPH_ROWS
+                && taken.add(at);
+      }
+      if (!valid) {
+        problems.add(
+            where
+                + ": positions needs one distinct [column, row] per vertex, columns 0 to "
+                + (Visual.GRAPH_COLUMNS - 1)
+                + " and rows 0 to "
+                + (Visual.GRAPH_ROWS - 1));
+      }
+    }
   }
 
   private static void checkQuestion(List<String> problems, String where, QuickCheckQuestion q) {
@@ -315,6 +384,13 @@ final class ContentValidator {
                 + Visual.MAX_TREE_CELLS
                 + " cells, and every node needs its parent at (i - 1) / 2");
       }
+    }
+    if (visual.drawsGraph()) {
+      checkGraph(problems, where, visual);
+    } else if (visual.directed() != null
+        || visual.visited() != null
+        || visual.positions() != null) {
+      problems.add(where + ": directed, visited and positions need edges");
     }
     List<Integer> next = visual.next();
     if (next != null) {

@@ -1,0 +1,853 @@
+[
+  {
+    "title": "The task",
+    "body": "Find the fewest tunnels from station **0** to station **6**. Breadth-first search starts with 0 in the queue, marked as seen (shaded), at distance 0.",
+    "code": "const queue = [start];\ndist[start] = 0;",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "visited": [
+        0
+      ],
+      "vars": [
+        {
+          "name": "queue",
+          "value": "[0]"
+        },
+        {
+          "name": "dist",
+          "value": "0=0"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Visit 0",
+    "body": "Take 0 from the front. Its neighbours 1 and 2 are new, so they are marked, get distance 1, and join the back of the queue.",
+    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "visited": [
+        0,
+        1,
+        2
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "queue",
+          "value": "[1, 2]"
+        },
+        {
+          "name": "dist",
+          "value": "0=0, 1=1, 2=1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Visit 1",
+    "body": "Take 1. Neighbour 0 is already seen and is skipped. 3 and 4 are new: distance 2, into the queue.",
+    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "visited": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "queue",
+          "value": "[2, 3, 4]"
+        },
+        {
+          "name": "dist",
+          "value": "0=0, 1=1, 2=1, 3=2, 4=2"
+        }
+      ],
+      "predict": {
+        "question": "Station 1 is taken from the queue. Its neighbours are 0, 3 and 4. What is the queue now?",
+        "options": [
+          "[2, 0, 3, 4]",
+          "[2, 3, 4]",
+          "[3, 4, 2]"
+        ],
+        "answer": 1,
+        "explanation": "0 is already seen, so it is skipped. 3 and 4 go to the back, behind 2.",
+        "hides": [
+          "queue"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Visit 2",
+    "body": "Take 2. 0 is seen, and so is **4**: it was added from 1 and must not be added twice. Only 5 is new.",
+    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "visited": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "queue",
+          "value": "[3, 4, 5]"
+        },
+        {
+          "name": "dist",
+          "value": "0=0, 1=1, 2=1, 3=2, 4=2, 5=2"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Visit 3",
+    "body": "Take 3. Neighbour 6 is new, reached through 0 → 1 → 3 → 6: distance 3. It joins the queue.",
+    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "visited": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "queue",
+          "value": "[4, 5, 6]"
+        },
+        {
+          "name": "dist",
+          "value": "0=0, 1=1, 2=1, 3=2, 4=2, 5=2, 6=3"
+        }
+      ],
+      "predict": {
+        "question": "Station 6 is first reached from 3, which has distance 2. What is the distance of 6?",
+        "options": [
+          "2",
+          "3",
+          "4"
+        ],
+        "answer": 1,
+        "explanation": "One more tunnel than 3: 2 + 1 = 3. BFS reaches 6 first along a shortest route.",
+        "hides": [
+          "dist"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Visit 4",
+    "body": "Take 4. All its neighbours (1, 2 and 6) are already seen, so nothing is added.",
+    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "visited": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "queue",
+          "value": "[5, 6]"
+        },
+        {
+          "name": "dist",
+          "value": "0=0, 1=1, 2=1, 3=2, 4=2, 5=2, 6=3"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Visit 5",
+    "body": "Take 5. Its only neighbour, 2, is seen.",
+    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "visited": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "queue",
+          "value": "[6]"
+        },
+        {
+          "name": "dist",
+          "value": "0=0, 1=1, 2=1, 3=2, 4=2, 5=2, 6=3"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Reach 6",
+    "body": "Take 6: the target. BFS reached it in the third ring, so **3 tunnels** is the fewest. Every vertex and edge was handled once: O(V + E).",
+    "code": "return dist[v];",
+    "visual": {
+      "cells": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ],
+      "positions": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "visited": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "markers": [
+        {
+          "index": 6,
+          "label": "curr"
+        }
+      ],
+      "vars": [
+        {
+          "name": "queue",
+          "value": "[]"
+        },
+        {
+          "name": "dist",
+          "value": "0=0, 1=1, 2=1, 3=2, 4=2, 5=2, 6=3"
+        },
+        {
+          "name": "result",
+          "value": "3 tunnels"
+        }
+      ]
+    }
+  }
+]

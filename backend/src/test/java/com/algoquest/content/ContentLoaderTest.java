@@ -8,6 +8,7 @@ import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.ProblemTranslation;
+import com.algoquest.content.model.Visual;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -77,7 +78,7 @@ class ContentLoaderTest {
     assertThat(levels).hasSize(2);
     assertThat(levels.get(1).available()).isTrue();
     assertThat(levels.get(1).problems()).hasSize(6);
-    assertThat(levels.get(1).lesson().walkthrough()).hasSize(3);
+    assertThat(levels.get(1).lesson().walkthrough()).hasSize(4);
     assertThat(levels.get(1).info().phase()).isEqualTo(1);
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().predict().hides())
         .containsExactly("best");
@@ -86,6 +87,12 @@ class ContentLoaderTest {
         .containsExactly(1, 2, -1);
     assertThat(levels.get(1).lesson().walkthrough().get(0).visual().drawsTree()).isTrue();
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().drawsTree()).isFalse();
+    Visual graph = levels.get(1).lesson().walkthrough().get(3).visual();
+    assertThat(graph.drawsGraph()).isTrue();
+    assertThat(graph.drawsDirected()).isFalse();
+    assertThat(graph.edges()).hasSize(3);
+    assertThat(graph.visited()).containsExactly(0);
+    assertThat(graph.positions().get(3)).containsExactly(2, 2);
     assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
     PatternChallenge challenge = levels.get(1).patterns().getFirst();
     assertThat(challenge.best().id()).isEqualTo("hash");
@@ -265,6 +272,12 @@ class ContentLoaderTest {
     replace(walkthrough, "2,\n        -1\n      ]", "2,\n        2\n      ]");
     replace(walkthrough, "\"3\",\n        \"10\"", "\"\",\n        \"10\"");
     replace(walkthrough, "\"hides\": [\n          \"best\"", "\"hides\": [\n          \"worst\"");
+    replace(walkthrough, "2,\n          3\n        ]", "2,\n          2\n        ]");
+    replace(walkthrough, "\"visited\": [\n        0", "\"visited\": [\n        9");
+    replace(
+        walkthrough,
+        "2,\n          0\n        ],\n        [\n          0,",
+        "0,\n          0\n        ],\n        [\n          0,");
     replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
 
     List<String> problems = problemsAfterLoad();
@@ -276,6 +289,9 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("step 2") && p.contains("swap"))
         .anyMatch(p -> p.contains("step 3") && p.contains("next needs"))
         .anyMatch(p -> p.contains("step 1") && p.contains("needs its parent"))
+        .anyMatch(p -> p.contains("step 4") && p.contains("each edge"))
+        .anyMatch(p -> p.contains("step 4") && p.contains("visited"))
+        .anyMatch(p -> p.contains("step 4") && p.contains("positions"))
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Edge cases"));
   }
 }

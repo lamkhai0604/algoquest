@@ -210,6 +210,50 @@ describe("lesson visualizers match their reference algorithms", () => {
     });
   });
 
+  it("Level 10: breadth-first search visits, queues and measures like the reference", () => {
+    const steps = walkthrough("10-graph-fundamentals");
+    const first = steps[0]!.visual!;
+    const n = first.cells.length;
+    const graph: number[][] = Array.from({ length: n }, () => []);
+    for (const [a = 0, b = 0] of first.edges!) {
+      graph[a]!.push(b);
+      graph[b]!.push(a);
+    }
+    for (const list of graph) list.sort((x, y) => x - y);
+    // Reference BFS from 0, recording the state after each vertex is taken.
+    const dist = new Array<number>(n).fill(-1);
+    dist[0] = 0;
+    const queue = [0];
+    const show = () => ({
+      queue: `[${queue.join(", ")}]`,
+      visited: dist.flatMap((d, v) => (d >= 0 ? [v] : [])),
+      dist: dist.flatMap((d, v) => (d >= 0 ? [`${v}=${d}`] : [])).join(", "),
+    });
+    const states = [{ curr: undefined as number | undefined, ...show() }];
+    while (queue.length) {
+      const v = queue.shift()!;
+      for (const next of graph[v]!)
+        if (dist[next] === -1) {
+          dist[next] = dist[v]! + 1;
+          queue.push(next);
+        }
+      states.push({ curr: v, ...show() });
+      if (v === n - 1) break;
+    }
+    const shown = steps.map((step) => ({
+      curr: step.visual!.markers?.[0]?.index,
+      queue: value(step, "queue"),
+      visited: step.visual!.visited,
+      dist: value(step, "dist"),
+    }));
+    expect(shown).toEqual(states);
+    for (const step of steps) {
+      expect(step.visual!.edges).toEqual(first.edges);
+      expect(step.visual!.positions).toEqual(first.positions);
+    }
+    expect(value(steps.at(-1)!, "result")).toBe(`${dist[n - 1]} tunnels`);
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -239,6 +283,7 @@ describe("lesson visualizers match their reference algorithms", () => {
       "7-recursion-divide-and-conquer",
       "8-trees-and-bst",
       "9-heap-priority-queue",
+      "10-graph-fundamentals",
       "11-bit-manipulation-and-math",
     ]) {
       for (const step of walkthrough(folder)) {
