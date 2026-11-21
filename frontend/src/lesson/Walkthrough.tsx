@@ -231,20 +231,23 @@ function Graph({ visual }: { visual: Visual }) {
   const { t } = useTranslation();
   const cells = visual.cells;
   const n = cells.length;
-  const grid: number[][] =
-    visual.positions ??
-    cells.map((_, i) => {
-      const angle = (2 * Math.PI * i) / Math.max(n, 1) - Math.PI / 2;
-      return [3 + 2.6 * Math.cos(angle), 2 + 1.8 * Math.sin(angle)];
-    });
-  const minX = Math.min(...grid.map(([x]) => x));
-  const minY = Math.min(...grid.map(([, y]) => y));
-  const maxX = Math.max(...grid.map(([x]) => x));
-  const maxY = Math.max(...grid.map(([, y]) => y));
-  const point = (i: number) => ({
-    x: GRAPH_MARGIN + (grid[i][0] - minX) * GRAPH_STEP,
-    y: GRAPH_MARGIN + (grid[i][1] - minY) * GRAPH_STEP,
+  const grid = cells.map((_, i) => {
+    const at = visual.positions?.[i];
+    if (at) return { x: at[0] ?? 0, y: at[1] ?? 0 };
+    const angle = (2 * Math.PI * i) / Math.max(n, 1) - Math.PI / 2;
+    return { x: 3 + 2.6 * Math.cos(angle), y: 2 + 1.8 * Math.sin(angle) };
   });
+  const minX = Math.min(...grid.map((g) => g.x));
+  const minY = Math.min(...grid.map((g) => g.y));
+  const maxX = Math.max(...grid.map((g) => g.x));
+  const maxY = Math.max(...grid.map((g) => g.y));
+  const point = (i: number) => {
+    const g = grid[i] ?? { x: minX, y: minY };
+    return {
+      x: GRAPH_MARGIN + (g.x - minX) * GRAPH_STEP,
+      y: GRAPH_MARGIN + (g.y - minY) * GRAPH_STEP,
+    };
+  };
   const width = 2 * GRAPH_MARGIN + (maxX - minX) * GRAPH_STEP;
   const height = 2 * GRAPH_MARGIN + (maxY - minY) * GRAPH_STEP + 14;
   const visited = new Set(visual.visited ?? []);
@@ -280,7 +283,7 @@ function Graph({ visual }: { visual: Visual }) {
             </marker>
           </defs>
         )}
-        {(visual.edges ?? []).map(([a, b]) => {
+        {(visual.edges ?? []).map(([a = 0, b = 0]) => {
           const from = point(a);
           const to = point(b);
           const length = Math.hypot(to.x - from.x, to.y - from.y) || 1;

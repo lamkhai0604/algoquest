@@ -215,9 +215,9 @@ describe("lesson visualizers match their reference algorithms", () => {
     const first = steps[0]!.visual!;
     const n = first.cells.length;
     const graph: number[][] = Array.from({ length: n }, () => []);
-    for (const [a, b] of first.edges!) {
-      graph[a]!.push(b!);
-      graph[b]!.push(a!);
+    for (const [a = 0, b = 0] of first.edges!) {
+      graph[a]!.push(b);
+      graph[b]!.push(a);
     }
     for (const list of graph) list.sort((x, y) => x - y);
     // Reference BFS from 0, recording the state after each vertex is taken.
