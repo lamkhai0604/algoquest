@@ -244,7 +244,8 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.positions(), b.positions())
               || !java.util.Objects.equals(a.activeEdges(), b.activeEdges())
               || !java.util.Objects.equals(a.queue(), b.queue())
-              || !java.util.Objects.equals(a.rings(), b.rings())) {
+              || !java.util.Objects.equals(a.rings(), b.rings())
+              || !java.util.Objects.equals(a.window(), b.window())) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -429,6 +430,24 @@ final class ContentValidator {
         || visual.rings() != null) {
       problems.add(
           where + ": directed, visited, positions, activeEdges, queue and rings need edges");
+    }
+    List<Integer> window = visual.window();
+    if (window != null && !window.isEmpty()) {
+      boolean valid =
+          window.size() == 2
+              && !window.contains(null)
+              && window.get(0) >= 0
+              && window.get(0) <= window.get(1)
+              && window.get(1) < visual.cells().size()
+              && visual.next() == null
+              && !visual.drawsTree()
+              && !visual.drawsGraph();
+      if (!valid) {
+        problems.add(
+            where
+                + ": window needs [start, end] inside the cells with start <= end, on the cell"
+                + " view only");
+      }
     }
     List<Integer> next = visual.next();
     if (next != null) {

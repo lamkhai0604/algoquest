@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-20 |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-12-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | A visitor, such as a recruiter, can understand AlgoQuest from the repository page in a minute and try every level in the live app without creating an account |
 | Duration | About 1 week from approval |
 | Tasks | T-544, T-545, T-546, T-547, T-548 ([BACKLOG.md](../BACKLOG.md)) |

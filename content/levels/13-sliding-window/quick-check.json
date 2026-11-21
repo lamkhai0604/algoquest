@@ -1,0 +1,35 @@
+[
+  {
+    "question": "A variable-size window has a while loop for shrinking inside a for loop over right. What is the total time?",
+    "options": [
+      "O(n): left and right each move at most n times",
+      "O(n²): two nested loops",
+      "O(n log n)",
+      "O(k · n)"
+    ],
+    "answer": 0,
+    "explanation": "left only moves forward, so all the shrinking together is at most n moves, plus n moves of right."
+  },
+  {
+    "question": "You need the longest substring with at most 2 distinct letters. What state does the window keep?",
+    "options": [
+      "The sum of the letters",
+      "A count of each letter in the window, and how many letters have a count above 0",
+      "A sorted copy of the window",
+      "Nothing: compare the ends"
+    ],
+    "answer": 1,
+    "explanation": "Counts let you add or remove one letter in O(1) and know when the number of distinct letters goes past 2."
+  },
+  {
+    "question": "Why does a shrinking window fail for \"shortest subarray with sum at least 10\" when the numbers can be negative?",
+    "options": [
+      "Removing an item may raise the sum, so shrinking no longer moves toward or away from the goal in a predictable way",
+      "Negative numbers cannot be added",
+      "The window needs a hash map",
+      "It does not fail"
+    ],
+    "answer": 0,
+    "explanation": "With only non-negative numbers, removing an item never increases the sum. With negatives that rule breaks; prefix sums are used instead."
+  }
+]

@@ -175,7 +175,9 @@
     "fast": "Fast",
     "queue": "Queue (front → back)",
     "empty": "empty",
-    "rings": "Distance from the start:"
+    "rings": "Distance from the start:",
+    "window": "Window",
+    "windowSize": "size"
   },
   "auth": {
     "title": "Sign in to {appName}",

@@ -18,6 +18,11 @@ function Cells({ visual }: { visual: Visual }) {
   }
   if (visual.cells.length === 0) return null;
   const swap: number[] = visual.swap ?? [];
+  // A shaded range of cells, such as a sliding window (D-063).
+  const [from, to] =
+    visual.window && visual.window.length === 2 ? visual.window : [-1, -2];
+  const inWindow = (index: number) =>
+    from !== undefined && to !== undefined && index >= from && index <= to;
   return (
     <>
       <ol className={styles.cells} aria-label={t("walkthrough.items")}>
@@ -31,7 +36,9 @@ function Cells({ visual }: { visual: Visual }) {
                 styles.cell,
                 marks && styles.cellCurrent,
                 swapped && styles.cellSwapped,
+                inWindow(index) && styles.cellInWindow,
               )}
+              data-window={inWindow(index) ? "true" : undefined}
               aria-current={marks ? "true" : undefined}
             >
               <span className={styles.cellIndex}>[{index}]</span>
@@ -43,6 +50,12 @@ function Cells({ visual }: { visual: Visual }) {
           );
         })}
       </ol>
+      {from !== undefined && to !== undefined && from >= 0 && (
+        <p className={styles.windowNote}>
+          {t("walkthrough.window")} [{from}]–[{to}] ·{" "}
+          {t("walkthrough.windowSize")} {to - from + 1}
+        </p>
+      )}
       {swap.length === 2 && (
         <p className={styles.swapNote}>
           {t("lessonMore.swapped")} [{swap[0]}] {t("lessonMore.and")} [{swap[1]}

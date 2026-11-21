@@ -409,6 +409,23 @@ describe("lesson page", () => {
     expect(screen.getByText("Distance from the start:")).toBeInTheDocument();
   });
 
+  it("shades a window of cells", async () => {
+    const lesson = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Window",
+          body: "Sum of three.",
+          visual: { cells: ["2", "1", "5", "1", "3"], window: [1, 3] },
+        },
+      ],
+    };
+    open(lesson, 2);
+
+    expect(await screen.findByText(/Window \[1\]–\[3\]/)).toBeVisible();
+    expect(document.querySelectorAll('[data-window="true"]')).toHaveLength(3);
+  });
+
   it("plays the steps by itself and pauses", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     try {

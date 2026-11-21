@@ -1,0 +1,257 @@
+{
+  "id": "L13-scrambled-word",
+  "level": 13,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Scrambled Word Finder",
+  "statement": "A word game hides scrambled copies of a word in a long line of letters. Return, in increasing order, every start position in line where the next word.length letters are a rearrangement of word.",
+  "examples": [
+    {
+      "input": "line = \"cbaebabacd\", word = \"abc\"",
+      "output": "[0, 6]"
+    },
+    {
+      "input": "line = \"abab\", word = \"ab\"",
+      "output": "[0, 1, 2]"
+    }
+  ],
+  "constraints": [
+    "1 <= line.length, word.length <= 100000",
+    "Both have lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Fixed-size window with letter counts compared to the word's counts",
+    "keyPoints": [
+      "Count the word's letters",
+      "Slide a window of word.length over line, updating its letter counts",
+      "Keep a number of letters whose counts match, or compare the 26 counts",
+      "Record the start when all counts match"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1): 26 letters",
+    "edgeCases": [
+      "word longer than line",
+      "Overlapping matches",
+      "No match"
+    ],
+    "acceptableSlowerApproaches": [
+      "Sort each window and compare: O(n · m log m)"
+    ]
+  },
+  "hints": [
+    "A scrambled copy has the same letter counts as the word. How long is each window?",
+    "A window of exactly word.length letters, slid one position at a time.",
+    "Keep the window's 26 counts; after each slide, compare with the word's counts (or track how many letters match) and record the start."
+  ],
+  "starterCode": {
+    "javascript": "function scrambledStarts(line, word) {\n  // return the start positions\n}",
+    "java": "class Solution {\n  int[] scrambledStarts(String line, String word) {\n    // return the start positions\n  }\n}"
+  },
+  "similarLeetCode": "Find All Anagrams in a String",
+  "tests": [
+    {
+      "input": [
+        "cbaebabacd",
+        "abc"
+      ],
+      "expected": [
+        0,
+        6
+      ]
+    },
+    {
+      "input": [
+        "abab",
+        "ab"
+      ],
+      "expected": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "input": [
+        "a",
+        "ab"
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        "aaaa",
+        "a"
+      ],
+      "expected": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "input": [
+        "abc",
+        "cba"
+      ],
+      "expected": [
+        0
+      ]
+    },
+    {
+      "input": [
+        "xyz",
+        "abc"
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        "cbddcabdacddbddcdbacaccdacdaabaadccaaadabbaaccddcabdbabacdacccaddbbcbcadbaaacaaabbabbbabcbdcacabbcaabcccaabdaaacddcccbadaaacdbdbcbbbbdbbabadabcbcbcbacdcaacbdaadbdaacdbacbdcaadaabcdbddabdbdbbbabcdbdaaadddcabccaabccdbbacddadaadbbabbddbaacccacdbaccbbaccbbabdcdcdbcacaddcbaacaddacbbadbddbabbbadbbbbbbcacaaddadbabcadccadccdcdacbbbcddaadbbbbbdcacbacadadbccbdcabdabcdabaacaacbdacccbdadbdcdcdcbabbabcdcbaccdacbdcbbcccbdccdcbadaacaacaabaaacbbcbdbaddcccddcbbadcbabbabbbabaccdadaabcabdadcccdcbcaabdbabdbacbbbcbcbacccdacbbbddbabbdcacaddddbbacadccbcadcdccadcddcaaacdcdcbcbdabdbdcccbcdbcbdcddddcbddcdddbcddcdbccbcbccbddadadcddbababdacaddbbcddcdcaacaabdddabaaadaabbabcbdadaabbbbcdccaacdcaddaadaacdcdbcdbdaccddcdbaabbcabcccdbdacbccccbbdaacbcbbbabcdaacbaacacbabbcdbbbdaadbaabadbcddabdbadaacacdcaacacacdddadcbdbbadcdcbabbaaacbadaaaddcdcaaccadddbdbaacabbaddadaccccabcdcbbacadcddaacabbdddbccccaccbaddbdbdbbbacbaddaabccdc",
+        "abcd"
+      ],
+      "expected": [
+        3,
+        4,
+        6,
+        15,
+        16,
+        47,
+        48,
+        54,
+        68,
+        69,
+        89,
+        116,
+        122,
+        139,
+        147,
+        153,
+        154,
+        163,
+        164,
+        165,
+        167,
+        169,
+        176,
+        191,
+        202,
+        215,
+        238,
+        239,
+        240,
+        252,
+        258,
+        265,
+        273,
+        307,
+        319,
+        335,
+        345,
+        350,
+        351,
+        352,
+        355,
+        356,
+        357,
+        358,
+        366,
+        367,
+        368,
+        373,
+        383,
+        389,
+        392,
+        398,
+        399,
+        413,
+        414,
+        447,
+        448,
+        449,
+        470,
+        490,
+        505,
+        516,
+        534,
+        557,
+        616,
+        652,
+        687,
+        694,
+        708,
+        709,
+        728,
+        729,
+        758,
+        787,
+        793,
+        797,
+        806,
+        845,
+        875,
+        888
+      ]
+    },
+    {
+      "input": [
+        "cbddcabdacddbddcdbacaccdacdaabaadccaaadabbaaccddcabdbabacdacccaddbbcbcadbaaacaaabbabbbabcbdcacabbcaabcccaabdaaacddcccbadaaacdbdbcbbbbdbbabadabcbcbcbacdcaacbdaadbdaacdbacbdcaadaabcdbddabdbdbbbabcdbdaaadddcabccaabccdbbacddadaadbbabbddbaacccacdbaccbbaccbbabdcdcdbcacaddcbaacaddacbbadbddbabbbadbbbbbbcacaaddadbabcadccadccdcdacbbbcddaadbbbbbdcacbacadadbccbdcabdabcdabaacaacbdacccbdadbdcdcdcbabbabcdcbaccdacbdcbbcccbdccdcbadaacaacaabaaacbbcbdbaddcccddcbbadcbabbabbbabaccdadaabcabdadcccdcbcaabdbabdbacbbbcbcbacccdacbbbddbabbdcacaddddbbacadccbcadcdccadcddcaaacdcdcbcbdabdbdcccbcdbcbdcddddcbddcdddbcddcdbccbcbccbddadadcddbababdacaddbbcddcdcaacaabdddabaaadaabbabcbdadaabbbbcdccaacdcaddaadaacdcdbcdbdaccddcdbaabbcabcccdbdacbccccbbdaacbcbbbabcdaacbaacacbabbcdbbbdaadbaabadbcddabdbadaacacdcaacacacdddadcbdbbadcdcbabbaaacbadaaaddcdcaaccadddbdbaacabbaddadaccccabcdcbbacadcddaacabbdddbccccaccbaddbdbdbbbacbaddaabccdc",
+        "aab"
+      ],
+      "expected": [
+        27,
+        28,
+        29,
+        41,
+        53,
+        72,
+        78,
+        98,
+        104,
+        136,
+        175,
+        208,
+        232,
+        267,
+        360,
+        361,
+        424,
+        425,
+        426,
+        459,
+        467,
+        483,
+        613,
+        634,
+        640,
+        641,
+        646,
+        657,
+        696,
+        697,
+        735,
+        754,
+        755,
+        756,
+        802,
+        828,
+        893
+      ]
+    },
+    {
+      "input": [
+        "cbddcabdacddbddcdbacaccdacdaabaadccaaadabbaaccddcabdbabacdacccaddbbcbcadbaaacaaabbabbbabcbdcacabbcaabcccaabdaaacddcccbadaaacdbdbcbbbbdbbabadabcbcbcbacdcaacbdaadbdaacdbacbdcaadaabcdbddabdbdbbbabcdbdaaadddcabccaabccdbbacddadaadbbabbddbaacccacdbaccbbaccbbabdcdcdbcacaddcbaacaddacbbadbddbabbbadbbbbbbcacaaddadbabcadccadccdcdacbbbcddaadbbbbbdcacbacadadbccbdcabdabcdabaacaacbdacccbdadbdcdcdcbabbabcdcbaccdacbdcbbcccbdccdcbadaacaacaabaaacbbcbdbaddcccddcbbadcbabbabbbabaccdadaabcabdadcccdcbcaabdbabdbacbbbcbcbacccdacbbbddbabbdcacaddddbbacadccbcadcdccadcddcaaacdcdcbcbdabdbdcccbcdbcbdcddddcbddcdddbcddcdbccbcbccbddadadcddbababdacaddbbcddcdcaacaabdddabaaadaabbabcbdadaabbbbcdccaacdcaddaadaacdcdbcdbdaccddcdbaabbcabcccdbdacbccccbbdaacbcbbbabcdaacbaacacbabbcdbbbdaadbaabadbcddabdbadaacacdcaacacacdddadcbdbbadcdcbabbaaacbadaaaddcdcaaccadddbdbaacabbaddadaccccabcdcbbacadcddaacabbdddbccccaccbaddbdbdbbbacbaddaabccdc",
+        "bcccaabdaaacddcccbadaaacdbdbcb"
+      ],
+      "expected": [
+        100,
+        101,
+        344,
+        348,
+        827,
+        828
+      ]
+    }
+  ]
+}

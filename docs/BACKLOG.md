@@ -168,15 +168,30 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-542 | Animated walkthroughs: playback for every level; travelled edges, queue strip and rings for graphs | FR-03, D-061 | P1 | Done 2026-11-20: rendering and playback tests; PO review OK |
 | T-541 | Sprint 11 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-11-report.md) |
 
-## Sprint 12 — Portfolio preparation ([plan](sprints/sprint-12.md))
+## Sprint 12 — Portfolio preparation ([plan](sprints/sprint-12.md), closed 2026-11-20)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-544 | Demo sign-in for visitors | FR-01, FR-17, D-062 | P1 | Built 2026-11-20: API and frontend tests; PO review pending |
-| T-545 | Landing section on the sign-in page | FR-01 | P2 | Built 2026-11-20: frontend tests and screenshots; PO review pending |
-| T-546 | Link previews (Open Graph) | — | P2 | Built 2026-11-20: tags and preview image; check after deploy |
-| T-547 | Portfolio README | D-007 | P1 | Built 2026-11-20: PO review pending |
-| T-548 | Sprint 12 report | D-007 | P2 | To do |
+| T-544 | Demo sign-in for visitors | FR-01, FR-17, D-062 | P1 | Done 2026-11-20: API and frontend tests; PO approval |
+| T-545 | Landing section on the sign-in page | FR-01 | P2 | Done 2026-11-20: frontend tests and screenshots; PO approval |
+| T-546 | Link previews (Open Graph) | — | P2 | Done 2026-11-20: tags and preview image; live check by the PO |
+| T-547 | Portfolio README | D-007 | P1 | Done 2026-11-20: PO approval |
+| T-548 | Sprint 12 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-12-report.md) |
+
+## Phase 2 roadmap — Problem-Solving Patterns (Levels 12–21)
+
+About two levels per sprint, each at the standard of Levels 4–11 with pattern challenges. Planned order: Sprint 13 Levels 12–13, Sprint 14 Levels 14–15, Sprint 15 Levels 16–17, Sprint 16 Levels 18–19 (with the graph explorer, T-543), Sprint 17 Levels 20–21.
+
+## Sprint 13 — Levels 12 and 13 ([plan](sprints/sprint-13.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-550 | Window range in the cell view | FR-03, D-063 | P1 | To do |
+| T-551 | Level 12 Two Pointers content | FR-03, FR-04, D-048 | P1 | To do |
+| T-552 | Level 12 pattern challenges | D-057 | P2 | To do |
+| T-553 | Level 13 Sliding Window content | FR-03, FR-04, D-048 | P1 | To do |
+| T-554 | Level 13 pattern challenges | D-057 | P2 | To do |
+| T-555 | Sprint 13 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 
