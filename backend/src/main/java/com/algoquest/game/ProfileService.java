@@ -1,9 +1,9 @@
 package com.algoquest.game;
 
-import com.algoquest.game.domain.LevelRules;
 import com.algoquest.access.AccessService;
 import com.algoquest.access.UserNotFoundException;
 import com.algoquest.game.GameViews.LevelView;
+import com.algoquest.game.domain.LevelRules;
 import com.algoquest.game.domain.StreakRules;
 import com.algoquest.game.domain.StreakRules.Streak;
 import java.time.Clock;
