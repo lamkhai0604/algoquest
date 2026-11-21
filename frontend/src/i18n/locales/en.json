@@ -165,7 +165,16 @@
     "items": "Items",
     "state": "State after each step",
     "step": "Step",
-    "keyboard": "Keyboard: ← and → to step, R to reset."
+    "keyboard": "Keyboard: ← and → to step, Space to play or pause, R to reset.",
+    "play": "Play",
+    "pause": "Pause",
+    "speed": "Speed",
+    "slow": "Slow",
+    "normal": "Normal",
+    "fast": "Fast",
+    "queue": "Queue (front → back)",
+    "empty": "empty",
+    "rings": "Distance from the start:"
   },
   "auth": {
     "title": "Sign in to {appName}",

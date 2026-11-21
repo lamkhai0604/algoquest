@@ -252,6 +252,20 @@ describe("lesson visualizers match their reference algorithms", () => {
       expect(step.visual!.positions).toEqual(first.positions);
     }
     expect(value(steps.at(-1)!, "result")).toBe(`${dist[n - 1]} tunnels`);
+    // Animation data (D-061): the queue strip matches the queue text, each
+    // travelled edge joins the current vertex to a vertex new in that step,
+    // and the rings are the final distances.
+    steps.forEach((step, k) => {
+      const v = step.visual!;
+      expect(`[${(v.queue ?? []).join(", ")}]`).toBe(value(step, "queue"));
+      const before = new Set(steps[k - 1]?.visual?.visited ?? []);
+      const fresh = (v.visited ?? []).filter((x) => !before.has(x));
+      const curr = v.markers?.[0]?.index;
+      expect(v.activeEdges ?? []).toEqual(
+        k === 0 ? [] : fresh.map((x) => [curr, x]),
+      );
+    });
+    expect(steps.at(-1)!.visual!.rings).toEqual(dist);
   });
 
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {

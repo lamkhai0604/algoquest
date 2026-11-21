@@ -93,6 +93,9 @@ class ContentLoaderTest {
     assertThat(graph.edges()).hasSize(3);
     assertThat(graph.visited()).containsExactly(0);
     assertThat(graph.positions().get(3)).containsExactly(2, 2);
+    assertThat(graph.activeEdges()).hasSize(1);
+    assertThat(graph.queue()).containsExactly(1, 2);
+    assertThat(graph.rings()).containsExactly(0, 1, 1, -1);
     assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
     PatternChallenge challenge = levels.get(1).patterns().getFirst();
     assertThat(challenge.best().id()).isEqualTo("hash");
@@ -278,6 +281,11 @@ class ContentLoaderTest {
         walkthrough,
         "2,\n          0\n        ],\n        [\n          0,",
         "0,\n          0\n        ],\n        [\n          0,");
+    replace(
+        walkthrough,
+        "\"activeEdges\": [\n        [\n          1,\n          0",
+        "\"activeEdges\": [\n        [\n          1,\n          3");
+    replace(walkthrough, "\"rings\": [\n        0", "\"rings\": [\n        -2");
     replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
 
     List<String> problems = problemsAfterLoad();
@@ -292,6 +300,8 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("step 4") && p.contains("each edge"))
         .anyMatch(p -> p.contains("step 4") && p.contains("visited"))
         .anyMatch(p -> p.contains("step 4") && p.contains("positions"))
+        .anyMatch(p -> p.contains("step 4") && p.contains("active edge"))
+        .anyMatch(p -> p.contains("step 4") && p.contains("rings"))
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Edge cases"));
   }
 }

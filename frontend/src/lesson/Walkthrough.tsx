@@ -222,12 +222,34 @@ const GRAPH_STEP = 72;
 const GRAPH_RADIUS = 20;
 const GRAPH_MARGIN = 30;
 
+/** Ring colours, one class per distance; larger distances reuse the last. */
+const RING_CLASSES = [
+  styles.ring0,
+  styles.ring1,
+  styles.ring2,
+  styles.ring3,
+  styles.ring4,
+];
+const ringClass = (ring: number) =>
+  RING_CLASSES[Math.min(ring, RING_CLASSES.length - 1)];
+
 /**
  * A graph (D-060): the cells are vertices, placed on a small grid by
  * `positions` or on a circle, with edges, arrows for a directed graph, and
- * visited vertices shaded. An SVG that scales to the width.
+ * visited vertices shaded. An SVG that scales to the width. Vertices visited
+ * in this step pulse and the edges this step travels glow (D-061); while a
+ * prediction is open, the graph keeps the previous step's state so it does
+ * not give the answer away.
  */
-function Graph({ visual }: { visual: Visual }) {
+function Graph({
+  visual,
+  previous,
+  masked,
+}: {
+  visual: Visual;
+  previous: Visual | null;
+  masked: boolean;
+}) {
   const { t } = useTranslation();
   const cells = visual.cells;
   const n = cells.length;
@@ -250,7 +272,19 @@ function Graph({ visual }: { visual: Visual }) {
   };
   const width = 2 * GRAPH_MARGIN + (maxX - minX) * GRAPH_STEP;
   const height = 2 * GRAPH_MARGIN + (maxY - minY) * GRAPH_STEP + 14;
-  const visited = new Set(visual.visited ?? []);
+  const before = new Set(previous?.visited ?? []);
+  const visited = masked ? before : new Set(visual.visited ?? []);
+  const fresh = (i: number) =>
+    !masked && previous !== null && visited.has(i) && !before.has(i);
+  const rings = masked ? null : (visual.rings ?? null);
+  const active = new Set(
+    masked
+      ? []
+      : (visual.activeEdges ?? []).flatMap(([a, b]) => [
+          `${a}-${b}`,
+          `${b}-${a}`,
+        ]),
+  );
   const labels = new Map<number, string[]>();
   for (const marker of visual.markers ?? []) {
     labels.set(marker.index, [
@@ -258,6 +292,7 @@ function Graph({ visual }: { visual: Visual }) {
       marker.label,
     ]);
   }
+  const maxRing = Math.max(-1, ...(rings ?? []));
   const arrowId = useId();
   return (
     <div className={styles.treeWrap}>
@@ -289,10 +324,12 @@ function Graph({ visual }: { visual: Visual }) {
           const length = Math.hypot(to.x - from.x, to.y - from.y) || 1;
           const dx = ((to.x - from.x) / length) * GRAPH_RADIUS;
           const dy = ((to.y - from.y) / length) * GRAPH_RADIUS;
+          const lit = active.has(`${a}-${b}`);
           return (
             <line
               key={`${a}-${b}`}
-              className={styles.treeEdge}
+              className={cx(styles.treeEdge, lit && styles.graphEdgeActive)}
+              data-active={lit ? "true" : undefined}
               x1={from.x + dx}
               y1={from.y + dy}
               x2={to.x - dx}
@@ -304,6 +341,7 @@ function Graph({ visual }: { visual: Visual }) {
         {cells.map((cell, i) => {
           const { x, y } = point(i);
           const marks = labels.get(i);
+          const ring = rings?.[i] ?? -1;
           return (
             <g
               key={i}
@@ -313,9 +351,12 @@ function Graph({ visual }: { visual: Visual }) {
               <circle
                 className={cx(
                   styles.treeNode,
-                  marks
-                    ? styles.treeNodeCurrent
-                    : visited.has(i) && styles.graphVisited,
+                  ring >= 0
+                    ? ringClass(ring)
+                    : marks
+                      ? styles.treeNodeCurrent
+                      : visited.has(i) && styles.graphVisited,
+                  fresh(i) && styles.graphFresh,
                 )}
                 cx={x}
                 cy={y}
@@ -337,6 +378,79 @@ function Graph({ visual }: { visual: Visual }) {
           );
         })}
       </svg>
+      {rings && maxRing >= 0 && (
+        <p className={styles.ringLegend}>
+          <span>{t("walkthrough.rings")}</span>
+          {Array.from({ length: maxRing + 1 }, (_, ring) => (
+            <span key={ring} className={styles.ringKey}>
+              <span className={cx(styles.ringSwatch, ringClass(ring))} />
+              {ring}
+            </span>
+          ))}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The queue of a breadth-first search as a strip of vertices, front on the
+ * left (D-061). New vertices slide in at the back; the vertex taken from the
+ * front this step fades out. While a prediction hides the queue, it shows "?".
+ */
+function QueueStrip({
+  visual,
+  previous,
+  masked,
+}: {
+  visual: Visual;
+  previous: Visual | null;
+  masked: boolean;
+}) {
+  const { t } = useTranslation();
+  const queue = visual.queue ?? [];
+  const before = previous?.queue ?? [];
+  const label = (v: number) => visual.cells[v] ?? String(v);
+  // The front of the previous queue, when it left in this step.
+  const taken =
+    !masked && before.length > 0 && before[0] !== queue[0] ? before[0] : null;
+  const added = new Set(
+    queue.slice(Math.max(0, before.length - (taken === null ? 0 : 1))),
+  );
+  return (
+    <div className={styles.queue}>
+      <span className={styles.queueLabel}>{t("walkthrough.queue")}</span>
+      <ol className={styles.queueItems} aria-label={t("walkthrough.queue")}>
+        {masked ? (
+          <li className={styles.queueItem}>?</li>
+        ) : (
+          <>
+            {taken !== null && taken !== undefined && (
+              <li
+                key={`out-${taken}`}
+                className={cx(styles.queueItem, styles.queueOut)}
+                aria-hidden="true"
+              >
+                {label(taken)}
+              </li>
+            )}
+            {queue.map((v) => (
+              <li
+                key={v}
+                className={cx(
+                  styles.queueItem,
+                  previous && added.has(v) && styles.queueIn,
+                )}
+              >
+                {label(v)}
+              </li>
+            ))}
+            {queue.length === 0 && (
+              <li className={styles.queueEmpty}>{t("walkthrough.empty")}</li>
+            )}
+          </>
+        )}
+      </ol>
     </div>
   );
 }
@@ -424,11 +538,32 @@ function StateTable({
  * markers, and variable values; a step with a prediction asks first and shows
  * its text once the learner answers. Arrow keys step, R resets.
  */
+/** Milliseconds per step for each playback speed. */
+const SPEEDS = { slow: 2200, normal: 1400, fast: 700 } as const;
+type Speed = keyof typeof SPEEDS;
+
 export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, Answer>>({});
+  const [playing, setPlaying] = useState(false);
+  const [speed, setSpeed] = useState<Speed>("normal");
   const count = steps.length;
+  const current = steps[index];
+  const waitingNow =
+    current?.visual?.predict != null && answers[index] === undefined;
+  // Playback moves on by itself, and holds at a prediction until it is
+  // answered and at the last step.
+  const running = playing && index < count - 1 && !waitingNow;
+
+  useEffect(() => {
+    if (!running) return;
+    const timer = setTimeout(
+      () => setIndex((i) => Math.min(count - 1, i + 1)),
+      SPEEDS[speed],
+    );
+    return () => clearTimeout(timer);
+  }, [running, index, speed, count]);
 
   // Arrow keys step and R resets while the walkthrough is on screen, unless
   // the learner is typing somewhere.
@@ -438,12 +573,18 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
       if (target?.closest("input, textarea, select, [contenteditable]")) return;
       if (event.altKey || event.ctrlKey || event.metaKey) return;
       if (event.key === "ArrowRight") {
+        setPlaying(false);
         setIndex((i) => Math.min(count - 1, i + 1));
       } else if (event.key === "ArrowLeft") {
+        setPlaying(false);
         setIndex((i) => Math.max(0, i - 1));
       } else if (event.key === "r" || event.key === "R") {
+        setPlaying(false);
         setIndex(0);
         setAnswers({});
+      } else if (event.key === " " && !target?.closest("button")) {
+        event.preventDefault();
+        setPlaying((p) => !p);
       }
     };
     document.addEventListener("keydown", onKey);
@@ -460,12 +601,24 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
   const last = index === steps.length - 1;
   const hasVisuals = steps.some((s) => s.visual);
 
-  const go = (target: number) =>
+  const go = (target: number) => {
+    setPlaying(false);
     setIndex(Math.min(steps.length - 1, Math.max(0, target)));
+  };
   const reset = () => {
+    setPlaying(false);
     setIndex(0);
     setAnswers({});
   };
+  const togglePlay = () => {
+    if (running) {
+      setPlaying(false);
+      return;
+    }
+    if (last) setIndex(0);
+    setPlaying(true);
+  };
+  const previousVisual = steps[index - 1]?.visual ?? null;
 
   return (
     <div className={styles.visualizer}>
@@ -476,7 +629,7 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
         </span>
         {visual &&
           (visual.edges ? (
-            <Graph visual={visual} />
+            <Graph visual={visual} previous={previousVisual} masked={waiting} />
           ) : visual.tree ? (
             <Tree visual={visual} />
           ) : visual.next ? (
@@ -488,6 +641,13 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           ) : (
             <Cells visual={visual} />
           ))}
+        {visual?.queue && (
+          <QueueStrip
+            visual={visual}
+            previous={previousVisual}
+            masked={hidden.includes("queue")}
+          />
+        )}
         {visual && <Variables visual={visual} hidden={hidden} />}
         {predict && (
           <Predict
@@ -523,6 +683,24 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           <Button variant="secondary" onClick={reset}>
             {t("lesson.reset")}
           </Button>
+          <Button
+            variant="secondary"
+            onClick={togglePlay}
+            aria-pressed={running}
+          >
+            {running ? t("walkthrough.pause") : t("walkthrough.play")}
+          </Button>
+          <label className={styles.speed}>
+            <span>{t("walkthrough.speed")}</span>
+            <select
+              value={speed}
+              onChange={(event) => setSpeed(event.target.value as Speed)}
+            >
+              <option value="slow">{t("walkthrough.slow")}</option>
+              <option value="normal">{t("walkthrough.normal")}</option>
+              <option value="fast">{t("walkthrough.fast")}</option>
+            </select>
+          </label>
         </div>
         <p className={styles.keys}>{t("walkthrough.keyboard")}</p>
       </Card>
