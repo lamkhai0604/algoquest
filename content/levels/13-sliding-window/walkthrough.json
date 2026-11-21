@@ -42,7 +42,7 @@
   {
     "title": "Add b (right = 1)",
     "body": "**b** enters and is not in the window, so the window just grows. Length 2, a new best.",
-    "code": "count[c]++;\nbest = Math.max(best, right - left + 1);",
+    "code": "count[c]++;\nbest = Math.max(best,\n  right - left + 1);",
     "visual": {
       "cells": [
         "a",
@@ -86,7 +86,7 @@
   {
     "title": "Add c (right = 2)",
     "body": "**c** enters and is not in the window, so the window just grows. Length 3, a new best.",
-    "code": "count[c]++;\nbest = Math.max(best, right - left + 1);",
+    "code": "count[c]++;\nbest = Math.max(best,\n  right - left + 1);",
     "visual": {
       "cells": [
         "a",
@@ -188,7 +188,7 @@
   {
     "title": "Add d (right = 4)",
     "body": "**d** enters and is not in the window, so the window just grows. Length 3, a new best.",
-    "code": "count[c]++;\nbest = Math.max(best, right - left + 1);",
+    "code": "count[c]++;\nbest = Math.max(best,\n  right - left + 1);",
     "visual": {
       "cells": [
         "a",
@@ -232,7 +232,7 @@
   {
     "title": "Add e (right = 5)",
     "body": "**e** enters and is not in the window, so the window just grows. Length 4, a new best.",
-    "code": "count[c]++;\nbest = Math.max(best, right - left + 1);",
+    "code": "count[c]++;\nbest = Math.max(best,\n  right - left + 1);",
     "visual": {
       "cells": [
         "a",
@@ -276,7 +276,7 @@
   {
     "title": "Add a (right = 6)",
     "body": "**a** enters and is not in the window, so the window just grows. Length 5, a new best. Every letter entered once and left at most once: **O(n)** time.",
-    "code": "count[c]++;\nbest = Math.max(best, right - left + 1);",
+    "code": "count[c]++;\nbest = Math.max(best,\n  right - left + 1);",
     "visual": {
       "cells": [
         "a",

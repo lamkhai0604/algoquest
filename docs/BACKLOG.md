@@ -186,11 +186,11 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-550 | Window range in the cell view | FR-03, D-063 | P1 | To do |
-| T-551 | Level 12 Two Pointers content | FR-03, FR-04, D-048 | P1 | To do |
-| T-552 | Level 12 pattern challenges | D-057 | P2 | To do |
-| T-553 | Level 13 Sliding Window content | FR-03, FR-04, D-048 | P1 | To do |
-| T-554 | Level 13 pattern challenges | D-057 | P2 | To do |
+| T-550 | Window range in the cell view | FR-03, D-063 | P1 | Built 2026-11-20: content check rules, rendering test; PO review pending |
+| T-551 | Level 12 Two Pointers content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers recomputed by JavaScript and Java reference solutions (all earlier answers confirmed); lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-552 | Level 12 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-553 | Level 13 Sliding Window content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-554 | Level 13 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
 | T-555 | Sprint 13 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
