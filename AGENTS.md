@@ -15,12 +15,13 @@ Adoption: Approved — PO, 2026-11-06 (D-009). Planning baseline approved (T-002
 7. `docs/WORKFLOW.md`: branching, review, engineering profile, commands
 8. `docs/TOOLS.md`: tools, services, free-tier limits, required accounts
 9. `docs/CONTENT-GUIDE.md`: how lessons and problems are written
+10. `docs/CURRICULUM-MAP.md` and `docs/MULTILINGUAL-CONTENT.md`: level numbering and translated content
 
 Then verify the actual repository state (branch, latest commit, uncommitted changes, open PRs) before making changes. Never invent repository state, test results, or approvals.
 
 ## Permissions (D-004)
 
-Implementation: tasks marked Ready in BACKLOG.md, within their acceptance criteria. No application code before Sprint 1 is planned (D-008).
+Implementation: tasks in the approved sprint plan in BACKLOG.md, within their acceptance criteria.
 Branch / commit / merge: one task branch per task, cut from `dev` and named per WORKFLOW.md; merged into `dev` when its checks pass
 `main`: protected; changed only through a `dev → main` pull request merged by the Product Owner
 Deployment / release: Product Owner approval required

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | **Approved — PO, 2026-11-20** |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-10-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | Levels 9 and 11 are playable in the five-step lesson format at the standard of Levels 4–8, with pattern challenges. Both reuse existing visualizers |
 | Duration | About 1 week from approval |
 | Tasks | T-533, T-534, T-535, T-536, T-537 ([BACKLOG.md](../BACKLOG.md)) |

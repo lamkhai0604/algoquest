@@ -3,6 +3,7 @@ package com.algoquest.game;
 import com.algoquest.access.AccessService;
 import com.algoquest.access.UserNotFoundException;
 import com.algoquest.game.GameViews.LevelView;
+import com.algoquest.game.domain.LevelRules;
 import com.algoquest.game.domain.StreakRules;
 import com.algoquest.game.domain.StreakRules.Streak;
 import java.time.Clock;
@@ -49,7 +50,7 @@ public class ProfileService {
   public Profile profile(UUID userId, ZoneId zone) {
     String name = access.findUser(userId).orElseThrow(UserNotFoundException::new).displayName();
     List<LevelView> levels = game.levels(userId);
-    int total = levels.stream().mapToInt(LevelView::xp).sum();
+    int total = LevelRules.totalXp(levels.stream().map(LevelView::xp).toList());
     int solved = (int) progress.byProblem(userId).values().stream().filter(p -> p.solved()).count();
     Streak streak = streaks.find(userId);
     LocalDate today = LocalDate.now(clock.withZone(zone));

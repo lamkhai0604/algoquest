@@ -178,7 +178,7 @@ Each level: about 3 Easy, 3 Medium, 2 Hard practice problems (levels 1–2 may s
 
 ## 7. Constraints, Assumptions, Dependencies
 
-- **Assumption:** one real user, so free-tier limits (Gemini, Judge0 50/day, Neon, Render) are enough.
+- **Assumption:** one real user, so free-tier limits (Gemini, Neon, Render) are enough. Judge0 no longer has a free plan, so Java runs are off until a key is set (D-054).
 - **Decision:** test score = average of the three problem totals (FR-10.2), approved in T-002.
 - **Constraint:** the free Render backend sleeps after 15 minutes idle and takes about a minute to wake; the frontend shows a "waking the server" state (D-037).
 - **Dependency:** a Gemini Flash model passes the grading test (T-005) before FR-05 is built.
@@ -188,9 +188,9 @@ Each level: about 3 Easy, 3 Medium, 2 Hard practice problems (levels 1–2 may s
 | ID | Question | Needed by |
 | --- | --- | --- |
 | OQ-01 | ~~Stack option A or B?~~ Resolved: option B (D-030), 2026-11-06 | — |
-| OQ-02 | Exact level-up test time per level (about 2 h proposed for all)? | Sprint 2 |
-| OQ-03 | Are the XP numbers right? Revisit after the levels 1–3 trial. | Sprint 3 review |
-| OQ-04 | Should the time bonus timer pause when the learner leaves the page? Proposed: no, it measures wall time from opening the problem. | Sprint 1 |
-| OQ-05 | Which permissions should the Admin role get in this release, if any (FR-17.1)? | Sprint 2 |
+| OQ-02 | ~~Exact level-up test time per level?~~ Resolved: about 2 hours for every level (D-016) | — |
+| OQ-03 | ~~Are the XP numbers right?~~ Resolved: rebalanced after the Levels 1–3 trial (D-040) | — |
+| OQ-04 | ~~Should the time bonus timer pause when the learner leaves the page?~~ Resolved: yes, it counts active time (D-043) | — |
+| OQ-05 | Which permissions should the Admin role get in this release, if any (FR-17.1)? The role exists with no permissions until this is decided. | Before Admin accounts are given out |
 | OQ-06 | Member limit per organization (5 or 10 members?) | Before FR-19 |
 | OQ-07 | ~~Are Medium problems built in this release?~~ Resolved: yes (D-024), 2026-11-06 | — |

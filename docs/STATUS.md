@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Updated | 2026-11-20 |
-| Sprint | Sprint 10 — Levels 9 and 11: approved 2026-11-20 ([plan](sprints/sprint-10.md)); Sprint 9 closed ([report](reports/sprint-9-report.md)) |
+| Sprint | Sprint 10 closed ([report](reports/sprint-10-report.md)); next is Sprint 11 — Level 10 Graph Fundamentals |
 | Repository | `lamkhai0604/algoquest` (public, D-039); branches `main` (protected by ruleset) and `dev` |
-| Active work | Levels 9 and 11 built (T-533 to T-536); waiting on the PO content review. English/Vietnamese work runs on its own track ([I18N-FOUNDATION.md](I18N-FOUNDATION.md)) |
+| Active work | Documentation refresh and code review done ([review](reports/code-review-2026-11-20.md)). English/Vietnamese work runs on its own track ([I18N-FOUNDATION.md](I18N-FOUNDATION.md)) |
 | Source revision | `dev` (see `git log dev`) |
-| Outstanding changes | Sprint 10 plan and Levels 9 and 11, in the `dev → main` pull request |
+| Outstanding changes | Sprint 10, the documentation refresh and the review fixes, in the `dev → main` pull request |
 | Verification | GitHub Actions on 2026-11-19: backend verify (203 tests), frontend, smoke (6 passed) |
 | Blockers | None. The live Java check stays paused (D-054) |
-| Next action | PO: review Levels 9 and 11 with the checklist, then merge the pull request. Then: Sprint 10 report (T-537), the documentation refresh, and the code review |
+| Next action | PO: merge the pull request. Then plan Sprint 11 (Level 10 and a graph visualizer) |
