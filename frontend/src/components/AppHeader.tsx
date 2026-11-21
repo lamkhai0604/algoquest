@@ -16,6 +16,8 @@ export interface HeaderAccount {
   name: string;
   /** Shows the Admin link (FR-18: users with at least one admin permission). */
   isAdmin?: boolean;
+  /** Marks a visitor's demo account (D-062). */
+  isDemo?: boolean;
   onSignOut: () => void;
 }
 
@@ -71,6 +73,9 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
               </span>
               <span className={styles.name}>{account.name}</span>
             </Link>
+            {account.isDemo && (
+              <span className={styles.demo}>{t("nav.demo")}</span>
+            )}
             <Button variant="ghost" size="sm" onClick={account.onSignOut}>
               {t("nav.signOut")}
             </Button>

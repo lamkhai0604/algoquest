@@ -27,7 +27,8 @@
     "map": "Lộ trình học",
     "profile": "Hồ sơ",
     "admin": "Quản trị",
-    "signOut": "Đăng xuất"
+    "signOut": "Đăng xuất",
+    "demo": "Dùng thử"
   },
   "game": {
     "dayStreak": "ngày liên tiếp",
@@ -185,7 +186,14 @@
     "error": "Đăng nhập chưa hoàn tất. Vui lòng thử lại.",
     "expired": "Liên kết đăng nhập đã hết hạn hoặc đã được sử dụng.",
     "notFinished": "Đăng nhập chưa hoàn tất",
-    "again": "Đăng nhập lại"
+    "again": "Đăng nhập lại",
+    "feature1": "Học 11 chủ đề nền tảng qua minh hoạ từng bước có hoạt cảnh",
+    "feature2": "Giải thích cách làm bằng lời; AI chấm như một người phỏng vấn",
+    "feature3": "Viết JavaScript hoặc Java chạy với test ẩn để nhận gấp đôi XP",
+    "or": "hoặc",
+    "demo": "Dùng thử, không cần tài khoản",
+    "demoNote": "Một tài khoản tạm thời, mở sẵn mọi level.",
+    "demoUsedUp": "Hôm nay đã hết lượt dùng thử. Hãy thử lại vào ngày mai, hoặc đăng nhập bằng Google hay GitHub."
   },
   "misc": {
     "notFound": "Không tìm thấy trang",

@@ -7,6 +7,8 @@ import java.util.Set;
 public enum Role {
   OWNER(EnumSet.allOf(Permission.class)),
   PLAYER(EnumSet.of(Permission.GAME_PLAY)),
+  /** A visitor's demo account: plays every available level (D-062). */
+  DEMO(EnumSet.of(Permission.GAME_PLAY, Permission.GAME_ALL_LEVELS)),
   /** Defined with no permissions until the PO decides its scope (OQ-05). */
   ADMIN(EnumSet.noneOf(Permission.class));
 
