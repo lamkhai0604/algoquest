@@ -27,7 +27,8 @@
     "map": "Lộ trình học",
     "profile": "Hồ sơ",
     "admin": "Quản trị",
-    "signOut": "Đăng xuất"
+    "signOut": "Đăng xuất",
+    "demo": "Dùng thử"
   },
   "game": {
     "dayStreak": "ngày liên tiếp",
@@ -165,7 +166,16 @@
     "items": "Các phần tử",
     "state": "Trạng thái sau từng bước",
     "step": "Bước",
-    "keyboard": "Bàn phím: ← và → để chuyển bước, R để đặt lại."
+    "keyboard": "Bàn phím: ← và → để chuyển bước, Space để tự chạy hoặc dừng, R để đặt lại.",
+    "play": "Tự chạy",
+    "pause": "Tạm dừng",
+    "speed": "Tốc độ",
+    "slow": "Chậm",
+    "normal": "Vừa",
+    "fast": "Nhanh",
+    "queue": "Hàng đợi (đầu → cuối)",
+    "empty": "trống",
+    "rings": "Khoảng cách từ điểm xuất phát:"
   },
   "auth": {
     "title": "Đăng nhập {appName}",
@@ -176,7 +186,14 @@
     "error": "Đăng nhập chưa hoàn tất. Vui lòng thử lại.",
     "expired": "Liên kết đăng nhập đã hết hạn hoặc đã được sử dụng.",
     "notFinished": "Đăng nhập chưa hoàn tất",
-    "again": "Đăng nhập lại"
+    "again": "Đăng nhập lại",
+    "feature1": "Học 11 chủ đề nền tảng qua minh hoạ từng bước có hoạt cảnh",
+    "feature2": "Giải thích cách làm bằng lời; AI chấm như một người phỏng vấn",
+    "feature3": "Viết JavaScript hoặc Java chạy với test ẩn để nhận gấp đôi XP",
+    "or": "hoặc",
+    "demo": "Dùng thử, không cần tài khoản",
+    "demoNote": "Một tài khoản tạm thời, mở sẵn mọi level.",
+    "demoUsedUp": "Hôm nay đã hết lượt dùng thử. Hãy thử lại vào ngày mai, hoặc đăng nhập bằng Google hay GitHub."
   },
   "misc": {
     "notFound": "Không tìm thấy trang",

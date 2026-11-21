@@ -24,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AccessService {
 
+  /** The sign-in provider name recorded for demo accounts (D-062). */
+  public static final String DEMO_PROVIDER = "demo";
+
   private final AppUserRepository users;
   private final RoleAssignmentRepository assignments;
   private final AuditLog auditLog;
@@ -60,6 +63,29 @@ public class AccessService {
     }
     users.flush(); // other modules may reference the user through plain SQL in this transaction
     return user.getId();
+  }
+
+  /**
+   * Creates a visitor's demo account with the Player and Demo roles (D-062). Each call makes a new
+   * account, so visitors never see each other's answers.
+   */
+  @Transactional
+  public UUID createDemoUser() {
+    String subject = UUID.randomUUID().toString();
+    AppUser user =
+        createPlayer(
+            new SignInProfile(
+                DEMO_PROVIDER, subject, "demo-" + subject + "@demo.invalid", "Demo visitor"),
+            "demo-" + subject + "@demo.invalid");
+    ensureRole(null, user.getId(), Role.DEMO, Scope.GLOBAL, "demo sign-in");
+    users.flush();
+    return user.getId();
+  }
+
+  /** How many demo accounts were created at or after the given moment. */
+  @Transactional(readOnly = true)
+  public long demoUsersSince(Instant since) {
+    return users.countByProviderAndCreatedAtGreaterThanEqual(DEMO_PROVIDER, since);
   }
 
   @Transactional(readOnly = true)

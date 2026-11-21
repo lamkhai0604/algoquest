@@ -241,7 +241,10 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.edges(), b.edges())
               || a.drawsDirected() != b.drawsDirected()
               || !java.util.Objects.equals(a.visited(), b.visited())
-              || !java.util.Objects.equals(a.positions(), b.positions())) {
+              || !java.util.Objects.equals(a.positions(), b.positions())
+              || !java.util.Objects.equals(a.activeEdges(), b.activeEdges())
+              || !java.util.Objects.equals(a.queue(), b.queue())
+              || !java.util.Objects.equals(a.rings(), b.rings())) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -310,6 +313,37 @@ final class ContentValidator {
             || visited.stream().anyMatch(i -> i < 0 || i >= n)
             || new HashSet<>(visited).size() != visited.size())) {
       problems.add(where + ": visited lists distinct vertex indices");
+    }
+    if (visual.activeEdges() != null) {
+      Set<String> edgeKeys = new HashSet<>();
+      for (List<Integer> edge : visual.edges()) {
+        if (edge != null && edge.size() == 2 && !edge.contains(null)) {
+          edgeKeys.add(edge.get(0) + ">" + edge.get(1));
+          if (!visual.drawsDirected()) {
+            edgeKeys.add(edge.get(1) + ">" + edge.get(0));
+          }
+        }
+      }
+      boolean valid =
+          visual.activeEdges().stream()
+              .allMatch(
+                  e ->
+                      e != null
+                          && e.size() == 2
+                          && !e.contains(null)
+                          && edgeKeys.contains(e.get(0) + ">" + e.get(1)));
+      if (!valid) {
+        problems.add(where + ": each active edge must be one of the edges");
+      }
+    }
+    List<Integer> queue = visual.queue();
+    if (queue != null && (queue.contains(null) || queue.stream().anyMatch(i -> i < 0 || i >= n))) {
+      problems.add(where + ": queue lists vertex indices");
+    }
+    List<Integer> rings = visual.rings();
+    if (rings != null
+        && (rings.size() != n || rings.contains(null) || rings.stream().anyMatch(r -> r < -1))) {
+      problems.add(where + ": rings needs one entry per vertex: a distance, or -1");
     }
     List<List<Integer>> positions = visual.positions();
     if (positions != null) {
@@ -389,8 +423,12 @@ final class ContentValidator {
       checkGraph(problems, where, visual);
     } else if (visual.directed() != null
         || visual.visited() != null
-        || visual.positions() != null) {
-      problems.add(where + ": directed, visited and positions need edges");
+        || visual.positions() != null
+        || visual.activeEdges() != null
+        || visual.queue() != null
+        || visual.rings() != null) {
+      problems.add(
+          where + ": directed, visited, positions, activeEdges, queue and rings need edges");
     }
     List<Integer> next = visual.next();
     if (next != null) {

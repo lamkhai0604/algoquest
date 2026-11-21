@@ -10,8 +10,9 @@ import java.util.List;
  * to, or -1 for {@code null}, and an optional tree flag: the cells are a binary tree in array
  * positions, where the children of cell i are cells 2i + 1 and 2i + 2 and an empty cell is no node
  * (D-059), and optional graph edges: pairs of cell indices that make the cells the vertices of a
- * graph, with optional arrows, visited vertices and grid positions (D-060). Everything except
- * {@code cells} is optional.
+ * graph, with optional arrows, visited vertices and grid positions (D-060), plus the edges this
+ * step travels, the queue as vertex indices, and each vertex's ring (its distance, or -1) for
+ * animation (D-061). Everything except {@code cells} is optional.
  */
 public record Visual(
     List<String> cells,
@@ -24,7 +25,10 @@ public record Visual(
     List<List<Integer>> edges,
     Boolean directed,
     List<Integer> visited,
-    List<List<Integer>> positions) {
+    List<List<Integer>> positions,
+    List<List<Integer>> activeEdges,
+    List<Integer> queue,
+    List<Integer> rings) {
 
   /** The most cells a tree may have: five levels. */
   public static final int MAX_TREE_CELLS = 31;

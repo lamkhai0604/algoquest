@@ -37,6 +37,12 @@ export interface Visual {
   visited?: number[] | null;
   /** [column, row] of each vertex on a 7 by 5 grid; a circle when absent. */
   positions?: number[][] | null;
+  /** Edges this step travels, drawn highlighted (D-061). */
+  activeEdges?: number[][] | null;
+  /** The queue as vertex indices, front first, drawn as a strip (D-061). */
+  queue?: number[] | null;
+  /** Each vertex's ring (distance from the start), or -1; colours the vertices (D-061). */
+  rings?: number[] | null;
 }
 
 export interface WalkthroughStep {

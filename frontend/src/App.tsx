@@ -39,6 +39,7 @@ export function AppRoutes() {
       name: state.user.displayName,
       onSignOut: signOut,
       isAdmin: state.user.permissions.some((p) => p.startsWith("admin.")),
+      isDemo: state.user.roles.includes("DEMO"),
     };
   }
 

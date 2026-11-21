@@ -27,7 +27,8 @@
     "map": "Map",
     "profile": "Profile",
     "admin": "Admin",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "demo": "Demo"
   },
   "game": {
     "dayStreak": "day streak",
@@ -165,7 +166,16 @@
     "items": "Items",
     "state": "State after each step",
     "step": "Step",
-    "keyboard": "Keyboard: ← and → to step, R to reset."
+    "keyboard": "Keyboard: ← and → to step, Space to play or pause, R to reset.",
+    "play": "Play",
+    "pause": "Pause",
+    "speed": "Speed",
+    "slow": "Slow",
+    "normal": "Normal",
+    "fast": "Fast",
+    "queue": "Queue (front → back)",
+    "empty": "empty",
+    "rings": "Distance from the start:"
   },
   "auth": {
     "title": "Sign in to {appName}",
@@ -176,7 +186,14 @@
     "error": "Sign-in did not finish. Please try again.",
     "expired": "The sign-in link expired or was already used.",
     "notFinished": "Sign-in did not finish",
-    "again": "Sign in again"
+    "again": "Sign in again",
+    "feature1": "Learn 11 core topics with step-by-step, animated walkthroughs",
+    "feature2": "Explain your approach in words; an AI grades it like an interviewer",
+    "feature3": "Write JavaScript or Java against hidden tests for double XP",
+    "or": "or",
+    "demo": "Try the demo, no account needed",
+    "demoNote": "A temporary account with every level open.",
+    "demoUsedUp": "Today's demo accounts are used up. Try again tomorrow, or sign in with Google or GitHub."
   },
   "misc": {
     "notFound": "Page not found",

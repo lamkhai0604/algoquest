@@ -158,14 +158,25 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-536 | Level 11 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check; PO review OK) |
 | T-537 | Sprint 10 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-10-report.md) |
 
-## Sprint 11 — Level 10 ([plan](sprints/sprint-11.md))
+## Sprint 11 — Level 10 ([plan](sprints/sprint-11.md), closed 2026-11-20)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-538 | Graph view in the walkthrough | FR-03, D-060 | P1 | Built 2026-11-20: content check rules, rendering and replay tests; PO review pending |
-| T-539 | Level 10 Graph Fundamentals content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-540 | Level 10 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-541 | Sprint 11 report | D-007 | P2 | To do |
+| T-538 | Graph view in the walkthrough | FR-03, D-060 | P1 | Done 2026-11-20: content check rules, rendering and replay tests; PO review OK |
+| T-539 | Level 10 Graph Fundamentals content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-540 | Level 10 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check; PO review OK) |
+| T-542 | Animated walkthroughs: playback for every level; travelled edges, queue strip and rings for graphs | FR-03, D-061 | P1 | Done 2026-11-20: rendering and playback tests; PO review OK |
+| T-541 | Sprint 11 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-11-report.md) |
+
+## Sprint 12 — Portfolio preparation ([plan](sprints/sprint-12.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-544 | Demo sign-in for visitors | FR-01, FR-17, D-062 | P1 | Built 2026-11-20: API and frontend tests; PO review pending |
+| T-545 | Landing section on the sign-in page | FR-01 | P2 | Built 2026-11-20: frontend tests and screenshots; PO review pending |
+| T-546 | Link previews (Open Graph) | — | P2 | Built 2026-11-20: tags and preview image; check after deploy |
+| T-547 | Portfolio README | D-007 | P1 | Built 2026-11-20: PO review pending |
+| T-548 | Sprint 12 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 
@@ -179,3 +190,5 @@ T-402's live Java check is paused (D-054): Judge0 CE has no free plan any more, 
 | T-505 | Move JavaScript checking to Judge0 or a server sandbox before graded organization use | D-035 |
 | T-506 | Voice answers | Excluded this release |
 | T-507 | Battle mode | FR-16 |
+| T-549 | Admin action to delete old demo accounts | FR-17, D-062 |
+| T-543 | Interactive graph explorer: pick the start vertex, compare BFS and DFS on the same graph (Level 18) | FR-03, D-061 |

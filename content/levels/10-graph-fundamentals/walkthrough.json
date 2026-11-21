@@ -89,6 +89,9 @@
           "name": "dist",
           "value": "0=0"
         }
+      ],
+      "queue": [
+        0
       ]
     }
   },
@@ -190,6 +193,20 @@
           "name": "dist",
           "value": "0=0, 1=1, 2=1"
         }
+      ],
+      "queue": [
+        1,
+        2
+      ],
+      "activeEdges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
       ]
     }
   },
@@ -306,7 +323,22 @@
         "hides": [
           "queue"
         ]
-      }
+      },
+      "queue": [
+        2,
+        3,
+        4
+      ],
+      "activeEdges": [
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ]
+      ]
     }
   },
   {
@@ -410,6 +442,17 @@
           "name": "dist",
           "value": "0=0, 1=1, 2=1, 3=2, 4=2, 5=2"
         }
+      ],
+      "queue": [
+        3,
+        4,
+        5
+      ],
+      "activeEdges": [
+        [
+          2,
+          5
+        ]
       ]
     }
   },
@@ -528,7 +571,18 @@
         "hides": [
           "dist"
         ]
-      }
+      },
+      "queue": [
+        4,
+        5,
+        6
+      ],
+      "activeEdges": [
+        [
+          3,
+          6
+        ]
+      ]
     }
   },
   {
@@ -633,6 +687,10 @@
           "name": "dist",
           "value": "0=0, 1=1, 2=1, 3=2, 4=2, 5=2, 6=3"
         }
+      ],
+      "queue": [
+        5,
+        6
       ]
     }
   },
@@ -738,12 +796,15 @@
           "name": "dist",
           "value": "0=0, 1=1, 2=1, 3=2, 4=2, 5=2, 6=3"
         }
+      ],
+      "queue": [
+        6
       ]
     }
   },
   {
     "title": "Reach 6",
-    "body": "Take 6: the target. BFS reached it in the third ring, so **3 tunnels** is the fewest. Every vertex and edge was handled once: O(V + E).",
+    "body": "Take 6: the target. BFS reached it in the third ring, so **3 tunnels** is the fewest. The colours show the rings: every vertex was first reached along a shortest route. Each vertex and edge was handled once: O(V + E).",
     "code": "return dist[v];",
     "visual": {
       "cells": [
@@ -847,6 +908,16 @@
           "name": "result",
           "value": "3 tunnels"
         }
+      ],
+      "queue": [],
+      "rings": [
+        0,
+        1,
+        1,
+        2,
+        2,
+        2,
+        3
       ]
     }
   }

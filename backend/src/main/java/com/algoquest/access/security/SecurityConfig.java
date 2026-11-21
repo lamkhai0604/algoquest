@@ -64,6 +64,8 @@ public class SecurityConfig {
     http.authorizeHttpRequests(
         auth -> {
           auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/exchange").permitAll();
+          auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/demo").permitAll();
+          auth.requestMatchers(HttpMethod.GET, "/api/v1/auth/options").permitAll();
           auth.requestMatchers("/api/**").authenticated();
           auth.anyRequest().permitAll();
         });
