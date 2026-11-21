@@ -55,6 +55,12 @@ export interface Visual {
   chosen?: number[] | null;
   /** A point in time drawn as a vertical sweep line (D-066). */
   line?: number | null;
+  /** Draws the cells as a table with this many rows (D-068). */
+  rows?: number | null;
+  rowLabels?: string[] | null;
+  columnLabels?: string[] | null;
+  /** Indexes of the cells this step reads, shaded (D-068). */
+  reads?: number[] | null;
 }
 
 export interface WalkthroughStep {

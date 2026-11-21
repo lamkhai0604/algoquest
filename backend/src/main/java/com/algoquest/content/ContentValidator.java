@@ -250,7 +250,11 @@ final class ContentValidator {
               || a.explores() != b.explores()
               || !java.util.Objects.equals(a.intervals(), b.intervals())
               || !java.util.Objects.equals(a.chosen(), b.chosen())
-              || !java.util.Objects.equals(a.line(), b.line())) {
+              || !java.util.Objects.equals(a.line(), b.line())
+              || !java.util.Objects.equals(a.rows(), b.rows())
+              || !java.util.Objects.equals(a.reads(), b.reads())
+              || sizeOf(a.rowLabels()) != sizeOf(b.rowLabels())
+              || sizeOf(a.columnLabels()) != sizeOf(b.columnLabels())) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -389,6 +393,44 @@ final class ContentValidator {
     }
   }
 
+  private static int sizeOf(List<?> list) {
+    return list == null ? -1 : list.size();
+  }
+
+  private static void checkTable(List<String> problems, String where, Visual visual) {
+    if (!visual.drawsTable()) {
+      if (visual.rowLabels() != null || visual.columnLabels() != null || visual.reads() != null) {
+        problems.add(where + ": rowLabels, columnLabels and reads need rows");
+      }
+      return;
+    }
+    int n = visual.cells().size();
+    int rows = visual.rows();
+    boolean valid =
+        rows > 0
+            && n % rows == 0
+            && visual.next() == null
+            && !visual.drawsTree()
+            && !visual.drawsGraph()
+            && !visual.drawsIntervals()
+            && (visual.window() == null || visual.window().isEmpty());
+    int columns = rows > 0 ? n / rows : 0;
+    if (!valid
+        || (visual.rowLabels() != null
+            && (visual.rowLabels().size() != rows || visual.rowLabels().contains(null)))
+        || (visual.columnLabels() != null
+            && (visual.columnLabels().size() != columns || visual.columnLabels().contains(null)))) {
+      problems.add(
+          where
+              + ": a table needs rows dividing the cell count, labels matching rows and columns,"
+              + " and the plain cell view");
+    }
+    List<Integer> reads = visual.reads();
+    if (reads != null && (reads.contains(null) || reads.stream().anyMatch(i -> i < 0 || i >= n))) {
+      problems.add(where + ": reads needs cell indexes");
+    }
+  }
+
   private static void checkIntervals(List<String> problems, String where, Visual visual) {
     if (!visual.drawsIntervals()) {
       if (visual.chosen() != null || visual.line() != null) {
@@ -480,6 +522,7 @@ final class ContentValidator {
       problems.add(where + ": stack items must be text");
     }
     checkIntervals(problems, where, visual);
+    checkTable(problems, where, visual);
     List<Integer> window = visual.window();
     if (window != null && !window.isEmpty()) {
       boolean valid =
@@ -525,6 +568,9 @@ final class ContentValidator {
     }
     if (visual.stack() != null) {
       names.add("stack");
+    }
+    if (visual.markers() != null && !visual.markers().isEmpty()) {
+      names.add("cell");
     }
     Visual.Prediction predict = visual.predict();
     if (predict != null) {

@@ -460,6 +460,43 @@ describe("lesson page", () => {
     expect(document.querySelector("[data-line]")).not.toBeNull();
   });
 
+  it("draws a table with labels, read cells, and hides the filled cell until the prediction is answered", async () => {
+    const lesson = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Fill",
+          body: "Fill the last cell.",
+          visual: {
+            cells: ["0", "0", "0", "0", "1", "1"],
+            rows: 2,
+            rowLabels: ["", "a"],
+            columnLabels: ["", "a", "b"],
+            reads: [1, 3, 4],
+            markers: [{ index: 5, label: "fill" }],
+            predict: {
+              question: "What goes in the cell?",
+              options: ["1", "2"],
+              answer: 0,
+              explanation: "Take the larger neighbour.",
+              hides: ["cell"],
+            },
+          },
+        },
+      ],
+    };
+    open(lesson, 2);
+
+    const table = await screen.findByRole("table", { name: "Table of values" });
+    expect(within(table).getAllByRole("columnheader")).toHaveLength(3);
+    expect(table.querySelectorAll('[data-read="true"]')).toHaveLength(3);
+    const filled = table.querySelector('[data-cell="5"]')!;
+    expect(filled).toHaveTextContent("?");
+    await userEvent.click(screen.getByRole("button", { name: "1" }));
+    expect(filled).toHaveTextContent("1");
+    expect(filled).toHaveTextContent("fill");
+  });
+
   it("draws a stack strip and lets the explorer switch to DFS", async () => {
     const lesson = {
       ...LESSON,

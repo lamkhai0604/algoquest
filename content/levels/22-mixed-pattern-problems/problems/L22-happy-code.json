@@ -1,0 +1,107 @@
+{
+  "id": "L22-happy-code",
+  "level": 22,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Happy Code",
+  "statement": "A game turns a number into the sum of the squares of its digits, again and again. A number is happy if this eventually reaches 1. Return true if n is happy.",
+  "examples": [
+    {
+      "input": "n = 19",
+      "output": "true"
+    },
+    {
+      "input": "n = 2",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 2^31 − 1"
+  ],
+  "answerKey": {
+    "pattern": "Detect a cycle in the sequence: a set of seen numbers, or fast and slow pointers",
+    "keyPoints": [
+      "The sequence either reaches 1 or repeats a number forever",
+      "Store seen numbers in a set, or move a slow and a fast pointer",
+      "Stop when you reach 1 or meet a repeat"
+    ],
+    "timeComplexity": "O(log n) per step, few steps",
+    "spaceComplexity": "O(1) with two pointers",
+    "edgeCases": [
+      "n = 1",
+      "n = 7 is happy",
+      "Large n shrinks fast"
+    ],
+    "acceptableSlowerApproaches": [
+      "Run a fixed large number of steps: works but not a real stopping rule"
+    ]
+  },
+  "hints": [
+    "Write out the sequence for 2. Does it ever stop?",
+    "If it does not reach 1, it must repeat: the numbers stay small.",
+    "Detect the repeat with a set, or with a slow pointer (one step) and a fast pointer (two steps)."
+  ],
+  "starterCode": {
+    "javascript": "function happyCode(n) {\n  // return whether n is happy\n}",
+    "java": "class Solution {\n  boolean happyCode(int n) {\n    // return whether n is happy\n  }\n}"
+  },
+  "similarLeetCode": "Happy Number",
+  "tests": [
+    {
+      "input": [
+        19
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        2
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        7
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        4
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        100
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        2147483647
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        1111111
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        999999999
+      ],
+      "expected": false
+    }
+  ]
+}

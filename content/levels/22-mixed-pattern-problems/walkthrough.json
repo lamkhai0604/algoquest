@@ -1,0 +1,318 @@
+[
+  {
+    "title": "The task",
+    "body": "Seven problem statements, none of which names a pattern. For each one, find the **signal** in the wording and the limits, then name the pattern and its time. This is the first thing to do in an interview, before any code.",
+    "code": "// 1. What is the input shape?\n// 2. What is asked: one value, all options, a count, a shortest path?\n// 3. What do the limits allow? n = 10^5 → O(n log n) or better",
+    "visual": {
+      "cells": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6",
+        "Q7"
+      ],
+      "vars": [
+        {
+          "name": "signal",
+          "value": "·"
+        },
+        {
+          "name": "pattern",
+          "value": "·"
+        },
+        {
+          "name": "time",
+          "value": "·"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Problem 1",
+    "body": "“A sorted list of prices: find two that add up to exactly 50.” The signal is **sorted + a pair**, which points to **two pointers**.",
+    "code": "// signal → pattern → time",
+    "visual": {
+      "cells": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6",
+        "Q7"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "now"
+        }
+      ],
+      "vars": [
+        {
+          "name": "signal",
+          "value": "sorted + a pair"
+        },
+        {
+          "name": "pattern",
+          "value": "Two pointers"
+        },
+        {
+          "name": "time",
+          "value": "O(n)"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Problem 2",
+    "body": "“The longest run of days with at most 2 rainy days.” The signal is **contiguous + at most k**, which points to **sliding window**.",
+    "code": "// signal → pattern → time",
+    "visual": {
+      "cells": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6",
+        "Q7"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "now"
+        }
+      ],
+      "vars": [
+        {
+          "name": "signal",
+          "value": "contiguous + at most k"
+        },
+        {
+          "name": "pattern",
+          "value": "Sliding window"
+        },
+        {
+          "name": "time",
+          "value": "O(n)"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Problem 3",
+    "body": "“The fewest moves for a knight to reach a square.” The signal is **fewest steps, equal cost**, which points to **BFS**.",
+    "code": "// signal → pattern → time",
+    "visual": {
+      "cells": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6",
+        "Q7"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "now"
+        }
+      ],
+      "vars": [
+        {
+          "name": "signal",
+          "value": "fewest steps, equal cost"
+        },
+        {
+          "name": "pattern",
+          "value": "BFS"
+        },
+        {
+          "name": "time",
+          "value": "O(cells)"
+        }
+      ],
+      "predict": {
+        "question": "“The fewest moves for a knight to reach a square.” Which pattern fits?",
+        "options": [
+          "BFS: fewest steps where every move costs the same",
+          "DFS: explore as deep as possible first",
+          "Greedy: always move closer",
+          "Binary search"
+        ],
+        "answer": 0,
+        "explanation": "Fewest steps with equal-cost moves is shortest path in an unweighted graph, so BFS level by level.",
+        "hides": [
+          "pattern",
+          "time"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Problem 4",
+    "body": "“List every way to choose 3 of 10 toppings.” The signal is **list all choices**, which points to **backtracking**.",
+    "code": "// signal → pattern → time",
+    "visual": {
+      "cells": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6",
+        "Q7"
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "now"
+        }
+      ],
+      "vars": [
+        {
+          "name": "signal",
+          "value": "list all choices"
+        },
+        {
+          "name": "pattern",
+          "value": "Backtracking"
+        },
+        {
+          "name": "time",
+          "value": "O(C(10, 3) · 3)"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Problem 5",
+    "body": "“The slowest reading speed that finishes a book list in 8 hours.” The signal is **smallest value that works; works stays true as it grows**, which points to **binary search on the answer**.",
+    "code": "// signal → pattern → time",
+    "visual": {
+      "cells": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6",
+        "Q7"
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "now"
+        }
+      ],
+      "vars": [
+        {
+          "name": "signal",
+          "value": "smallest value that works; works stays true as it grows"
+        },
+        {
+          "name": "pattern",
+          "value": "Binary search on the answer"
+        },
+        {
+          "name": "time",
+          "value": "O(n log max)"
+        }
+      ],
+      "predict": {
+        "question": "“The slowest reading speed that finishes in 8 hours.” Which pattern fits?",
+        "options": [
+          "Binary search on the speed",
+          "Sliding window over the books",
+          "Sort the books and read the longest first",
+          "Backtracking over speeds"
+        ],
+        "answer": 0,
+        "explanation": "If a speed works, every faster speed also works. That yes/no line can be binary searched.",
+        "hides": [
+          "pattern",
+          "time"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Problem 6",
+    "body": "“The number of ways to make 100 cents from coins.” The signal is **count ways; choices overlap**, which points to **dynamic programming**.",
+    "code": "// signal → pattern → time",
+    "visual": {
+      "cells": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6",
+        "Q7"
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "now"
+        }
+      ],
+      "vars": [
+        {
+          "name": "signal",
+          "value": "count ways; choices overlap"
+        },
+        {
+          "name": "pattern",
+          "value": "Dynamic programming"
+        },
+        {
+          "name": "time",
+          "value": "O(amount · coins)"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Problem 7",
+    "body": "“For each day, how many days until a warmer one.” The signal is **next greater to the right**, which points to **monotonic stack**. Done: seven statements, seven signals. With practice the signal jumps out before you think about code.",
+    "code": "// signal → pattern → time",
+    "visual": {
+      "cells": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6",
+        "Q7"
+      ],
+      "markers": [
+        {
+          "index": 6,
+          "label": "now"
+        }
+      ],
+      "vars": [
+        {
+          "name": "signal",
+          "value": "next greater to the right"
+        },
+        {
+          "name": "pattern",
+          "value": "Monotonic stack"
+        },
+        {
+          "name": "time",
+          "value": "O(n)"
+        },
+        {
+          "name": "result",
+          "value": "7 patterns named"
+        }
+      ]
+    }
+  }
+]

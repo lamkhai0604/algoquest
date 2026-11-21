@@ -28,7 +28,9 @@
     "profile": "Profile",
     "admin": "Admin",
     "signOut": "Sign out",
-    "demo": "Demo"
+    "demo": "Demo",
+    "systemDesign": "System Design",
+    "soon": "Soon"
   },
   "game": {
     "dayStreak": "day streak",
@@ -179,6 +181,7 @@
     "window": "Window",
     "windowSize": "size",
     "stack": "Stack (bottom → top)",
+    "table": "Table of values",
     "timeline": "Intervals on a time axis",
     "exploreTitle": "Try it yourself: pick a start vertex and a search",
     "startAt": "Start at",
@@ -214,7 +217,17 @@
     "vipLead": "A future monthly plan for players who want more help. Nothing on this page can be bought yet.",
     "vipHints": "10 hints every 5 hours instead of 3",
     "vipHard": "Hard problems and hard test mode as soon as they are ready",
-    "vipReport": "A monthly progress summary"
+    "vipReport": "A monthly progress summary",
+    "systemDesignTitle": "System Design",
+    "systemDesignLead": "A separate track on designing large systems: how the parts of a real service fit together, how it grows to millions of users, and how to explain the trade-offs in an interview.",
+    "systemDesignPlanned": "Planned topics",
+    "systemDesignTopic1": "Estimating scale: requests per second, storage and bandwidth",
+    "systemDesignTopic2": "Load balancing and stateless servers",
+    "systemDesignTopic3": "Caching: where to cache and when data goes stale",
+    "systemDesignTopic4": "Databases: indexes, replicas and sharding",
+    "systemDesignTopic5": "Message queues and background work",
+    "systemDesignTopic6": "Rate limiting, then full designs such as a URL shortener and a chat app",
+    "systemDesignNote": "Each topic will follow the same five steps as the algorithm levels, with animated diagrams and design questions graded by AI. The algorithm levels come first."
   },
   "levelExtra": {
     "solved": "Solved",

@@ -18,6 +18,7 @@ import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
 import { PatternPage } from "./pattern/PatternPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { SystemDesignPage } from "./pages/SystemDesignPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { UiKitPage } from "./pages/UiKitPage";
 import { VipPage } from "./pages/VipPage";
@@ -113,6 +114,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <AdminPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/system-design"
+            element={
+              <RequireAuth>
+                <SystemDesignPage />
               </RequireAuth>
             }
           />

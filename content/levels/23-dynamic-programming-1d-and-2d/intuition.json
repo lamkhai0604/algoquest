@@ -1,0 +1,11 @@
+{
+  "question": "A spell checker compares the typed word \"helo\" with every word in its dictionary. For each pair it needs the fewest single-letter edits. What do the subproblems depend on?",
+  "options": [
+    "Two positions: how much of each word has been used",
+    "One position: how far into the typed word",
+    "Only the word lengths",
+    "Nothing: try every edit sequence"
+  ],
+  "answer": 0,
+  "explanation": "An edit can move through either word independently, so the state is a pair (i, j) of prefix lengths. That is a 2-D table, filled from smaller prefixes to larger ones."
+}

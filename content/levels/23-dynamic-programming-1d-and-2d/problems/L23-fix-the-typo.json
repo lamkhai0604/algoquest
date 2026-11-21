@@ -1,0 +1,117 @@
+{
+  "id": "L23-fix-the-typo",
+  "level": 23,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Fix the Typo",
+  "statement": "A spell checker turns a typed word into a dictionary word with three kinds of edits, each counting as one step: insert a letter, delete a letter, or replace a letter. Return the fewest steps to turn typed into target.",
+  "examples": [
+    {
+      "input": "typed = \"horse\", target = \"ros\"",
+      "output": "3"
+    },
+    {
+      "input": "typed = \"intention\", target = \"execution\"",
+      "output": "5"
+    }
+  ],
+  "constraints": [
+    "0 <= typed.length, target.length <= 500",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "2-D DP over prefixes: edit(i, j) from edit(i − 1, j − 1) on a match, else 1 + min(replace, delete, insert)",
+    "keyPoints": [
+      "edit(i, 0) = i and edit(0, j) = j",
+      "Matching last letters cost nothing",
+      "Otherwise try replace (i − 1, j − 1), delete (i − 1, j) and insert (i, j − 1)"
+    ],
+    "timeComplexity": "O(n · m)",
+    "spaceComplexity": "O(m) with one row",
+    "edgeCases": [
+      "Empty typed or target",
+      "Identical words: 0",
+      "Completely different words"
+    ],
+    "acceptableSlowerApproaches": [
+      "Recursion without memo: exponential"
+    ]
+  },
+  "hints": [
+    "Look at the last letters of both prefixes.",
+    "If they match, the answer is the same as without them.",
+    "Otherwise one edit plus the best of the three smaller tables: replace, delete, insert."
+  ],
+  "starterCode": {
+    "javascript": "function fixTheTypo(typed, target) {\n  // return the fewest edits\n}",
+    "java": "class Solution {\n  int fixTheTypo(String typed, String target) {\n    // return the fewest edits\n  }\n}"
+  },
+  "similarLeetCode": "Edit Distance",
+  "tests": [
+    {
+      "input": [
+        "horse",
+        "ros"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "intention",
+        "execution"
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        "",
+        ""
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        "abc",
+        ""
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "",
+        "abc"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "kitten",
+        "sitting"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "eaebdbbbcddceddecdddadbcadaeaa",
+        "ceaddcdcceebaebacaeaecebc"
+      ],
+      "expected": 20
+    },
+    {
+      "input": [
+        "ffegbdfdfbeeeebccccgdbcbchhdgaddeagfaafdhehhbaafhgagcdgdaahacdggafbbeeebfadegefgdacbbegfgfbaahhffcccedgfdahabfhbfegacfbehfeachhfhdheghaaegbcfgadbfbbfhebcbadcbaegeffbbfddhdcgcggbadcgbedbbdcfdbghbebbfcfacahbfaabfefccdeheedfchhhcgcbhggfcggafcaehaaehafcfhhhgbcfcafcgebbdbfdhafggcefcfcfedhgffcffdbgcdagdag",
+        "dbbhcefgadfhfgefacggggfcbbcdddeffddffbdhaahddceehdhdedegbfcggcgacdfeghagbhedbdhfegggfdchchbdchdecheefhegbcehcbheaaceadehhfcadadgbbegcgagefhgeafeebadfafhdcdhegdhhehadhfbahhhaafbcabegedgffcbcdafcfbageebbeddgaebfhdgfheghccbebeccaghhhfcgagbhfcgdccdcceaehhdadghabfgbfggccabdefffbhdhbah"
+      ],
+      "expected": 209
+    },
+    {
+      "input": [
+        "abababbabbabaaaabaababbbbbbbbaaabbaaaaaaaaaaaabbaaabbababbbabaaaaabbbaaababbbaabbbaababaaabbabbabbbababaabbabbbbbababbaaaabbabababaaabaabaaabbaaababaaababbabababaababababbbababaababaabbabbababaaaababbbaaabaaabbabbbaabbaaabbaaabbbbaaaabababaabbababaaabaabaabaababaaaabbabbabbbbbbaababbababbbbaaabbaabbbbaaaaaabbaaaababaabaabbbaaababaaaababaaaabaabbbaaabbabbaaababbaaaabbbbbabaabbaabbaaaaababbbaababbbbbaabbbaabaabababaabbabbbaaaabaaaababbbbbbaaaaababbabababaaababababbbbbababbabbababaababaabbaaaaabaaa",
+        "abaabbababbaabbaabbaababaabaabbaaaaaaabaabbabbaaabbababaabaaabbaaaabbbbabaaabbbaababbabaaabaaabbabaabbbbaaabaaaaaaabbaababbabbbbbabaabbabaababbabaaabbabbaaaabbbbbaabaaaaaaabbbbabbbabbbaabaaaabbaaaaaabbbbbbaabbaaaabaaaaaaabaabbbbbbabaaaaabbbababbbbababaaaabbbbabababbaaaaaabbabaaaaabaababaabbbabbbbaaaabbabababaabbbabbbabababbaaabaaabaaaabbabaaaaaababaabbbaaaaaaabaaaaabababbabbaaabbabaabbbbabbbaaaaabbbababbababaababbaabbabbabaabababaabaabbaabaabbaab"
+      ],
+      "expected": 141
+    }
+  ]
+}

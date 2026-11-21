@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-20 |
+| Status | **Closed 2026-11-21** ([report](../reports/sprint-17-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | Levels 20 and 21 are playable in the five-step lesson format at the standard of Levels 4–19, with pattern challenges; interval problems are drawn on a time axis. Phase 2 is complete |
 | Duration | About 1 week from approval |
 | Tasks | T-572, T-573, T-574, T-575, T-576, T-577 ([BACKLOG.md](../BACKLOG.md)) |

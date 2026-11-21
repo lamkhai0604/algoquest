@@ -1,0 +1,35 @@
+[
+  {
+    "question": "In the longest-common-subsequence table, the letters at (i, j) match. Which cell does the new value come from?",
+    "options": [
+      "The diagonal cell (i − 1, j − 1), plus 1",
+      "The larger of the cells above and to the left",
+      "The cell above, plus 1",
+      "The cell to the left"
+    ],
+    "answer": 0,
+    "explanation": "Both matching letters can end the shared sequence, so the rest comes from both prefixes without them."
+  },
+  {
+    "question": "In 0/1 knapsack with a 1-D array, why does the loop over capacity go from high to low?",
+    "options": [
+      "So each item is counted at most once",
+      "It is faster",
+      "So larger items come first",
+      "It makes no difference"
+    ],
+    "answer": 0,
+    "explanation": "Going down, best[c − weight] still holds the value without this item. Going up would let the same item be added again."
+  },
+  {
+    "question": "Edit distance from \"cat\" to \"cut\". What is the answer?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "0"
+    ],
+    "answer": 0,
+    "explanation": "Replace a with u. The table finds it: c = c and t = t cost nothing, a → u costs 1."
+  }
+]

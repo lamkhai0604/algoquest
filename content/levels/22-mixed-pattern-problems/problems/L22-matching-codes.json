@@ -1,0 +1,117 @@
+{
+  "id": "L22-matching-codes",
+  "level": 22,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Matching Codes",
+  "statement": "Two secret codes s and t of the same length match if the letters of s can be replaced to get t, where every copy of a letter is replaced by the same letter and no two different letters become the same letter. Return true if they match.",
+  "examples": [
+    {
+      "input": "s = \"egg\", t = \"add\"",
+      "output": "true"
+    },
+    {
+      "input": "s = \"foo\", t = \"bar\"",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 5 * 10^4",
+    "t.length == s.length",
+    "s and t contain lowercase letters"
+  ],
+  "answerKey": {
+    "pattern": "Two hash maps (or arrays): s → t and t → s must stay consistent",
+    "keyPoints": [
+      "Map each letter of s to the letter of t at the same place",
+      "Also map t back to s so two letters cannot share a target",
+      "Any conflict means false"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1) (alphabet-sized maps)",
+    "edgeCases": [
+      "One letter",
+      "Same string",
+      "Two letters mapping to one"
+    ],
+    "acceptableSlowerApproaches": [
+      "Compare every pair of positions: O(n²)"
+    ]
+  },
+  "hints": [
+    "What must stay true for every pair of positions?",
+    "Same letter in s ↔ same letter in t, both ways.",
+    "Keep a map from s to t and one from t to s; check both at each position."
+  ],
+  "starterCode": {
+    "javascript": "function matchingCodes(s, t) {\n  // return whether the codes match\n}",
+    "java": "class Solution {\n  boolean matchingCodes(String s, String t) {\n    // return whether the codes match\n  }\n}"
+  },
+  "similarLeetCode": "Isomorphic Strings",
+  "tests": [
+    {
+      "input": [
+        "egg",
+        "add"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "foo",
+        "bar"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "paper",
+        "title"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "ab",
+        "aa"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "a",
+        "z"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "badc",
+        "baba"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "tpvwqrwpuwsuwtvtpuqspwwuqpupsv",
+        "ehfdcgdhbdabdefehbcahddbchbhaf"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "qtpvpsrpvsppvrswptqsquuuqrwstwspqvusvrupwvwurusptpwsqqrswrrruwpwsuwvvrvsrqrpsvsvutwuqvrqsttpwputrtwtvvutrprqutqsptvtvpssrvwuurtpstprsprwqtsvvpuvsssrpwsvtrvvwtpvvvprqsquupquvwurruwvsqrtsuurqwwqrvqwurrspwvvustswvvrwpsvprusupvtqrqwsruqvtsspquqrqqrtspvqspsprwvvssuvrwtturrpvrvutsrptutuurqrwrtsquwqqrvpsvq",
+        "hdecebgecbeecgbfedhbhaaahgfbdfbehcabcgaefcfagabedefbhhgbfgggafefbafccgcbghgebcbcadfahcghbddefeadgdfdccadgeghadhbedcdcebbgcfaagdebdegbegfhdbcceacbbbgefbcdgccfdeccceghbhaaehacfaggafcbhgdbaaghffhgchfaggbefccabdbfccgfebcegabaecdhghfbgahcdbbehahghhgdbechbebegfccbbacgfddaggecgcadbgedadaaghgfgdbhafhhgcebch"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "qtpvpsrpvsppvrswptqsquuuqrwstwspqvusvrupwvwurusptpwsqqrswrrruwpwsuwvvrvsrqrpsvsvutwuqvrqsttpwputrtwtvvutrprqutqsptvtvpssrvwuurtpstprsprwqtsvvpuvsssrpwsvtrvvwtpvvvprqsquupquvwurruwvsqrtsuurqwwqrvqwurrspwvvustswvvrwpsvprusupvtqrqwsruqvtsspquqrqqrtspvqspsprwvvssuvrwtturrpvrvutsrptutuurqrwrtsquwqqrvpsvq",
+        "hdecebgecbeecgbfedhbhaaahgfbdfbehcabcgaefcfagabedefbhhgbfgggafefbafccgcbghgebcbcadfahcghbddefeadgdfdccadgeghadhbedcdcebbgcfaagdebdegbegfhdbcceacbbbgefbcdgccfdeccceghbhaaehacfaggafcbhgdbaaghffhgchfaggbefccabdbfccgfebcegabaecdhghfbgahcdbbehahghhgdbechbebegfccbbacgfddaggecgcadbgedadaaghgfgdbhafhhgcebca"
+      ],
+      "expected": false
+    }
+  ]
+}

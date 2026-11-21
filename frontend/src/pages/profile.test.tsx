@@ -81,4 +81,21 @@ describe("profile", () => {
       "/profile",
     );
   });
+
+  it("shows the System Design tab last, as coming soon", async () => {
+    fakeApi({
+      "GET /api/v1/me": () => json(200, ME),
+      "GET /api/v1/levels": () => json(200, LEVELS),
+    });
+    renderSignedInAt("/system-design");
+
+    const nav = await screen.findByRole("navigation", { name: "Main" });
+    const links = within(nav).getAllByRole("link");
+    expect(links.at(-1)).toHaveTextContent("System DesignSoon");
+    expect(links.at(-1)).toHaveAttribute("aria-current", "page");
+    expect(
+      await screen.findByRole("heading", { name: /System Design/ }),
+    ).toHaveTextContent("Coming soon");
+    expect(screen.getByText(/Load balancing/)).toBeVisible();
+  });
 });

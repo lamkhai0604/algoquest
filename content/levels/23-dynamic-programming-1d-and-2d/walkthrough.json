@@ -1,0 +1,643 @@
+[
+  {
+    "title": "The task",
+    "body": "Find the longest sequence of letters shared, in order, by **ABC** (rows) and **ACB** (columns). Cell (i, j) will hold the answer for the first i letters of ABC and the first j letters of ACB. The top row and the left column compare with an empty prefix, so they are 0.",
+    "code": "const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "?",
+        "?",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "·"
+        },
+        {
+          "name": "rule",
+          "value": "·"
+        },
+        {
+          "name": "value",
+          "value": "·"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cell (1, 1)",
+    "body": "A and A match, so they can end a shared sequence: take the diagonal cell (without both letters) and add 1. Cell = 1.",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "?",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        0
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "A vs A"
+        },
+        {
+          "name": "rule",
+          "value": "match: diagonal 0 + 1"
+        },
+        {
+          "name": "value",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cell (1, 2)",
+    "body": "A and C differ, so one of them is not in the shared sequence: take the better of the cell above (drop A) and the cell to the left (drop C). Cell = 1.",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 6,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        2,
+        5
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "A vs C"
+        },
+        {
+          "name": "rule",
+          "value": "max(up 0, left 1)"
+        },
+        {
+          "name": "value",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cell (1, 3)",
+    "body": "A and B differ, so one of them is not in the shared sequence: take the better of the cell above (drop A) and the cell to the left (drop B). Cell = 1.",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "0",
+        "?",
+        "?",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 7,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        3,
+        6
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "A vs B"
+        },
+        {
+          "name": "rule",
+          "value": "max(up 0, left 1)"
+        },
+        {
+          "name": "value",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cell (2, 1)",
+    "body": "B and A differ, so one of them is not in the shared sequence: take the better of the cell above (drop B) and the cell to the left (drop A). Cell = 1.",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "0",
+        "1",
+        "?",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 9,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        5,
+        8
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "B vs A"
+        },
+        {
+          "name": "rule",
+          "value": "max(up 1, left 0)"
+        },
+        {
+          "name": "value",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cell (2, 2)",
+    "body": "B and C differ, so one of them is not in the shared sequence: take the better of the cell above (drop B) and the cell to the left (drop C). Cell = 1.",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "0",
+        "1",
+        "1",
+        "?",
+        "0",
+        "?",
+        "?",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 10,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        6,
+        9
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "B vs C"
+        },
+        {
+          "name": "rule",
+          "value": "max(up 1, left 1)"
+        },
+        {
+          "name": "value",
+          "value": "1"
+        }
+      ],
+      "predict": {
+        "question": "B (row) and C (column) differ. Above is 1, left is 1. What goes in the cell?",
+        "options": [
+          "1: the better of up and left",
+          "2: add 1 for the step",
+          "0: the letters differ"
+        ],
+        "answer": 0,
+        "explanation": "Different letters cannot both end the shared sequence, so drop one of them: max(1, 1) = 1.",
+        "hides": [
+          "rule",
+          "value",
+          "cell"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Cell (2, 3)",
+    "body": "B and B match, so they can end a shared sequence: take the diagonal cell (without both letters) and add 1. Cell = 2.",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "0",
+        "1",
+        "1",
+        "2",
+        "0",
+        "?",
+        "?",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 11,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        6
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "B vs B"
+        },
+        {
+          "name": "rule",
+          "value": "match: diagonal 1 + 1"
+        },
+        {
+          "name": "value",
+          "value": "2"
+        }
+      ],
+      "predict": {
+        "question": "B and B match. The diagonal cell is 1. What goes in the cell?",
+        "options": [
+          "2: diagonal + 1",
+          "1: the same as the diagonal",
+          "3: up + left + 1"
+        ],
+        "answer": 0,
+        "explanation": "The shared B extends the best sequence of the shorter prefixes, A and AC, which is 1.",
+        "hides": [
+          "rule",
+          "value",
+          "cell"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Cell (3, 1)",
+    "body": "C and A differ, so one of them is not in the shared sequence: take the better of the cell above (drop C) and the cell to the left (drop A). Cell = 1.",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "0",
+        "1",
+        "1",
+        "2",
+        "0",
+        "1",
+        "?",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 13,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        9,
+        12
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "C vs A"
+        },
+        {
+          "name": "rule",
+          "value": "max(up 1, left 0)"
+        },
+        {
+          "name": "value",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cell (3, 2)",
+    "body": "C and C match, so they can end a shared sequence: take the diagonal cell (without both letters) and add 1. Cell = 2.",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "0",
+        "1",
+        "1",
+        "2",
+        "0",
+        "1",
+        "2",
+        "?"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 14,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        9
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "C vs C"
+        },
+        {
+          "name": "rule",
+          "value": "match: diagonal 1 + 1"
+        },
+        {
+          "name": "value",
+          "value": "2"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cell (3, 3)",
+    "body": "C and B differ, so one of them is not in the shared sequence: take the better of the cell above (drop C) and the cell to the left (drop B). Cell = 2. The bottom-right cell is the answer: 2 (for example AB or AC). 3 × 3 cells, each filled once: O(n · m).",
+    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "1",
+        "1",
+        "0",
+        "1",
+        "1",
+        "2",
+        "0",
+        "1",
+        "2",
+        "2"
+      ],
+      "rows": 4,
+      "rowLabels": [
+        "",
+        "A",
+        "B",
+        "C"
+      ],
+      "columnLabels": [
+        "",
+        "A",
+        "C",
+        "B"
+      ],
+      "markers": [
+        {
+          "index": 15,
+          "label": "fill"
+        }
+      ],
+      "reads": [
+        11,
+        14
+      ],
+      "vars": [
+        {
+          "name": "letters",
+          "value": "C vs B"
+        },
+        {
+          "name": "rule",
+          "value": "max(up 2, left 2)"
+        },
+        {
+          "name": "value",
+          "value": "2"
+        },
+        {
+          "name": "result",
+          "value": "2"
+        }
+      ]
+    }
+  }
+]
