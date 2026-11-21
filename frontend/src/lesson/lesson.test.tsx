@@ -426,6 +426,43 @@ describe("lesson page", () => {
     expect(document.querySelectorAll('[data-window="true"]')).toHaveLength(3);
   });
 
+  it("draws a stack strip and lets the explorer switch to DFS", async () => {
+    const lesson = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Stack",
+          body: "Two waiting.",
+          visual: { cells: ["2", "7"], stack: ["7", "3"] },
+        },
+        {
+          title: "Explore",
+          body: "Try it.",
+          visual: {
+            cells: ["0", "1", "2"],
+            edges: [
+              [0, 1],
+              [1, 2],
+            ],
+            explore: true,
+          },
+        },
+      ],
+    };
+    open(lesson, 2);
+
+    const stack = await screen.findByRole("list", {
+      name: "Stack (bottom → top)",
+    });
+    expect(stack).toHaveTextContent("73");
+    await userEvent.click(screen.getByRole("button", { name: "Next step" }));
+    await userEvent.click(screen.getByRole("button", { name: "DFS (stack)" }));
+    const next = screen.getAllByRole("button", { name: "Next step" })[0]!;
+    await userEvent.click(next);
+    await userEvent.click(next);
+    expect(screen.getByText("0 → 1")).toBeInTheDocument();
+  });
+
   it("plays the steps by itself and pauses", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     try {

@@ -203,15 +203,27 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 | T-559 | Level 15 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
 | T-560 | Sprint 14 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-14-report.md) |
 
-## Sprint 15 — Levels 16 and 17 ([plan](sprints/sprint-15.md))
+## Sprint 15 — Levels 16 and 17 ([plan](sprints/sprint-15.md), closed 2026-11-20)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-561 | Level 16 Fast & Slow Pointers content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-562 | Level 16 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-563 | Level 17 Monotonic Stack content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-564 | Level 17 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-565 | Sprint 15 report | D-007 | P2 | To do |
+| T-561 | Level 16 Fast & Slow Pointers content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-562 | Level 16 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
+| T-563 | Level 17 Monotonic Stack content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-564 | Level 17 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
+| T-565 | Sprint 15 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-15-report.md) |
+
+## Sprint 16 — Levels 18 and 19 ([plan](sprints/sprint-16.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-543 | Interactive graph explorer: pick the start vertex, compare BFS and DFS on the same graph | FR-03, D-064 | P1 | Built 2026-11-20: trace unit tests, rendering test; PO review pending |
+| T-566 | Level 18 DFS & BFS Patterns content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-567 | Level 18 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-568 | Level 19 Backtracking content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-569 | Level 19 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-571 | Motion in every walkthrough view: sliding markers, swaps, growing tree nodes, path highlight, pointer flips, stack strip | FR-03, D-065 | P1 | Built 2026-11-20: frontend tests; motion checked in a recording; PO review pending |
+| T-570 | Sprint 16 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 
@@ -226,4 +238,3 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 | T-506 | Voice answers | Excluded this release |
 | T-507 | Battle mode | FR-16 |
 | T-549 | Admin action to delete old demo accounts | FR-17, D-062 |
-| T-543 | Interactive graph explorer: pick the start vertex, compare BFS and DFS on the same graph (Level 18) | FR-03, D-061 |

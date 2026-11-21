@@ -1,0 +1,614 @@
+{
+  "id": "L19-coin-combos",
+  "level": 19,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Coin Combos",
+  "statement": "A vending machine takes coins of the given distinct values, each value usable any number of times. Return every way to make exactly amount, each way listed in non-decreasing order, and all ways in lexicographic order.",
+  "examples": [
+    {
+      "input": "coins = [2, 3, 6, 7], amount = 7",
+      "output": "[[2, 2, 3], [7]]"
+    },
+    {
+      "input": "coins = [2], amount = 1",
+      "output": "[]"
+    }
+  ],
+  "constraints": [
+    "1 <= coins.length <= 10",
+    "2 <= coins[i] <= 30, all different",
+    "1 <= amount <= 40"
+  ],
+  "answerKey": {
+    "pattern": "Backtracking with a start index and pruning",
+    "keyPoints": [
+      "Sort the coins",
+      "At each step try coins from the current index on, so each way is non-decreasing and found once",
+      "Stay on the same index to reuse a coin",
+      "Stop when the remaining amount is 0 (record) or a coin is larger than what remains (prune the rest)"
+    ],
+    "timeComplexity": "Exponential in amount / smallest coin",
+    "spaceComplexity": "O(amount / smallest coin)",
+    "edgeCases": [
+      "No way: []",
+      "One coin equal to the amount",
+      "Many small coins"
+    ],
+    "acceptableSlowerApproaches": [
+      "Generate all multisets up to the amount and filter: much slower"
+    ]
+  },
+  "hints": [
+    "How do you avoid listing [2, 3, 2] and [2, 2, 3] as different ways?",
+    "Only allow coins at or after the current coin's index, so every way is non-decreasing.",
+    "Recurse with (index, remaining): for i from index, if coins[i] > remaining stop; else push, recurse with (i, remaining − coins[i]), pop."
+  ],
+  "starterCode": {
+    "javascript": "function coinCombos(coins, amount) {\n  // return every combination\n}",
+    "java": "class Solution {\n  int[][] coinCombos(int[] coins, int amount) {\n    // return every combination\n  }\n}"
+  },
+  "similarLeetCode": "Combination Sum",
+  "tests": [
+    {
+      "input": [
+        [
+          2,
+          3,
+          6,
+          7
+        ],
+        7
+      ],
+      "expected": [
+        [
+          2,
+          2,
+          3
+        ],
+        [
+          7
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          2
+        ],
+        1
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          2,
+          3,
+          5
+        ],
+        8
+      ],
+      "expected": [
+        [
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          3,
+          3
+        ],
+        [
+          3,
+          5
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          7
+        ],
+        14
+      ],
+      "expected": [
+        [
+          7,
+          7
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          3,
+          4
+        ],
+        5
+      ],
+      "expected": []
+    },
+    {
+      "input": [
+        [
+          5,
+          10,
+          25
+        ],
+        30
+      ],
+      "expected": [
+        [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        [
+          5,
+          5,
+          5,
+          5,
+          10
+        ],
+        [
+          5,
+          5,
+          10,
+          10
+        ],
+        [
+          5,
+          25
+        ],
+        [
+          10,
+          10,
+          10
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          3,
+          5,
+          7
+        ],
+        20
+      ],
+      "expected": [
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          3,
+          3
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          3,
+          5
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          3,
+          7
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          5,
+          5
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          3
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          5,
+          7
+        ],
+        [
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          5
+        ],
+        [
+          2,
+          2,
+          2,
+          7,
+          7
+        ],
+        [
+          2,
+          2,
+          3,
+          3,
+          3,
+          7
+        ],
+        [
+          2,
+          2,
+          3,
+          3,
+          5,
+          5
+        ],
+        [
+          2,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        [
+          2,
+          3,
+          3,
+          5,
+          7
+        ],
+        [
+          2,
+          3,
+          5,
+          5,
+          5
+        ],
+        [
+          3,
+          3,
+          3,
+          3,
+          3,
+          5
+        ],
+        [
+          3,
+          3,
+          7,
+          7
+        ],
+        [
+          3,
+          5,
+          5,
+          7
+        ],
+        [
+          5,
+          5,
+          5,
+          5
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          4,
+          6,
+          9,
+          13
+        ],
+        35
+      ],
+      "expected": [
+        [
+          4,
+          4,
+          4,
+          4,
+          4,
+          6,
+          9
+        ],
+        [
+          4,
+          4,
+          4,
+          4,
+          6,
+          13
+        ],
+        [
+          4,
+          4,
+          6,
+          6,
+          6,
+          9
+        ],
+        [
+          4,
+          4,
+          9,
+          9,
+          9
+        ],
+        [
+          4,
+          6,
+          6,
+          6,
+          13
+        ],
+        [
+          4,
+          9,
+          9,
+          13
+        ],
+        [
+          9,
+          13,
+          13
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          2,
+          5,
+          11,
+          17
+        ],
+        40
+      ],
+      "expected": [
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          5,
+          5
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          5,
+          11
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          5,
+          5,
+          5,
+          5
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          5,
+          17
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          11,
+          11
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          5,
+          5,
+          5,
+          11
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          11,
+          17
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          5,
+          5,
+          5,
+          17
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          5,
+          5,
+          11,
+          11
+        ],
+        [
+          2,
+          2,
+          2,
+          17,
+          17
+        ],
+        [
+          2,
+          2,
+          5,
+          5,
+          5,
+          5,
+          5,
+          11
+        ],
+        [
+          2,
+          5,
+          5,
+          11,
+          17
+        ],
+        [
+          2,
+          5,
+          11,
+          11,
+          11
+        ],
+        [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ]
+      ]
+    }
+  ]
+}

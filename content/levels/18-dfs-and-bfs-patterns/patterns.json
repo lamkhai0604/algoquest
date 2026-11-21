@@ -1,0 +1,152 @@
+[
+  {
+    "id": "P18-build-order",
+    "level": 18,
+    "title": "Build Order",
+    "statement": "A monorepo has 20,000 packages and 60,000 \"depends on\" links. The build system must find an order that builds every dependency before the packages that need it, or report that the links go in a circle.",
+    "examples": [
+      "ui depends on core; core depends on utils → utils, core, ui"
+    ],
+    "constraints": [
+      "V = 20,000, E = 60,000"
+    ],
+    "approaches": [
+      {
+        "id": "kahn",
+        "name": "Kahn's algorithm: in-degrees and a queue of packages with none left",
+        "hint": "Free what has no requirements",
+        "label": "best",
+        "time": "O(V + E)",
+        "space": "O(V + E)",
+        "why": "One pass; a short order at the end reveals a cycle."
+      },
+      {
+        "id": "dfs",
+        "name": "Depth-first search, adding each package after all its dependencies (post-order)",
+        "hint": "Finish dependencies first",
+        "label": "valid",
+        "time": "O(V + E)",
+        "space": "O(V + E)",
+        "why": "Also linear, but cycle detection needs extra colour states."
+      },
+      {
+        "id": "repeat",
+        "name": "Repeatedly scan all packages for one whose dependencies are built",
+        "hint": "Look for a ready package",
+        "label": "valid",
+        "time": "O(V · (V + E))",
+        "space": "O(V)",
+        "why": "Correct, but rescans everything after each build."
+      },
+      {
+        "id": "sort",
+        "name": "Sort packages by name",
+        "hint": "Alphabetical",
+        "label": "unsuitable",
+        "time": "O(V log V)",
+        "space": "O(V)",
+        "why": "Names say nothing about dependencies."
+      }
+    ]
+  },
+  {
+    "id": "P18-nearest-exit",
+    "level": 18,
+    "title": "Nearest Exit",
+    "statement": "A stadium floor plan is a 2,000 × 2,000 grid with walls and 300 exits. For the evacuation sign at every open cell, the system needs the fewest steps to any exit.",
+    "examples": [
+      "Exits marked E; each open cell gets its distance"
+    ],
+    "constraints": [
+      "R = C = 2,000; 300 exits"
+    ],
+    "approaches": [
+      {
+        "id": "multi",
+        "name": "One BFS that starts with all exits in the queue at distance 0",
+        "hint": "Many sources at once",
+        "label": "best",
+        "time": "O(R · C)",
+        "space": "O(R · C)",
+        "why": "Each cell is reached first from its nearest exit, in one pass."
+      },
+      {
+        "id": "perexit",
+        "name": "One BFS from each exit, keeping the minimum per cell",
+        "hint": "Search from every exit",
+        "label": "valid",
+        "time": "O(300 · R · C)",
+        "space": "O(R · C)",
+        "why": "Correct, but 300 full passes."
+      },
+      {
+        "id": "percell",
+        "name": "BFS from each cell until it finds an exit",
+        "hint": "Search from every cell",
+        "label": "valid",
+        "time": "O((R · C)²) worst case",
+        "space": "O(R · C)",
+        "why": "Correct, hopelessly slow."
+      },
+      {
+        "id": "straight",
+        "name": "Straight-line distance to the nearest exit",
+        "hint": "Measure with a ruler",
+        "label": "unsuitable",
+        "time": "O(R · C · 300)",
+        "space": "O(1)",
+        "why": "Ignores walls, so the numbers are wrong."
+      }
+    ]
+  },
+  {
+    "id": "P18-delivery-time",
+    "level": 18,
+    "title": "Fastest Delivery Route",
+    "statement": "A courier map has 50,000 junctions and 200,000 one-way roads, each with a travel time in minutes (all positive). The app needs the fastest time from the depot to every junction.",
+    "examples": [
+      "depot → A 5 min, depot → B 2 min, B → A 1 min → A is 3 min"
+    ],
+    "constraints": [
+      "V = 50,000, E = 200,000, positive times"
+    ],
+    "approaches": [
+      {
+        "id": "dijkstra",
+        "name": "Dijkstra's algorithm with a min-heap of tentative times",
+        "hint": "Cheapest known first",
+        "label": "best",
+        "time": "O((V + E) log V)",
+        "space": "O(V + E)",
+        "why": "Each junction is final when it leaves the heap."
+      },
+      {
+        "id": "bellman",
+        "name": "Relax every road V − 1 times (Bellman–Ford)",
+        "hint": "Repeat relaxing",
+        "label": "valid",
+        "time": "O(V · E)",
+        "space": "O(V)",
+        "why": "Correct, also handles negative times, but about 10 billion steps here."
+      },
+      {
+        "id": "bfs",
+        "name": "BFS counting roads",
+        "hint": "Fewest roads",
+        "label": "unsuitable",
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "why": "Fewest roads is not fastest when times differ."
+      },
+      {
+        "id": "dfs",
+        "name": "DFS over every route, keeping the fastest",
+        "hint": "Try every route",
+        "label": "unsuitable",
+        "time": "Exponential",
+        "space": "O(V)",
+        "why": "Correct only by exhausting all routes, which is infeasible."
+      }
+    ]
+  }
+]

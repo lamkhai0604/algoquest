@@ -915,3 +915,63 @@
     }
   }
 }
+
+/* Stack strip (D-065). */
+.stackTop {
+  border-color: var(--color-xp);
+}
+
+.stackIn {
+  border-color: var(--color-success);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stackIn {
+    animation: stack-in 0.4s ease-out;
+  }
+
+  @keyframes stack-in {
+    from {
+      opacity: 0;
+      transform: translateY(-14px);
+    }
+  }
+
+  .treeValue {
+    transition: fill 0.3s ease;
+  }
+}
+
+/* Graph explorer (D-064). */
+.explorer {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-2) 0;
+  padding: var(--space-3);
+  border: 1px dashed var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.explorerTitle {
+  margin: 0;
+  color: var(--color-primary-soft-text);
+  font-weight: 700;
+}
+
+.explorerControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+
+.visitOrder {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.visitOrder strong {
+  color: var(--color-text);
+  font-family: var(--font-mono);
+}

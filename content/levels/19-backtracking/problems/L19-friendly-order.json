@@ -1,0 +1,106 @@
+{
+  "id": "L19-friendly-order",
+  "level": 19,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Friendly Order",
+  "statement": "Badges numbered 1 to n are pinned in positions 1 to n, one per position. An arrangement is friendly when, for every position i, the badge number divides i or i divides the badge number. Return how many friendly arrangements exist.",
+  "examples": [
+    {
+      "input": "n = 2",
+      "output": "2"
+    },
+    {
+      "input": "n = 3",
+      "output": "3"
+    }
+  ],
+  "constraints": [
+    "1 <= n <= 12"
+  ],
+  "answerKey": {
+    "pattern": "Backtracking with pruning by position",
+    "keyPoints": [
+      "Fill positions 1 to n in order",
+      "At position i, try each unused badge that divides i or is divided by i",
+      "Count when every position is filled",
+      "The divisibility check prunes most branches early"
+    ],
+    "timeComplexity": "Far below n! thanks to pruning",
+    "spaceComplexity": "O(n)",
+    "edgeCases": [
+      "n = 1",
+      "Larger n with heavy pruning"
+    ],
+    "acceptableSlowerApproaches": [
+      "Generate all n! orders and test each: much slower"
+    ]
+  },
+  "hints": [
+    "Which badges can go in position i at all?",
+    "Only those that divide i or are divided by i. Skip the rest at once.",
+    "Fill positions in order with a used array; count complete arrangements."
+  ],
+  "starterCode": {
+    "javascript": "function friendlyOrders(n) {\n  // return the number of friendly arrangements\n}",
+    "java": "class Solution {\n  int friendlyOrders(int n) {\n    // return the number of friendly arrangements\n  }\n}"
+  },
+  "similarLeetCode": "Beautiful Arrangement",
+  "tests": [
+    {
+      "input": [
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        3
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        1
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        4
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        5
+      ],
+      "expected": 10
+    },
+    {
+      "input": [
+        7
+      ],
+      "expected": 41
+    },
+    {
+      "input": [
+        9
+      ],
+      "expected": 250
+    },
+    {
+      "input": [
+        11
+      ],
+      "expected": 750
+    },
+    {
+      "input": [
+        12
+      ],
+      "expected": 4010
+    }
+  ]
+}

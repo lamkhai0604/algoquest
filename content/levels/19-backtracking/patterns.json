@@ -1,0 +1,152 @@
+[
+  {
+    "id": "P19-meal-combos",
+    "level": 19,
+    "title": "Meal Combo Builder",
+    "statement": "A restaurant menu has 12 side dishes. The ordering screen must list every possible set of sides a customer could pick (including none), so staff can price them.",
+    "examples": [
+      "sides = [fries, salad] → {}, {fries}, {salad}, {fries, salad}"
+    ],
+    "constraints": [
+      "n = 12, every set must be listed"
+    ],
+    "approaches": [
+      {
+        "id": "backtrack",
+        "name": "Backtracking over take or skip for each side",
+        "hint": "Choose, explore, undo",
+        "label": "best",
+        "time": "O(n · 2ⁿ)",
+        "space": "O(n) plus the output",
+        "why": "The output itself has 2¹² = 4,096 sets, so listing them is the minimum work."
+      },
+      {
+        "id": "bitmask",
+        "name": "Count from 0 to 2ⁿ − 1 and read each number's bits as take or skip",
+        "hint": "Binary counting",
+        "label": "valid",
+        "time": "O(n · 2ⁿ)",
+        "space": "O(n) plus the output",
+        "why": "Same cost; a good alternative when n is at most about 20."
+      },
+      {
+        "id": "nested",
+        "name": "Write one nested loop per side",
+        "hint": "Twelve loops",
+        "label": "unsuitable",
+        "time": "O(n · 2ⁿ)",
+        "space": "O(n)",
+        "why": "Correct for exactly 12 sides, but breaks as soon as the menu changes."
+      },
+      {
+        "id": "greedy",
+        "name": "Add sides one by one, keeping only the cheapest set",
+        "hint": "Pick the best",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Gives one set, not every set."
+      }
+    ]
+  },
+  {
+    "id": "P19-seat-plan",
+    "level": 19,
+    "title": "Seating Plan Search",
+    "statement": "A wedding planner must seat 10 guests in a row of 10 chairs so that no two guests who dislike each other sit next to each other. Only one valid seating is needed, and there are 15 \"dislike\" pairs.",
+    "examples": [
+      "Find any order of the 10 guests with no dislike pair adjacent"
+    ],
+    "constraints": [
+      "n = 10, one answer needed"
+    ],
+    "approaches": [
+      {
+        "id": "prune",
+        "name": "Backtracking that places guests chair by chair and abandons a branch as soon as two neighbours dislike each other",
+        "hint": "Prune early",
+        "label": "best",
+        "time": "O(n!) worst case, far less in practice",
+        "space": "O(n)",
+        "why": "Bad partial seatings are cut off before they grow, and the search stops at the first valid seating."
+      },
+      {
+        "id": "allperms",
+        "name": "Generate all 3,628,800 orders, then check each one",
+        "hint": "Generate, then test",
+        "label": "valid",
+        "time": "O(n · n!)",
+        "space": "O(n)",
+        "why": "Correct but checks every full order, even ones that failed at the second chair."
+      },
+      {
+        "id": "random",
+        "name": "Shuffle the guests until a valid order appears",
+        "hint": "Try luck",
+        "label": "unsuitable",
+        "time": "Unbounded",
+        "space": "O(n)",
+        "why": "May never finish, and cannot tell when no seating exists."
+      },
+      {
+        "id": "sortname",
+        "name": "Seat guests in alphabetical order",
+        "hint": "Sort",
+        "label": "unsuitable",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Ignores the dislike pairs."
+      }
+    ]
+  },
+  {
+    "id": "P19-word-grid",
+    "level": 19,
+    "title": "Word in a Letter Grid",
+    "statement": "A puzzle app checks whether a word of up to 12 letters can be traced in a 6 × 6 letter grid by moving up, down, left or right, without reusing a cell.",
+    "examples": [
+      "grid with A B C / S F C / A D E, word ABCCED → true"
+    ],
+    "constraints": [
+      "6 × 6 grid, word length up to 12"
+    ],
+    "approaches": [
+      {
+        "id": "dfs",
+        "name": "From each cell matching the first letter, DFS letter by letter, marking cells in use and unmarking when backing up",
+        "hint": "Backtrack on the grid",
+        "label": "best",
+        "time": "O(R · C · 4^L) worst case",
+        "space": "O(L)",
+        "why": "Mismatched letters prune almost every branch at once."
+      },
+      {
+        "id": "allpaths",
+        "name": "List every path of length L in the grid, then compare with the word",
+        "hint": "Generate all paths",
+        "label": "valid",
+        "time": "O(R · C · 4^L)",
+        "space": "O(4^L)",
+        "why": "Correct, but builds paths that fail at their first letter."
+      },
+      {
+        "id": "count",
+        "name": "Check that the grid contains every letter of the word",
+        "hint": "Count letters",
+        "label": "unsuitable",
+        "time": "O(R · C + L)",
+        "space": "O(1)",
+        "why": "Necessary but not enough: the letters must also be adjacent in order."
+      },
+      {
+        "id": "bfs",
+        "name": "BFS from the first letter without tracking used cells",
+        "hint": "Spread out",
+        "label": "unsuitable",
+        "time": "O(R · C)",
+        "space": "O(R · C)",
+        "why": "Cannot tell which cells a particular path has already used."
+      }
+    ]
+  }
+]

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-20 |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-15-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | Levels 16 and 17 are playable in the five-step lesson format at the standard of Levels 4–15, with pattern challenges. Level 16 uses the linked-list view (D-058); Level 17 uses the cell view |
 | Duration | About 1 week from approval |
 | Tasks | T-561, T-562, T-563, T-564, T-565 ([BACKLOG.md](../BACKLOG.md)) |

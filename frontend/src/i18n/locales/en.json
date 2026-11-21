@@ -177,7 +177,14 @@
     "empty": "empty",
     "rings": "Distance from the start:",
     "window": "Window",
-    "windowSize": "size"
+    "windowSize": "size",
+    "stack": "Stack (bottom → top)",
+    "exploreTitle": "Try it yourself: pick a start vertex and a search",
+    "startAt": "Start at",
+    "search": "Search",
+    "bfs": "BFS (queue)",
+    "dfs": "DFS (stack)",
+    "visitOrder": "Visit order"
   },
   "auth": {
     "title": "Sign in to {appName}",

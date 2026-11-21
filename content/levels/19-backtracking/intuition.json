@@ -1,0 +1,11 @@
+{
+  "question": "A playlist app wants to show every possible order of a 10-song playlist. About how many orders is that?",
+  "options": [
+    "About 3.6 million (10!)",
+    "About 1,000 (2¹⁰)",
+    "100 (10²)",
+    "About 55"
+  ],
+  "answer": 0,
+  "explanation": "The first song has 10 choices, the second 9, and so on: 10 × 9 × … × 1 = 3,628,800. Backtracking can list them, but each extra song multiplies the work."
+}
