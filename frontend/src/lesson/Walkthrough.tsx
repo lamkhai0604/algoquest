@@ -77,7 +77,7 @@ function animateRow(
     const marker = items[m.index]?.querySelector(`.${markerClass}`);
     if (rect) slideFrom(marker, rect);
   }
-  const swap = visual.swap ?? [];
+  const swap: number[] = visual.swap ?? [];
   if (swap.length === 2) {
     const [a = 0, b = 0] = swap;
     const ra = rects[a];
@@ -209,6 +209,7 @@ function Nodes({
     // A pointer that changed flips into place.
     if (!canAnimate() || masked || !previous?.next) return;
     const prevNext = previous.next;
+    const next = visual.next ?? [];
     nodes.forEach((node, i) => {
       if (prevNext[i] === next[i]) return;
       node.querySelector(`.${styles.nodeNext}`)?.animate(
@@ -238,7 +239,7 @@ function Nodes({
         }
       },
     );
-  }, [visual, previous, masked, next]);
+  }, [visual, previous, masked]);
   const labels = new Map<number, string[]>();
   for (const marker of visual.markers ?? []) {
     labels.set(marker.index, [
