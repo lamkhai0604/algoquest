@@ -28,7 +28,9 @@
     "profile": "Hồ sơ",
     "admin": "Quản trị",
     "signOut": "Đăng xuất",
-    "demo": "Dùng thử"
+    "demo": "Dùng thử",
+    "systemDesign": "Thiết kế hệ thống",
+    "soon": "Sắp có"
   },
   "game": {
     "dayStreak": "ngày liên tiếp",
@@ -476,5 +478,17 @@
     "testStart": "Điểm kiểm tra bằng trung bình điểm ba bài, làm tròn xuống.",
     "nextOpen": "mở các bài dễ ở cấp độ tiếp theo; 100 mở toàn bộ. Nếu dưới",
     "retake": "bạn có thể thi lại."
+  },
+  "systemDesign": {
+    "title": "Thiết kế hệ thống",
+    "lead": "Một lộ trình riêng về thiết kế hệ thống lớn: các thành phần của một dịch vụ thật kết nối với nhau thế nào, mở rộng lên hàng triệu người dùng ra sao, và cách giải thích các đánh đổi khi phỏng vấn.",
+    "planned": "Chủ đề dự kiến",
+    "topic1": "Ước lượng quy mô: số request mỗi giây, dung lượng lưu trữ và băng thông",
+    "topic2": "Cân bằng tải và server không lưu trạng thái",
+    "topic3": "Caching: cache ở đâu và khi nào dữ liệu bị cũ",
+    "topic4": "Cơ sở dữ liệu: index, bản sao và sharding",
+    "topic5": "Hàng đợi tin nhắn và xử lý nền",
+    "topic6": "Giới hạn tần suất, rồi các bài thiết kế trọn vẹn như rút gọn link và ứng dụng chat",
+    "note": "Mỗi chủ đề sẽ theo 5 bước giống các level thuật toán, có sơ đồ hoạt cảnh và câu hỏi thiết kế do AI chấm. Các level thuật toán được làm trước."
   }
 }

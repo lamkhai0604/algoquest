@@ -45,6 +45,10 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
             </NavLink>
             <NavLink to="/profile">{t("nav.profile")}</NavLink>
             {account.isAdmin && <NavLink to="/admin">{t("nav.admin")}</NavLink>}
+            <NavLink to="/system-design">
+              {t("nav.systemDesign")}
+              <span className={styles.soon}>{t("nav.soon")}</span>
+            </NavLink>
           </nav>
         )}
       </div>

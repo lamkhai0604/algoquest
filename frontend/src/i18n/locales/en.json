@@ -28,7 +28,9 @@
     "profile": "Profile",
     "admin": "Admin",
     "signOut": "Sign out",
-    "demo": "Demo"
+    "demo": "Demo",
+    "systemDesign": "System Design",
+    "soon": "Soon"
   },
   "game": {
     "dayStreak": "day streak",
@@ -476,5 +478,17 @@
     "testStart": "The test score is the average of the three problem scores, rounded down.",
     "nextOpen": "opens the Easy problems of the next level; 100 opens the whole level. Below",
     "retake": "you can take the test again."
+  },
+  "systemDesign": {
+    "title": "System Design",
+    "lead": "A separate track on designing large systems: how the parts of a real service fit together, how it grows to millions of users, and how to explain the trade-offs in an interview.",
+    "planned": "Planned topics",
+    "topic1": "Estimating scale: requests per second, storage and bandwidth",
+    "topic2": "Load balancing and stateless servers",
+    "topic3": "Caching: where to cache and when data goes stale",
+    "topic4": "Databases: indexes, replicas and sharding",
+    "topic5": "Message queues and background work",
+    "topic6": "Rate limiting, then full designs such as a URL shortener and a chat app",
+    "note": "Each topic will follow the same five steps as the algorithm levels, with animated diagrams and design questions graded by AI. The algorithm levels come first."
   }
 }
