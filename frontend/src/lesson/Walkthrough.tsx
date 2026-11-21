@@ -625,6 +625,169 @@ function Graph({
  * left (D-061). New vertices slide in at the back; the vertex taken from the
  * front this step fades out. While a prediction hides the queue, it shows "?".
  */
+const TIMELINE_ROW = 34;
+const TIMELINE_BAR = 20;
+const TIMELINE_LABEL = 40;
+const TIMELINE_TOP = 26;
+const TIMELINE_RIGHT = 48;
+
+/**
+ * Interval timeline (D-066): each cell is a bar on a shared time axis. Kept
+ * bars are filled and ticked, the marked bar is outlined, and an optional
+ * sweep line marks a point in time. Newly kept bars pop and the marker and
+ * the line slide from where they were.
+ */
+function Timeline({
+  visual,
+  previous,
+  masked,
+}: {
+  visual: Visual;
+  previous: Visual | null;
+  masked: boolean;
+}) {
+  const { t } = useTranslation();
+  const intervals = visual.intervals ?? [];
+  const shown = masked && previous ? previous : visual;
+  const starts = intervals.map(([a = 0]) => a);
+  const ends = intervals.map(([, b = 0]) => b);
+  const lo = Math.min(...starts, shown.line ?? Infinity);
+  const hi = Math.max(...ends, shown.line ?? -Infinity, lo + 1);
+  const span = hi - lo;
+  const unit = Math.max(18, Math.min(56, 460 / span));
+  const x = (v: number) => TIMELINE_LABEL + (v - lo) * unit;
+  const width = TIMELINE_LABEL + span * unit + TIMELINE_RIGHT;
+  const height = TIMELINE_TOP + intervals.length * TIMELINE_ROW + 8;
+  const every = span <= 16 ? 1 : span <= 32 ? 2 : 5;
+  const ticks: number[] = [];
+  for (let v = Math.ceil(lo / every) * every; v <= hi; v += every) ticks.push(v);
+  const chosen = new Set(shown.chosen ?? []);
+  const marks = new Map<number, string[]>();
+  for (const m of visual.markers ?? []) {
+    marks.set(m.index, [...(marks.get(m.index) ?? []), m.label]);
+  }
+  const svgRef = useRef<SVGSVGElement>(null);
+  useLayoutEffect(() => {
+    const svg = svgRef.current;
+    if (!svg || !canAnimate() || !previous || masked) return;
+    const scale = svg.getBoundingClientRect().width / width || 1;
+    const shift = (el: Element | null, dx: number, dy: number) => {
+      if (!el || (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5)) return;
+      el.animate(
+        [
+          { transform: `translate(${dx * scale}px, ${dy * scale}px)` },
+          { transform: "none" },
+        ],
+        { duration: 380, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
+      );
+    };
+    const before = new Set(previous.chosen ?? []);
+    for (const i of visual.chosen ?? []) {
+      if (!before.has(i)) pop(svg.querySelector(`[data-bar="${i}"]`));
+    }
+    const was = markerIndexes(previous);
+    for (const m of visual.markers ?? []) {
+      const from = was.get(m.label);
+      if (from === undefined || from === m.index) continue;
+      shift(svg.querySelector(`[data-marker="${m.index}"]`), 0, (from - m.index) * TIMELINE_ROW);
+    }
+    if (
+      visual.line !== null &&
+      visual.line !== undefined &&
+      previous.line !== null &&
+      previous.line !== undefined
+    ) {
+      shift(svg.querySelector("[data-line]"), (previous.line - visual.line) * unit, 0);
+    }
+  }, [visual, previous, masked, width, unit]);
+  return (
+    <div className={styles.treeWrap}>
+      <svg
+        ref={svgRef}
+        className={styles.tree}
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={t("walkthrough.timeline")}
+        style={{ maxWidth: `min(100%, ${Math.max(width, 240)}px)` }}
+      >
+        {ticks.map((v) => (
+          <g key={v}>
+            <line
+              className={styles.timelineTick}
+              x1={x(v)}
+              x2={x(v)}
+              y1={TIMELINE_TOP - 4}
+              y2={height - 4}
+            />
+            <text className={styles.timelineTime} x={x(v)} y={TIMELINE_TOP - 10}>
+              {v}
+            </text>
+          </g>
+        ))}
+        {intervals.map(([a = 0, b = 0], i) => {
+          const y = TIMELINE_TOP + i * TIMELINE_ROW + (TIMELINE_ROW - TIMELINE_BAR) / 2;
+          const kept = chosen.has(i);
+          const current = marks.has(i);
+          return (
+            <g key={i}>
+              <text
+                className={styles.timelineName}
+                x={TIMELINE_LABEL - 8}
+                y={y + TIMELINE_BAR / 2}
+              >
+                {visual.cells[i]}
+              </text>
+              <rect
+                data-bar={i}
+                data-kept={kept ? "true" : undefined}
+                className={cx(
+                  styles.timelineBar,
+                  kept && styles.timelineKept,
+                  current && styles.timelineCurrent,
+                )}
+                x={x(a)}
+                y={y}
+                width={Math.max((b - a) * unit, 6)}
+                height={TIMELINE_BAR}
+                rx={6}
+              />
+              {kept && (
+                <text
+                  className={styles.timelineCheck}
+                  x={x(a) + 8}
+                  y={y + TIMELINE_BAR / 2}
+                >
+                  ✓
+                </text>
+              )}
+              {current && (
+                <text
+                  data-marker={i}
+                  className={styles.timelineMarker}
+                  x={x(b) + Math.max(0, 6 - (b - a) * unit) + 6}
+                  y={y + TIMELINE_BAR / 2}
+                >
+                  {marks.get(i)?.join(", ")}
+                </text>
+              )}
+            </g>
+          );
+        })}
+        {shown.line !== null && shown.line !== undefined && (
+          <line
+            data-line="true"
+            className={styles.timelineLine}
+            x1={x(shown.line)}
+            x2={x(shown.line)}
+            y1={TIMELINE_TOP - 4}
+            y2={height - 4}
+          />
+        )}
+      </svg>
+    </div>
+  );
+}
+
 function QueueStrip({
   visual,
   previous,
@@ -1065,6 +1228,12 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
         {visual &&
           (visual.edges && visual.explore ? (
             <Explorer key={index} visual={visual} />
+          ) : visual.intervals ? (
+            <Timeline
+              visual={visual}
+              previous={previousVisual}
+              masked={waiting}
+            />
           ) : visual.edges ? (
             <Graph visual={visual} previous={previousVisual} masked={waiting} />
           ) : visual.tree ? (

@@ -49,6 +49,12 @@ export interface Visual {
   stack?: string[] | null;
   /** Makes a graph step an interactive BFS/DFS explorer (D-064). */
   explore?: boolean | null;
+  /** One [start, end] per cell, drawn as bars on a time axis (D-066). */
+  intervals?: number[][] | null;
+  /** Indexes of kept intervals (D-066). */
+  chosen?: number[] | null;
+  /** A point in time drawn as a vertical sweep line (D-066). */
+  line?: number | null;
 }
 
 export interface WalkthroughStep {

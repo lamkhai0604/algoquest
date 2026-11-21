@@ -975,3 +975,63 @@
   color: var(--color-text);
   font-family: var(--font-mono);
 }
+
+/* Interval timeline (D-066) */
+.timelineTick {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.timelineTime {
+  fill: var(--color-text-muted);
+  font: 500 11px var(--font-mono);
+  text-anchor: middle;
+}
+
+.timelineName {
+  fill: var(--color-text);
+  font: 700 13px var(--font-mono);
+  text-anchor: end;
+  dominant-baseline: central;
+}
+
+.timelineBar {
+  fill: var(--color-bg-sunken);
+  stroke: var(--color-border-strong);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.timelineKept {
+  fill: var(--color-success-soft);
+  stroke: var(--color-success);
+}
+
+.timelineCurrent {
+  stroke: var(--color-xp);
+  stroke-width: 3;
+}
+
+.timelineCheck {
+  fill: var(--color-success);
+  font: 700 13px var(--font-body);
+  dominant-baseline: central;
+}
+
+.timelineMarker {
+  fill: var(--color-xp);
+  font: 700 12px var(--font-body);
+  dominant-baseline: central;
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.timelineLine {
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+}
