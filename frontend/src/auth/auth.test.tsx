@@ -29,6 +29,65 @@ describe("sign-in", () => {
     expect(github).toHaveAttribute("href", `${SIGN_IN}/github`);
   });
 
+  it("signs a visitor in with the demo and marks the account", async () => {
+    fakeApi({
+      "GET /api/v1/auth/options": () => json(200, { demo: true }),
+      "POST /api/v1/auth/demo": () => json(200, { code: "demo-code" }),
+      "POST /api/v1/auth/exchange": () =>
+        json(200, { token: "jwt-demo", expiresAt: inFourHours() }),
+      "GET /api/v1/me": () =>
+        json(200, {
+          ...ME,
+          displayName: "Demo visitor",
+          roles: ["PLAYER", "DEMO"],
+          permissions: ["game.play", "game.allLevels"],
+        }),
+    });
+    renderAt("/sign-in");
+
+    expect(
+      screen.getByText("Explain your approach in words; an AI grades it like an interviewer"),
+    ).toBeVisible();
+    await userEvent.click(
+      await screen.findByRole("button", {
+        name: "Try the demo, no account needed",
+      }),
+    );
+
+    expect(await screen.findByText("Demo visitor")).toBeVisible();
+    expect(screen.getByText("Demo")).toBeVisible();
+    expect(getToken()).toBe("jwt-demo");
+  });
+
+  it("explains when today's demo accounts are used up", async () => {
+    fakeApi({
+      "GET /api/v1/auth/options": () => json(200, { demo: true }),
+      "POST /api/v1/auth/demo": () =>
+        json(429, { title: "Demo limit reached" }),
+    });
+    renderAt("/sign-in");
+
+    await userEvent.click(
+      await screen.findByRole("button", {
+        name: "Try the demo, no account needed",
+      }),
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "demo accounts are used up",
+    );
+  });
+
+  it("hides the demo when the server does not offer it", async () => {
+    fakeApi({ "GET /api/v1/auth/options": () => json(200, { demo: false }) });
+    renderAt("/sign-in");
+
+    await screen.findByRole("link", { name: "Continue with Google" });
+    expect(
+      screen.queryByRole("button", { name: "Try the demo, no account needed" }),
+    ).toBeNull();
+  });
+
   it("explains a failed sign-in", () => {
     renderAt("/sign-in?error=email-not-verified");
 

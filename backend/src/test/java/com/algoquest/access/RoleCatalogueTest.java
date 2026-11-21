@@ -19,6 +19,12 @@ class RoleCatalogueTest {
   }
 
   @Test
+  void demoPlaysEveryLevel() {
+    assertThat(Role.DEMO.permissions())
+        .containsExactlyInAnyOrder(Permission.GAME_PLAY, Permission.GAME_ALL_LEVELS);
+  }
+
+  @Test
   void adminHasNoPermissionsUntilDefined() {
     assertThat(Role.ADMIN.permissions()).isEmpty();
   }

@@ -57,6 +57,10 @@ algoquest:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   # Signs the app's login tokens (D-036). When empty, a random key is used and tokens end at restart.
   jwt-secret: ${JWT_SECRET:}
+  # Demo sign-in for visitors (D-062): on or off, and how many demo accounts a UTC day allows.
+  demo:
+    enabled: ${DEMO_ENABLED:true}
+    daily-limit: ${DEMO_DAILY_LIMIT:40}
   code:
     java:
       # "judge0" (default) or "fake" (fixed rules, no network; tests and the smoke run).

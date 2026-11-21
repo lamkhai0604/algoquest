@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-20 |
+| Status | **Closed 2026-11-20** ([report](../reports/sprint-11-report.md)). Approved by the PO on 2026-11-20 |
 | Goal | Level 10 is playable in the five-step lesson format at the standard of Levels 4–9, with a graph view in the walkthrough. Phase 1 (Levels 1–11) is then complete |
 | Duration | About 1 week from approval |
 | Tasks | T-538, T-539, T-540, T-542, T-541 ([BACKLOG.md](../BACKLOG.md)) |
