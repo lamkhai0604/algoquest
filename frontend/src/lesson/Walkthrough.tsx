@@ -415,7 +415,7 @@ function QueueStrip({
   const taken =
     !masked && before.length > 0 && before[0] !== queue[0] ? before[0] : null;
   const added = new Set(
-    queue.filter((v, i) => i >= before.length - (taken === null ? 0 : 1)),
+    queue.slice(Math.max(0, before.length - (taken === null ? 0 : 1))),
   );
   return (
     <div className={styles.queue}>
