@@ -1,0 +1,348 @@
+[
+  {
+    "title": "The task",
+    "body": "For every number, find the next greater number to its right (−1 if none). The stack holds the numbers still waiting for an answer; from bottom to top it always decreases.",
+    "code": "const stack = [];",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[]"
+        },
+        {
+          "name": "answer",
+          "value": "[?, ?, ?, ?, ?, ?, ?]"
+        },
+        {
+          "name": "popped",
+          "value": "·"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Read 2 (i = 0)",
+    "body": "2 arrives. The stack is empty, so 2 is pushed and waits.",
+    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[2]"
+        },
+        {
+          "name": "answer",
+          "value": "[?, ?, ?, ?, ?, ?, ?]"
+        },
+        {
+          "name": "popped",
+          "value": "none"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Read 7 (i = 1)",
+    "body": "7 arrives. It is greater than 2 on top of the stack, so it answers it and it is popped. Then 7 is pushed to wait for its own answer.",
+    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[7]"
+        },
+        {
+          "name": "answer",
+          "value": "[7, ?, ?, ?, ?, ?, ?]"
+        },
+        {
+          "name": "popped",
+          "value": "2"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Read 3 (i = 2)",
+    "body": "3 arrives. It is not greater than the top of the stack (7), so nothing is answered; 3 is pushed and waits.",
+    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[7, 3]"
+        },
+        {
+          "name": "answer",
+          "value": "[7, ?, ?, ?, ?, ?, ?]"
+        },
+        {
+          "name": "popped",
+          "value": "none"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Read 5 (i = 3)",
+    "body": "5 arrives. It is greater than 3 on top of the stack, so it answers it and it is popped. Then 5 is pushed to wait for its own answer.",
+    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[7, 5]"
+        },
+        {
+          "name": "answer",
+          "value": "[7, ?, 5, ?, ?, ?, ?]"
+        },
+        {
+          "name": "popped",
+          "value": "3"
+        }
+      ],
+      "predict": {
+        "question": "The stack is [7, 3] and 5 arrives. What happens?",
+        "options": [
+          "5 is pushed on top: [7, 3, 5]",
+          "3 is popped and answered with 5, then 5 is pushed: [7, 5]",
+          "7 and 3 are both popped"
+        ],
+        "answer": 1,
+        "explanation": "5 > 3, so 5 is 3's next greater number. 5 < 7, so 7 keeps waiting. The stack stays decreasing: [7, 5].",
+        "hides": [
+          "stack",
+          "answer",
+          "popped"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Read 4 (i = 4)",
+    "body": "4 arrives. It is not greater than the top of the stack (5), so nothing is answered; 4 is pushed and waits.",
+    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[7, 5, 4]"
+        },
+        {
+          "name": "answer",
+          "value": "[7, ?, 5, ?, ?, ?, ?]"
+        },
+        {
+          "name": "popped",
+          "value": "none"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Read 6 (i = 5)",
+    "body": "6 arrives. It is greater than 4, 5 on top of the stack, so it answers them and they are popped. Then 6 is pushed to wait for its own answer.",
+    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[7, 6]"
+        },
+        {
+          "name": "answer",
+          "value": "[7, ?, 5, 6, 6, ?, ?]"
+        },
+        {
+          "name": "popped",
+          "value": "4, 5"
+        }
+      ],
+      "predict": {
+        "question": "The stack is [7, 5, 4] and 6 arrives. How many numbers does 6 answer?",
+        "options": [
+          "One: 4",
+          "Two: 4 and 5",
+          "Three: 4, 5 and 7"
+        ],
+        "answer": 1,
+        "explanation": "6 > 4 and 6 > 5, so both are popped and answered with 6; 6 < 7 stops the loop.",
+        "hides": [
+          "stack",
+          "answer",
+          "popped"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Read 8 (i = 6)",
+    "body": "8 arrives. It is greater than 6, 7 on top of the stack, so it answers them and they are popped. Then 8 is pushed to wait for its own answer.",
+    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "markers": [
+        {
+          "index": 6,
+          "label": "i"
+        }
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[8]"
+        },
+        {
+          "name": "answer",
+          "value": "[7, 8, 5, 6, 6, 8, ?]"
+        },
+        {
+          "name": "popped",
+          "value": "6, 7"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Leftovers",
+    "body": "The numbers still on the stack never met a greater number, so their answer is −1. Each number was pushed once and popped at most once: **O(n)** time.",
+    "code": "// whatever is left on the stack gets -1",
+    "visual": {
+      "cells": [
+        "2",
+        "7",
+        "3",
+        "5",
+        "4",
+        "6",
+        "8"
+      ],
+      "vars": [
+        {
+          "name": "stack",
+          "value": "[8]"
+        },
+        {
+          "name": "answer",
+          "value": "[7, 8, 5, 6, 6, 8, -1]"
+        },
+        {
+          "name": "popped",
+          "value": "·"
+        },
+        {
+          "name": "result",
+          "value": "[7, 8, 5, 6, 6, 8, -1]"
+        }
+      ]
+    }
+  }
+]

@@ -193,15 +193,25 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 | T-554 | Level 13 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
 | T-555 | Sprint 13 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-13-report.md) |
 
-## Sprint 14 — Levels 14 and 15 ([plan](sprints/sprint-14.md))
+## Sprint 14 — Levels 14 and 15 ([plan](sprints/sprint-14.md), closed 2026-11-20)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-556 | Level 14 Prefix Sum & Range Queries content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-557 | Level 14 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-558 | Level 15 Binary Search content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-559 | Level 15 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
-| T-560 | Sprint 14 report | D-007 | P2 | To do |
+| T-556 | Level 14 Prefix Sum & Range Queries content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-557 | Level 14 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
+| T-558 | Level 15 Binary Search content | FR-03, FR-04, D-048 | P1 | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-559 | Level 15 pattern challenges | D-057 | P2 | Done 2026-11-20 (content check); PO review OK |
+| T-560 | Sprint 14 report | D-007 | P2 | Done 2026-11-20: [report](reports/sprint-14-report.md) |
+
+## Sprint 15 — Levels 16 and 17 ([plan](sprints/sprint-15.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-561 | Level 16 Fast & Slow Pointers content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-562 | Level 16 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-563 | Level 17 Monotonic Stack content | FR-03, FR-04, D-048 | P1 | Built 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-564 | Level 17 pattern challenges | D-057 | P2 | Built 2026-11-20 (content check); PO review pending |
+| T-565 | Sprint 15 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 

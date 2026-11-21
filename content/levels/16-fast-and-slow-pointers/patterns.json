@@ -1,0 +1,152 @@
+[
+  {
+    "id": "P16-router-loop",
+    "level": 16,
+    "title": "Router Loop",
+    "statement": "A network packet follows a forwarding table: each of 10,000,000 routers names one next router, or \"deliver\". An embedded tester with almost no memory must decide whether a packet from router 0 gets stuck in a loop.",
+    "examples": [
+      "0 → 5 → 9 → 5 → … loops"
+    ],
+    "constraints": [
+      "n = 10,000,000, O(1) memory"
+    ],
+    "approaches": [
+      {
+        "id": "floyd",
+        "name": "Floyd's cycle detection: one pointer moves one hop, the other two",
+        "hint": "Two speeds",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Detects the loop with two pointers and no memory of visited routers."
+      },
+      {
+        "id": "set",
+        "name": "Follow the packet and store every router visited in a set",
+        "hint": "Remember where you have been",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Correct, but 10,000,000 stored routers do not fit the tester's memory."
+      },
+      {
+        "id": "limit",
+        "name": "Follow up to n hops; if not delivered, call it a loop",
+        "hint": "Count hops",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Also correct with exactly n hops, but it always walks the full n hops even when the loop is tiny."
+      },
+      {
+        "id": "mark",
+        "name": "Change each visited table entry to a marker value",
+        "hint": "Mark the path",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Destroys the forwarding table, which the network still needs."
+      }
+    ]
+  },
+  {
+    "id": "P16-playlist-middle",
+    "level": 16,
+    "title": "Middle of a Streamed Playlist",
+    "statement": "A music app receives a playlist as a singly linked list of unknown length (up to 5,000,000 songs) and wants to start playback at the middle song, using constant extra memory.",
+    "examples": [
+      "1 → 2 → 3 → 4 → 5 → start at 3"
+    ],
+    "constraints": [
+      "Length unknown; O(1) memory"
+    ],
+    "approaches": [
+      {
+        "id": "fastslow",
+        "name": "Walk two pointers at one and two steps; when the fast one ends, the slow one is in the middle",
+        "hint": "Two speeds",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "One pass and no extra memory."
+      },
+      {
+        "id": "count",
+        "name": "Count the songs, then walk half way",
+        "hint": "Two passes",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Correct; it reads the list twice."
+      },
+      {
+        "id": "array",
+        "name": "Copy the songs into an array and index the middle",
+        "hint": "Random access",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Correct, but stores up to 5,000,000 references."
+      },
+      {
+        "id": "guess",
+        "name": "Start at song 2,500,000",
+        "hint": "Use the maximum length",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "The actual length is unknown, so this is usually not the middle."
+      }
+    ]
+  },
+  {
+    "id": "P16-duplicate-badge",
+    "level": 16,
+    "title": "Duplicate Badge Number",
+    "statement": "A read-only log holds 1,000,001 badge numbers, each between 1 and 1,000,000, so at least one number repeats; exactly one value repeats. The log cannot be changed and only a few variables of extra memory are allowed.",
+    "examples": [
+      "[1, 3, 4, 2, 2] → 2"
+    ],
+    "constraints": [
+      "n + 1 values in 1..n; read-only; O(1) memory"
+    ],
+    "approaches": [
+      {
+        "id": "floyd",
+        "name": "Treat each value as a pointer to an index and run Floyd's cycle detection; the cycle's start is the duplicate",
+        "hint": "Values as next pointers",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Two values point to the same index, which creates a cycle whose entrance is the repeated value."
+      },
+      {
+        "id": "set",
+        "name": "Add each number to a hash set until one is already there",
+        "hint": "Remember what you have seen",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(n)",
+        "why": "Correct, but uses up to a million entries of memory."
+      },
+      {
+        "id": "sort",
+        "name": "Sort a copy and look for neighbours that are equal",
+        "hint": "Put them in order",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Needs a copy because the log is read-only."
+      },
+      {
+        "id": "sum",
+        "name": "Subtract 1 + 2 + … + n from the total",
+        "hint": "Arithmetic",
+        "label": "unsuitable",
+        "time": "O(n)",
+        "space": "O(1)",
+        "why": "Only works if the duplicate appears exactly twice and every other number appears once, which the log does not promise."
+      }
+    ]
+  }
+]
