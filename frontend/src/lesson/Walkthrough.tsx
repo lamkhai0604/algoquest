@@ -211,21 +211,23 @@ function Nodes({
     const prevNext = previous.next;
     nodes.forEach((node, i) => {
       if (prevNext[i] === next[i]) return;
-      node
-        .querySelector(`.${styles.nodeNext}`)
-        ?.animate(
-          [
-            { transform: "rotateX(90deg)", opacity: 0 },
-            { transform: "none", opacity: 1 },
-          ],
-          { duration: 380, easing: "ease-out" },
-        );
+      node.querySelector(`.${styles.nodeNext}`)?.animate(
+        [
+          { transform: "rotateX(90deg)", opacity: 0 },
+          { transform: "none", opacity: 1 },
+        ],
+        { duration: 380, easing: "ease-out" },
+      );
     });
     Array.from(list.querySelectorAll(`.${styles.nodeLink}`)).forEach(
       (link, i) => {
         const was = prevNext[i] === i + 1 || prevNext[i + 1] === i;
         const is = next[i] === i + 1 || next[i + 1] === i;
-        if (was !== is || prevNext[i] !== next[i] || prevNext[i + 1] !== next[i + 1]) {
+        if (
+          was !== is ||
+          prevNext[i] !== next[i] ||
+          prevNext[i + 1] !== next[i + 1]
+        ) {
           link.animate(
             [
               { transform: "scale(0.2) rotate(-180deg)", opacity: 0 },
@@ -404,11 +406,7 @@ function Tree({
           const { x, y } = place(i);
           const marks = labels.get(i);
           return (
-            <g
-              key={i}
-              data-node={i}
-              aria-current={marks ? "true" : undefined}
-            >
+            <g key={i} data-node={i} aria-current={marks ? "true" : undefined}>
               <circle
                 className={cx(
                   styles.treeNode,
