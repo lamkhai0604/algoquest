@@ -12,8 +12,8 @@ import java.util.List;
  * (D-059), and optional graph edges: pairs of cell indices that make the cells the vertices of a
  * graph, with optional arrows, visited vertices and grid positions (D-060), plus the edges this
  * step travels, the queue as vertex indices, and each vertex's ring (its distance, or -1) for
- * animation (D-061), and an optional window: the first and last index of a range of cells to
- * shade (D-063). Everything except {@code cells} is optional.
+ * animation (D-061), and an optional window: the first and last index of a range of cells to shade
+ * (D-063). Everything except {@code cells} is optional.
  */
 public record Visual(
     List<String> cells,

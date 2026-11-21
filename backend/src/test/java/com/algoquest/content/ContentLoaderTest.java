@@ -287,7 +287,10 @@ class ContentLoaderTest {
         "\"activeEdges\": [\n        [\n          1,\n          0",
         "\"activeEdges\": [\n        [\n          1,\n          3");
     replace(walkthrough, "\"rings\": [\n        0", "\"rings\": [\n        -2");
-    replace(walkthrough, "\"window\": [\n        0,\n        1", "\"window\": [\n        0,\n        3");
+    replace(
+        walkthrough,
+        "\"window\": [\n        0,\n        1",
+        "\"window\": [\n        0,\n        3");
     replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
 
     List<String> problems = problemsAfterLoad();

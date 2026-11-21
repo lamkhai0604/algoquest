@@ -284,7 +284,9 @@ describe("lesson visualizers match their reference algorithms", () => {
       const sum = nums[left]! + nums[right]!;
       if (step.title.startsWith("Compare")) {
         compared++;
-        expect(value(step, "sum")).toBe(`${nums[left]} + ${nums[right]} = ${sum}`);
+        expect(value(step, "sum")).toBe(
+          `${nums[left]} + ${nums[right]} = ${sum}`,
+        );
         if (sum < target) left++;
         else if (sum > target) right--;
       }
