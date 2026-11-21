@@ -1,0 +1,11 @@
+{
+  "question": "A music app wants the best 30-minute stretch of listening time out of the last 100,000 minutes. After the first stretch, what is the least work to get the next stretch's total?",
+  "options": [
+    "Add all 30 minutes again",
+    "Add the minute that enters and subtract the minute that leaves",
+    "Sort the minutes first",
+    "Look up the total in a hash map"
+  ],
+  "answer": 1,
+  "explanation": "Neighbouring stretches share 29 minutes, so one addition and one subtraction update the total. The whole scan is O(n) instead of O(n · k)."
+}

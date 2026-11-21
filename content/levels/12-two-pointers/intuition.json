@@ -1,0 +1,11 @@
+{
+  "question": "A sorted list has 1,000,000 numbers, and you need two that add up to a target. About how many sums does the two-pointer search check at most?",
+  "options": [
+    "About 1,000,000: one pointer moves after each sum",
+    "About 500,000,000,000: every pair",
+    "About 20: like binary search",
+    "About 1,000: the square root"
+  ],
+  "answer": 0,
+  "explanation": "Every sum moves one pointer inward and no pointer moves back, so after at most n − 1 sums the pointers meet. Checking every pair would take about n²/2 sums."
+}

@@ -268,6 +268,57 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(steps.at(-1)!.visual!.rings).toEqual(dist);
   });
 
+  it("Level 12: the pointers move by the sum rule and the window is the range between them", () => {
+    const steps = walkthrough("12-two-pointers");
+    const nums = steps[0]!.visual!.cells.map(Number);
+    const target = Number(value(steps[0]!, "target"));
+    let left = 0;
+    let right = nums.length - 1;
+    let compared = 0;
+    for (const step of steps.slice(1)) {
+      const v = step.visual!;
+      const at = (label: string) =>
+        v.markers!.find((m) => m.label === label)!.index;
+      expect([at("left"), at("right")]).toEqual([left, right]);
+      expect(v.window).toEqual([left, right]);
+      const sum = nums[left]! + nums[right]!;
+      if (step.title.startsWith("Compare")) {
+        compared++;
+        expect(value(step, "sum")).toBe(
+          `${nums[left]} + ${nums[right]} = ${sum}`,
+        );
+        if (sum < target) left++;
+        else if (sum > target) right--;
+      }
+    }
+    expect(nums[left]! + nums[right]!).toBe(target);
+    expect(compared).toBe(5);
+  });
+
+  it("Level 13: the window matches a reference longest-unique-run scan", () => {
+    const steps = walkthrough("13-sliding-window");
+    const text = steps[0]!.visual!.cells;
+    // Reference: the window after each letter enters, and the best length.
+    const states: { window: number[]; best: number }[] = [];
+    let left = 0;
+    let best = 0;
+    text.forEach((c, right) => {
+      while (text.slice(left, right).includes(c)) left++;
+      best = Math.max(best, right - left + 1);
+      states.push({ window: [left, right], best });
+    });
+    const shown = steps.map((step) => ({
+      window: step.visual!.window!,
+      best: Number(value(step, "best")),
+    }));
+    expect(shown).toEqual(states);
+    for (const step of steps) {
+      const [from = 0, to = 0] = step.visual!.window!;
+      expect(value(step, "in window")).toBe(text.slice(from, to + 1).join(" "));
+    }
+    expect(value(steps.at(-1)!, "result")).toBe(String(best));
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -299,6 +350,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "9-heap-priority-queue",
       "10-graph-fundamentals",
       "11-bit-manipulation-and-math",
+      "12-two-pointers",
+      "13-sliding-window",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

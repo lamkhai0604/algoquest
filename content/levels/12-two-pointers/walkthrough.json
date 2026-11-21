@@ -1,0 +1,328 @@
+[
+  {
+    "title": "The task",
+    "body": "The array is sorted. Find two numbers that add up to **13**. `left` starts at the smallest number and `right` at the largest; the shaded range is what is still possible.",
+    "code": "let left = 0, right = nums.length - 1;",
+    "visual": {
+      "cells": [
+        "-4",
+        "1",
+        "3",
+        "5",
+        "8",
+        "11"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "left"
+        },
+        {
+          "index": 5,
+          "label": "right"
+        }
+      ],
+      "window": [
+        0,
+        5
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "13"
+        },
+        {
+          "name": "sum",
+          "value": "·"
+        },
+        {
+          "name": "move",
+          "value": "·"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Compare -4 + 11",
+    "body": "-4 + 11 = 7, less than 13. Even the largest partner is not enough for -4, so `left` moves right.",
+    "code": "const sum = nums[left] + nums[right];\nif (sum < target) left++;\nelse right--;",
+    "visual": {
+      "cells": [
+        "-4",
+        "1",
+        "3",
+        "5",
+        "8",
+        "11"
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "left"
+        },
+        {
+          "index": 5,
+          "label": "right"
+        }
+      ],
+      "window": [
+        0,
+        5
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "13"
+        },
+        {
+          "name": "sum",
+          "value": "-4 + 11 = 7"
+        },
+        {
+          "name": "move",
+          "value": "left++"
+        }
+      ],
+      "predict": {
+        "question": "-4 + 11 = 7, which is less than 13. Which pointer moves?",
+        "options": [
+          "left moves right",
+          "right moves left",
+          "Both move"
+        ],
+        "answer": 0,
+        "explanation": "Only a bigger left number can raise the sum. -4 is too small even with the largest partner, so it can never be in the answer.",
+        "hides": [
+          "move"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Compare 1 + 11",
+    "body": "1 + 11 = 12, less than 13. Even the largest partner is not enough for 1, so `left` moves right.",
+    "code": "const sum = nums[left] + nums[right];\nif (sum < target) left++;\nelse right--;",
+    "visual": {
+      "cells": [
+        "-4",
+        "1",
+        "3",
+        "5",
+        "8",
+        "11"
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "left"
+        },
+        {
+          "index": 5,
+          "label": "right"
+        }
+      ],
+      "window": [
+        1,
+        5
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "13"
+        },
+        {
+          "name": "sum",
+          "value": "1 + 11 = 12"
+        },
+        {
+          "name": "move",
+          "value": "left++"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Compare 3 + 11",
+    "body": "3 + 11 = 14, more than 13. Even the smallest partner makes 11 too big, so `right` moves left.",
+    "code": "const sum = nums[left] + nums[right];\nif (sum < target) left++;\nelse right--;",
+    "visual": {
+      "cells": [
+        "-4",
+        "1",
+        "3",
+        "5",
+        "8",
+        "11"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "left"
+        },
+        {
+          "index": 5,
+          "label": "right"
+        }
+      ],
+      "window": [
+        2,
+        5
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "13"
+        },
+        {
+          "name": "sum",
+          "value": "3 + 11 = 14"
+        },
+        {
+          "name": "move",
+          "value": "right--"
+        }
+      ],
+      "predict": {
+        "question": "3 + 11 = 14, which is more than 13. Which pointer moves?",
+        "options": [
+          "left moves right",
+          "right moves left",
+          "Stop: no pair exists"
+        ],
+        "answer": 1,
+        "explanation": "Only a smaller right number can lower the sum. 11 is too big even with the smallest remaining partner, 3.",
+        "hides": [
+          "move"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Compare 3 + 8",
+    "body": "3 + 8 = 11, less than 13. Even the largest partner is not enough for 3, so `left` moves right.",
+    "code": "const sum = nums[left] + nums[right];\nif (sum < target) left++;\nelse right--;",
+    "visual": {
+      "cells": [
+        "-4",
+        "1",
+        "3",
+        "5",
+        "8",
+        "11"
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "left"
+        },
+        {
+          "index": 4,
+          "label": "right"
+        }
+      ],
+      "window": [
+        2,
+        4
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "13"
+        },
+        {
+          "name": "sum",
+          "value": "3 + 8 = 11"
+        },
+        {
+          "name": "move",
+          "value": "left++"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Compare 5 + 8",
+    "body": "5 + 8 = 13. Found the pair at indexes **[3, 4]**.",
+    "code": "if (sum === target) return [left, right];",
+    "visual": {
+      "cells": [
+        "-4",
+        "1",
+        "3",
+        "5",
+        "8",
+        "11"
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "left"
+        },
+        {
+          "index": 4,
+          "label": "right"
+        }
+      ],
+      "window": [
+        3,
+        4
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "13"
+        },
+        {
+          "name": "sum",
+          "value": "5 + 8 = 13"
+        },
+        {
+          "name": "move",
+          "value": "found [3, 4]"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Why it works",
+    "body": "Each comparison ruled out one number for good and shrank the shaded range by one. The pointers never move back, so the search takes at most n − 1 comparisons: **O(n) time** with **O(1) extra space**, against O(n²) for checking every pair.",
+    "visual": {
+      "cells": [
+        "-4",
+        "1",
+        "3",
+        "5",
+        "8",
+        "11"
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "left"
+        },
+        {
+          "index": 4,
+          "label": "right"
+        }
+      ],
+      "window": [
+        3,
+        4
+      ],
+      "vars": [
+        {
+          "name": "target",
+          "value": "13"
+        },
+        {
+          "name": "sum",
+          "value": "5 + 8 = 13"
+        },
+        {
+          "name": "move",
+          "value": "found [3, 4]"
+        }
+      ]
+    }
+  }
+]

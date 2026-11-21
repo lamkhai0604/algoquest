@@ -175,7 +175,9 @@
     "fast": "Nhanh",
     "queue": "Hàng đợi (đầu → cuối)",
     "empty": "trống",
-    "rings": "Khoảng cách từ điểm xuất phát:"
+    "rings": "Khoảng cách từ điểm xuất phát:",
+    "window": "Cửa sổ",
+    "windowSize": "độ dài"
   },
   "auth": {
     "title": "Đăng nhập {appName}",

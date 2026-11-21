@@ -43,6 +43,8 @@ export interface Visual {
   queue?: number[] | null;
   /** Each vertex's ring (distance from the start), or -1; colours the vertices (D-061). */
   rings?: number[] | null;
+  /** [start, end] of a range of cells to shade, such as a sliding window (D-063). */
+  window?: number[] | null;
 }
 
 export interface WalkthroughStep {

@@ -1,0 +1,118 @@
+{
+  "id": "L13-unique-blocks",
+  "level": 13,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Unique Name Tags",
+  "statement": "A printer prints a long strip of letters. Name tags are cut from it as blocks of k consecutive letters. Return how many of the possible k-letter blocks (one starting at each position) have no letter repeated.",
+  "examples": [
+    {
+      "input": "strip = \"havefunonleetcode\", k = 5",
+      "output": "6"
+    },
+    {
+      "input": "strip = \"home\", k = 5",
+      "output": "0"
+    }
+  ],
+  "constraints": [
+    "1 <= strip.length <= 100000",
+    "1 <= k <= 100000",
+    "strip has lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Fixed-size window with letter counts",
+    "keyPoints": [
+      "Keep a count of each letter in the current k-letter block",
+      "Slide one letter at a time: add the entering letter, remove the leaving one",
+      "Track how many letters appear more than once; a block counts when that number is 0",
+      "k longer than the strip gives 0"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1): 26 letters",
+    "edgeCases": [
+      "k longer than the strip",
+      "k = 1",
+      "Every block repeats a letter"
+    ],
+    "acceptableSlowerApproaches": [
+      "Check each block with a new set: O(n · k)"
+    ]
+  },
+  "hints": [
+    "Every block has exactly k letters. How can the counts of one block become the counts of the next?",
+    "Slide the window: one letter enters and one leaves.",
+    "Keep counts and the number of letters with count above 1; when it is 0 and the window has k letters, count the block."
+  ],
+  "starterCode": {
+    "javascript": "function uniqueBlocks(strip, k) {\n  // return the number of blocks with no repeated letter\n}",
+    "java": "class Solution {\n  int uniqueBlocks(String strip, int k) {\n    // return the number of blocks with no repeated letter\n  }\n}"
+  },
+  "similarLeetCode": "Find K-Length Substrings With No Repeated Characters",
+  "tests": [
+    {
+      "input": [
+        "havefunonleetcode",
+        5
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        "home",
+        5
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        "abc",
+        1
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "aaaa",
+        2
+      ],
+      "expected": 0
+    },
+    {
+      "input": [
+        "abcabc",
+        3
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        "abab",
+        2
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "elskuiluwibzqynuvjfsdkgxrqftmjodnunsatcekssshgfwlzgqqvirgsxockkldqtmgmnrgfzpfnjiamxeyvogynnvedtlbbwwnfkalizwcqotvaqoqjgkzruylpobarrzarhgmkuiawkwncizwenadtvqkqxospghfzyrfxkvegaxyrdjwoafvracojzfxwqzblpacvyivrcvdrstcxjpxmjteiypuabtagrpdtjvwxwgitmfiqtksoyippnlcddejyrpkudmxpuuamqzoduhhgrixuxkpejjcavyxpmkmuwdqtaseoaifxyozclhfwxenszxfefxinszkhxtqelpnyoamsytwonsihlbuihzqhmgevadlfmqpmltwuvoruldjwagrdzntvcnniarrjpmfifoplsurdevglaxjasxaaoypjnztdtlviypimbhbowcohmorvlxbigzmforggucfgkejfvnnzfawbvobfinkuiunccgugwaezoibugyxjcwhothyxqogiecnewufoeujojfaqvgdzzxwbnfigmhkdvzjgsuicgcraifjsgfvcthmkooruzougzoygeszfkxnorceapcatggtcnbisanqjxrcdndrvrtcotyiizhcmbscvmlyzrenrathoyaipeueygxpzjfqixrqefacovgityumcdpcvfhucmcizqyhkzpelnlirzqsteczctngexxnxtziqiwckxbssgutvbfounjpuxndrcwnlqsrrgqtcqahjkrefzcfleapfmgyvpvekwjiqqdodfmvtitzowevbbbdogfmoumxnrituiptwjhdcsnvnccaysnplnzgtcpmrtnrbczxczmpfzidjwvlkytfkddwxknmeavegznbrqp",
+        4
+      ],
+      "expected": 723
+    },
+    {
+      "input": [
+        "elskuiluwibzqynuvjfsdkgxrqftmjodnunsatcekssshgfwlzgqqvirgsxockkldqtmgmnrgfzpfnjiamxeyvogynnvedtlbbwwnfkalizwcqotvaqoqjgkzruylpobarrzarhgmkuiawkwncizwenadtvqkqxospghfzyrfxkvegaxyrdjwoafvracojzfxwqzblpacvyivrcvdrstcxjpxmjteiypuabtagrpdtjvwxwgitmfiqtksoyippnlcddejyrpkudmxpuuamqzoduhhgrixuxkpejjcavyxpmkmuwdqtaseoaifxyozclhfwxenszxfefxinszkhxtqelpnyoamsytwonsihlbuihzqhmgevadlfmqpmltwuvoruldjwagrdzntvcnniarrjpmfifoplsurdevglaxjasxaaoypjnztdtlviypimbhbowcohmorvlxbigzmforggucfgkejfvnnzfawbvobfinkuiunccgugwaezoibugyxjcwhothyxqogiecnewufoeujojfaqvgdzzxwbnfigmhkdvzjgsuicgcraifjsgfvcthmkooruzougzoygeszfkxnorceapcatggtcnbisanqjxrcdndrvrtcotyiizhcmbscvmlyzrenrathoyaipeueygxpzjfqixrqefacovgityumcdpcvfhucmcizqyhkzpelnlirzqsteczctngexxnxtziqiwckxbssgutvbfounjpuxndrcwnlqsrrgqtcqahjkrefzcfleapfmgyvpvekwjiqqdodfmvtitzowevbbbdogfmoumxnrituiptwjhdcsnvnccaysnplnzgtcpmrtnrbczxczmpfzidjwvlkytfkddwxknmeavegznbrqp",
+        10
+      ],
+      "expected": 144
+    },
+    {
+      "input": [
+        "elskuiluwibzqynuvjfsdkgxrqftmjodnunsatcekssshgfwlzgqqvirgsxockkldqtmgmnrgfzpfnjiamxeyvogynnvedtlbbwwnfkalizwcqotvaqoqjgkzruylpobarrzarhgmkuiawkwncizwenadtvqkqxospghfzyrfxkvegaxyrdjwoafvracojzfxwqzblpacvyivrcvdrstcxjpxmjteiypuabtagrpdtjvwxwgitmfiqtksoyippnlcddejyrpkudmxpuuamqzoduhhgrixuxkpejjcavyxpmkmuwdqtaseoaifxyozclhfwxenszxfefxinszkhxtqelpnyoamsytwonsihlbuihzqhmgevadlfmqpmltwuvoruldjwagrdzntvcnniarrjpmfifoplsurdevglaxjasxaaoypjnztdtlviypimbhbowcohmorvlxbigzmforggucfgkejfvnnzfawbvobfinkuiunccgugwaezoibugyxjcwhothyxqogiecnewufoeujojfaqvgdzzxwbnfigmhkdvzjgsuicgcraifjsgfvcthmkooruzougzoygeszfkxnorceapcatggtcnbisanqjxrcdndrvrtcotyiizhcmbscvmlyzrenrathoyaipeueygxpzjfqixrqefacovgityumcdpcvfhucmcizqyhkzpelnlirzqsteczctngexxnxtziqiwckxbssgutvbfounjpuxndrcwnlqsrrgqtcqahjkrefzcfleapfmgyvpvekwjiqqdodfmvtitzowevbbbdogfmoumxnrituiptwjhdcsnvnccaysnplnzgtcpmrtnrbczxczmpfzidjwvlkytfkddwxknmeavegznbrqp",
+        27
+      ],
+      "expected": 0
+    }
+  ]
+}

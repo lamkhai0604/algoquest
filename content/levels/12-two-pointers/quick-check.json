@@ -1,0 +1,35 @@
+[
+  {
+    "question": "In a sorted list, the sum of the left and right numbers is smaller than the target. What should move?",
+    "options": [
+      "The right pointer, backward",
+      "The left pointer, forward",
+      "Both pointers",
+      "Neither: restart from the middle"
+    ],
+    "answer": 1,
+    "explanation": "Moving left forward makes the left number bigger, which is the only way to increase the sum."
+  },
+  {
+    "question": "What is the extra space of the two-pointer pair search?",
+    "options": [
+      "O(1)",
+      "O(log n)",
+      "O(n)",
+      "O(n²)"
+    ],
+    "answer": 0,
+    "explanation": "Only two indexes are kept, however long the list is."
+  },
+  {
+    "question": "You must remove every 0 from an array in place and keep the other numbers in order. What do the read and write pointers do?",
+    "options": [
+      "read visits every item; write moves only when a non-zero item is copied to it",
+      "Both start at the ends and move inward",
+      "write visits every item; read moves only on zeros",
+      "Sort the array, then cut off the zeros"
+    ],
+    "answer": 0,
+    "explanation": "The write pointer marks where the next kept item goes, so kept items are packed at the front in their original order with O(1) extra space."
+  }
+]
