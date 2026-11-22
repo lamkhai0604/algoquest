@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Profile } from "../game/types";
@@ -76,26 +77,23 @@ describe("profile", () => {
     );
     expect(within(nav).getByRole("link", { name: "Profile" })).toBeVisible();
     expect(within(nav).queryByRole("link", { name: "Admin" })).toBeNull();
-    expect(screen.getByRole("link", { name: /your profile/ })).toHaveAttribute(
+    expect(within(nav).getByRole("link", { name: "Knowledge" })).toBeVisible();
+
+    // Progress and account details sit in two small menus.
+    await userEvent.click(
+      screen.getByRole("button", { name: "Your progress" }),
+    );
+    const progress = screen.getByRole("group", { name: "Your progress" });
+    expect(within(progress).getByText(/Total XP/)).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Account menu" }));
+    const menu = screen.getByRole("group", { name: "Account menu" });
+    expect(within(menu).getByRole("link", { name: "Profile" })).toHaveAttribute(
       "href",
       "/profile",
     );
-  });
-
-  it("shows the System Design tab last, as coming soon", async () => {
-    fakeApi({
-      "GET /api/v1/me": () => json(200, ME),
-      "GET /api/v1/levels": () => json(200, LEVELS),
-    });
-    renderSignedInAt("/system-design");
-
-    const nav = await screen.findByRole("navigation", { name: "Main" });
-    const links = within(nav).getAllByRole("link");
-    expect(links.at(-1)).toHaveTextContent("System DesignSoon");
-    expect(links.at(-1)).toHaveAttribute("aria-current", "page");
     expect(
-      await screen.findByRole("heading", { name: /System Design/ }),
-    ).toHaveTextContent("Coming soon");
-    expect(screen.getByText(/Load balancing/)).toBeVisible();
+      within(menu).getByRole("button", { name: "Sign out" }),
+    ).toBeVisible();
+    expect(screen.queryByRole("group", { name: "Your progress" })).toBeNull();
   });
 });

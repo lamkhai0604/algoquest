@@ -56,7 +56,10 @@ describe("sign-in", () => {
       }),
     );
 
-    expect(await screen.findByText("Demo visitor")).toBeVisible();
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Account menu" }),
+    );
+    expect(screen.getByText("Demo visitor")).toBeVisible();
     expect(screen.getByText("Demo")).toBeVisible();
     expect(getToken()).toBe("jwt-demo");
   });
@@ -108,6 +111,7 @@ describe("sign-in", () => {
     expect(
       await screen.findByRole("heading", { name: "Learning Path" }),
     ).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Account menu" }));
     expect(screen.getByText("Ann")).toBeVisible();
     expect(getToken()).toBe("jwt-1");
     const exchanges = fetchFn.mock.calls.filter(([url]) => isExchange(url));
@@ -134,6 +138,7 @@ describe("sign-in", () => {
 
     renderAt("/");
     await screen.findByRole("heading", { name: "Learning Path" });
+    await userEvent.click(screen.getByRole("button", { name: "Account menu" }));
     await userEvent.click(screen.getByRole("button", { name: "Sign out" }));
 
     expect(
