@@ -15,6 +15,7 @@ import { GameProvider } from "./game/GameProvider";
 import { LessonPage } from "./lesson/LessonPage";
 import { LevelTestPage } from "./leveltest/LevelTestPage";
 import { HomePage } from "./pages/HomePage";
+import { KnowledgePage } from "./pages/KnowledgePage";
 import { LevelPage } from "./pages/LevelPage";
 import { PatternPage } from "./pattern/PatternPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -58,6 +59,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <HomePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/knowledge"
+            element={
+              <RequireAuth>
+                <KnowledgePage />
               </RequireAuth>
             }
           />
