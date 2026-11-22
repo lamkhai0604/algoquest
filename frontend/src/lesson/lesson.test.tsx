@@ -243,7 +243,7 @@ describe("lesson page", () => {
     // The controls sit above the drawing and the explanation, so they keep
     // their place while the content below changes size from step to step.
     expect(
-      next.compareDocumentPosition(variable("best")) &
+      next.compareDocumentPosition(variable("best")!) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 
