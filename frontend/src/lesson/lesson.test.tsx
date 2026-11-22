@@ -540,7 +540,8 @@ describe("lesson page", () => {
     expect(stack).toHaveTextContent("73");
     await userEvent.click(screen.getByRole("button", { name: "Next step" }));
     await userEvent.click(screen.getByRole("button", { name: "DFS (stack)" }));
-    const next = screen.getAllByRole("button", { name: "Next step" })[0]!;
+    // The explorer's own Next step comes after the walkthrough's controls.
+    const next = screen.getAllByRole("button", { name: "Next step" }).at(-1)!;
     await userEvent.click(next);
     await userEvent.click(next);
     expect(screen.getByText("0 → 1")).toBeInTheDocument();
