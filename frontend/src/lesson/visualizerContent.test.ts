@@ -616,10 +616,9 @@ describe("lesson visualizers match their reference algorithms", () => {
       }
       expect(step.visual!.markers![0]!.index).toBe(u);
       expect(step.visual!.visited).toEqual(done);
-      const shown = first.cells
-        .map((name, i) => `${name} ${dist[i] === Infinity ? "∞" : dist[i]}`)
-        .join(" · ");
-      expect(value(step, "dist")).toBe(shown);
+      first.cells.forEach((name, i) => {
+        expect(value(step, name)).toBe(dist[i] === Infinity ? "∞" : String(dist[i]));
+      });
     });
     expect(done).toHaveLength(n);
   });

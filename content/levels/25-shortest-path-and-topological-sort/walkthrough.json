@@ -89,8 +89,28 @@
       ],
       "vars": [
         {
-          "name": "dist",
-          "value": "A 0 · B ∞ · C ∞ · D ∞ · E ∞ · F ∞"
+          "name": "A",
+          "value": "0"
+        },
+        {
+          "name": "B",
+          "value": "∞"
+        },
+        {
+          "name": "C",
+          "value": "∞"
+        },
+        {
+          "name": "D",
+          "value": "∞"
+        },
+        {
+          "name": "E",
+          "value": "∞"
+        },
+        {
+          "name": "F",
+          "value": "∞"
         },
         {
           "name": "frontier",
@@ -212,8 +232,28 @@
       ],
       "vars": [
         {
-          "name": "dist",
-          "value": "A 0 · B 4 · C 2 · D ∞ · E ∞ · F ∞"
+          "name": "A",
+          "value": "0"
+        },
+        {
+          "name": "B",
+          "value": "4"
+        },
+        {
+          "name": "C",
+          "value": "2"
+        },
+        {
+          "name": "D",
+          "value": "∞"
+        },
+        {
+          "name": "E",
+          "value": "∞"
+        },
+        {
+          "name": "F",
+          "value": "∞"
         },
         {
           "name": "frontier",
@@ -340,8 +380,28 @@
       ],
       "vars": [
         {
-          "name": "dist",
-          "value": "A 0 · B 3 · C 2 · D 10 · E 12 · F ∞"
+          "name": "A",
+          "value": "0"
+        },
+        {
+          "name": "B",
+          "value": "3"
+        },
+        {
+          "name": "C",
+          "value": "2"
+        },
+        {
+          "name": "D",
+          "value": "10"
+        },
+        {
+          "name": "E",
+          "value": "12"
+        },
+        {
+          "name": "F",
+          "value": "∞"
         },
         {
           "name": "frontier",
@@ -461,8 +521,28 @@
       ],
       "vars": [
         {
-          "name": "dist",
-          "value": "A 0 · B 3 · C 2 · D 8 · E 12 · F ∞"
+          "name": "A",
+          "value": "0"
+        },
+        {
+          "name": "B",
+          "value": "3"
+        },
+        {
+          "name": "C",
+          "value": "2"
+        },
+        {
+          "name": "D",
+          "value": "8"
+        },
+        {
+          "name": "E",
+          "value": "12"
+        },
+        {
+          "name": "F",
+          "value": "∞"
         },
         {
           "name": "frontier",
@@ -484,8 +564,8 @@
         "answer": 0,
         "explanation": "3 + 5 = 8 is shorter than 10, so D's distance drops to 8.",
         "hides": [
-          "dist",
-          "frontier"
+          "frontier",
+          "D"
         ]
       }
     }
@@ -602,8 +682,28 @@
       ],
       "vars": [
         {
-          "name": "dist",
-          "value": "A 0 · B 3 · C 2 · D 8 · E 10 · F 14"
+          "name": "A",
+          "value": "0"
+        },
+        {
+          "name": "B",
+          "value": "3"
+        },
+        {
+          "name": "C",
+          "value": "2"
+        },
+        {
+          "name": "D",
+          "value": "8"
+        },
+        {
+          "name": "E",
+          "value": "10"
+        },
+        {
+          "name": "F",
+          "value": "14"
         },
         {
           "name": "frontier",
@@ -725,8 +825,28 @@
       ],
       "vars": [
         {
-          "name": "dist",
-          "value": "A 0 · B 3 · C 2 · D 8 · E 10 · F 12"
+          "name": "A",
+          "value": "0"
+        },
+        {
+          "name": "B",
+          "value": "3"
+        },
+        {
+          "name": "C",
+          "value": "2"
+        },
+        {
+          "name": "D",
+          "value": "8"
+        },
+        {
+          "name": "E",
+          "value": "10"
+        },
+        {
+          "name": "F",
+          "value": "12"
         },
         {
           "name": "frontier",
@@ -748,8 +868,8 @@
         "answer": 0,
         "explanation": "10 + 2 = 12 beats the 14 found through D.",
         "hides": [
-          "dist",
-          "frontier"
+          "frontier",
+          "F"
         ]
       }
     }
@@ -859,8 +979,28 @@
       "activeEdges": [],
       "vars": [
         {
-          "name": "dist",
-          "value": "A 0 · B 3 · C 2 · D 8 · E 10 · F 12"
+          "name": "A",
+          "value": "0"
+        },
+        {
+          "name": "B",
+          "value": "3"
+        },
+        {
+          "name": "C",
+          "value": "2"
+        },
+        {
+          "name": "D",
+          "value": "8"
+        },
+        {
+          "name": "E",
+          "value": "10"
+        },
+        {
+          "name": "F",
+          "value": "12"
         },
         {
           "name": "frontier",
