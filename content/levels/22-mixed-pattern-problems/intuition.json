@@ -1,0 +1,11 @@
+{
+  "question": "An interviewer says: \"Given an array of up to 100,000 numbers, return the length of the longest stretch whose sum is at most K. All numbers are positive.\" What should you notice first?",
+  "options": [
+    "Contiguous stretch + positive numbers + a limit: a sliding window fits in O(n)",
+    "Try every start and end: n is small",
+    "It needs dynamic programming over all subsets",
+    "Sort the numbers first"
+  ],
+  "answer": 0,
+  "explanation": "\"Stretch\" means contiguous, and positive numbers mean the sum only grows as the window widens, so a window can grow and shrink in one pass. n = 100,000 rules out O(n²)."
+}

@@ -78,7 +78,7 @@ class ContentLoaderTest {
     assertThat(levels).hasSize(2);
     assertThat(levels.get(1).available()).isTrue();
     assertThat(levels.get(1).problems()).hasSize(6);
-    assertThat(levels.get(1).lesson().walkthrough()).hasSize(5);
+    assertThat(levels.get(1).lesson().walkthrough()).hasSize(6);
     assertThat(levels.get(1).info().phase()).isEqualTo(1);
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().predict().hides())
         .containsExactly("best");
@@ -106,6 +106,12 @@ class ContentLoaderTest {
     assertThat(meetings.chosen()).containsExactly(1);
     assertThat(meetings.line()).isEqualTo(3);
     assertThat(graph.drawsIntervals()).isFalse();
+    Visual table = levels.get(1).lesson().walkthrough().get(5).visual();
+    assertThat(table.drawsTable()).isTrue();
+    assertThat(table.rows()).isEqualTo(2);
+    assertThat(table.columnLabels()).containsExactly("", "a", "b");
+    assertThat(table.reads()).containsExactly(1, 3, 4);
+    assertThat(meetings.drawsTable()).isFalse();
     assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
     PatternChallenge challenge = levels.get(1).patterns().getFirst();
     assertThat(challenge.best().id()).isEqualTo("hash");
@@ -305,6 +311,8 @@ class ContentLoaderTest {
         "\"intervals\": [\n        [\n          1,\n          4",
         "\"intervals\": [\n        [\n          5,\n          4");
     replace(walkthrough, "\"chosen\": [\n        1", "\"chosen\": [\n        3");
+    replace(walkthrough, "\"rows\": 2", "\"rows\": 4");
+    replace(walkthrough, "\"reads\": [\n        1", "\"reads\": [\n        9");
     replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
 
     List<String> problems = problemsAfterLoad();
@@ -324,6 +332,8 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("step 4") && p.contains("rings"))
         .anyMatch(p -> p.contains("step 5") && p.contains("intervals need"))
         .anyMatch(p -> p.contains("step 5") && p.contains("chosen needs"))
+        .anyMatch(p -> p.contains("step 6") && p.contains("a table needs"))
+        .anyMatch(p -> p.contains("step 6") && p.contains("reads needs"))
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Edge cases"));
   }
 }

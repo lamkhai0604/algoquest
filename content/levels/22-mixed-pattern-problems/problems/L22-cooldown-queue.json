@@ -1,0 +1,118 @@
+{
+  "id": "L22-cooldown-queue",
+  "level": 22,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Cooldown Queue",
+  "statement": "A printer runs jobs of different types, written as letters, one per minute. After a job of some type, the printer must wait at least gap minutes before running the same type again; it may idle. Jobs can run in any order. Return the fewest minutes to finish all jobs.",
+  "examples": [
+    {
+      "input": "jobs = \"AAABBB\", gap = 2",
+      "output": "8"
+    },
+    {
+      "input": "jobs = \"AAABBB\", gap = 0",
+      "output": "6"
+    }
+  ],
+  "constraints": [
+    "1 <= jobs.length <= 10^4",
+    "jobs contains uppercase letters",
+    "0 <= gap <= 100"
+  ],
+  "answerKey": {
+    "pattern": "Counting and a formula from the most frequent type",
+    "keyPoints": [
+      "Let f be the highest count and k the number of types with that count",
+      "The busiest type needs (f − 1) blocks of gap + 1 minutes plus k at the end",
+      "The answer is max(total jobs, (f − 1) · (gap + 1) + k)"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1) (26 counters)",
+    "edgeCases": [
+      "gap = 0: just the number of jobs",
+      "One type only",
+      "Many types: no idling needed"
+    ],
+    "acceptableSlowerApproaches": [
+      "Simulate minute by minute with a heap: O(answer · log 26)"
+    ]
+  },
+  "hints": [
+    "Which job type decides how long it takes?",
+    "Lay out the most frequent type with gap empty minutes between; the others fill the gaps.",
+    "Answer = max(jobs.length, (maxCount − 1) × (gap + 1) + number of types with maxCount)."
+  ],
+  "starterCode": {
+    "javascript": "function cooldownQueue(jobs, gap) {\n  // return the fewest minutes\n}",
+    "java": "class Solution {\n  int cooldownQueue(String jobs, int gap) {\n    // return the fewest minutes\n  }\n}"
+  },
+  "similarLeetCode": "Task Scheduler",
+  "tests": [
+    {
+      "input": [
+        "AAABBB",
+        2
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        "AAABBB",
+        0
+      ],
+      "expected": 6
+    },
+    {
+      "input": [
+        "A",
+        5
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "AAAA",
+        3
+      ],
+      "expected": 13
+    },
+    {
+      "input": [
+        "ABCDE",
+        4
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        "AAABBBCCDDE",
+        2
+      ],
+      "expected": 11
+    },
+    {
+      "input": [
+        "CAABAABBBABBACACACACBAAAABCBACCAAABABBCC",
+        4
+      ],
+      "expected": 86
+    },
+    {
+      "input": [
+        "AGGBECFBECEBGGBAABCDFGGGCEBEAEBFCEGCDGBCDEBEEGDDBGACCADEADGEFFCEDBBADGEBBAFCCAGBEECAEEDFEFFBABCBBCGDDEDEAADAEFBDBBCAFCCADBEDEBFGEGDADEAAECFBBDGABDEFDDFFCCFGEEFAFFEDADBFGDDBGEBFGGDBBGFFEAFDABCEEFFFECCGAEABAEFGFADCCDEGFCEABCCCDACCECAGAFEEBCCFAAGFFEACBCBEAGAGECCCFCDFDCCEGCAFEGCFBAGGCGCAEGBBBECFCBBFEEBBFGAFEBCCGEDAFGDBABAAGBGFGBECABBABCFFBDABBFBBFAEFABCECCAGFBAFFCBBCEEEBFFDDAGEGACACGBGBDBDDCCECCCFFCBEFGEAGFAAGCFAFAGBFEAFBEDFBEGBEGCEAAEFBBEDGBDGBCCDDBGFGGBDGFGDGFGGEEFGECAGDAEGDDCFFCABAECCEBDCABABCGADBAECCBABFCCFDBCBBBFBACBGABDGDBEBCGFFBFDCDCDACCDAFFEFBCFDDGGGCACAECCAECFAAEFECDCEDBBFAGDABACBACEBBBFFBGAACCEBFDAFGBADEDAGACEBCCBDADGFAFBFGCEDDEEAGEDFCGDDAGFEFAECFCAEDEEDFBEDEAACCGBADFAEGCCGAGADCDBDDFDEADEBCCGADCDAEAADCGCGFFFFEDACDACGBAGAAFGEEEEAEBCFCEAFEABBAAFDEBEDAABDAGDAAGDCGEDEAEGDADGEBBDBFBCGGBFB",
+        10
+      ],
+      "expected": 1376
+    },
+    {
+      "input": [
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        100
+      ],
+      "expected": 4950
+    }
+  ]
+}

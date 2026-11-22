@@ -180,5 +180,40 @@
         }
       ]
     }
+  },
+  {
+    "title": "Table",
+    "body": "Fill the table.",
+    "visual": {
+      "cells": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "?"
+      ],
+      "rows": 2,
+      "rowLabels": [
+        "",
+        "a"
+      ],
+      "columnLabels": [
+        "",
+        "a",
+        "b"
+      ],
+      "reads": [
+        1,
+        3,
+        4
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "fill"
+        }
+      ]
+    }
   }
 ]

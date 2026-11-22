@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Updated | 2026-11-21 |
-| Sprint | Sprint 17 — Levels 20 and 21: approved 2026-11-20 ([plan](sprints/sprint-17.md)); Sprint 16 closed ([report](reports/sprint-16-report.md)) |
+| Sprint | Sprint 18 — Levels 22 and 23, Phase 3 starts: approved 2026-11-21 ([plan](sprints/sprint-18.md)); Sprint 17 closed and Phase 2 complete ([report](reports/sprint-17-report.md)) |
 | Repository | `lamkhai0604/algoquest` (public, D-039); branches `main` (protected by ruleset) and `dev` |
-| Active work | Interval timeline view, Level 20 Greedy & Intervals and Level 21 Dynamic Programming Fundamentals built on `feat/sprint-17` (T-572 to T-576); screenshots, merge to `dev` and the pull request still to do |
+| Active work | System Design tab, table view, Level 22 Mixed Pattern Problems and Level 23 1D & 2D Dynamic Programming built (T-578 to T-583); waiting on the PO review |
 | Source revision | `dev` (see `git log dev`) |
-| Outstanding changes | Sprint 16 report and Sprint 17 work, on `feat/sprint-17` |
+| Outstanding changes | Sprint 17 report and Sprint 18 work, on `feat/sprint-18` |
 | Verification | GitHub Actions on 2026-11-19: backend verify (203 tests), frontend, smoke (6 passed) |
 | Blockers | None. The live Java check stays paused (D-054) |
-| Next action | Screenshots of the timeline view and both levels, merge `feat/sprint-17` into `dev`, open the pull request and add checklist rows; then the PO reviews and merges |
+| Next action | PO: review Levels 22 and 23 and the System Design page with the checklist, then merge the pull request. Then: Sprint 18 report (T-584) |

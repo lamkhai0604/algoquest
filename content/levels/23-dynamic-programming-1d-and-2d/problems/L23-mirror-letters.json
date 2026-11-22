@@ -1,0 +1,107 @@
+{
+  "id": "L23-mirror-letters",
+  "level": 23,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Mirror Letters",
+  "statement": "A puzzle asks for the longest message that reads the same forwards and backwards, made by deleting some letters (possibly none) from a string s without changing the order of the rest. Return its length.",
+  "examples": [
+    {
+      "input": "s = \"bbbab\"",
+      "output": "4"
+    },
+    {
+      "input": "s = \"cbbd\"",
+      "output": "2"
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 1000",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Interval DP: pal(i, j) = pal(i + 1, j − 1) + 2 if s[i] == s[j], else max(pal(i + 1, j), pal(i, j − 1))",
+    "keyPoints": [
+      "pal(i, i) = 1",
+      "Fill by increasing length, or i from the end and j forward",
+      "Equivalently the LCS of s and its reverse"
+    ],
+    "timeComplexity": "O(n²)",
+    "spaceComplexity": "O(n²), or O(n) with two rows",
+    "edgeCases": [
+      "One letter",
+      "All the same letter",
+      "No repeated letters: 1"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try every subsequence: O(2^n · n)"
+    ]
+  },
+  "hints": [
+    "Compare the first and last letters of a range.",
+    "If they match, both can be the outer pair of the mirror: 2 + inner range.",
+    "Otherwise drop one end and take the better result; fill short ranges before long ones."
+  ],
+  "starterCode": {
+    "javascript": "function mirrorLetters(s) {\n  // return the longest palindromic subsequence length\n}",
+    "java": "class Solution {\n  int mirrorLetters(String s) {\n    // return the longest palindromic subsequence length\n  }\n}"
+  },
+  "similarLeetCode": "Longest Palindromic Subsequence",
+  "tests": [
+    {
+      "input": [
+        "bbbab"
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        "cbbd"
+      ],
+      "expected": 2
+    },
+    {
+      "input": [
+        "a"
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "abcde"
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "aaaa"
+      ],
+      "expected": 4
+    },
+    {
+      "input": [
+        "character"
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        "edeedbcddeeabaacccbcccaabaadcdedeebdbbaa"
+      ],
+      "expected": 27
+    },
+    {
+      "input": [
+        "eececbdbcecaccbaaccaaeadceaebccbbcabceaaabdceaedbdcbbbabccdbdbbbbcbacdcaebaeadabeedcddbcbcbeebedddabceaeccbdcbeebccbbccaeacdcbdceddbebeeaadaabccdbbaecaeabebdecbadedabcedddddabedcecabdcebeeecccdaeeadedcdccedaedbcdddbeccaccabceebccaaebedecbeedbbcccaecdccabcacdabbcebcecbaccadcecbcbddabdacabcedbcedeecbbeeadeeccebdcdaedbceeebeaedeacecddaeebdcbaaeceeabcacbbeadcbceadcbddaadadcbbdbedecbbbebedecceceabbddba"
+      ],
+      "expected": 234
+    },
+    {
+      "input": [
+        "aaccababcbcbbcbaccaaabaaaacacbabaaaccabcacbbbcbbbccacacbaaccccacbbcbbabacbabcbcbababbbabbaabbcbcabcbaccbccbcccbcbbcbbaccbccbaaaacbaabbbcbaaabccaaacabccbacbacabbbbcaccaaaacaaaabbcbcacbbcacaccbcbbaccacabbbacacbacaaabcbacababcbaacccacbcccccaacaaaacacabbbcbbbacbcabaaccbcbabccabbabbccbccbcabcaabacbcaaaacaacbcbbcabbacbcbaacbbcbcbabbccccacaabaacabbacbaaacabaaccbcbcaacbbcaabaabbacbacaabcabcaccaaabaaaacccacbcbccbbbbccacbacbaacccbbaacbcaaacaabbcbaccabcbbbbaabcbccbccacabaabbacabbaacccabbcacbccbbaabccbbbbabccbbcacaccbccbcabcababcbcbabaccaaaacbbacbcccccacbacccabbbcaacbabccabbaaaabcccbbcaccccacbbabbacccccbbbabbcbbbacccaacbacbabcbbacbaacbcbbaabcbbbabbccbccacbbaaaacccbaaacbbbccbabbccccacbaccabbaabbabacabaabbcabbcbcbbbbcaabbcbbccabacaaccaaaaaccccabababcbabbacbbabbccabcaacabccabcccbbcabbbabbcaaacccaaabbaccccbacaaaaaaacabaabcaccaabcccacbccbcacacaccbbaaaccacaccccccbccbcccaaababbaacbbbbcbaccbcbbbaacbaacacccabaaabcacbabbbabbaaaaacccbaccaccbbbbbbbcacaaaabbabccabbbaaabcbaacacbbbcacaabcabbabaaaacaaabbacacbcaaa"
+      ],
+      "expected": 713
+    }
+  ]
+}

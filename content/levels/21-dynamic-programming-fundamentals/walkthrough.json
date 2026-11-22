@@ -186,7 +186,8 @@
         "explanation": "Taking house 3 means house 2 is off limits, so the best is dp[1] + 3 = 10. Skipping keeps 11.",
         "hides": [
           "skip",
-          "take"
+          "take",
+          "cell"
         ]
       }
     }
