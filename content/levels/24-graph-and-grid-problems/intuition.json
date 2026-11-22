@@ -1,0 +1,11 @@
+{
+  "question": "A city has 40,000 street corners and 300 fire stations. For every corner you need the distance to the nearest station. What is the fastest plan?",
+  "options": [
+    "One BFS that starts from all 300 stations at once",
+    "A BFS from every corner until it meets a station",
+    "A BFS from each station, keeping the minimum per corner",
+    "Sort the corners by distance to the city centre"
+  ],
+  "answer": 0,
+  "explanation": "Putting every station in the queue at distance 0 makes one search, and the first time a corner is reached is along a route from its nearest station: O(corners + streets) in total, instead of 300 or 40,000 separate searches."
+}

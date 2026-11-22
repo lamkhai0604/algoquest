@@ -1,0 +1,154 @@
+[
+  {
+    "id": "P24-evacuation-map",
+    "level": 24,
+    "title": "Stadium Evacuation Map",
+    "statement": "A stadium floor plan is a 1,000 × 1,000 grid with walls and 40 exits. Safety staff need, for every seat cell, the walking distance to the nearest exit.",
+    "examples": [
+      "Two exits on a small plan → each cell's distance to the closer exit"
+    ],
+    "constraints": [
+      "10⁶ cells",
+      "40 exits"
+    ],
+    "approaches": [
+      {
+        "id": "multi-bfs",
+        "name": "One BFS starting from all exits at once",
+        "hint": "Many sources, one queue",
+        "label": "best",
+        "time": "O(rows · columns)",
+        "space": "O(rows · columns)",
+        "why": "Each cell is visited once; the first visit comes from its nearest exit."
+      },
+      {
+        "id": "per-exit",
+        "name": "A BFS from each exit, keeping the minimum per cell",
+        "hint": "One search per exit",
+        "label": "valid",
+        "time": "O(exits · rows · columns)",
+        "space": "O(rows · columns)",
+        "why": "Correct, but 40 times the work."
+      },
+      {
+        "id": "per-cell",
+        "name": "A BFS from each seat until it reaches an exit",
+        "hint": "One search per cell",
+        "label": "unsuitable",
+        "time": "O((rows · columns)²) worst case",
+        "space": "O(rows · columns)",
+        "why": "A million searches is far too slow."
+      },
+      {
+        "id": "straight",
+        "name": "Use straight-line distance to the nearest exit",
+        "hint": "Geometry",
+        "label": "unsuitable",
+        "time": "O(cells · exits)",
+        "space": "O(1)",
+        "why": "Ignores walls, so it can be badly wrong."
+      }
+    ]
+  },
+  {
+    "id": "P24-network-merge",
+    "level": 24,
+    "title": "Office Network Merge",
+    "statement": "An IT team plugs in 200,000 cables one at a time between 100,000 devices and, after each cable, must say whether the whole office is now one network.",
+    "examples": [
+      "3 devices, cables 1–2 then 2–3 → no, then yes"
+    ],
+    "constraints": [
+      "10⁵ devices",
+      "2 × 10⁵ cables, online"
+    ],
+    "approaches": [
+      {
+        "id": "dsu",
+        "name": "Union-find with a running count of groups",
+        "hint": "Merge groups",
+        "label": "best",
+        "time": "O(cables · α(n))",
+        "space": "O(devices)",
+        "why": "Each cable is a near-constant merge; one network when the count reaches 1."
+      },
+      {
+        "id": "bfs-each",
+        "name": "Run BFS over all devices after each cable",
+        "hint": "Search again",
+        "label": "unsuitable",
+        "time": "O(cables · (devices + cables))",
+        "space": "O(devices + cables)",
+        "why": "About 6 × 10¹⁰ steps."
+      },
+      {
+        "id": "bfs-end",
+        "name": "BFS once after all cables",
+        "hint": "Search once",
+        "label": "unsuitable",
+        "time": "O(devices + cables)",
+        "space": "O(devices + cables)",
+        "why": "Fast, but answers only at the end, not after each cable."
+      },
+      {
+        "id": "matrix",
+        "name": "Keep a devices × devices reachability matrix",
+        "hint": "All pairs",
+        "label": "unsuitable",
+        "time": "O(devices²) per cable",
+        "space": "O(devices²)",
+        "why": "10¹⁰ cells of memory."
+      }
+    ]
+  },
+  {
+    "id": "P24-puzzle-moves",
+    "level": 24,
+    "title": "Sliding Puzzle Solver",
+    "statement": "A phone game shows a 2 × 3 sliding puzzle with tiles 1–5 and one gap. The game needs the fewest moves from any shuffled position to the solved one, or to say it is impossible.",
+    "examples": [
+      "[[1, 2, 3], [4, 0, 5]] → 1 move"
+    ],
+    "constraints": [
+      "6! = 720 possible positions"
+    ],
+    "approaches": [
+      {
+        "id": "state-bfs",
+        "name": "BFS over board positions, each written as a string",
+        "hint": "States as vertices",
+        "label": "best",
+        "time": "O(720 · moves)",
+        "space": "O(720)",
+        "why": "Few states; BFS gives the fewest moves and finds impossible positions."
+      },
+      {
+        "id": "dfs",
+        "name": "DFS over moves until solved",
+        "hint": "Go deep",
+        "label": "unsuitable",
+        "time": "Exponential without limits",
+        "space": "O(depth)",
+        "why": "Does not give the fewest moves and can loop."
+      },
+      {
+        "id": "greedy",
+        "name": "Always move the tile that is farthest from its place",
+        "hint": "Fix the worst tile",
+        "label": "unsuitable",
+        "time": "O(moves)",
+        "space": "O(1)",
+        "why": "Gets stuck and is not optimal."
+      },
+      {
+        "id": "astar",
+        "name": "A* search with a distance heuristic",
+        "hint": "Guided search",
+        "label": "valid",
+        "time": "Fewer states in practice",
+        "space": "O(states)",
+        "why": "Correct and faster on big puzzles, but more code than needed for 720 states."
+      }
+    ]
+  }
+]

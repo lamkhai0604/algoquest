@@ -143,7 +143,12 @@
         1,
         -1
       ],
-      "explore": true
+      "explore": true,
+      "weights": [
+        "2",
+        "3",
+        "4"
+      ]
     }
   },
   {

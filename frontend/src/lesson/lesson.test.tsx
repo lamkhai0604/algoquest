@@ -349,6 +349,7 @@ describe("lesson page", () => {
               [2, 0],
               [2, 2],
             ],
+            weights: ["4", "11"],
             markers: [{ index: 1, label: "curr" }],
           },
         },
@@ -358,6 +359,11 @@ describe("lesson page", () => {
 
     expect(await screen.findByText("curr")).toBeInTheDocument();
     expect(document.querySelectorAll("svg circle")).toHaveLength(3);
+    expect(
+      Array.from(document.querySelectorAll("[data-weight]")).map((g) =>
+        g.getAttribute("data-weight"),
+      ),
+    ).toEqual(["4", "11"]);
     expect(document.querySelectorAll("svg line")).toHaveLength(2);
     expect(document.querySelectorAll("svg marker")).toHaveLength(1);
     expect(document.querySelectorAll('[data-visited="true"]')).toHaveLength(1);

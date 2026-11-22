@@ -112,6 +112,8 @@ class ContentLoaderTest {
     assertThat(table.columnLabels()).containsExactly("", "a", "b");
     assertThat(table.reads()).containsExactly(1, 3, 4);
     assertThat(meetings.drawsTable()).isFalse();
+    assertThat(graph.weights()).hasSize(graph.edges().size()).startsWith("2");
+    assertThat(meetings.weights()).isNull();
     assertThat(levels.get(1).lesson().intuition().answer()).isEqualTo(1);
     PatternChallenge challenge = levels.get(1).patterns().getFirst();
     assertThat(challenge.best().id()).isEqualTo("hash");
@@ -312,6 +314,7 @@ class ContentLoaderTest {
         "\"intervals\": [\n        [\n          5,\n          4");
     replace(walkthrough, "\"chosen\": [\n        1", "\"chosen\": [\n        3");
     replace(walkthrough, "\"rows\": 2", "\"rows\": 4");
+    replace(walkthrough, "\"weights\": [", "\"weights\": [\"9\", ");
     replace(walkthrough, "\"reads\": [\n        1", "\"reads\": [\n        9");
     replace(level.resolve("lesson.md"), "## Edge cases", "## Edges");
 
@@ -333,6 +336,7 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("step 5") && p.contains("intervals need"))
         .anyMatch(p -> p.contains("step 5") && p.contains("chosen needs"))
         .anyMatch(p -> p.contains("step 6") && p.contains("a table needs"))
+        .anyMatch(p -> p.contains("step 4") && p.contains("weights need"))
         .anyMatch(p -> p.contains("step 6") && p.contains("reads needs"))
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Edge cases"));
   }
