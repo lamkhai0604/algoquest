@@ -3,7 +3,8 @@ import { cx } from "../components";
 import { useTranslation } from "../i18n";
 import { languageName, useCodeLanguage } from "./codeLanguage";
 import styles from "./Lesson.module.css";
-import { LessonFigure, parseFigure } from "./LessonFigure";
+import { LessonFigure } from "./LessonFigure";
+import { parseFigure } from "./figure";
 import { parseInline } from "./parseMarkdown";
 import type { Block } from "./parseMarkdown";
 
@@ -185,7 +186,11 @@ function groupCode(blocks: Block[]): Piece[] {
   const pieces: Piece[] = [];
   for (const block of blocks) {
     const last = pieces[pieces.length - 1];
-    if (block.type === "code" && block.language && block.language !== "figure") {
+    if (
+      block.type === "code" &&
+      block.language &&
+      block.language !== "figure"
+    ) {
       if (
         last &&
         "tabs" in last &&

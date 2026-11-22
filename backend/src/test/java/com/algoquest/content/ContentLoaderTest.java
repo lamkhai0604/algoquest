@@ -345,7 +345,10 @@ class ContentLoaderTest {
   void figureRulesAreChecked() throws IOException {
     Path lesson = level.resolve("lesson.md");
     replace(lesson, "\"items\": [\"A\"]}, {\"op\": \"pop", "\"items\": [\"\"]}, {\"op\": \"pop");
-    replace(lesson, "{\"kind\": \"queue\", \"frames\": [{\"op\": \"enqueue(A)\", \"items\": [\"A\"]}, ", "{\"kind\": \"queue\", \"frames\": [");
+    replace(
+        lesson,
+        "{\"kind\": \"queue\", \"frames\": [{\"op\": \"enqueue(A)\", \"items\": [\"A\"]}, ",
+        "{\"kind\": \"queue\", \"frames\": [");
     replace(lesson, "\"next\": [-1, 0]", "\"next\": [-1, 5]");
     replace(lesson, "plates.webp", "plates.png");
     replace(lesson, "\"kind\": \"image\",", "\"kind\": \"image\", \"size\": 2,");

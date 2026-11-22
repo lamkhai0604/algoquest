@@ -43,8 +43,10 @@ final class ContentValidator {
 
   private static final JsonMapper FIGURE_JSON =
       JsonMapper.builder().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
-  private static final Pattern FIGURE_BLOCK = Pattern.compile("```figure\\n(.*?)\\n```", Pattern.DOTALL);
-  private static final Pattern FIGURE_IMAGE = Pattern.compile("/lesson-images/[a-z0-9]+(-[a-z0-9]+)*\\.webp");
+  private static final Pattern FIGURE_BLOCK =
+      Pattern.compile("```figure\\n(.*?)\\n```", Pattern.DOTALL);
+  private static final Pattern FIGURE_IMAGE =
+      Pattern.compile("/lesson-images/[a-z0-9]+(-[a-z0-9]+)*\\.webp");
   static final int FIGURE_MIN_FRAMES = 2;
   static final int FIGURE_MAX_FRAMES = 6;
   static final int FIGURE_MAX_ITEMS = 8;
@@ -522,11 +524,8 @@ final class ContentValidator {
       problems.add(at + ": only an image has src and alt");
     }
     List<Figure.Frame> frames = figure.frames();
-    if (frames == null
-        || frames.size() < FIGURE_MIN_FRAMES
-        || frames.size() > FIGURE_MAX_FRAMES) {
-      problems.add(
-          at + ": needs " + FIGURE_MIN_FRAMES + " to " + FIGURE_MAX_FRAMES + " frames");
+    if (frames == null || frames.size() < FIGURE_MIN_FRAMES || frames.size() > FIGURE_MAX_FRAMES) {
+      problems.add(at + ": needs " + FIGURE_MIN_FRAMES + " to " + FIGURE_MAX_FRAMES + " frames");
       return;
     }
     for (int i = 0; i < frames.size(); i++) {

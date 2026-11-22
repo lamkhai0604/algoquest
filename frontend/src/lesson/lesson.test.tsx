@@ -5,7 +5,7 @@ import { fakeApi, json, ME } from "../test/fakeApi";
 import { setLocale } from "../i18n";
 import { LEVELS } from "../test/gameData";
 import { renderSignedInAt } from "../test/renderApp";
-import { FIGURE_FRAME_MS } from "./LessonFigure";
+import { FIGURE_FRAME_MS } from "./figure";
 import type { Lesson } from "./types";
 
 const LESSON: Lesson = {

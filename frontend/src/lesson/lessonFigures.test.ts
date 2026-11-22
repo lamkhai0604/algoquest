@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseFigure } from "./LessonFigure";
+import { parseFigure } from "./figure";
 
 /** Every lesson.md in content/, English and translated (D-072). */
 const LESSONS = import.meta.glob<string>(
