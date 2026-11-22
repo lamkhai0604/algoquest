@@ -75,8 +75,8 @@ describe("profile", () => {
       "aria-current",
       "page",
     );
-    expect(within(nav).getByRole("link", { name: "Profile" })).toBeVisible();
-    expect(within(nav).queryByRole("link", { name: "Admin" })).toBeNull();
+    // The main navigation holds only Map and Knowledge (D-071).
+    expect(within(nav).getAllByRole("link")).toHaveLength(2);
     expect(within(nav).getByRole("link", { name: "Knowledge" })).toBeVisible();
 
     // Progress and account details sit in two small menus.

@@ -272,7 +272,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-594 | Level 26 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
 | T-595 | Level 27 Interview Practice content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
 | T-596 | Level 27 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-599 | Tidy the header: remove the System Design item (Phase 4 is on the Learning Path), put streak, XP and hints in a progress menu, and name, language, theme and sign-out in an account menu | FR-02, D-071 | P1 | Built 2026-11-21: frontend tests; screenshots on desktop and phone; PO review pending |
+| T-599 | Tidy the header: remove the System Design item (Phase 4 is on the Learning Path), keep Map and Knowledge in the main navigation, put streak, XP and hints in a progress menu, and name, Profile, Admin, language, theme and sign-out in an account menu | FR-02, D-071 | P1 | Built 2026-11-21: frontend tests; screenshots on desktop and phone; PO review pending |
 | T-597 | Sprint 20 report and Phase 3 summary | D-007 | P2 | To do |
 
 ## Later (unscheduled)
