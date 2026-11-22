@@ -1116,3 +1116,21 @@
     font-size: var(--text-sm);
   }
 }
+
+/* Edge weights (D-069) */
+.graphWeight rect {
+  fill: var(--color-surface);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+
+.graphWeight text {
+  fill: var(--color-text);
+  font: 700 11px var(--font-mono);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.graphWeightActive rect {
+  stroke: var(--color-xp);
+}

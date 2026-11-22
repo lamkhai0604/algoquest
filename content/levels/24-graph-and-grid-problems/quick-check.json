@@ -1,0 +1,35 @@
+[
+  {
+    "question": "In a grid problem, what are usually the vertices and edges?",
+    "options": [
+      "Cells are vertices; moves between neighbouring cells are edges",
+      "Rows are vertices; columns are edges",
+      "Only walls are vertices",
+      "Each value is a vertex"
+    ],
+    "answer": 0,
+    "explanation": "Modelling the grid as a graph lets you reuse BFS and DFS without building an adjacency list."
+  },
+  {
+    "question": "A robot may break up to k walls. Why is BFS over cells alone wrong?",
+    "options": [
+      "Reaching a cell with more breaks left can lead to a shorter route later, so the state needs the breaks left too",
+      "BFS cannot handle walls",
+      "The grid is too large",
+      "Walls make the graph directed"
+    ],
+    "answer": 0,
+    "explanation": "Add the number of breaks left to the state: (row, column, left)."
+  },
+  {
+    "question": "Cables are added one by one. Which tool tells you fastest whether two computers are already connected?",
+    "options": [
+      "Union-find (disjoint set union)",
+      "A new BFS after every cable",
+      "Sorting the cables",
+      "A stack"
+    ],
+    "answer": 0,
+    "explanation": "Union-find answers and merges in almost O(1) each, while a BFS per cable would cost O(n) every time."
+  }
+]

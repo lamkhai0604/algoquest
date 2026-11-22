@@ -254,7 +254,8 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.rows(), b.rows())
               || !java.util.Objects.equals(a.reads(), b.reads())
               || sizeOf(a.rowLabels()) != sizeOf(b.rowLabels())
-              || sizeOf(a.columnLabels()) != sizeOf(b.columnLabels())) {
+              || sizeOf(a.columnLabels()) != sizeOf(b.columnLabels())
+              || sizeOf(a.weights()) != sizeOf(b.weights())) {
             issues.add(
                 folder
                     + "walkthrough.json, step "
@@ -523,6 +524,12 @@ final class ContentValidator {
     }
     checkIntervals(problems, where, visual);
     checkTable(problems, where, visual);
+    if (visual.weights() != null
+        && (visual.edges() == null
+            || visual.weights().size() != visual.edges().size()
+            || visual.weights().contains(null))) {
+      problems.add(where + ": weights need one label per edge");
+    }
     List<Integer> window = visual.window();
     if (window != null && !window.isEmpty()) {
       boolean valid =

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-21 |
+| Status | **Closed 2026-11-21** ([report](../reports/sprint-18-report.md)). Approved by the PO on 2026-11-21 |
 | Goal | Phase 3 starts: Levels 22 and 23 are playable in the five-step lesson format at the standard of Levels 12–21, with pattern challenges; 2-D DP tables are drawn as tables; the main navigation announces the System Design track |
 | Duration | About 1 week from approval |
 | Tasks | T-578, T-579, T-580, T-581, T-582, T-583, T-584 ([BACKLOG.md](../BACKLOG.md)) |

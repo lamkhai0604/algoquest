@@ -1,0 +1,299 @@
+{
+  "id": "L25-alien-dictionary-check",
+  "level": 25,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 3,
+  "title": "Alien Dictionary Check",
+  "statement": "A dictionary from another planet uses lowercase letters in an unknown order. Its words are listed in sorted order by that alphabet. Return true if some ordering of the letters makes the list sorted, and false if the list contradicts itself.",
+  "examples": [
+    {
+      "input": "words = [\"wrt\", \"wrf\", \"er\", \"ett\", \"rftt\"]",
+      "output": "true"
+    },
+    {
+      "input": "words = [\"z\", \"x\", \"z\"]",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "1 <= words.length <= 500",
+    "1 <= words[i].length <= 20",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Build letter rules from neighbouring words, then check for a cycle with topological sort",
+    "keyPoints": [
+      "Compare each word with the next: the first different letter gives a rule a → b",
+      "If a longer word comes before its own prefix, the list is invalid",
+      "Kahn's algorithm: if not every letter can be ordered, there is a cycle"
+    ],
+    "timeComplexity": "O(total letters + 26²)",
+    "spaceComplexity": "O(26²)",
+    "edgeCases": [
+      "One word: true",
+      "Prefix before a longer word is fine; the reverse is not",
+      "Rules that form a cycle"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try every ordering of the letters: O(26!)"
+    ]
+  },
+  "hints": [
+    "What does comparing two neighbouring words tell you?",
+    "Only the first position where they differ gives a rule; the rest says nothing.",
+    "Collect the rules as edges, then run Kahn's algorithm on the letters that appear."
+  ],
+  "starterCode": {
+    "javascript": "function alienDictionaryCheck(words) {\n  // return whether a consistent alphabet exists\n}",
+    "java": "class Solution {\n  boolean alienDictionaryCheck(String[] words) {\n    // return whether a consistent alphabet exists\n  }\n}"
+  },
+  "similarLeetCode": "Alien Dictionary",
+  "tests": [
+    {
+      "input": [
+        [
+          "wrt",
+          "wrf",
+          "er",
+          "ett",
+          "rftt"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "z",
+          "x",
+          "z"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          "abc"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "abc",
+          "ab"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          "ab",
+          "abc"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "ba",
+          "ab",
+          "bb"
+        ]
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        [
+          "db",
+          "c",
+          "cdab",
+          "cccc",
+          "a",
+          "ada",
+          "aca",
+          "acab",
+          "aa",
+          "ab",
+          "bc",
+          "baab"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "f",
+          "fa",
+          "faa",
+          "fc",
+          "fce",
+          "fb",
+          "fg",
+          "feb",
+          "a",
+          "afd",
+          "aac",
+          "ab",
+          "abb",
+          "aebc",
+          "d",
+          "df",
+          "dade",
+          "daba",
+          "dd",
+          "ddgb",
+          "de",
+          "defb",
+          "c",
+          "ca",
+          "cadb",
+          "ccc",
+          "cgdd",
+          "b",
+          "bfg",
+          "ba",
+          "baa",
+          "bde",
+          "bcd",
+          "bg",
+          "g",
+          "gd",
+          "gdcd",
+          "gdbe",
+          "gcf",
+          "gcdd",
+          "gg",
+          "e",
+          "ef",
+          "efb",
+          "ed",
+          "edfe",
+          "ecb",
+          "ebcb",
+          "ee"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "c",
+          "ccaj",
+          "ch",
+          "cah",
+          "caej",
+          "d",
+          "ddc",
+          "dbha",
+          "dbaf",
+          "di",
+          "dec",
+          "da",
+          "b",
+          "bcca",
+          "bcb",
+          "bchh",
+          "bdef",
+          "bbd",
+          "bbag",
+          "bf",
+          "bi",
+          "bjd",
+          "beje",
+          "f",
+          "fcdj",
+          "ff",
+          "fg",
+          "fgcj",
+          "fgi",
+          "fggc",
+          "fh",
+          "feii",
+          "fej",
+          "faf",
+          "i",
+          "idfj",
+          "iigg",
+          "igdb",
+          "igjf",
+          "ijbb",
+          "ihgg",
+          "ia",
+          "iah",
+          "g",
+          "gc",
+          "gcf",
+          "gd",
+          "gb",
+          "gi",
+          "gici",
+          "ggg",
+          "gjff",
+          "gjec",
+          "ghei",
+          "gef",
+          "j",
+          "jcc",
+          "jd",
+          "jddb",
+          "jbb",
+          "jfh",
+          "jg",
+          "jgaj",
+          "jh",
+          "jhbe",
+          "jecc",
+          "ja",
+          "jahi",
+          "h",
+          "hcb",
+          "hce",
+          "hbdd",
+          "hbeh",
+          "hi",
+          "hjjf",
+          "hed",
+          "e",
+          "ebgc",
+          "ebj",
+          "ef",
+          "ead",
+          "eagf",
+          "a",
+          "aca",
+          "adg",
+          "adj",
+          "af",
+          "affj",
+          "agj",
+          "age",
+          "ajd",
+          "aef",
+          "aei"
+        ]
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        [
+          "ab",
+          "ac",
+          "cb",
+          "ca"
+        ]
+      ],
+      "expected": true
+    }
+  ]
+}
