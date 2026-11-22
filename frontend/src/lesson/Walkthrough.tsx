@@ -1322,6 +1322,21 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
   }, [count]);
 
   const step = steps[index];
+  // The stage keeps the tallest height it has reached, so the controls
+  // under it stay in place while stepping back and forth.
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [stageHeight, setStageHeight] = useState(0);
+  useLayoutEffect(() => {
+    const node = stageRef.current;
+    if (!node) return;
+    const measure = () =>
+      setStageHeight((tallest) => Math.max(tallest, node.scrollHeight));
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [index]);
   if (!step) return null;
 
   const visual = step.visual ?? null;
@@ -1366,6 +1381,45 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           {t("walkthrough.step")} {index + 1} {t("lesson.stepOf")}{" "}
           {steps.length}
         </span>
+        <div className={styles.stepButtons}>
+          <Button
+            variant="secondary"
+            disabled={index === 0}
+            onClick={() => go(index - 1)}
+          >
+            {t("lesson.previous")}
+          </Button>
+          <Button disabled={last} onClick={() => go(index + 1)}>
+            {t("lessonMore.nextStep")}
+          </Button>
+          <Button variant="secondary" onClick={reset}>
+            {t("lesson.reset")}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={togglePlay}
+            aria-pressed={running}
+          >
+            {running ? t("walkthrough.pause") : t("walkthrough.play")}
+          </Button>
+          <label className={styles.speed}>
+            <span>{t("walkthrough.speed")}</span>
+            <select
+              value={speed}
+              onChange={(event) => setSpeed(event.target.value as Speed)}
+            >
+              <option value="slow">{t("walkthrough.slow")}</option>
+              <option value="normal">{t("walkthrough.normal")}</option>
+              <option value="fast">{t("walkthrough.fast")}</option>
+            </select>
+          </label>
+        </div>
+        <p className={styles.keys}>{t("walkthrough.keyboard")}</p>
+        <div
+          ref={stageRef}
+          className={styles.stage}
+          style={stageHeight ? { minHeight: stageHeight } : undefined}
+        >
         {visual &&
           (visual.edges && visual.explore ? (
             <Explorer key={index} visual={visual} />
@@ -1409,6 +1463,7 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           />
         )}
         {visual && <Variables visual={visual} hidden={hidden} />}
+        </div>
         {predict && (
           <Predict
             predict={predict}
@@ -1429,40 +1484,6 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
             </>
           )}
         </div>
-        <div className={styles.stepButtons}>
-          <Button
-            variant="secondary"
-            disabled={index === 0}
-            onClick={() => go(index - 1)}
-          >
-            {t("lesson.previous")}
-          </Button>
-          <Button disabled={last} onClick={() => go(index + 1)}>
-            {t("lessonMore.nextStep")}
-          </Button>
-          <Button variant="secondary" onClick={reset}>
-            {t("lesson.reset")}
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={togglePlay}
-            aria-pressed={running}
-          >
-            {running ? t("walkthrough.pause") : t("walkthrough.play")}
-          </Button>
-          <label className={styles.speed}>
-            <span>{t("walkthrough.speed")}</span>
-            <select
-              value={speed}
-              onChange={(event) => setSpeed(event.target.value as Speed)}
-            >
-              <option value="slow">{t("walkthrough.slow")}</option>
-              <option value="normal">{t("walkthrough.normal")}</option>
-              <option value="fast">{t("walkthrough.fast")}</option>
-            </select>
-          </label>
-        </div>
-        <p className={styles.keys}>{t("walkthrough.keyboard")}</p>
       </Card>
       {hasVisuals && (
         <Card>

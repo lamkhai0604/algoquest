@@ -240,6 +240,12 @@ describe("lesson page", () => {
     expect(screen.getByText("Step 1 of 2")).toBeVisible();
     expect(back).toBeDisabled();
     expect(variable("best")).toHaveTextContent("3");
+    // The controls sit above the drawing and the explanation, so they keep
+    // their place while the content below changes size from step to step.
+    expect(
+      next.compareDocumentPosition(variable("best")) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
 
     await userEvent.click(next);
     expect(screen.getByText("Step 2 of 2")).toBeVisible();
