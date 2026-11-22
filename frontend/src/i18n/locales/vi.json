@@ -24,6 +24,8 @@
     "difficultyHard": "Khó"
   },
   "nav": {
+    "knowledgeLesson": "Bài học",
+    "knowledgeCheck": "Kiểm tra kiến thức",
     "knowledge": "Kiến thức",
     "jsOperators": "Toán tử ??, && và ||",
     "map": "Lộ trình học",

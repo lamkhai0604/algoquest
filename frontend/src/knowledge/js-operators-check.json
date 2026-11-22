@@ -1,0 +1,54 @@
+{
+  "en": [
+    {
+      "question": "What do 0 ?? 10 and 0 || 10 return, in that order?",
+      "options": ["0, 10", "10, 10", "0, 0"],
+      "answer": 0,
+      "explanation": "0 is a valid value for ??, but it is falsy for ||."
+    },
+    {
+      "question": "What does true && \"Ready\" return?",
+      "options": ["false", "\"Ready\"", "true"],
+      "answer": 1,
+      "explanation": "The left operand is truthy, so && returns the right operand."
+    },
+    {
+      "question": "What does false && count++ return when count starts at 1?",
+      "options": ["false", "1", "undefined"],
+      "answer": 0,
+      "explanation": "&& returns false immediately. The increment never runs, so count stays at 1."
+    },
+    {
+      "question": "What does 0 ?? (10 || 20) return?",
+      "options": ["10", "0", "20"],
+      "answer": 1,
+      "explanation": "0 is neither null nor undefined, so ?? returns 0 without evaluating the expression in parentheses."
+    }
+  ],
+  "vi": [
+    {
+      "question": "Theo thứ tự, 0 ?? 10 và 0 || 10 trả về gì?",
+      "options": ["0, 10", "10, 10", "0, 0"],
+      "answer": 0,
+      "explanation": "Toán tử ?? giữ nguyên 0, còn || xem 0 là falsy nên trả về 10."
+    },
+    {
+      "question": "Biểu thức true && \"Ready\" trả về gì?",
+      "options": ["false", "\"Ready\"", "true"],
+      "answer": 1,
+      "explanation": "Vế trái là truthy, nên && trả về giá trị ở vế phải."
+    },
+    {
+      "question": "Khi count bắt đầu bằng 1, false && count++ trả về gì?",
+      "options": ["false", "1", "undefined"],
+      "answer": 0,
+      "explanation": "Toán tử && trả về false ngay. Phép tăng không chạy, nên count vẫn là 1."
+    },
+    {
+      "question": "Biểu thức 0 ?? (10 || 20) trả về gì?",
+      "options": ["10", "0", "20"],
+      "answer": 1,
+      "explanation": "Vì 0 không phải null hay undefined, ?? trả về 0 và bỏ qua biểu thức trong ngoặc."
+    }
+  ]
+}

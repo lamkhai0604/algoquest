@@ -24,6 +24,8 @@
     "difficultyHard": "Hard"
   },
   "nav": {
+    "knowledgeLesson": "Lesson",
+    "knowledgeCheck": "Knowledge Check",
     "knowledge": "Knowledge",
     "jsOperators": "Operators ??, &&, and ||",
     "map": "Map",
