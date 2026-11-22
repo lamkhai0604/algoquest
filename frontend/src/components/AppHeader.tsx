@@ -40,6 +40,7 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
         </Link>
         {account && (
           <nav className={styles.nav} aria-label={t("common.main")}>
+            <NavLink to="/knowledge">{t("nav.knowledge")}</NavLink>
             <NavLink to="/" end>
               {t("nav.map")}
             </NavLink>
