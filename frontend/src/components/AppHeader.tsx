@@ -135,10 +135,16 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
               triggerClassName={styles.statsTrigger}
               trigger={
                 <>
-                  <span className={styles.chip} title={t("game.dayStreakTitle")}>
+                  <span
+                    className={styles.chip}
+                    title={t("game.dayStreakTitle")}
+                  >
                     🔥 {stats.streakDays}
                   </span>
-                  <span className={cx(styles.chip, styles.xp)} title={t("game.xp")}>
+                  <span
+                    className={cx(styles.chip, styles.xp)}
+                    title={t("game.xp")}
+                  >
                     ★ {stats.totalXp}
                   </span>
                   <span className={styles.chip} title={t("game.hintsLeft")}>

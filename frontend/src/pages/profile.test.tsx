@@ -80,7 +80,9 @@ describe("profile", () => {
     expect(within(nav).getByRole("link", { name: "Knowledge" })).toBeVisible();
 
     // Progress and account details sit in two small menus.
-    await userEvent.click(screen.getByRole("button", { name: "Your progress" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Your progress" }),
+    );
     const progress = screen.getByRole("group", { name: "Your progress" });
     expect(within(progress).getByText("Total XP")).toBeVisible();
     await userEvent.click(screen.getByRole("button", { name: "Account menu" }));
@@ -89,7 +91,9 @@ describe("profile", () => {
       "href",
       "/profile",
     );
-    expect(within(menu).getByRole("button", { name: "Sign out" })).toBeVisible();
+    expect(
+      within(menu).getByRole("button", { name: "Sign out" }),
+    ).toBeVisible();
     expect(screen.queryByRole("group", { name: "Your progress" })).toBeNull();
   });
 });
