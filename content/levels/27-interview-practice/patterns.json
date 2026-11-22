@@ -1,0 +1,155 @@
+[
+  {
+    "id": "P27-duplicate-orders",
+    "level": 27,
+    "title": "Duplicate Order Detector",
+    "statement": "An online shop receives 1,000,000 orders a day. Support wants to know, for each order, whether the same customer placed an order with the same total in the previous 10 minutes, to catch accidental double payments.",
+    "examples": [
+      "Orders (alice, $30, 9:00) and (alice, $30, 9:04) → second is a duplicate"
+    ],
+    "constraints": [
+      "10⁶ orders, in time order"
+    ],
+    "approaches": [
+      {
+        "id": "window-map",
+        "name": "A hash map from (customer, total) to the last order time, checked in time order",
+        "hint": "Remember the last one",
+        "label": "best",
+        "time": "O(n)",
+        "space": "O(distinct pairs)",
+        "why": "One lookup per order; old entries can be ignored by comparing times."
+      },
+      {
+        "id": "sliding-queue",
+        "name": "A sliding window queue of the last 10 minutes plus a hash set",
+        "hint": "Window with eviction",
+        "label": "valid",
+        "time": "O(n)",
+        "space": "O(orders in 10 minutes)",
+        "why": "Also linear and keeps memory bounded, a bit more code."
+      },
+      {
+        "id": "sort-group",
+        "name": "Sort by customer and total, then compare neighbours",
+        "hint": "Group first",
+        "label": "valid",
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "why": "Works for a daily batch, but not as orders arrive."
+      },
+      {
+        "id": "pairs",
+        "name": "Compare every pair of orders",
+        "hint": "All pairs",
+        "label": "unsuitable",
+        "time": "O(n²)",
+        "space": "O(1)",
+        "why": "10¹² comparisons."
+      }
+    ]
+  },
+  {
+    "id": "P27-meeting-scheduler",
+    "level": 27,
+    "title": "Team Meeting Finder",
+    "statement": "A calendar app must find the earliest 30-minute slot when all 12 people on a team are free next week. Each person has up to 200 busy blocks.",
+    "examples": [
+      "Busy [9–10], [9:30–11]; free from 11:00 → 11:00–11:30"
+    ],
+    "constraints": [
+      "12 people",
+      "≤ 2,400 busy blocks"
+    ],
+    "approaches": [
+      {
+        "id": "merge-gaps",
+        "name": "Merge everyone's busy blocks after sorting, then scan the gaps",
+        "hint": "Merge intervals",
+        "label": "best",
+        "time": "O(B log B)",
+        "space": "O(B)",
+        "why": "One sort and one pass over at most 2,400 blocks."
+      },
+      {
+        "id": "minutes",
+        "name": "Mark busy minutes in an array for the week",
+        "hint": "Timeline array",
+        "label": "valid",
+        "time": "O(B · block length + week minutes)",
+        "space": "O(10,080)",
+        "why": "Simple and fine for one week at minute resolution."
+      },
+      {
+        "id": "pairwise",
+        "name": "Intersect free times person by person",
+        "hint": "Two at a time",
+        "label": "valid",
+        "time": "O(people · B)",
+        "space": "O(B)",
+        "why": "Correct; more steps than merging once."
+      },
+      {
+        "id": "try-slots",
+        "name": "Try every start minute and check all blocks",
+        "hint": "Brute force",
+        "label": "unsuitable",
+        "time": "O(minutes · B)",
+        "space": "O(1)",
+        "why": "About 24 million checks; slow and clumsy."
+      }
+    ]
+  },
+  {
+    "id": "P27-top-songs",
+    "level": 27,
+    "title": "Top Songs Today",
+    "statement": "A music service streams 50 million plays a day across 2 million songs. Every hour it must show the 100 most played songs so far.",
+    "examples": [
+      "Plays a, b, a, c, a, b → top 2: a (3), b (2)"
+    ],
+    "constraints": [
+      "5 × 10⁷ plays",
+      "2 × 10⁶ songs",
+      "k = 100"
+    ],
+    "approaches": [
+      {
+        "id": "count-heap",
+        "name": "Count plays in a hash map, then keep a min-heap of size 100 over the counts",
+        "hint": "Count, then top k",
+        "label": "best",
+        "time": "O(P + S log k)",
+        "space": "O(S)",
+        "why": "One pass to count, and the heap stays tiny."
+      },
+      {
+        "id": "count-sort",
+        "name": "Count, then sort all songs by count",
+        "hint": "Sort everything",
+        "label": "valid",
+        "time": "O(P + S log S)",
+        "space": "O(S)",
+        "why": "Correct; sorts 2 million songs to keep 100."
+      },
+      {
+        "id": "quickselect",
+        "name": "Count, then quickselect the 100th largest",
+        "hint": "Partition",
+        "label": "valid",
+        "time": "O(P + S) average",
+        "space": "O(S)",
+        "why": "Fast on average; more code and an unordered result."
+      },
+      {
+        "id": "rescan",
+        "name": "For each song, count its plays by scanning all plays",
+        "hint": "Count per song",
+        "label": "unsuitable",
+        "time": "O(S · P)",
+        "space": "O(1)",
+        "why": "10¹⁴ steps."
+      }
+    ]
+  }
+]

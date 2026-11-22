@@ -1376,7 +1376,11 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
               masked={waiting}
             />
           ) : visual.edges ? (
-            <Graph visual={visual} previous={previousVisual} masked={waiting} />
+            <Graph
+              visual={shownCells ?? visual}
+              previous={previousVisual}
+              masked={waiting}
+            />
           ) : visual.tree ? (
             <Tree visual={visual} previous={previousVisual} />
           ) : visual.next ? (

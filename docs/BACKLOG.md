@@ -267,11 +267,11 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-592 | Learning Path: Phase 4 System Design and an elective on design patterns, both marked "Coming soon" | D-070 | P2 | To do |
-| T-593 | Level 26 Tries content | FR-03, FR-04, D-048 | P1 | To do |
-| T-594 | Level 26 pattern challenges | D-057 | P2 | To do |
-| T-595 | Level 27 Interview Practice content | FR-03, FR-04, D-048 | P1 | To do |
-| T-596 | Level 27 pattern challenges | D-057 | P2 | To do |
+| T-592 | Learning Path: Phase 4 System Design and an elective on design patterns, both marked "Coming soon" | D-070 | P2 | Built 2026-11-21: frontend test; screenshots; PO review pending |
+| T-593 | Level 26 Tries content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against trie insertion; PO review pending |
+| T-594 | Level 26 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
+| T-595 | Level 27 Interview Practice content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-596 | Level 27 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
 | T-597 | Sprint 20 report and Phase 3 summary | D-007 | P2 | To do |
 
 ## Later (unscheduled)

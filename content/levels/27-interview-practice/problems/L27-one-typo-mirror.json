@@ -1,0 +1,107 @@
+{
+  "id": "L27-one-typo-mirror",
+  "level": 27,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "One-Typo Mirror",
+  "statement": "A word reads the same forwards and backwards if it is a palindrome. Return true if the word becomes a palindrome after deleting at most one letter.",
+  "examples": [
+    {
+      "input": "word = \"aba\"",
+      "output": "true"
+    },
+    {
+      "input": "word = \"abca\"",
+      "output": "true"
+    }
+  ],
+  "constraints": [
+    "1 <= word.length <= 10^5",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Two pointers from both ends; on the first mismatch, try skipping either side once",
+    "keyPoints": [
+      "Move inward while the letters match",
+      "At a mismatch, check whether the rest is a palindrome when skipping the left letter or the right letter",
+      "Only one skip is allowed"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Already a palindrome",
+      "Mismatch at the very ends",
+      "Two mismatches: false"
+    ],
+    "acceptableSlowerApproaches": [
+      "Try deleting every letter and check: O(n²)"
+    ]
+  },
+  "hints": [
+    "Where is the only place a deletion can help?",
+    "At the first pair of letters that do not match.",
+    "Check s[l + 1 .. r] and s[l .. r − 1] for being palindromes."
+  ],
+  "starterCode": {
+    "javascript": "function oneTypoMirror(word) {\n  // return whether one deletion can make a palindrome\n}",
+    "java": "class Solution {\n  boolean oneTypoMirror(String word) {\n    // return whether one deletion can make a palindrome\n  }\n}"
+  },
+  "similarLeetCode": "Valid Palindrome II",
+  "tests": [
+    {
+      "input": [
+        "aba"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abca"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abc"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "a"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "deeee"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "cbbcc"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "cbcbbbaacaaabbaaccaccccaacbbbbaabbbbcaaccccaccaabaaacaabbbcbc"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "bacccabbbcbbbccbbaabcacacacbaaaacbcccaaaacabbaaaaabcbbbacbabccabbbcccbbcaaababbbcbaccccbcabbcaabababccaabccacbcaabccbcabbacacbcbcbccaabccacbcbbbabccaccaaabaaabaccabcbaccbacbbaaacaaaacabbabcabcccbbabaccacbbacbbcacabbcaccbcacabbccccaaabcabbacbcccbbccbcbcacacbaabaaacccacccbaaaccacaccababcbcbabccabcaaacacaacabcbcabcbcacabbbcababbcaaacbcbcbcbbbbbcacbcaaacabcacaccbaaccabaccbbacbbcbbbcaabbcaacacbaccacaaaaaacaccabcacaacbbaacbbbcbbcabbccabaccaabccacacbacaaacbcacbbbbbcbcbcbcaaacbbabacbbbacacbcbacbcbacaacacaaacbaccbabcbcbabaccacaccaaabcccacccaaabaabcacacbcbccbbcccbcabbacbaaaccccbbacacbccacbbacacbbcabbcaccababbcccbacbabbacaaaacaaabbcabccabcbaccabaaabaaaccaccbabbbcbcaccbaacacbcbcbcacabbacbccbaacbcaccbaaccbababaacbbacbccccabcbbbabaaacbbcccbbbaccbabcabbbcbaaaaabbacaaaacccbcaaaabcacacacbaabbccbbbcbbbacccab"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefg"
+      ],
+      "expected": false
+    }
+  ]
+}
