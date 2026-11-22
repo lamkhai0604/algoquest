@@ -30,7 +30,11 @@ export default defineConfig(({ mode }) => {
     define: {
       "import.meta.env.VITE_APP_NAME": JSON.stringify(appName),
     },
-    server: { port: 5173 },
+    server: {
+      port: 5173,
+      // Content tests read the lessons in ../content as raw text.
+      fs: { allow: [".", "../content"] },
+    },
     test: {
       environment: "jsdom",
       globals: true,
