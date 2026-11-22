@@ -24,6 +24,8 @@
     "difficultyHard": "Khó"
   },
   "nav": {
+    "knowledge": "Kiến thức",
+    "jsOperators": "Toán tử ??, && và ||",
     "map": "Lộ trình học",
     "profile": "Hồ sơ",
     "admin": "Quản trị",
