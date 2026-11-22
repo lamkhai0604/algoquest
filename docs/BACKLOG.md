@@ -238,19 +238,30 @@ About two levels per sprint, each at the standard of Levels 4–11 with pattern 
 
 ## Phase 3 roadmap — Interview Mastery (Levels 22–27)
 
-About two levels per sprint at the standard of Levels 12–21. Planned order: Sprint 18 Levels 22–23 (with the table view for 2-D DP, T-579, and the System Design placeholder, T-578), Sprint 19 Levels 24–25, Sprint 20 Levels 26–27.
+About two levels per sprint at the standard of Levels 12–21. Planned order: Sprint 18 Levels 22–23 (with the table view for 2-D DP, T-579, and the System Design placeholder, T-578), Sprint 19 Levels 24–25 (with edge weights, T-586), Sprint 20 Levels 26–27.
 
-## Sprint 18 — Levels 22 and 23 ([plan](sprints/sprint-18.md))
+## Sprint 18 — Levels 22 and 23 ([plan](sprints/sprint-18.md), closed 2026-11-21)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-578 | System Design tab marked "Coming soon": last item of the main navigation and a page listing the planned topics | D-067 | P2 | Built 2026-11-21: frontend test; screenshots on desktop and phone (header wraps below 480 px); PO review pending |
-| T-579 | Table view for 2-D walkthroughs: rows and columns of cells, the cell being filled, the cells it reads | FR-03, D-068 | P1 | Built 2026-11-21: content check rules, loader and rendering tests; a prediction can also hide the marked cell; PO review pending |
-| T-580 | Level 22 Mixed Pattern Problems content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-581 | Level 22 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-582 | Level 23 1D & 2D Dynamic Programming content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against the LCS recurrence; PO review pending |
-| T-583 | Level 23 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-584 | Sprint 18 report | D-007 | P2 | To do |
+| T-578 | System Design tab marked "Coming soon": last item of the main navigation and a page listing the planned topics | D-067 | P2 | Done 2026-11-21: frontend test; screenshots on desktop and phone (header wraps below 480 px); PO review OK |
+| T-579 | Table view for 2-D walkthroughs: rows and columns of cells, the cell being filled, the cells it reads | FR-03, D-068 | P1 | Done 2026-11-21: content check rules, loader and rendering tests; a prediction can also hide the marked cell; PO review OK |
+| T-580 | Level 22 Mixed Pattern Problems content | FR-03, FR-04, D-048 | P1 | Done 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-581 | Level 22 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
+| T-582 | Level 23 1D & 2D Dynamic Programming content | FR-03, FR-04, D-048 | P1 | Done 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against the LCS recurrence; PO review OK |
+| T-583 | Level 23 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
+| T-584 | Sprint 18 report | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-18-report.md) |
+
+## Sprint 19 — Levels 24 and 25 ([plan](sprints/sprint-19.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-586 | Edge weights on the graph view: a label on each edge, and the explorer ignores weights | FR-03, D-069 | P1 | To do |
+| T-587 | Level 24 Graph & Grid Problem Solving content | FR-03, FR-04, D-048 | P1 | To do |
+| T-588 | Level 24 pattern challenges | D-057 | P2 | To do |
+| T-589 | Level 25 Shortest Path & Topological Sort content | FR-03, FR-04, D-048 | P1 | To do |
+| T-590 | Level 25 pattern challenges | D-057 | P2 | To do |
+| T-591 | Sprint 19 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 
