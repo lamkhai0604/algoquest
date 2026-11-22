@@ -4,8 +4,7 @@ import { useTranslation } from "../i18n";
 import { MarkdownBlocks } from "../lesson/Markdown";
 import { parseMarkdown } from "../lesson/parseMarkdown";
 import styles from "../pages/Pages.module.css";
-import operatorsEn from "./js-operators.en.md?raw";
-import operatorsVi from "./js-operators.vi.md?raw";
+import operators from "./js-operators.json";
 
 export function KnowledgePage() {
   const { t } = useTranslation();
@@ -27,7 +26,7 @@ export function KnowledgePage() {
 
 export function JsOperatorsPage() {
   const { locale, t } = useTranslation();
-  const lesson = locale === "vi" ? operatorsVi : operatorsEn;
+  const lesson = operators[locale];
 
   return (
     <div className={styles.page}>
