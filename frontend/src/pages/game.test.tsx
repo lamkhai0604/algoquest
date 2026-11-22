@@ -69,6 +69,10 @@ describe("learning path", () => {
       screen.getByText("Phase 2 · Problem-Solving Patterns"),
     ).toBeVisible();
     expect(screen.getByText("Phase 3 · Interview Mastery")).toBeVisible();
+    expect(screen.getByText("Phase 4 · System Design")).toBeVisible();
+    const elective = screen.getByRole("region", { name: "Design Patterns" });
+    expect(elective).toHaveTextContent("Elective · Design Patterns");
+    expect(elective).toHaveTextContent("Coming soon");
 
     const phases = screen.getAllByRole("group");
     expect(phases).toHaveLength(1);

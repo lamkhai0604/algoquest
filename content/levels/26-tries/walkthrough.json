@@ -1,0 +1,923 @@
+[
+  {
+    "title": "The task",
+    "body": "Store the words **car**, **cat**, **cart** and **dog** so that prefix questions are fast. Each node is a prefix; each edge adds one letter. The number in a node counts the words that pass through it, and a filled node marks the end of a word.",
+    "code": "const root = { children: {}, count: 0, end: false };",
+    "visual": {
+      "cells": [
+        "0"
+      ],
+      "edges": [],
+      "weights": [],
+      "directed": true,
+      "positions": [
+        [
+          3,
+          0
+        ]
+      ],
+      "visited": [],
+      "vars": [
+        {
+          "name": "word",
+          "value": "·"
+        },
+        {
+          "name": "action",
+          "value": "·"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Insert car",
+    "body": "Insert **car**: walk from the root letter by letter. Create 3 new nodes for car. Every node on the path counts one more word, and the last node is marked as a word end.",
+    "code": "let node = root;\nnode.count++;\nfor (const ch of word) {\n  node.children[ch] ??= { children: {}, count: 0, end: false };\n  node = node.children[ch];\n  node.count++;\n}\nnode.end = true;",
+    "visual": {
+      "cells": [
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "weights": [
+        "c",
+        "a",
+        "r"
+      ],
+      "directed": true,
+      "positions": [
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      "visited": [
+        3
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "end"
+        }
+      ],
+      "activeEdges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "vars": [
+        {
+          "name": "word",
+          "value": "car"
+        },
+        {
+          "name": "action",
+          "value": "add c-a-r"
+        },
+        {
+          "name": "result",
+          "value": "1 word"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Insert cat",
+    "body": "Insert **cat**: walk from the root letter by letter. The path ca already exists, so it is shared. Create 1 new node for t. Every node on the path counts one more word, and the last node is marked as a word end.",
+    "code": "let node = root;\nnode.count++;\nfor (const ch of word) {\n  node.children[ch] ??= { children: {}, count: 0, end: false };\n  node = node.children[ch];\n  node.count++;\n}\nnode.end = true;",
+    "visual": {
+      "cells": [
+        "2",
+        "2",
+        "2",
+        "1",
+        "1"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "weights": [
+        "c",
+        "a",
+        "r",
+        "t"
+      ],
+      "directed": true,
+      "positions": [
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "visited": [
+        3,
+        4
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "end"
+        }
+      ],
+      "activeEdges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "vars": [
+        {
+          "name": "word",
+          "value": "cat"
+        },
+        {
+          "name": "action",
+          "value": "reuse ca, add t"
+        },
+        {
+          "name": "result",
+          "value": "2 words"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Insert cart",
+    "body": "Insert **cart**: walk from the root letter by letter. The path car already exists, so it is shared. Create 1 new node for t. Every node on the path counts one more word, and the last node is marked as a word end.",
+    "code": "let node = root;\nnode.count++;\nfor (const ch of word) {\n  node.children[ch] ??= { children: {}, count: 0, end: false };\n  node = node.children[ch];\n  node.count++;\n}\nnode.end = true;",
+    "visual": {
+      "cells": [
+        "3",
+        "3",
+        "3",
+        "2",
+        "1",
+        "1"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "weights": [
+        "c",
+        "a",
+        "r",
+        "t",
+        "t"
+      ],
+      "directed": true,
+      "positions": [
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          0,
+          4
+        ]
+      ],
+      "visited": [
+        3,
+        4,
+        5
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "end"
+        }
+      ],
+      "activeEdges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "vars": [
+        {
+          "name": "word",
+          "value": "cart"
+        },
+        {
+          "name": "action",
+          "value": "reuse car, add t"
+        },
+        {
+          "name": "result",
+          "value": "3 words"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Insert dog",
+    "body": "Insert **dog**: walk from the root letter by letter. Create 3 new nodes for dog. Every node on the path counts one more word, and the last node is marked as a word end.",
+    "code": "let node = root;\nnode.count++;\nfor (const ch of word) {\n  node.children[ch] ??= { children: {}, count: 0, end: false };\n  node = node.children[ch];\n  node.count++;\n}\nnode.end = true;",
+    "visual": {
+      "cells": [
+        "4",
+        "3",
+        "3",
+        "2",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "weights": [
+        "c",
+        "a",
+        "r",
+        "t",
+        "t",
+        "d",
+        "o",
+        "g"
+      ],
+      "directed": true,
+      "positions": [
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          5,
+          3
+        ]
+      ],
+      "visited": [
+        3,
+        4,
+        5,
+        8
+      ],
+      "markers": [
+        {
+          "index": 8,
+          "label": "end"
+        }
+      ],
+      "activeEdges": [
+        [
+          0,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "vars": [
+        {
+          "name": "word",
+          "value": "dog"
+        },
+        {
+          "name": "action",
+          "value": "add d-o-g"
+        },
+        {
+          "name": "result",
+          "value": "4 words"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Count prefix ca",
+    "body": "How many words start with **ca**? Walk c, then a. The answer is already stored in that node: car, cat and cart pass through it.",
+    "code": "let node = root;\nfor (const ch of prefix) {\n  node = node.children[ch];\n  if (!node) return 0;\n}\nreturn node.count;",
+    "visual": {
+      "cells": [
+        "4",
+        "3",
+        "3",
+        "2",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "weights": [
+        "c",
+        "a",
+        "r",
+        "t",
+        "t",
+        "d",
+        "o",
+        "g"
+      ],
+      "directed": true,
+      "positions": [
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          5,
+          3
+        ]
+      ],
+      "visited": [
+        3,
+        4,
+        5,
+        8
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "ca"
+        }
+      ],
+      "activeEdges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "vars": [
+        {
+          "name": "word",
+          "value": "ca"
+        },
+        {
+          "name": "action",
+          "value": "walk c, a"
+        },
+        {
+          "name": "result",
+          "value": "3 words"
+        }
+      ],
+      "predict": {
+        "question": "After inserting car, cat, cart and dog, how many words start with \"ca\"?",
+        "options": [
+          "3",
+          "2",
+          "4",
+          "1"
+        ],
+        "answer": 0,
+        "explanation": "car, cat and cart all pass through the ca node, so its count is 3. The walk takes two steps, whatever the number of words stored.",
+        "hides": [
+          "result",
+          "cell"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Search cab",
+    "body": "Is **cab** stored? Walk c, then a. The a node has no child b, so the search stops: no word and no prefix cab.",
+    "code": "for (const ch of word) {\n  node = node.children[ch];\n  if (!node) return false;   // the path breaks\n}\nreturn node.end;",
+    "visual": {
+      "cells": [
+        "4",
+        "3",
+        "3",
+        "2",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "weights": [
+        "c",
+        "a",
+        "r",
+        "t",
+        "t",
+        "d",
+        "o",
+        "g"
+      ],
+      "directed": true,
+      "positions": [
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          5,
+          3
+        ]
+      ],
+      "visited": [
+        3,
+        4,
+        5,
+        8
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "no b"
+        }
+      ],
+      "activeEdges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "vars": [
+        {
+          "name": "word",
+          "value": "cab"
+        },
+        {
+          "name": "action",
+          "value": "walk c, a; b missing"
+        },
+        {
+          "name": "result",
+          "value": "not found"
+        }
+      ],
+      "predict": {
+        "question": "Searching for \"cab\": what happens after walking c and a?",
+        "options": [
+          "There is no b child, so the search stops: not found",
+          "It finds car, the closest word",
+          "It returns true because ca is stored",
+          "It checks every stored word"
+        ],
+        "answer": 0,
+        "explanation": "A trie search follows one child per letter; a missing child ends it immediately.",
+        "hides": [
+          "action",
+          "result"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Search car",
+    "body": "Is **car** stored as a word? Walk c, a, r. The r node is marked as a word end, so yes, even though cart continues below it. Each search costs the length of the word, not the number of words stored.",
+    "code": "return node.end;",
+    "visual": {
+      "cells": [
+        "4",
+        "3",
+        "3",
+        "2",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "weights": [
+        "c",
+        "a",
+        "r",
+        "t",
+        "t",
+        "d",
+        "o",
+        "g"
+      ],
+      "directed": true,
+      "positions": [
+        [
+          3,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          5,
+          3
+        ]
+      ],
+      "visited": [
+        3,
+        4,
+        5,
+        8
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "end"
+        }
+      ],
+      "activeEdges": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "vars": [
+        {
+          "name": "word",
+          "value": "car"
+        },
+        {
+          "name": "action",
+          "value": "walk c, a, r"
+        },
+        {
+          "name": "result",
+          "value": "found"
+        }
+      ]
+    }
+  }
+]

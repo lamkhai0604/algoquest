@@ -1,0 +1,107 @@
+{
+  "id": "L26-distinct-pieces",
+  "level": 26,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Distinct Pieces",
+  "statement": "A music app shows every distinct non-empty run of consecutive letters (substring) of a song's code name. Return how many distinct substrings the name has.",
+  "examples": [
+    {
+      "input": "name = \"aba\"",
+      "output": "5"
+    },
+    {
+      "input": "name = \"aaa\"",
+      "output": "3"
+    }
+  ],
+  "constraints": [
+    "1 <= name.length <= 300",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Insert every suffix into a trie; each new node is one new distinct substring",
+    "keyPoints": [
+      "Every substring is a prefix of some suffix",
+      "Insert all suffixes; count nodes created (excluding the root)",
+      "Repeated substrings walk existing nodes and add nothing"
+    ],
+    "timeComplexity": "O(n²)",
+    "spaceComplexity": "O(n²)",
+    "edgeCases": [
+      "One letter: 1",
+      "All letters equal: n",
+      "All letters distinct: n (n + 1) / 2"
+    ],
+    "acceptableSlowerApproaches": [
+      "Put every substring in a hash set: O(n³) time for hashing strings"
+    ]
+  },
+  "hints": [
+    "How are substrings related to suffixes?",
+    "Each substring is the start of some suffix.",
+    "Insert the n suffixes into one trie and count the nodes it creates."
+  ],
+  "starterCode": {
+    "javascript": "function distinctPieces(name) {\n  // return the number of distinct substrings\n}",
+    "java": "class Solution {\n  int distinctPieces(String name) {\n    // return the number of distinct substrings\n  }\n}"
+  },
+  "similarLeetCode": "Number of Distinct Substrings in a String",
+  "tests": [
+    {
+      "input": [
+        "aba"
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        "aaa"
+      ],
+      "expected": 3
+    },
+    {
+      "input": [
+        "z"
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "abcd"
+      ],
+      "expected": 10
+    },
+    {
+      "input": [
+        "abab"
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        "aaaabbabbbbaaaabababbbbbbbabaa"
+      ],
+      "expected": 372
+    },
+    {
+      "input": [
+        "bbccacbcacabababbbaccbbbbacaccbbcbbaacacabccabaaabbccaaacaccaaaaaaaaccbabcbbcaccbabbcaabcbacbabcbabbbcaacaabbccbbabacbbaacaacbacbaaabcaccbacbaaaabbbbb"
+      ],
+      "expected": 10781
+    },
+    {
+      "input": [
+        "dihbfddggjafbbeidhdjcdebgaghgadchfcbhgejdfehbhjbhfgcjfddajfbjhgjijgbccgafhbadieicbjebbbihigdhjadjchafhffgjfiafeaffbfhajhecebagdejihhjbfedfgdfgbihcjgahbfciajjahdiejhdhediifhgiacfhjjefebbabeigeeaehiebiejjijbjhciadjddcchebefhhchjciefjijgghfgihejajfchhehbjjjedhcijbeibcchdcdficaedhidejgcecieegiffbbiecdij"
+      ],
+      "expected": 44621
+    },
+    {
+      "input": [
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "expected": 300
+    }
+  ]
+}

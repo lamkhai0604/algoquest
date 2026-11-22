@@ -1,0 +1,108 @@
+{
+  "id": "L27-calculator-line",
+  "level": 27,
+  "difficulty": "Medium",
+  "use": "test",
+  "status": "ready",
+  "title": "Calculator Line",
+  "statement": "A simple calculator reads a line with non-negative integers, the operators +, −, * and /, and spaces. Multiplication and division come before addition and subtraction; division keeps only the whole part (rounding towards zero). Return the result. Every intermediate result fits in a 32-bit integer.",
+  "examples": [
+    {
+      "input": "line = \"3+2*2\"",
+      "output": "7"
+    },
+    {
+      "input": "line = \" 3+5 / 2 \"",
+      "output": "5"
+    }
+  ],
+  "constraints": [
+    "1 <= line.length <= 3 * 10^5",
+    "no parentheses",
+    "the line is a valid expression"
+  ],
+  "answerKey": {
+    "pattern": "One pass with a stack of terms (or a running sum and the last term)",
+    "keyPoints": [
+      "Read a number, then act on the operator before it",
+      "+ pushes the number, − pushes its negative",
+      "* and / combine with the last term on the stack; the answer is the sum"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n), or O(1) with a running sum and last term",
+    "edgeCases": [
+      "Spaces anywhere",
+      "Division that truncates",
+      "A single number"
+    ],
+    "acceptableSlowerApproaches": [
+      "Two passes: first * and /, then + and −: also O(n)"
+    ]
+  },
+  "hints": [
+    "Why can't you add as you go from left to right?",
+    "A later * or / binds tighter than a + before it.",
+    "Keep the last term separate: on * or / update it; on + or − add it to the sum and start a new term."
+  ],
+  "starterCode": {
+    "javascript": "function calculatorLine(line) {\n  // return the result\n}",
+    "java": "class Solution {\n  int calculatorLine(String line) {\n    // return the result\n  }\n}"
+  },
+  "similarLeetCode": "Basic Calculator II",
+  "tests": [
+    {
+      "input": [
+        "3+2*2"
+      ],
+      "expected": 7
+    },
+    {
+      "input": [
+        " 3+5 / 2 "
+      ],
+      "expected": 5
+    },
+    {
+      "input": [
+        "42"
+      ],
+      "expected": 42
+    },
+    {
+      "input": [
+        "1-1+1"
+      ],
+      "expected": 1
+    },
+    {
+      "input": [
+        "14/3*2"
+      ],
+      "expected": 8
+    },
+    {
+      "input": [
+        "2*3-4/5+6"
+      ],
+      "expected": 12
+    },
+    {
+      "input": [
+        "9/78+45*34+41-54+96*55-2+13/58+41/3"
+      ],
+      "expected": 6808
+    },
+    {
+      "input": [
+        "49 + 66 / 17 + 89 / 53 + 29 + 58 * 67 - 71 * 11 - 42 - 1 + 55 / 42 * 73 * 34 - 93 * 83 + 3 / 42 / 55 / 62 + 18 / 84 - 40 + 14 + 8 * 61 - 99 / 1 - 34 + 35 - 12 + 54 + 56 + 49 * 30 * 97 * 98 / 9 - 50"
+      ],
+      "expected": 1550965
+    },
+    {
+      "input": [
+        "21/35/50*5/28-15-81*63-88+28-88/39+37+78/16*68-85-71-25*41+40-95/65*43+12*71/81+75+91*43-4*12+64/73-45/47+23-73/55*51+23+85-58*60/88+55+41*17+18+30+81*78/72+69*77-62+61*2-30/43*61*84*15/22+58/93/65/83/75+73-31-63+71-77-97*38-13*99*77+36/83+46/87*95-72/58-44/8+41-34*91+84*59+76/47-47*34+27/63-36+58/11*4-2*4-63+26*55/57/8*77+74*6-7*25*17+75+89+49+97+24*16*37+83/7/36*26-24-88+74/48/70-34-59/34+13-27*77*81/50/18+82-3/86/38*67*56/32*68/92-57"
+      ],
+      "expected": -86481
+    }
+  ]
+}

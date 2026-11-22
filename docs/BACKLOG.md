@@ -252,16 +252,27 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-583 | Level 23 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
 | T-584 | Sprint 18 report | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-18-report.md) |
 
-## Sprint 19 — Levels 24 and 25 ([plan](sprints/sprint-19.md))
+## Sprint 19 — Levels 24 and 25 ([plan](sprints/sprint-19.md), closed 2026-11-21)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-586 | Edge weights on the graph view: a label on each edge, and the explorer ignores weights | FR-03, D-069 | P1 | Built 2026-11-21: content check rule, loader and rendering tests; PO review pending |
-| T-587 | Level 24 Graph & Grid Problem Solving content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against multi-source BFS; PO review pending |
-| T-588 | Level 24 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-589 | Level 25 Shortest Path & Topological Sort content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against Dijkstra; PO review pending |
-| T-590 | Level 25 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-591 | Sprint 19 report | D-007 | P2 | To do |
+| T-586 | Edge weights on the graph view: a label on each edge, and the explorer ignores weights | FR-03, D-069 | P1 | Done 2026-11-21: content check rule, loader and rendering tests; PO review OK |
+| T-587 | Level 24 Graph & Grid Problem Solving content | FR-03, FR-04, D-048 | P1 | Done 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against multi-source BFS; PO review OK |
+| T-588 | Level 24 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
+| T-589 | Level 25 Shortest Path & Topological Sort content | FR-03, FR-04, D-048 | P1 | Done 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against Dijkstra; PO review OK |
+| T-590 | Level 25 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
+| T-591 | Sprint 19 report | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-19-report.md) |
+
+## Sprint 20 — Levels 26 and 27 ([plan](sprints/sprint-20.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-592 | Learning Path: Phase 4 System Design and an elective on design patterns, both marked "Coming soon" | D-070 | P2 | Built 2026-11-21: frontend test; screenshots; PO review pending |
+| T-593 | Level 26 Tries content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against trie insertion; PO review pending |
+| T-594 | Level 26 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
+| T-595 | Level 27 Interview Practice content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
+| T-596 | Level 27 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
+| T-597 | Sprint 20 report and Phase 3 summary | D-007 | P2 | To do |
 
 ## Later (unscheduled)
 
@@ -277,3 +288,4 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-507 | Battle mode | FR-16 |
 | T-549 | Admin action to delete old demo accounts | FR-17, D-062 |
 | T-585 | System Design track: lessons, animated architecture diagrams, design questions graded by AI | D-067 |
+| T-598 | Design patterns elective: lessons and practice on common object-oriented design patterns | D-070 |

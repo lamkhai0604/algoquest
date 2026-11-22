@@ -8,7 +8,7 @@ A web app for learning the algorithm patterns used in coding interviews. Topics 
 
 ![Breadth-first search playing step by step: the queue, the travelled edges, and the vertices coloured by distance](docs/media/bfs-animation.gif)
 
-> **Status: Phase 2 under way.** Levels 1–25 are playable, from Big-O to graphs and on through two pointers, sliding windows, prefix sums, binary search, fast and slow pointers, monotonic stacks, graph search patterns, backtracking, greedy algorithms with intervals, dynamic programming in one and two dimensions, mixed problems that do not name their pattern, graph and grid modelling, and shortest paths with topological order. Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
+> **Status: Phase 2 under way.** Levels 1–27 are playable, from Big-O to graphs and on through two pointers, sliding windows, prefix sums, binary search, fast and slow pointers, monotonic stacks, graph search patterns, backtracking, greedy algorithms with intervals, dynamic programming in one and two dimensions, mixed problems that do not name their pattern, graph and grid modelling, shortest paths with topological order, tries, and interview practice. System Design (Phase 4) and a design patterns elective are announced as coming soon. Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
 
 ## What it does
 

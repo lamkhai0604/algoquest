@@ -35,6 +35,11 @@ const PHASES = [
     titleKey: "home.mastery",
     goalKey: "home.masteryGoal",
   },
+  {
+    number: 4,
+    titleKey: "home.systemDesign",
+    goalKey: "home.systemDesignGoal",
+  },
 ] as const;
 
 function stateLabel(
@@ -214,6 +219,7 @@ function PhaseSection({
 }
 
 function LearningPath({ levels }: { levels: Level[] }) {
+  const { t } = useTranslation();
   const current = currentLevel(levels);
   const byPhase = PHASES.map((phase) =>
     levels.filter((level) => level.phase === phase.number),
@@ -236,6 +242,22 @@ function LearningPath({ levels }: { levels: Level[] }) {
           }
         />
       ))}
+      <section
+        className={cx(game.phase, game.phaseLocked)}
+        aria-label={t("home.designPatterns")}
+      >
+        <div className={game.phaseSummary}>
+          <span className={game.phaseText}>
+            <span className={game.phaseTitle}>
+              {t("home.elective")} · {t("home.designPatterns")}
+            </span>
+            <span className={game.phaseGoal}>
+              {t("home.designPatternsGoal")}
+            </span>
+          </span>
+          <Badge>{t("common.comingSoon")}</Badge>
+        </div>
+      </section>
     </>
   );
 }

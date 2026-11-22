@@ -24,6 +24,8 @@
     "difficultyHard": "Khó"
   },
   "nav": {
+    "knowledge": "Kiến thức",
+    "jsOperators": "Toán tử ??, && và ||",
     "map": "Lộ trình học",
     "profile": "Hồ sơ",
     "admin": "Quản trị",
@@ -121,7 +123,12 @@
     "locked": "Đã khóa",
     "readLesson": "Đọc bài học",
     "levelXp": "XP cấp độ",
-    "loading": "Đang tải các cấp độ…"
+    "loading": "Đang tải các cấp độ…",
+    "systemDesign": "Thiết kế hệ thống",
+    "systemDesignGoal": "Thiết kế dịch vụ chịu tải lớn: cân bằng tải, caching, cơ sở dữ liệu, hàng đợi, và các bài thiết kế trọn vẹn trình bày như khi phỏng vấn.",
+    "elective": "Ngoại khóa",
+    "designPatterns": "Design Patterns",
+    "designPatternsGoal": "Tùy chọn: các mẫu thiết kế hướng đối tượng phổ biến, khi nào nên dùng và khi nào chỉ làm code phức tạp thêm."
   },
   "profile": {
     "back": "Quay lại lộ trình học",

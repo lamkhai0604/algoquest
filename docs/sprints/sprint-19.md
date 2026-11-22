@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-21 |
+| Status | **Closed 2026-11-21** ([report](../reports/sprint-19-report.md)). Approved by the PO on 2026-11-21 |
 | Goal | Levels 24 and 25 are playable in the five-step lesson format at the standard of Levels 12–23, with pattern challenges; weighted graphs show the cost of each edge |
 | Duration | About 1 week from approval |
 | Tasks | T-586, T-587, T-588, T-589, T-590, T-591 ([BACKLOG.md](../BACKLOG.md)) |

@@ -24,6 +24,8 @@
     "difficultyHard": "Hard"
   },
   "nav": {
+    "knowledge": "Knowledge",
+    "jsOperators": "Operators ??, &&, and ||",
     "map": "Map",
     "profile": "Profile",
     "admin": "Admin",
@@ -121,7 +123,12 @@
     "locked": "Locked",
     "readLesson": "Read lesson",
     "levelXp": "Level XP",
-    "loading": "Loading levels…"
+    "loading": "Loading levels…",
+    "systemDesign": "System Design",
+    "systemDesignGoal": "Design services that scale: load balancing, caching, databases, queues, and full designs explained like in an interview.",
+    "elective": "Elective",
+    "designPatterns": "Design Patterns",
+    "designPatternsGoal": "Optional: common object-oriented design patterns, when each one helps, and when it adds needless complexity."
   },
   "profile": {
     "back": "Back to the Learning Path",
