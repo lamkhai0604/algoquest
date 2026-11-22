@@ -115,10 +115,17 @@ describe("sign-in", () => {
     });
     renderAt("/sign-in");
 
-    await userEvent.type(await screen.findByLabelText("Email"), "owner@example.com");
+    await userEvent.type(
+      await screen.findByLabelText("Email"),
+      "owner@example.com",
+    );
     await userEvent.type(screen.getByLabelText("Password"), "a-long-password");
-    expect(screen.queryByRole("link", { name: "Continue with Google" })).toBeNull();
-    expect(screen.queryByRole("link", { name: "Continue with GitHub" })).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "Continue with Google" }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "Continue with GitHub" }),
+    ).toBeNull();
     expect(
       screen.queryByRole("button", { name: "Try the demo, no account needed" }),
     ).toBeNull();
@@ -146,7 +153,10 @@ describe("sign-in", () => {
     });
     renderAt("/sign-in");
 
-    await userEvent.type(await screen.findByLabelText("Email"), "owner@example.com");
+    await userEvent.type(
+      await screen.findByLabelText("Email"),
+      "owner@example.com",
+    );
     await userEvent.type(screen.getByLabelText("Password"), "not-the-password");
     await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
