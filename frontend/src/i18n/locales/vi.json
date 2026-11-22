@@ -24,6 +24,7 @@
     "difficultyHard": "Khó"
   },
   "nav": {
+    "knowledge": "Kiến thức",
     "map": "Lộ trình học",
     "profile": "Hồ sơ",
     "admin": "Quản trị",
@@ -209,6 +210,8 @@
     "demoUsedUp": "Hôm nay đã hết lượt dùng thử. Hãy thử lại vào ngày mai, hoặc đăng nhập bằng Google hay GitHub."
   },
   "misc": {
+    "knowledgeTopic": "Nền tảng ngôn ngữ lập trình",
+    "knowledgeStatus": "Các bài học đang được soạn.",
     "notFound": "Không tìm thấy trang",
     "backQuest": "Quay lại hành trình học",
     "themeLight": "Chuyển sang giao diện sáng",
