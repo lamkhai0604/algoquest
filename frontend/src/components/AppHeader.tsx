@@ -15,7 +15,7 @@ export interface HeaderStats {
 
 export interface HeaderAccount {
   name: string;
-  /** Shows the Admin link (FR-18: users with at least one admin permission). */
+  /** Shows the Admin link in the account menu (FR-18: users with at least one admin permission). */
   isAdmin?: boolean;
   /** Marks a visitor's demo account (D-062). */
   isDemo?: boolean;
@@ -122,8 +122,6 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
               {t("nav.map")}
             </NavLink>
             <NavLink to="/knowledge">{t("nav.knowledge")}</NavLink>
-            <NavLink to="/profile">{t("nav.profile")}</NavLink>
-            {account.isAdmin && <NavLink to="/admin">{t("nav.admin")}</NavLink>}
           </nav>
         )}
       </div>
@@ -193,6 +191,11 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
               <Link to="/profile" className={styles.panelLink}>
                 {t("nav.profile")}
               </Link>
+              {account.isAdmin && (
+                <Link to="/admin" className={styles.panelLink}>
+                  {t("nav.admin")}
+                </Link>
+              )}
               <div className={styles.row}>
                 <span>{t("nav.language")}</span>
                 <LanguageSelect />
