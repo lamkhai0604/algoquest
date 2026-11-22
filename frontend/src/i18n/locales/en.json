@@ -24,6 +24,8 @@
     "difficultyHard": "Hard"
   },
   "nav": {
+    "knowledge": "Knowledge",
+    "jsOperators": "Operators ??, &&, and ||",
     "map": "Map",
     "profile": "Profile",
     "admin": "Admin",

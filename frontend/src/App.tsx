@@ -12,6 +12,7 @@ import { AppFooter, AppHeader, WakingServer } from "./components";
 import type { HeaderAccount } from "./components";
 import { hintsLeft, streakDays, totalXp, useGame } from "./game/gameContext";
 import { GameProvider } from "./game/GameProvider";
+import { JsOperatorsPage, KnowledgePage } from "./knowledge/KnowledgePage";
 import { LessonPage } from "./lesson/LessonPage";
 import { LevelTestPage } from "./leveltest/LevelTestPage";
 import { HomePage } from "./pages/HomePage";
@@ -53,6 +54,22 @@ export function AppRoutes() {
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/ui-kit" element={<UiKitPage />} />
+          <Route
+            path="/knowledge"
+            element={
+              <RequireAuth>
+                <KnowledgePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/knowledge/js/operators"
+            element={
+              <RequireAuth>
+                <JsOperatorsPage />
+              </RequireAuth>
+            }
+          />
           <Route
             path="/"
             element={
