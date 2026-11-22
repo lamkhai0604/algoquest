@@ -3,6 +3,8 @@ import { cx } from "../components";
 import { useTranslation } from "../i18n";
 import { languageName, useCodeLanguage } from "./codeLanguage";
 import styles from "./Lesson.module.css";
+import { LessonFigure } from "./LessonFigure";
+import { parseFigure } from "./figure";
 import { parseInline } from "./parseMarkdown";
 import type { Block } from "./parseMarkdown";
 
@@ -141,8 +143,12 @@ function BlockView({ block }: { block: Block }) {
           <InlineText text={block.text} />
         </blockquote>
       );
-    case "code":
+    case "code": {
+      const figure =
+        block.language === "figure" ? parseFigure(block.code) : null;
+      if (figure) return <LessonFigure figure={figure} />;
       return <CodeBlock code={block.code} language={block.language} />;
+    }
     case "table":
       return (
         <div className={styles.tableWrap}>
@@ -180,7 +186,11 @@ function groupCode(blocks: Block[]): Piece[] {
   const pieces: Piece[] = [];
   for (const block of blocks) {
     const last = pieces[pieces.length - 1];
-    if (block.type === "code" && block.language) {
+    if (
+      block.type === "code" &&
+      block.language &&
+      block.language !== "figure"
+    ) {
       if (
         last &&
         "tabs" in last &&

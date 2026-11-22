@@ -22,9 +22,35 @@ Same idea, opposite order. Undo needs the newest item; the printer needs the old
 
 - Use a stack when the newest unfinished thing must be dealt with first: closing the most recent open bracket, undoing the latest action, going back to the previous page.
 
+```figure
+{
+  "kind": "stack",
+  "caption": "**Last in, first out.** `pop` always takes the plate on top: the one pushed most recently.",
+  "frames": [
+    {"op": "push(A)", "items": ["A"]},
+    {"op": "push(B)", "items": ["A", "B"]},
+    {"op": "push(C)", "items": ["A", "B", "C"]},
+    {"op": "pop() → C", "items": ["A", "B"], "out": "C"}
+  ]
+}
+```
+
 **A queue is a line at a counter.** People join at the back (`enqueue`) and are served from the front (`dequeue`): **first in, first out (FIFO)**.
 
 - Use a queue when things must be handled in arrival order: print jobs, customers, turns in a game, and later, breadth-first search.
+
+```figure
+{
+  "kind": "queue",
+  "caption": "**First in, first out.** New items join at the back; `dequeue` serves the front.",
+  "frames": [
+    {"op": "enqueue(A)", "items": ["A"]},
+    {"op": "enqueue(B)", "items": ["A", "B"]},
+    {"op": "enqueue(C)", "items": ["A", "B", "C"]},
+    {"op": "dequeue() → A", "items": ["B", "C"], "out": "A"}
+  ]
+}
+```
 
 **A deque (double-ended queue) is a line with two doors.** You can add or remove at the front and at the back, each in O(1). A stack and a queue are both special cases of a deque.
 

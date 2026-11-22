@@ -22,11 +22,35 @@ Think of an array as a row of numbered lockers that sit side by side in memory.
 - **Inserting or deleting in the middle is O(n).** Every item after the gap has to shift by one.
 - **Searching an unsorted array is O(n).** Without an index, you look at items one by one.
 
+```figure
+{
+  "kind": "visual",
+  "caption": "Inserting **7** at index 1 moves every later item one place to the right: O(n).",
+  "frames": [
+    {"op": "a = [3, 8, 5, 9]", "visual": {"cells": ["3", "8", "5", "9", "·"], "markers": [{"index": 1, "label": "here"}]}},
+    {"op": "shift 9, 5, 8 right", "visual": {"cells": ["3", "·", "8", "5", "9"], "window": [2, 4], "markers": [{"index": 1, "label": "gap"}]}},
+    {"op": "a[1] = 7", "visual": {"cells": ["3", "7", "8", "5", "9"], "markers": [{"index": 1, "label": "new"}]}}
+  ]
+}
+```
+
 A **string** is an array of characters with one extra rule: in Java and JavaScript it cannot be changed. `s + "x"` makes a brand-new string and copies every character. Doing that inside a loop copies more and more each time, which adds up to O(n²). The fix is to collect pieces in an array (JavaScript) or a `StringBuilder` (Java) and join them once at the end.
 
 Characters are also numbers: `'a'` is 97 and `'z'` is 122. Subtracting 97 turns a letter into a position from 0 to 25, which is handy for shifting letters or counting them.
 
 A **grid** (2D array) is an array of rows: `grid[row][col]`. Moving right means `col + 1`; moving down means `row + 1`.
+
+```figure
+{
+  "kind": "visual",
+  "caption": "Moving right adds 1 to `col`; moving down adds 1 to `row`.",
+  "frames": [
+    {"op": "grid[0][1]", "visual": {"cells": ["4", "7", "1", "2", "9", "5"], "rows": 2, "rowLabels": ["row 0", "row 1"], "columnLabels": ["col 0", "col 1", "col 2"], "reads": [1]}},
+    {"op": "right: grid[0][2]", "visual": {"cells": ["4", "7", "1", "2", "9", "5"], "rows": 2, "rowLabels": ["row 0", "row 1"], "columnLabels": ["col 0", "col 1", "col 2"], "reads": [2]}},
+    {"op": "down: grid[1][2]", "visual": {"cells": ["4", "7", "1", "2", "9", "5"], "rows": 2, "rowLabels": ["row 0", "row 1"], "columnLabels": ["col 0", "col 1", "col 2"], "reads": [5]}}
+  ]
+}
+```
 
 ## When to use
 

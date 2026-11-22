@@ -340,4 +340,33 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("step 6") && p.contains("reads needs"))
         .anyMatch(p -> p.contains("lesson.md") && p.contains("Edge cases"));
   }
+
+  @Test
+  void figureRulesAreChecked() throws IOException {
+    Path lesson = level.resolve("lesson.md");
+    replace(lesson, "\"items\": [\"A\"]}, {\"op\": \"pop", "\"items\": [\"\"]}, {\"op\": \"pop");
+    replace(
+        lesson,
+        "{\"kind\": \"queue\", \"frames\": [{\"op\": \"enqueue(A)\", \"items\": [\"A\"]}, ",
+        "{\"kind\": \"queue\", \"frames\": [");
+    replace(lesson, "\"next\": [-1, 0]", "\"next\": [-1, 5]");
+    replace(lesson, "plates.webp", "plates.png");
+    replace(lesson, "\"kind\": \"image\",", "\"kind\": \"image\", \"size\": 2,");
+
+    List<String> problems = problemsAfterLoad();
+
+    assertThat(problems)
+        .anyMatch(p -> p.contains("figure 1, frame 1") && p.contains("must not be blank"))
+        .anyMatch(p -> p.contains("figure 2") && p.contains("frames"))
+        .anyMatch(p -> p.contains("figure 3, frame 2") && p.contains("next"))
+        .anyMatch(p -> p.contains("figure 4") && p.contains("not valid figure JSON"));
+  }
+
+  @Test
+  void figureImagesMustBeWebp() throws IOException {
+    replace(level.resolve("lesson.md"), "plates.webp", "plates.png");
+
+    assertThat(problemsAfterLoad())
+        .anyMatch(p -> p.contains("figure 4") && p.contains("/lesson-images/"));
+  }
 }

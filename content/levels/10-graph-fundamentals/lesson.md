@@ -26,6 +26,19 @@ There is no first or last station and no left or right. Lists, trees and heaps d
 
 **Breadth-first search (BFS)** visits vertices in rings: the start, then every vertex 1 edge away, then 2 edges away, and so on. It uses a **queue** (Level 6): take a vertex from the front, and add each neighbour not seen before to the back. Because rings are visited in order, the first time BFS reaches a vertex is along the **fewest edges**. That makes BFS the tool for shortest paths when every edge counts the same.
 
+```figure
+{
+  "kind": "visual",
+  "caption": "BFS from **A** reaches the vertices in rings: the start, then every vertex 1 edge away, then 2, 3 and 4.",
+  "frames": [
+    {"op": "start at A", "visual": {"cells": ["A", "B", "C", "D", "E", "F"], "edges": [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [4, 5]], "visited": [0], "rings": [0, -1, -1, -1, -1, -1]}},
+    {"op": "ring 1: B, C", "visual": {"cells": ["A", "B", "C", "D", "E", "F"], "edges": [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [4, 5]], "visited": [0, 1, 2], "rings": [0, 1, 1, -1, -1, -1]}},
+    {"op": "ring 2: D", "visual": {"cells": ["A", "B", "C", "D", "E", "F"], "edges": [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [4, 5]], "visited": [0, 1, 2, 3], "rings": [0, 1, 1, 2, -1, -1]}},
+    {"op": "rings 3 and 4: E, F", "visual": {"cells": ["A", "B", "C", "D", "E", "F"], "edges": [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [4, 5]], "visited": [0, 1, 2, 3, 4, 5], "rings": [0, 1, 1, 2, 3, 4]}}
+  ]
+}
+```
+
 **Depth-first search (DFS)** goes as far as it can along one path, then backs up and tries the next branch. With recursion (Level 7) it is a few lines: visit a vertex, then call DFS on each unvisited neighbour. A stack does the same without recursion. DFS is natural for "visit everything that is connected" and "count the groups".
 
 **The visited set is not optional.** Graphs can have cycles: 0 → 1 → 2 → 0. Without remembering which vertices were already seen, a search loops forever. Mark a vertex when it is **added** to the queue (BFS) or **entered** (DFS), so it is never added twice.

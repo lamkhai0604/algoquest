@@ -25,6 +25,18 @@ Two keys can land in the same bucket (11 and 21 both go to bucket 1). That is a 
 - **Chaining:** each bucket holds a small list, and colliding keys share it.
 - **Open addressing:** a colliding key tries the next bucket (i + 1, i + 2, ...) until it finds a free one.
 
+```figure
+{
+  "kind": "visual",
+  "caption": "Five buckets, hash = `key % 5`. **12** collides with **7** in bucket 2 and, with chaining, joins its list. A lookup for 12 checks bucket 2 only.",
+  "frames": [
+    {"op": "add 7 → 7 % 5 = 2", "visual": {"cells": ["·", "·", "7", "·", "·"], "markers": [{"index": 2, "label": "bucket 2"}]}},
+    {"op": "add 4 → 4 % 5 = 4", "visual": {"cells": ["·", "·", "7", "·", "4"], "markers": [{"index": 4, "label": "bucket 4"}]}},
+    {"op": "add 12 → 12 % 5 = 2", "visual": {"cells": ["·", "·", "7 → 12", "·", "4"], "markers": [{"index": 2, "label": "collision"}]}}
+  ]
+}
+```
+
 To keep the lists short, the table watches its **load factor** (items ÷ buckets). When it gets too high, the table grows, usually doubling, and puts every key into the new, larger array. Because growing is rare, adding stays O(1) on average, just like appending to a dynamic array.
 
 So the honest summary is: **O(1) on average, O(n) in the worst case**, when many keys collide in one bucket. With a good hash function the worst case is very unlikely, and interview answers use the average.

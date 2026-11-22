@@ -201,7 +201,14 @@
     "search": "Cách duyệt",
     "bfs": "BFS (hàng đợi)",
     "dfs": "DFS (ngăn xếp)",
-    "visitOrder": "Thứ tự thăm"
+    "visitOrder": "Thứ tự thăm",
+    "figTop": "đỉnh",
+    "figFront": "đầu",
+    "figBack": "cuối",
+    "figPlay": "Chạy",
+    "figStop": "Dừng",
+    "figure": "Hình minh hoạ",
+    "figFrame": "Bước"
   },
   "auth": {
     "title": "Đăng nhập {appName}",

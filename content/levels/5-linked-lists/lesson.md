@@ -24,9 +24,33 @@ The price: there is no "jump to song 30,000". To get there you follow 30,000 poi
 - To insert or delete, you do not move any values. You **change where one or two pointers point**.
 - Losing the only pointer to a node means losing that node and everything after it. So before you change `node.next`, keep a pointer to whatever you still need.
 
+```figure
+{
+  "kind": "visual",
+  "caption": "Inserting **X** after **B** changes two pointers and moves no values: O(1) once you hold B.",
+  "frames": [
+    {"op": "A → B → C", "visual": {"cells": ["A", "B", "C"], "next": [1, 2, -1], "markers": [{"index": 0, "label": "head"}, {"index": 1, "label": "B"}]}},
+    {"op": "X.next = B.next; B.next = X", "visual": {"cells": ["A", "B", "X", "C"], "next": [1, 2, 3, -1], "markers": [{"index": 0, "label": "head"}, {"index": 2, "label": "new"}]}}
+  ]
+}
+```
+
 **A dummy node removes the special case for the head.** Deleting a node means changing the pointer of the node **before** it, and the head has no node before it. Put a dummy node in front (`dummy.next = head`), work as if every real node has a predecessor, and return `dummy.next` at the end.
 
 **Reversing turns every arrow around.** Walk with `prev` (starts at `null`) and `curr` (starts at `head`). At each node: save `curr.next`, point `curr.next` back at `prev`, then move `prev` and `curr` one step forward. When `curr` is `null`, `prev` is the new head.
+
+```figure
+{
+  "kind": "visual",
+  "caption": "Each step turns one arrow around. When `curr` reaches `null`, `prev` is the new head.",
+  "frames": [
+    {"op": "prev = null, curr = 1", "visual": {"cells": ["1", "2", "3"], "next": [1, 2, -1], "markers": [{"index": 0, "label": "curr"}]}},
+    {"op": "1.next = null", "visual": {"cells": ["1", "2", "3"], "next": [-1, 2, -1], "markers": [{"index": 0, "label": "prev"}, {"index": 1, "label": "curr"}]}},
+    {"op": "2.next = 1", "visual": {"cells": ["1", "2", "3"], "next": [-1, 0, -1], "markers": [{"index": 1, "label": "prev"}, {"index": 2, "label": "curr"}]}},
+    {"op": "3.next = 2", "visual": {"cells": ["1", "2", "3"], "next": [-1, 0, 1], "markers": [{"index": 2, "label": "new head"}]}}
+  ]
+}
+```
 
 Each node in these lessons is `{ val, next }` in JavaScript and `class ListNode { int val; ListNode next; }` in Java. The code editor provides `ListNode`; tests write a list as an array, so `[1, 2, 3]` means 1 → 2 → 3.
 

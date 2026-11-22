@@ -10,3 +10,9 @@
   font-size: var(--text-md);
   margin-bottom: var(--space-3);
 }
+
+/* A button that follows text inside a card keeps a clear gap above it. */
+.card > * + button,
+.card > * + a[role="button"] {
+  margin-top: var(--space-4);
+}

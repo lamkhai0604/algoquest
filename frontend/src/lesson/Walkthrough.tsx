@@ -1272,6 +1272,33 @@ function StateTable({
 const SPEEDS = { slow: 2200, normal: 1400, fast: 700 } as const;
 type Speed = keyof typeof SPEEDS;
 
+/**
+ * One walkthrough drawing without animation or prediction, for a frame of a
+ * lesson figure (D-072).
+ */
+export function StillVisual({ visual }: { visual: Visual }) {
+  return (
+    <>
+      {visual.intervals ? (
+        <Timeline visual={visual} previous={null} masked={false} />
+      ) : visual.edges ? (
+        <Graph visual={visual} previous={null} masked={false} />
+      ) : visual.tree ? (
+        <Tree visual={visual} previous={null} />
+      ) : visual.next ? (
+        <Nodes visual={visual} previous={null} hidden={[]} />
+      ) : visual.rows ? (
+        <Table visual={visual} previous={null} />
+      ) : (
+        <Cells visual={visual} previous={null} />
+      )}
+      {visual.vars && visual.vars.length > 0 && (
+        <Variables visual={visual} hidden={[]} />
+      )}
+    </>
+  );
+}
+
 export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
@@ -1322,6 +1349,21 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
   }, [count]);
 
   const step = steps[index];
+  // The stage keeps the tallest height it has reached, so the controls
+  // under it stay in place while stepping back and forth.
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [stageHeight, setStageHeight] = useState(0);
+  useLayoutEffect(() => {
+    const node = stageRef.current;
+    if (!node) return;
+    const measure = () =>
+      setStageHeight((tallest) => Math.max(tallest, node.scrollHeight));
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [index]);
   if (!step) return null;
 
   const visual = step.visual ?? null;
@@ -1366,69 +1408,6 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           {t("walkthrough.step")} {index + 1} {t("lesson.stepOf")}{" "}
           {steps.length}
         </span>
-        {visual &&
-          (visual.edges && visual.explore ? (
-            <Explorer key={index} visual={visual} />
-          ) : visual.intervals ? (
-            <Timeline
-              visual={visual}
-              previous={previousVisual}
-              masked={waiting}
-            />
-          ) : visual.edges ? (
-            <Graph
-              visual={shownCells ?? visual}
-              previous={previousVisual}
-              masked={waiting}
-            />
-          ) : visual.tree ? (
-            <Tree visual={visual} previous={previousVisual} />
-          ) : visual.next ? (
-            <Nodes
-              visual={visual}
-              previous={steps[index - 1]?.visual ?? null}
-              hidden={hidden}
-            />
-          ) : visual.rows ? (
-            <Table visual={shownCells ?? visual} previous={previousVisual} />
-          ) : (
-            <Cells visual={shownCells ?? visual} previous={previousVisual} />
-          ))}
-        {visual?.queue && (
-          <QueueStrip
-            visual={visual}
-            previous={previousVisual}
-            masked={hidden.includes("queue")}
-          />
-        )}
-        {visual?.stack && (
-          <StackStrip
-            visual={visual}
-            previous={previousVisual}
-            masked={hidden.includes("stack")}
-          />
-        )}
-        {visual && <Variables visual={visual} hidden={hidden} />}
-        {predict && (
-          <Predict
-            predict={predict}
-            answer={answers[index]}
-            onAnswer={(answer) => setAnswers({ ...answers, [index]: answer })}
-          />
-        )}
-        <div className={styles.step} aria-live="polite">
-          <h3 className={styles.stepTitle}>{step.title}</h3>
-          {waiting ? (
-            <p className={styles.stepHidden}>{t("lessonMore.answerFirst")}</p>
-          ) : (
-            <>
-              <p>
-                <InlineText text={step.body} />
-              </p>
-              {step.code && <CodeBlock code={step.code} />}
-            </>
-          )}
-        </div>
         <div className={styles.stepButtons}>
           <Button
             variant="secondary"
@@ -1463,6 +1442,75 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           </label>
         </div>
         <p className={styles.keys}>{t("walkthrough.keyboard")}</p>
+        <div
+          ref={stageRef}
+          className={styles.stage}
+          style={stageHeight ? { minHeight: stageHeight } : undefined}
+        >
+          {visual &&
+            (visual.edges && visual.explore ? (
+              <Explorer key={index} visual={visual} />
+            ) : visual.intervals ? (
+              <Timeline
+                visual={visual}
+                previous={previousVisual}
+                masked={waiting}
+              />
+            ) : visual.edges ? (
+              <Graph
+                visual={shownCells ?? visual}
+                previous={previousVisual}
+                masked={waiting}
+              />
+            ) : visual.tree ? (
+              <Tree visual={visual} previous={previousVisual} />
+            ) : visual.next ? (
+              <Nodes
+                visual={visual}
+                previous={steps[index - 1]?.visual ?? null}
+                hidden={hidden}
+              />
+            ) : visual.rows ? (
+              <Table visual={shownCells ?? visual} previous={previousVisual} />
+            ) : (
+              <Cells visual={shownCells ?? visual} previous={previousVisual} />
+            ))}
+          {visual?.queue && (
+            <QueueStrip
+              visual={visual}
+              previous={previousVisual}
+              masked={hidden.includes("queue")}
+            />
+          )}
+          {visual?.stack && (
+            <StackStrip
+              visual={visual}
+              previous={previousVisual}
+              masked={hidden.includes("stack")}
+            />
+          )}
+          {visual && <Variables visual={visual} hidden={hidden} />}
+        </div>
+        {predict && (
+          <Predict
+            predict={predict}
+            answer={answers[index]}
+            onAnswer={(answer) => setAnswers({ ...answers, [index]: answer })}
+          />
+        )}
+        <div className={styles.step} aria-live="polite">
+          <h3 className={styles.stepTitle}>{step.title}</h3>
+          {waiting ? (
+            <p className={styles.stepHidden}>{t("lessonMore.answerFirst")}</p>
+          ) : (
+            <>
+              <p>
+                <InlineText text={step.body} />
+              </p>
+              {step.code && <CodeBlock code={step.code} />}
+            </>
+          )}
+        </div>
       </Card>
       {hasVisuals && (
         <Card>
