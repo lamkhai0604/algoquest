@@ -54,7 +54,11 @@ public class SecurityConfig {
 
   @Bean
   SecurityFilterChain securityFilterChain(
-      HttpSecurity http, TokenService tokens, OAuthSignInHandler signIn) throws Exception {
+      HttpSecurity http,
+      TokenService tokens,
+      OAuthSignInHandler signIn,
+      @Value("${algoquest.signin.oauth-enabled:false}") boolean oauthEnabled)
+      throws Exception {
     http.csrf(csrf -> csrf.disable());
     http.cors(Customizer.withDefaults());
     http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -65,18 +69,22 @@ public class SecurityConfig {
         auth -> {
           auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/exchange").permitAll();
           auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/demo").permitAll();
+          auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/password").permitAll();
           auth.requestMatchers(HttpMethod.GET, "/api/v1/auth/options").permitAll();
           auth.requestMatchers("/api/**").authenticated();
           auth.anyRequest().permitAll();
         });
-    GitHubEmailUserService users = new GitHubEmailUserService(github());
-    http.oauth2Login(
-        login -> {
-          login.userInfoEndpoint(info -> info.userService(users));
-          login.authorizedClientRepository(new HttpSessionOAuth2AuthorizedClientRepository());
-          login.successHandler(signIn);
-          login.failureHandler(signIn);
-        });
+    // Google and GitHub sign-in are off unless OAUTH_SIGNIN_ENABLED is true (D-073).
+    if (oauthEnabled) {
+      GitHubEmailUserService users = new GitHubEmailUserService(github());
+      http.oauth2Login(
+          login -> {
+            login.userInfoEndpoint(info -> info.userService(users));
+            login.authorizedClientRepository(new HttpSessionOAuth2AuthorizedClientRepository());
+            login.successHandler(signIn);
+            login.failureHandler(signIn);
+          });
+    }
     http.addFilterBefore(new BearerTokenFilter(tokens), UsernamePasswordAuthenticationFilter.class);
     http.exceptionHandling(
         errors -> errors.authenticationEntryPoint(UNAUTHORIZED).accessDeniedHandler(FORBIDDEN));

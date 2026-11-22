@@ -226,7 +226,13 @@
     "or": "or",
     "demo": "Try the demo, no account needed",
     "demoNote": "A temporary account with every level open.",
-    "demoUsedUp": "Today's demo accounts are used up. Try again tomorrow, or sign in with Google or GitHub."
+    "demoUsedUp": "Today's demo accounts are used up. Try again tomorrow, or sign in with Google or GitHub.",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "wrongPassword": "The email or password is wrong.",
+    "tooManyAttempts": "Too many wrong attempts. Try again in 15 minutes.",
+    "loadingOptions": "Waking the server…"
   },
   "misc": {
     "notFound": "Page not found",

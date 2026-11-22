@@ -42,7 +42,7 @@ Voice answers, battle mode (dummy placeholder at most), real friends or social f
 Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't (this release)**. Status of every requirement: **Approved** (baseline v1.0), with the priority shown.
 
 ### FR-01 — Sign in (Must)
-1. The learner signs in with Google or GitHub; there is no password form.
+1. The learner signs in with Google or GitHub; there is no password form. *Amended by D-073: only the Owner signs in, with email and password; Google, GitHub and demo sign-in are off unless turned on in the server settings.*
 2. Every page except the landing page requires a session; the server enforces it on every data and grading route.
 3. Sign-out ends the session.
 4. A new account gets the **Player** role (FR-17). Nobody can make themselves an Owner or Admin by signing up.

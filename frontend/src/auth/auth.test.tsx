@@ -20,10 +20,16 @@ describe("sign-in", () => {
     expect(screen.queryByTitle("Total XP")).toBeNull();
   });
 
-  it("links both providers to the backend sign-in", () => {
+  it("links both providers to the backend sign-in when they are on", async () => {
+    fakeApi({
+      "GET /api/v1/auth/options": () =>
+        json(200, { demo: false, oauth: true, password: false }),
+    });
     renderAt("/sign-in");
 
-    const google = screen.getByRole("link", { name: "Continue with Google" });
+    const google = await screen.findByRole("link", {
+      name: "Continue with Google",
+    });
     const github = screen.getByRole("link", { name: "Continue with GitHub" });
     expect(google).toHaveAttribute("href", `${SIGN_IN}/google`);
     expect(github).toHaveAttribute("href", `${SIGN_IN}/github`);
@@ -31,7 +37,8 @@ describe("sign-in", () => {
 
   it("signs a visitor in with the demo and marks the account", async () => {
     fakeApi({
-      "GET /api/v1/auth/options": () => json(200, { demo: true }),
+      "GET /api/v1/auth/options": () =>
+        json(200, { demo: true, oauth: true, password: false }),
       "POST /api/v1/auth/demo": () => json(200, { code: "demo-code" }),
       "POST /api/v1/auth/exchange": () =>
         json(200, { token: "jwt-demo", expiresAt: inFourHours() }),
@@ -66,7 +73,8 @@ describe("sign-in", () => {
 
   it("explains when today's demo accounts are used up", async () => {
     fakeApi({
-      "GET /api/v1/auth/options": () => json(200, { demo: true }),
+      "GET /api/v1/auth/options": () =>
+        json(200, { demo: true, oauth: true, password: false }),
       "POST /api/v1/auth/demo": () =>
         json(429, { title: "Demo limit reached" }),
     });
@@ -84,13 +92,78 @@ describe("sign-in", () => {
   });
 
   it("hides the demo when the server does not offer it", async () => {
-    fakeApi({ "GET /api/v1/auth/options": () => json(200, { demo: false }) });
+    fakeApi({
+      "GET /api/v1/auth/options": () =>
+        json(200, { demo: false, oauth: true, password: false }),
+    });
     renderAt("/sign-in");
 
     await screen.findByRole("link", { name: "Continue with Google" });
     expect(
       screen.queryByRole("button", { name: "Try the demo, no account needed" }),
     ).toBeNull();
+  });
+
+  it("offers only the owner's email and password form", async () => {
+    const fetchFn = fakeApi({
+      "GET /api/v1/auth/options": () =>
+        json(200, { demo: false, oauth: false, password: true }),
+      "POST /api/v1/auth/password": () => json(200, { code: "owner-code" }),
+      "POST /api/v1/auth/exchange": () =>
+        json(200, { token: "jwt-owner", expiresAt: inFourHours() }),
+      "GET /api/v1/me": () => json(200, ME),
+    });
+    renderAt("/sign-in");
+
+    await userEvent.type(
+      await screen.findByLabelText("Email"),
+      "owner@example.com",
+    );
+    await userEvent.type(screen.getByLabelText("Password"), "a-long-password");
+    expect(
+      screen.queryByRole("link", { name: "Continue with Google" }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "Continue with GitHub" }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: "Try the demo, no account needed" }),
+    ).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "Learning Path" }),
+    ).toBeVisible();
+    expect(getToken()).toBe("jwt-owner");
+    const call = fetchFn.mock.calls.find(([url]) =>
+      String(url).endsWith("/api/v1/auth/password"),
+    );
+    expect(JSON.parse(String(call?.[1]?.body))).toEqual({
+      email: "owner@example.com",
+      password: "a-long-password",
+    });
+  });
+
+  it("says when the email or password is wrong", async () => {
+    fakeApi({
+      "GET /api/v1/auth/options": () =>
+        json(200, { demo: false, oauth: false, password: true }),
+      "POST /api/v1/auth/password": () =>
+        json(401, { title: "Wrong email or password" }),
+    });
+    renderAt("/sign-in");
+
+    await userEvent.type(
+      await screen.findByLabelText("Email"),
+      "owner@example.com",
+    );
+    await userEvent.type(screen.getByLabelText("Password"), "not-the-password");
+    await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The email or password is wrong.",
+    );
+    expect(getToken()).toBeNull();
   });
 
   it("explains a failed sign-in", () => {
