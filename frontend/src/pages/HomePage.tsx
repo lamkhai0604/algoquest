@@ -251,7 +251,9 @@ function LearningPath({ levels }: { levels: Level[] }) {
             <span className={game.phaseTitle}>
               {t("home.elective")} · {t("home.designPatterns")}
             </span>
-            <span className={game.phaseGoal}>{t("home.designPatternsGoal")}</span>
+            <span className={game.phaseGoal}>
+              {t("home.designPatternsGoal")}
+            </span>
           </span>
           <Badge>{t("common.comingSoon")}</Badge>
         </div>
