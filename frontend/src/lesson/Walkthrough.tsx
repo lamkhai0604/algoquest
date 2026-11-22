@@ -565,6 +565,27 @@ function Graph({
             />
           );
         })}
+        {(visual.weights ?? []).map((weight, e) => {
+          const [a = 0, b = 0] = visual.edges?.[e] ?? [];
+          const from = point(a);
+          const to = point(b);
+          const x = (from.x + to.x) / 2;
+          const y = (from.y + to.y) / 2;
+          const width = 10 + weight.length * 7;
+          const lit = active.has(`${a}-${b}`);
+          return (
+            <g
+              key={`w${e}`}
+              data-weight={weight}
+              className={cx(styles.graphWeight, lit && styles.graphWeightActive)}
+            >
+              <rect x={x - width / 2} y={y - 9} width={width} height={18} rx={5} />
+              <text x={x} y={y}>
+                {weight}
+              </text>
+            </g>
+          );
+        })}
         {cells.map((cell, i) => {
           const { x, y } = point(i);
           const marks = labels.get(i);
