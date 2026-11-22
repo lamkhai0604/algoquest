@@ -577,9 +577,18 @@ function Graph({
             <g
               key={`w${e}`}
               data-weight={weight}
-              className={cx(styles.graphWeight, lit && styles.graphWeightActive)}
+              className={cx(
+                styles.graphWeight,
+                lit && styles.graphWeightActive,
+              )}
             >
-              <rect x={x - width / 2} y={y - 9} width={width} height={18} rx={5} />
+              <rect
+                x={x - width / 2}
+                y={y - 9}
+                width={width}
+                height={18}
+                rx={5}
+              />
               <text x={x} y={y}>
                 {weight}
               </text>

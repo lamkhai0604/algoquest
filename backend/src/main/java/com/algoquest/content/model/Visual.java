@@ -17,7 +17,8 @@ import java.util.List;
  * a graph step interactive (D-064), and optional intervals: one {@code [start, end]} per cell,
  * drawn as bars on a shared time axis, with the indexes of kept intervals and a sweep line (D-066),
  * and an optional table layout: the cells in {@code rows} rows with row and column labels and the
- * indexes of the cells a step reads (D-068), and optional edge weights, one label per edge (D-069). Everything except {@code cells} is optional.
+ * indexes of the cells a step reads (D-068), and optional edge weights, one label per edge (D-069).
+ * Everything except {@code cells} is optional.
  */
 public record Visual(
     List<String> cells,
