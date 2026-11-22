@@ -627,7 +627,12 @@ describe("lesson visualizers match their reference algorithms", () => {
 
   it("Level 26: the trie grows as words are inserted, with counts on every node", () => {
     const steps = walkthrough("26-tries");
-    type Node = { id: number; count: number; end: boolean; next: Map<string, Node> };
+    type Node = {
+      id: number;
+      count: number;
+      end: boolean;
+      next: Map<string, Node>;
+    };
     const nodes: Node[] = [{ id: 0, count: 0, end: false, next: new Map() }];
     const root = nodes[0]!;
     for (const step of steps.slice(1, 5)) {
@@ -659,7 +664,15 @@ describe("lesson visualizers match their reference algorithms", () => {
   it("Level 27: the routine runs in order and the trace finds the pair", () => {
     const steps = walkthrough("27-interview-practice");
     const stages = steps.map((s) => value(s, "stage"));
-    const order = ["listen", "clarify", "brute force", "improve", "code + trace", "test", "explain"];
+    const order = [
+      "listen",
+      "clarify",
+      "brute force",
+      "improve",
+      "code + trace",
+      "test",
+      "explain",
+    ];
     expect([...new Set(stages)]).toEqual(order);
     const nums = steps[0]!.visual!.cells.map(Number);
     const target = 6;
