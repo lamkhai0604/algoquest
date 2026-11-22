@@ -24,6 +24,7 @@
     "difficultyHard": "Hard"
   },
   "nav": {
+    "knowledge": "Knowledge",
     "map": "Map",
     "profile": "Profile",
     "admin": "Admin",
@@ -209,6 +210,8 @@
     "demoUsedUp": "Today's demo accounts are used up. Try again tomorrow, or sign in with Google or GitHub."
   },
   "misc": {
+    "knowledgeTopic": "Programming Language Fundamentals",
+    "knowledgeStatus": "Lessons are in preparation.",
     "notFound": "Page not found",
     "backQuest": "Back to your quest",
     "themeLight": "Switch to light theme",
