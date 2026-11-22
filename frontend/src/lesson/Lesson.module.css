@@ -10,13 +10,14 @@
 }
 
 .prose p,
-.prose ul,
-.prose ol {
+.prose > ul,
+.prose > ol {
   margin: 0;
 }
 
-.prose ul,
-.prose ol {
+/* Only the lesson's own lists: drawings inside figures keep their layout. */
+.prose > ul,
+.prose > ol {
   display: grid;
   gap: var(--space-2);
   padding-left: var(--space-5);
@@ -1141,4 +1142,223 @@
 
 .graphWeightActive rect {
   stroke: var(--color-xp);
+}
+/* Lesson figures: rows of small frames drawn from data. */
+.figure {
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-2, var(--color-surface));
+}
+
+.figFrames {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.figFramesWide {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* A linked list reads left to right, so each frame takes the full width. */
+.figFramesRow {
+  grid-template-columns: 1fr;
+}
+
+.figFrame {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  transition:
+    opacity 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.figStep {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-primary-strong);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.figStep code {
+  color: var(--color-text);
+  font-size: var(--text-sm);
+}
+
+.figPile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  min-height: 170px;
+}
+
+.figPileItems {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 6px 6px 8px;
+  list-style: none;
+  border: 2px solid var(--color-border-strong);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.figPlate {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 96px;
+  min-height: 30px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+}
+
+.figTop {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
+}
+
+.figTag {
+  position: absolute;
+  right: -2px;
+  top: -9px;
+  padding: 0 4px;
+  border-radius: var(--radius-sm, 4px);
+  background: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 16px;
+}
+
+.figLeaving {
+  border-style: dashed;
+  opacity: 0.55;
+}
+
+.figEmpty {
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+  font-style: italic;
+  padding: var(--space-2);
+}
+
+.figLine {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 72px;
+}
+
+.figLine > .figLeaving {
+  grid-column: 1 / -1;
+  justify-self: start;
+  max-width: 64px;
+}
+
+.figDoor {
+  color: var(--color-text-faint);
+  font-size: 10px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.figLineItems {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-block: 2px solid var(--color-border-strong);
+}
+
+.figLineItems .figPlate {
+  width: 34px;
+  min-width: 0;
+}
+
+.figCaption {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.figImage {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.figBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-2);
+}
+
+.figPlay {
+  padding: 2px var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-primary-strong);
+  font: inherit;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.figPlay:hover {
+  background: var(--color-primary-soft);
+}
+
+.figPlay[aria-pressed="true"] {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.figPlaying .figFrame {
+  opacity: 0.35;
+}
+
+.figPlaying .figLit {
+  opacity: 1;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .figFrame {
+    transition: none;
+  }
+
+  .figPlaying .figLit {
+    transform: none;
+  }
 }

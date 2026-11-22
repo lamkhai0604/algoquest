@@ -1,10 +1,11 @@
-import { act, screen, within } from "@testing-library/react";
+import { act, fireEvent, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { fakeApi, json, ME } from "../test/fakeApi";
 import { setLocale } from "../i18n";
 import { LEVELS } from "../test/gameData";
 import { renderSignedInAt } from "../test/renderApp";
+import { FIGURE_FRAME_MS } from "./LessonFigure";
 import type { Lesson } from "./types";
 
 const LESSON: Lesson = {
@@ -107,6 +108,76 @@ const variable = (name: string) =>
   screen.getByText(name, { selector: "dt" }).nextElementSibling;
 
 describe("lesson page", () => {
+  const withFigures = (blocks: string[]): Lesson => ({
+    ...LESSON,
+    markdown: LESSON.markdown.replace(
+      "Read the list **once**.",
+      ["Read the list **once**.", "", ...blocks].join("\n"),
+    ),
+  });
+  const STACK_FIGURE = [
+    "```figure",
+    JSON.stringify({
+      kind: "stack",
+      caption: "**Last in**, first out.",
+      frames: [
+        { op: "push(A)", items: ["A"] },
+        { op: "push(B)", items: ["A", "B"] },
+        { op: "pop() -> B", items: ["A"], out: "B" },
+      ],
+    }),
+    "```",
+  ];
+
+  it("draws a stack figure and plays its frames in a loop until Stop", async () => {
+    open(withFigures(STACK_FIGURE));
+    const figure = await screen.findByRole("figure", { name: "Diagram" });
+    const frames = Array.from(figure.querySelector("ol")!.children);
+    expect(frames).toHaveLength(3);
+    expect(within(figure).getByText("push(B)")).toBeVisible();
+    expect(within(figure).getAllByText("top")).toHaveLength(3);
+    expect(within(figure).getByText("Last in")).toBeVisible();
+    expect(figure.querySelector("[aria-current]")).toBeNull();
+
+    vi.useFakeTimers();
+    try {
+      fireEvent.click(within(figure).getByRole("button", { name: "▶ Play" }));
+      expect(frames[0]).toHaveAttribute("aria-current", "step");
+      act(() => vi.advanceTimersByTime(FIGURE_FRAME_MS));
+      expect(frames[1]).toHaveAttribute("aria-current", "step");
+      act(() => vi.advanceTimersByTime(FIGURE_FRAME_MS * 2));
+      expect(frames[0]).toHaveAttribute("aria-current", "step");
+
+      fireEvent.click(within(figure).getByRole("button", { name: "■ Stop" }));
+      expect(figure.querySelector("[aria-current]")).toBeNull();
+      act(() => vi.advanceTimersByTime(FIGURE_FRAME_MS * 3));
+      expect(figure.querySelector("[aria-current]")).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("shows an image figure with its alt text, and plain code for a broken figure", async () => {
+    open(
+      withFigures([
+        "```figure",
+        JSON.stringify({
+          kind: "image",
+          src: "/lesson-images/plates.webp",
+          alt: "A pile of plates",
+        }),
+        "```",
+        "",
+        "```figure",
+        "{ not json",
+        "```",
+      ]),
+    );
+    const image = await screen.findByRole("img", { name: "A pile of plates" });
+    expect(image).toHaveAttribute("src", "/lesson-images/plates.webp");
+    expect(screen.getByText("{ not json")).toBeVisible();
+  });
+
   it("loads VI content and groups translated headings by stable IDs", async () => {
     setLocale("vi");
     try {

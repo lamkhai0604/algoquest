@@ -1272,6 +1272,33 @@ function StateTable({
 const SPEEDS = { slow: 2200, normal: 1400, fast: 700 } as const;
 type Speed = keyof typeof SPEEDS;
 
+/**
+ * One walkthrough drawing without animation or prediction, for a frame of a
+ * lesson figure (D-072).
+ */
+export function StillVisual({ visual }: { visual: Visual }) {
+  return (
+    <>
+      {visual.intervals ? (
+        <Timeline visual={visual} previous={null} masked={false} />
+      ) : visual.edges ? (
+        <Graph visual={visual} previous={null} masked={false} />
+      ) : visual.tree ? (
+        <Tree visual={visual} previous={null} />
+      ) : visual.next ? (
+        <Nodes visual={visual} previous={null} hidden={[]} />
+      ) : visual.rows ? (
+        <Table visual={visual} previous={null} />
+      ) : (
+        <Cells visual={visual} previous={null} />
+      )}
+      {visual.vars && visual.vars.length > 0 && (
+        <Variables visual={visual} hidden={[]} />
+      )}
+    </>
+  );
+}
+
 export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);

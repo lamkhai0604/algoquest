@@ -201,7 +201,14 @@
     "search": "Search",
     "bfs": "BFS (queue)",
     "dfs": "DFS (stack)",
-    "visitOrder": "Visit order"
+    "visitOrder": "Visit order",
+    "figTop": "top",
+    "figFront": "front",
+    "figBack": "back",
+    "figPlay": "Play",
+    "figStop": "Stop",
+    "figure": "Diagram",
+    "figFrame": "Step"
   },
   "auth": {
     "title": "Sign in to {appName}",

@@ -32,6 +32,18 @@ A **binary search tree** stores data in exactly this shape, and, unlike a sorted
 
 **The binary search tree (BST) rule:** for every node, all values in its left subtree are smaller, and all values in its right subtree are larger. To search, compare with the node and go left or right; each step skips a whole subtree. Insert the same way: walk down until you reach an empty spot, and put the new node there.
 
+```figure
+{
+  "kind": "visual",
+  "caption": "Searching for **6** compares once per level and follows one path: O(h).",
+  "frames": [
+    {"op": "search(6): start at 8", "visual": {"cells": ["8", "3", "10", "1", "6", "", "14"], "tree": true, "markers": [{"index": 0, "label": "6 < 8"}]}},
+    {"op": "go left to 3", "visual": {"cells": ["8", "3", "10", "1", "6", "", "14"], "tree": true, "markers": [{"index": 1, "label": "6 > 3"}]}},
+    {"op": "go right to 6", "visual": {"cells": ["8", "3", "10", "1", "6", "", "14"], "tree": true, "markers": [{"index": 4, "label": "found"}]}}
+  ]
+}
+```
+
 **Height decides the speed.** A search walks one path, so it costs O(h). A **balanced** tree has height about log2(n). If values arrive in sorted order, every new node goes to the same side and the tree becomes a **chain** with height n. Self-balancing trees (AVL, red-black) fix this automatically; language libraries such as Java's `TreeMap` use them.
 
 **How trees are written in tests.** A tree is listed level by level, left to right, with `null` for a missing child: `[3, 9, 20, null, null, 15, 7]` is 3 with children 9 and 20, and 20 with children 15 and 7. The code editor provides `TreeNode` with `val`, `left`, and `right`.

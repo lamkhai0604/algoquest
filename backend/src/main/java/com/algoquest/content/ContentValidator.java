@@ -2,6 +2,7 @@ package com.algoquest.content;
 
 import com.algoquest.content.model.AnswerKey;
 import com.algoquest.content.model.Example;
+import com.algoquest.content.model.Figure;
 import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelInfo;
 import com.algoquest.content.model.PatternChallenge;
@@ -16,7 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /** Content rules from CONTENT-GUIDE.md. Each check returns problems as "file: message" lines. */
 final class ContentValidator {
@@ -36,6 +41,13 @@ final class ContentValidator {
   static final int MIN_TESTS = 8;
   static final int HINTS = 3;
 
+  private static final JsonMapper FIGURE_JSON =
+      JsonMapper.builder().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
+  private static final Pattern FIGURE_BLOCK = Pattern.compile("```figure\\n(.*?)\\n```", Pattern.DOTALL);
+  private static final Pattern FIGURE_IMAGE = Pattern.compile("/lesson-images/[a-z0-9]+(-[a-z0-9]+)*\\.webp");
+  static final int FIGURE_MIN_FRAMES = 2;
+  static final int FIGURE_MAX_FRAMES = 6;
+  static final int FIGURE_MAX_ITEMS = 8;
   private static final Pattern SLUG = Pattern.compile("[a-z0-9]+(-[a-z0-9]+)*");
   private static final Set<String> DIFFICULTIES = Set.of("Easy", "Medium", "Hard");
   private static final Set<String> USES = Set.of("practice", "test", "hardTest");
@@ -135,6 +147,7 @@ final class ContentValidator {
           from = at + 1;
         }
       }
+      checkFigures(problems, folder + "lesson.md", lesson.markdown());
     }
     List<WalkthroughStep> steps = lesson.walkthrough();
     if (steps != null) {
@@ -466,6 +479,81 @@ final class ContentValidator {
             || chosen.stream().anyMatch(i -> i < 0 || i >= n)
             || chosen.stream().distinct().count() != chosen.size())) {
       problems.add(where + ": chosen needs distinct interval indexes");
+    }
+  }
+
+  /** Checks every {@code ```figure} block in a lesson (D-072). */
+  static void checkFigures(List<String> problems, String where, String markdown) {
+    Matcher block = FIGURE_BLOCK.matcher(markdown);
+    int count = 0;
+    while (block.find()) {
+      count++;
+      String at = where + ", figure " + count;
+      Figure figure;
+      try {
+        figure = FIGURE_JSON.readValue(block.group(1), Figure.class);
+      } catch (JacksonException e) {
+        problems.add(at + ": not valid figure JSON");
+        continue;
+      }
+      checkFigure(problems, at, figure);
+    }
+  }
+
+  private static void checkFigure(List<String> problems, String at, Figure figure) {
+    String kind = figure.kind() == null ? "" : figure.kind();
+    if (kind.equals("image")) {
+      if (figure.src() == null || !FIGURE_IMAGE.matcher(figure.src()).matches()) {
+        problems.add(at + ": image src must be /lesson-images/<slug>.webp");
+      }
+      if (blank(figure.alt())) {
+        problems.add(at + ": image needs alt text");
+      }
+      if (figure.frames() != null) {
+        problems.add(at + ": an image has no frames");
+      }
+      return;
+    }
+    if (!Set.of("stack", "queue", "visual").contains(kind)) {
+      problems.add(at + ": kind must be stack, queue, visual, or image");
+      return;
+    }
+    if (figure.src() != null || figure.alt() != null) {
+      problems.add(at + ": only an image has src and alt");
+    }
+    List<Figure.Frame> frames = figure.frames();
+    if (frames == null
+        || frames.size() < FIGURE_MIN_FRAMES
+        || frames.size() > FIGURE_MAX_FRAMES) {
+      problems.add(
+          at + ": needs " + FIGURE_MIN_FRAMES + " to " + FIGURE_MAX_FRAMES + " frames");
+      return;
+    }
+    for (int i = 0; i < frames.size(); i++) {
+      Figure.Frame frame = frames.get(i);
+      String here = at + ", frame " + (i + 1);
+      if (blank(frame.op())) {
+        problems.add(here + ": op is missing");
+      }
+      if (kind.equals("visual")) {
+        if (frame.visual() == null) {
+          problems.add(here + ": a visual frame needs a visual");
+        } else {
+          checkVisual(problems, here, frame.visual());
+        }
+        if (frame.items() != null || frame.out() != null) {
+          problems.add(here + ": a visual frame uses visual, not items or out");
+        }
+      } else {
+        if (frame.items() == null || frame.items().size() > FIGURE_MAX_ITEMS) {
+          problems.add(here + ": items must list at most " + FIGURE_MAX_ITEMS + " values");
+        } else if (frame.items().stream().anyMatch(ContentValidator::blank)) {
+          problems.add(here + ": items must not be blank");
+        }
+        if (frame.visual() != null) {
+          problems.add(here + ": only a visual frame has a visual");
+        }
+      }
     }
   }
 

@@ -28,6 +28,18 @@ A **priority queue** gives the plane with the least fuel in one step and takes a
 
 **Push (sift-up).** Put the new value in the next free spot at the end of the array. While it is smaller than its parent, swap them. It climbs at most the height of the tree: **O(log n)**.
 
+```figure
+{
+  "kind": "visual",
+  "caption": "`push(2)` into a min-heap: add at the end, then swap upward while it is smaller than its parent.",
+  "frames": [
+    {"op": "add 2 at the end", "visual": {"cells": ["1", "4", "5", "7", "6", "2"], "tree": true, "markers": [{"index": 5, "label": "new"}], "vars": [{"name": "array", "value": "[1, 4, 5, 7, 6, 2]"}]}},
+    {"op": "2 < parent 5: swap", "visual": {"cells": ["1", "4", "2", "7", "6", "5"], "tree": true, "markers": [{"index": 2, "label": "moved up"}], "vars": [{"name": "array", "value": "[1, 4, 2, 7, 6, 5]"}]}},
+    {"op": "2 > parent 1: stop", "visual": {"cells": ["1", "4", "2", "7", "6", "5"], "tree": true, "markers": [{"index": 0, "label": "parent"}, {"index": 2, "label": "done"}], "vars": [{"name": "array", "value": "[1, 4, 2, 7, 6, 5]"}]}}
+  ]
+}
+```
+
 **Pop (sift-down).** Remove the root (the smallest). Move the last value to the root, then, while it is larger than its smaller child, swap with that child. Again one path: **O(log n)**.
 
 **Peek** reads index 0: **O(1)**.
