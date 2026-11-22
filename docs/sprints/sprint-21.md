@@ -5,7 +5,7 @@
 | Status | Approved by the PO on 2026-11-21 |
 | Goal | Core lessons explain data structures with drawings, and the walkthrough and form buttons have a stable, well-spaced layout |
 | Duration | About 3 days from approval |
-| Tasks | T-600, T-601, T-602, T-603 ([BACKLOG.md](../BACKLOG.md)) |
+| Tasks | T-600, T-601, T-602, T-603, T-604 ([BACKLOG.md](../BACKLOG.md)) |
 | Requirements | FR-03; decisions D-060, D-065, D-068, D-072 |
 
 ## Increment at the end of the sprint
