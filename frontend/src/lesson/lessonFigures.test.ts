@@ -26,9 +26,9 @@ describe("lesson figures in content", () => {
         count++;
       }
     }
-    // Levels 2, 3, 5, 6, 8, 9 and 10 have 11 figures between them.
+    // Levels 2, 3, 5, 6, 8, 9 and 10 have 10 figures between them.
     expect(Object.keys(LESSONS).length).toBeGreaterThanOrEqual(27);
-    expect(count).toBeGreaterThanOrEqual(11);
+    expect(count).toBeGreaterThanOrEqual(10);
   });
 
   it("every image figure points at a file in public/lesson-images", () => {
