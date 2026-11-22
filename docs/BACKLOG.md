@@ -263,31 +263,32 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-590 | Level 25 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
 | T-591 | Sprint 19 report | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-19-report.md) |
 
-## Sprint 20 — Levels 26 and 27 ([plan](sprints/sprint-20.md))
+## Sprint 20 — Levels 26 and 27 ([plan](sprints/sprint-20.md), closed 2026-11-21)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-592 | Learning Path: Phase 4 System Design and an elective on design patterns, both marked "Coming soon" | D-070 | P2 | Built 2026-11-21: frontend test; screenshots; PO review pending |
-| T-593 | Level 26 Tries content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against trie insertion; PO review pending |
-| T-594 | Level 26 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-595 | Level 27 Interview Practice content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review pending |
-| T-596 | Level 27 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
-| T-599 | Tidy the header: remove the System Design item (Phase 4 is on the Learning Path), keep Map and Knowledge in the main navigation, put streak, XP and hints in a progress menu, and name, Profile, Admin, language, theme and sign-out in an account menu | FR-02, D-071 | P1 | Built 2026-11-21: frontend tests; screenshots on desktop and phone; PO review pending |
-| T-597 | Sprint 20 report and Phase 3 summary | D-007 | P2 | To do |
+| T-592 | Learning Path: Phase 4 System Design and an elective on design patterns, both marked "Coming soon" | D-070 | P2 | Done 2026-11-21: frontend test; screenshots; PO review OK |
+| T-593 | Level 26 Tries content | FR-03, FR-04, D-048 | P1 | Done 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against trie insertion; PO review OK |
+| T-594 | Level 26 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
+| T-595 | Level 27 Interview Practice content | FR-03, FR-04, D-048 | P1 | Done 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-596 | Level 27 pattern challenges | D-057 | P2 | Done 2026-11-21 (content check); PO review OK |
+| T-599 | Tidy the header: remove the System Design item (Phase 4 is on the Learning Path), keep Map and Knowledge in the main navigation, put streak, XP and hints in a progress menu, and name, Profile, Admin, language, theme and sign-out in an account menu | FR-02, D-071 | P1 | Done 2026-11-21: frontend tests; screenshots on desktop and phone; PO review OK |
+| T-597 | Sprint 20 report and Phase 3 summary | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-20-report.md) |
 
-## Sprint 21 — Lesson figures and layout fixes ([plan](sprints/sprint-21.md))
+## Sprint 21 — Lesson figures and layout fixes ([plan](sprints/sprint-21.md), closed 2026-11-21)
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-600 | Walkthrough controls above the drawing so they stay in place between steps; 16px of space above a button that follows other content in a card | D-072 | P1 | Built 2026-11-21: frontend tests; before and after screenshots on desktop and phone; PO review pending |
-| T-601 | Lesson figures: the `figure` block (stack, queue, visual, image), Play and Stop, English and Vietnamese labels, backend and frontend content checks | FR-03, D-072 | P1 | Built 2026-11-21: backend and frontend tests; screenshots; PO review pending |
-| T-602 | Figures in the core lessons: arrays (insert, grid), hashing (buckets and a collision), linked lists (insert, reverse), stack and queue, BST search, heap push, BFS rings | FR-03, D-072 | P1 | Built 2026-11-21: content checks, including frame-by-frame replay of stack and queue figures; screenshots; PO review pending |
-| T-603 | Decorative images for the core lessons: prompts and file names in [lesson-images.md](lesson-images.md); the PO creates the images with Gemini; added as `.webp` with alt text | D-072 | P3 | To do: waiting on the images |
+| T-600 | Walkthrough controls above the drawing so they stay in place between steps; 16px of space above a button that follows other content in a card | D-072 | P1 | Done 2026-11-21: frontend tests; before and after screenshots on desktop and phone; PO review OK |
+| T-601 | Lesson figures: the `figure` block (stack, queue, visual, image), Play and Stop, English and Vietnamese labels, backend and frontend content checks | FR-03, D-072 | P1 | Done 2026-11-21: backend and frontend tests; screenshots; PO review OK |
+| T-602 | Figures in the core lessons: arrays (insert, grid), hashing (buckets and a collision), linked lists (insert, reverse), stack and queue, BST search, heap push, BFS rings | FR-03, D-072 | P1 | Done 2026-11-21: content checks, including frame-by-frame replay of stack and queue figures; screenshots; PO review OK |
+| T-604 | Sprint 21 report | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-21-report.md) |
 
 ## Later (unscheduled)
 
 | ID | Title | Req |
 | --- | --- | --- |
+| T-603 | Decorative images for the core lessons: prompts and file names in [lesson-images.md](lesson-images.md); waiting on the PO's images (moved from Sprint 21) | D-072 |
 | T-403 | Leaderboard with labelled dummy players (moved from Sprint 4) | FR-14 |
 | T-501 | Hard problems and hard test mode for real | FR-11, D-024 |
 | T-502 | Levels 4–27 content, about 2 levels per sprint | SRS §6, D-048 |
