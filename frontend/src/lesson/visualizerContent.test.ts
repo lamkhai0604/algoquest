@@ -558,7 +558,7 @@ describe("lesson visualizers match their reference algorithms", () => {
     const first = steps[0]!.visual!;
     const cols = first.columnLabels!.length;
     const grid = first.cells;
-    const dist = grid.map((c) => (c === "S" ? 0 : -1));
+    const dist: number[] = grid.map((c) => (c === "S" ? 0 : -1));
     let wave = grid.flatMap((c, i) => (c === "S" ? [i] : []));
     const waves: number[][] = [];
     while (wave.length) {
