@@ -19,11 +19,16 @@ const figures = (markdown: string) =>
 
 describe("lesson figures in content", () => {
   it("every figure block is a valid figure", () => {
+    let count = 0;
     for (const [path, markdown] of Object.entries(LESSONS)) {
       for (const block of figures(markdown)) {
         expect(parseFigure(block), `${path}: ${block}`).not.toBeNull();
+        count++;
       }
     }
+    // Levels 2, 3, 5, 6, 8, 9 and 10 have 11 figures between them.
+    expect(Object.keys(LESSONS).length).toBeGreaterThanOrEqual(27);
+    expect(count).toBeGreaterThanOrEqual(11);
   });
 
   it("every image figure points at a file in public/lesson-images", () => {
