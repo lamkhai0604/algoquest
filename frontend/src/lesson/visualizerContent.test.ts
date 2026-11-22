@@ -553,6 +553,72 @@ describe("lesson visualizers match their reference algorithms", () => {
     );
   });
 
+  it("Level 24: multi-source BFS fills the grid one wave at a time", () => {
+    const steps = walkthrough("24-graph-and-grid-problems");
+    const first = steps[0]!.visual!;
+    const cols = first.columnLabels!.length;
+    const grid = first.cells;
+    const dist = grid.map((c) => (c === "S" ? 0 : -1));
+    let wave = grid.flatMap((c, i) => (c === "S" ? [i] : []));
+    const waves: number[][] = [];
+    while (wave.length) {
+      waves.push(wave);
+      const next: number[] = [];
+      for (const i of wave) {
+        const r = Math.floor(i / cols);
+        const c = i % cols;
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+          const nr = r + dr;
+          const nc = c + dc;
+          const j = nr * cols + nc;
+          if (nr < 0 || nc < 0 || nc >= cols || j >= grid.length) continue;
+          if (grid[j] === "#" || dist[j] !== -1) continue;
+          dist[j] = dist[i]! + 1;
+          next.push(j);
+        }
+      }
+      wave = next;
+    }
+    expect(steps).toHaveLength(waves.length + 1);
+    waves.forEach((w, k) => {
+      const v = steps[k + 1]!.visual!;
+      for (const i of w) expect(v.cells[i]).toBe(String(k));
+      expect(v.reads ?? []).toEqual(k === 0 ? [] : [...waves[k - 1]!]);
+    });
+  });
+
+  it("Level 25: Dijkstra settles towns in order of distance", () => {
+    const steps = walkthrough("25-shortest-path-and-topological-sort");
+    const first = steps[0]!.visual!;
+    const n = first.cells.length;
+    const adj: [number, number][][] = Array.from({ length: n }, () => []);
+    first.edges!.forEach(([a = 0, b = 0], e) => {
+      const w = Number(first.weights![e]);
+      adj[a]!.push([b, w]);
+      adj[b]!.push([a, w]);
+    });
+    const dist = new Array<number>(n).fill(Infinity);
+    dist[0] = 0;
+    const done: number[] = [];
+    steps.slice(1).forEach((step) => {
+      let u = -1;
+      for (let i = 0; i < n; i++) {
+        if (!done.includes(i) && (u < 0 || dist[i]! < dist[u]!)) u = i;
+      }
+      done.push(u);
+      for (const [v, w] of adj[u]!) {
+        if (!done.includes(v)) dist[v] = Math.min(dist[v]!, dist[u]! + w);
+      }
+      expect(step.visual!.markers![0]!.index).toBe(u);
+      expect(step.visual!.visited).toEqual(done);
+      const shown = first.cells
+        .map((name, i) => `${name} ${dist[i] === Infinity ? "∞" : dist[i]}`)
+        .join(" · ");
+      expect(value(step, "dist")).toBe(shown);
+    });
+    expect(done).toHaveLength(n);
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -596,6 +662,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "21-dynamic-programming-fundamentals",
       "22-mixed-pattern-problems",
       "23-dynamic-programming-1d-and-2d",
+      "24-graph-and-grid-problems",
+      "25-shortest-path-and-topological-sort",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

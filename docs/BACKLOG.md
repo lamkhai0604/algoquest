@@ -256,11 +256,11 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-586 | Edge weights on the graph view: a label on each edge, and the explorer ignores weights | FR-03, D-069 | P1 | To do |
-| T-587 | Level 24 Graph & Grid Problem Solving content | FR-03, FR-04, D-048 | P1 | To do |
-| T-588 | Level 24 pattern challenges | D-057 | P2 | To do |
-| T-589 | Level 25 Shortest Path & Topological Sort content | FR-03, FR-04, D-048 | P1 | To do |
-| T-590 | Level 25 pattern challenges | D-057 | P2 | To do |
+| T-586 | Edge weights on the graph view: a label on each edge, and the explorer ignores weights | FR-03, D-069 | P1 | Built 2026-11-21: content check rule, loader and rendering tests; PO review pending |
+| T-587 | Level 24 Graph & Grid Problem Solving content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against multi-source BFS; PO review pending |
+| T-588 | Level 24 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
+| T-589 | Level 25 Shortest Path & Topological Sort content | FR-03, FR-04, D-048 | P1 | Built 2026-11-21: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test against Dijkstra; PO review pending |
+| T-590 | Level 25 pattern challenges | D-057 | P2 | Built 2026-11-21 (content check); PO review pending |
 | T-591 | Sprint 19 report | D-007 | P2 | To do |
 
 ## Later (unscheduled)

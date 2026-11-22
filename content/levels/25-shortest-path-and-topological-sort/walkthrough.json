@@ -1,0 +1,880 @@
+[
+  {
+    "title": "The task",
+    "body": "Six towns and two-way roads; the number on each road is its length in km. Find the shortest distance from **A** to every town. Distances start at ∞ except A = 0. Repeatedly settle the closest town that is not settled yet, and try its roads.",
+    "code": "const dist = new Array(n).fill(Infinity);\ndist[start] = 0;\nconst heap = [[0, start]];",
+    "visual": {
+      "cells": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "weights": [
+        "4",
+        "2",
+        "1",
+        "5",
+        "8",
+        "10",
+        "2",
+        "6",
+        "2"
+      ],
+      "positions": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          1
+        ]
+      ],
+      "vars": [
+        {
+          "name": "dist",
+          "value": "A 0 · B ∞ · C ∞ · D ∞ · E ∞ · F ∞"
+        },
+        {
+          "name": "frontier",
+          "value": "A 0"
+        },
+        {
+          "name": "settled",
+          "value": "·"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Settle A",
+    "body": "Settle **A** at 0: it is the closest unsettled town, so no later route can beat it. Try its roads: B: ∞ → 4; C: ∞ → 2.",
+    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "visual": {
+      "cells": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "weights": [
+        "4",
+        "2",
+        "1",
+        "5",
+        "8",
+        "10",
+        "2",
+        "6",
+        "2"
+      ],
+      "positions": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          1
+        ]
+      ],
+      "visited": [
+        0
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "settle"
+        }
+      ],
+      "activeEdges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "vars": [
+        {
+          "name": "dist",
+          "value": "A 0 · B 4 · C 2 · D ∞ · E ∞ · F ∞"
+        },
+        {
+          "name": "frontier",
+          "value": "C 2, B 4"
+        },
+        {
+          "name": "settled",
+          "value": "A"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Settle C",
+    "body": "Settle **C** at 2: it is the closest unsettled town, so no later route can beat it. Try its roads: B: 4 → 3; D: ∞ → 10; E: ∞ → 12.",
+    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "visual": {
+      "cells": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "weights": [
+        "4",
+        "2",
+        "1",
+        "5",
+        "8",
+        "10",
+        "2",
+        "6",
+        "2"
+      ],
+      "positions": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          1
+        ]
+      ],
+      "visited": [
+        0,
+        2
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "settle"
+        }
+      ],
+      "activeEdges": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "vars": [
+        {
+          "name": "dist",
+          "value": "A 0 · B 3 · C 2 · D 10 · E 12 · F ∞"
+        },
+        {
+          "name": "frontier",
+          "value": "B 3, D 10, E 12"
+        },
+        {
+          "name": "settled",
+          "value": "A C"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Settle B",
+    "body": "Settle **B** at 3: it is the closest unsettled town, so no later route can beat it. Try its roads: D: 10 → 8.",
+    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "visual": {
+      "cells": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "weights": [
+        "4",
+        "2",
+        "1",
+        "5",
+        "8",
+        "10",
+        "2",
+        "6",
+        "2"
+      ],
+      "positions": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          1
+        ]
+      ],
+      "visited": [
+        0,
+        2,
+        1
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "settle"
+        }
+      ],
+      "activeEdges": [
+        [
+          1,
+          3
+        ]
+      ],
+      "vars": [
+        {
+          "name": "dist",
+          "value": "A 0 · B 3 · C 2 · D 8 · E 12 · F ∞"
+        },
+        {
+          "name": "frontier",
+          "value": "D 8, E 12"
+        },
+        {
+          "name": "settled",
+          "value": "A C B"
+        }
+      ],
+      "predict": {
+        "question": "B is settled at 3. Its road to D is 5 km, and D is at 10 so far. What happens to D?",
+        "options": [
+          "D becomes 8",
+          "D stays 10",
+          "D becomes 5",
+          "D becomes 15"
+        ],
+        "answer": 0,
+        "explanation": "3 + 5 = 8 is shorter than 10, so D's distance drops to 8.",
+        "hides": [
+          "dist",
+          "frontier"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Settle D",
+    "body": "Settle **D** at 8: it is the closest unsettled town, so no later route can beat it. Try its roads: E: 12 → 10; F: ∞ → 14.",
+    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "visual": {
+      "cells": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "weights": [
+        "4",
+        "2",
+        "1",
+        "5",
+        "8",
+        "10",
+        "2",
+        "6",
+        "2"
+      ],
+      "positions": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          1
+        ]
+      ],
+      "visited": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "settle"
+        }
+      ],
+      "activeEdges": [
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "vars": [
+        {
+          "name": "dist",
+          "value": "A 0 · B 3 · C 2 · D 8 · E 10 · F 14"
+        },
+        {
+          "name": "frontier",
+          "value": "E 10, F 14"
+        },
+        {
+          "name": "settled",
+          "value": "A C B D"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Settle E",
+    "body": "Settle **E** at 10: it is the closest unsettled town, so no later route can beat it. Try its roads: F: 14 → 12.",
+    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "visual": {
+      "cells": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "weights": [
+        "4",
+        "2",
+        "1",
+        "5",
+        "8",
+        "10",
+        "2",
+        "6",
+        "2"
+      ],
+      "positions": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          1
+        ]
+      ],
+      "visited": [
+        0,
+        2,
+        1,
+        3,
+        4
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "settle"
+        }
+      ],
+      "activeEdges": [
+        [
+          4,
+          5
+        ]
+      ],
+      "vars": [
+        {
+          "name": "dist",
+          "value": "A 0 · B 3 · C 2 · D 8 · E 10 · F 12"
+        },
+        {
+          "name": "frontier",
+          "value": "F 12"
+        },
+        {
+          "name": "settled",
+          "value": "A C B D E"
+        }
+      ],
+      "predict": {
+        "question": "E is settled at 10. F is at 14 so far, and the road E–F is 2 km. What is F's distance now?",
+        "options": [
+          "12",
+          "14",
+          "16",
+          "10"
+        ],
+        "answer": 0,
+        "explanation": "10 + 2 = 12 beats the 14 found through D.",
+        "hides": [
+          "dist",
+          "frontier"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Settle F",
+    "body": "Settle **F** at 12: it is the closest unsettled town, so no later route can beat it. All its neighbours are already settled. Every town is settled: A 0, C 2, B 3, D 8, E 10, F 12.",
+    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "visual": {
+      "cells": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "edges": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "weights": [
+        "4",
+        "2",
+        "1",
+        "5",
+        "8",
+        "10",
+        "2",
+        "6",
+        "2"
+      ],
+      "positions": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          1
+        ]
+      ],
+      "visited": [
+        0,
+        2,
+        1,
+        3,
+        4,
+        5
+      ],
+      "markers": [
+        {
+          "index": 5,
+          "label": "settle"
+        }
+      ],
+      "activeEdges": [],
+      "vars": [
+        {
+          "name": "dist",
+          "value": "A 0 · B 3 · C 2 · D 8 · E 10 · F 12"
+        },
+        {
+          "name": "frontier",
+          "value": "empty"
+        },
+        {
+          "name": "settled",
+          "value": "A C B D E F"
+        },
+        {
+          "name": "result",
+          "value": "A→F: 12 km (A, C, B, D, E, F)"
+        }
+      ]
+    }
+  }
+]

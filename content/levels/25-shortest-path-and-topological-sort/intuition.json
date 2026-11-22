@@ -1,0 +1,11 @@
+{
+  "question": "A map app knows the travel time of every road. Plain BFS finds the route with the fewest roads. Why is that not good enough here?",
+  "options": [
+    "Roads take different times, so fewer roads can still mean a longer trip",
+    "BFS cannot handle two-way roads",
+    "BFS is too slow for maps",
+    "BFS only works on trees"
+  ],
+  "answer": 0,
+  "explanation": "One 60-minute road loses to three 5-minute roads. Dijkstra always settles the closest place next, so it handles different road lengths (as long as none is negative)."
+}
