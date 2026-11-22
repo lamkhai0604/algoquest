@@ -59,8 +59,10 @@ describe("admin panel", () => {
     expect(
       screen.getByText(/gemini-3.5-flash-lite\/v2 · 3100 ms/),
     ).toBeVisible();
-    const nav = screen.getByRole("navigation", { name: "Main" });
-    expect(within(nav).getByRole("link", { name: "Admin" })).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Account menu" }));
+    const menu = screen.getByRole("group", { name: "Account menu" });
+    expect(within(menu).getByRole("link", { name: "Admin" })).toBeVisible();
+    await userEvent.keyboard("{Escape}");
 
     await userEvent.type(
       screen.getByLabelText("Problem ID"),
