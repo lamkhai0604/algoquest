@@ -26,26 +26,32 @@ public class DemoController {
   private final AccessService access;
   private final LoginCodeService loginCodes;
   private final Clock clock;
+  private final PasswordSignInController password;
   private final boolean enabled;
+  private final boolean oauth;
   private final int dailyLimit;
 
   public DemoController(
       AccessService access,
       LoginCodeService loginCodes,
       Clock clock,
-      @Value("${algoquest.demo.enabled:true}") boolean enabled,
+      PasswordSignInController password,
+      @Value("${algoquest.demo.enabled:false}") boolean enabled,
+      @Value("${algoquest.signin.oauth-enabled:false}") boolean oauth,
       @Value("${algoquest.demo.daily-limit:40}") int dailyLimit) {
     this.access = access;
     this.loginCodes = loginCodes;
     this.clock = clock;
+    this.password = password;
     this.enabled = enabled;
+    this.oauth = oauth;
     this.dailyLimit = dailyLimit;
   }
 
-  /** Which sign-in options the frontend shows. */
+  /** Which sign-in options the frontend shows (D-062, D-073). */
   @GetMapping("/options")
   public Options options() {
-    return new Options(enabled);
+    return new Options(enabled, oauth, password.enabled());
   }
 
   @PostMapping("/demo")
@@ -65,7 +71,7 @@ public class DemoController {
     return new DemoCode(loginCodes.issue(userId));
   }
 
-  public record Options(boolean demo) {}
+  public record Options(boolean demo, boolean oauth, boolean password) {}
 
   public record DemoCode(String code) {}
 }

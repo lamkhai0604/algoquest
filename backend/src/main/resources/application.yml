@@ -57,9 +57,15 @@ algoquest:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   # Signs the app's login tokens (D-036). When empty, a random key is used and tokens end at restart.
   jwt-secret: ${JWT_SECRET:}
-  # Demo sign-in for visitors (D-062): on or off, and how many demo accounts a UTC day allows.
+  # Owner sign-in with email and password (D-073). Set OWNER_PASSWORD only on the host, never in
+  # the repository; at least 12 characters. Empty turns password sign-in off.
+  owner-password: ${OWNER_PASSWORD:}
+  signin:
+    # Google and GitHub sign-in (D-073): off unless turned on.
+    oauth-enabled: ${OAUTH_SIGNIN_ENABLED:false}
+  # Demo sign-in for visitors (D-062, D-073): off unless turned on; how many a UTC day allows.
   demo:
-    enabled: ${DEMO_ENABLED:true}
+    enabled: ${DEMO_ENABLED:false}
     daily-limit: ${DEMO_DAILY_LIMIT:40}
   code:
     java:

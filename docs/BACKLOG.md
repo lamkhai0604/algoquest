@@ -284,6 +284,12 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-602 | Figures in the core lessons: arrays (insert, grid), hashing (buckets and a collision), linked lists (insert, reverse), stack and queue, BST search, heap push, BFS rings | FR-03, D-072 | P1 | Done 2026-11-21: content checks, including frame-by-frame replay of stack and queue figures; screenshots; PO review OK |
 | T-604 | Sprint 21 report | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-21-report.md) |
 
+## Maintenance
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-605 | Owner-only sign-in with email and password; Google, GitHub and demo sign-in off by default | FR-01, FR-17, D-073 | P1 | Built 2026-11-22: backend tests (sign-in, wrong password, lock after 5 attempts, OAuth and demo off); frontend tests; screenshots; PO review pending. The PO sets `OWNER_PASSWORD` on Render |
+
 ## Later (unscheduled)
 
 | ID | Title | Req |

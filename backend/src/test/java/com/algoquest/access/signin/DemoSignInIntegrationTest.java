@@ -21,6 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(
     properties = {
       "algoquest.jwt-secret=integration-test-secret-of-32-characters",
+      "algoquest.demo.enabled=true",
       "algoquest.demo.daily-limit=2"
     })
 @ActiveProfiles("test")
@@ -66,7 +67,8 @@ class DemoSignInIntegrationTest {
   void optionsAreOpenAndShowTheDemo() throws Exception {
     mvc.perform(get("/api/v1/auth/options"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.demo").value(true));
+        .andExpect(jsonPath("$.demo").value(true))
+        .andExpect(jsonPath("$.password").value(false));
   }
 
   @Test

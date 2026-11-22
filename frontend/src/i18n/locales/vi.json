@@ -226,7 +226,13 @@
     "or": "hoặc",
     "demo": "Dùng thử, không cần tài khoản",
     "demoNote": "Một tài khoản tạm thời, mở sẵn mọi level.",
-    "demoUsedUp": "Hôm nay đã hết lượt dùng thử. Hãy thử lại vào ngày mai, hoặc đăng nhập bằng Google hay GitHub."
+    "demoUsedUp": "Hôm nay đã hết lượt dùng thử. Hãy thử lại vào ngày mai, hoặc đăng nhập bằng Google hay GitHub.",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "signIn": "Đăng nhập",
+    "wrongPassword": "Email hoặc mật khẩu không đúng.",
+    "tooManyAttempts": "Sai quá nhiều lần. Hãy thử lại sau 15 phút.",
+    "loadingOptions": "Đang đánh thức máy chủ…"
   },
   "misc": {
     "notFound": "Không tìm thấy trang",

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "../i18n";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import { API_URL, ApiError, api, wakeServer } from "../api";
@@ -9,12 +9,20 @@ import { useAuth } from "./authContext";
 
 const FEATURES = ["auth.feature1", "auth.feature2", "auth.feature3"] as const;
 
+/** Which sign-in methods the server offers (D-062, D-073). */
+type Options = { demo: boolean; oauth: boolean; password: boolean };
+
 export function SignInPage() {
   const { t } = useTranslation();
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const { state } = useAuth();
-  const [demoOn, setDemoOn] = useState(false);
+  const [options, setOptions] = useState<Options | null>(null);
+  const [optionsFailed, setOptionsFailed] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordBusy, setPasswordBusy] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [demoBusy, setDemoBusy] = useState(false);
   const [demoError, setDemoError] = useState<string | null>(null);
   const error =
@@ -25,11 +33,11 @@ export function SignInPage() {
         : null;
   useEffect(() => {
     wakeServer();
-    // The demo button shows only when the server offers it (D-062).
+    // Each sign-in method shows only when the server offers it (D-062, D-073).
     api
-      .get<{ demo: boolean }>("/api/v1/auth/options")
-      .then((options) => setDemoOn(options.demo))
-      .catch(() => setDemoOn(false));
+      .get<Options>("/api/v1/auth/options")
+      .then(setOptions)
+      .catch(() => setOptionsFailed(true));
   }, []);
   if (state.status === "signed-in") {
     return <Navigate to="/" replace />;
@@ -53,6 +61,27 @@ export function SignInPage() {
       });
   };
 
+  const signInWithPassword = (event: FormEvent) => {
+    event.preventDefault();
+    setPasswordBusy(true);
+    setPasswordError(null);
+    api
+      .post<{ code: string }>("/api/v1/auth/password", { email, password })
+      .then(({ code }) =>
+        navigate(`/auth/callback?code=${encodeURIComponent(code)}`),
+      )
+      .catch((e: unknown) => {
+        setPasswordError(
+          e instanceof ApiError && e.status === 401
+            ? t("auth.wrongPassword")
+            : e instanceof ApiError && e.status === 429
+              ? t("auth.tooManyAttempts")
+              : t("auth.error"),
+        );
+        setPasswordBusy(false);
+      });
+  };
+
   return (
     <div className={styles.page}>
       <GraphBackground />
@@ -69,19 +98,63 @@ export function SignInPage() {
             {error}
           </p>
         )}
-        <a
-          className={styles.provider}
-          href={`${API_URL}/oauth2/authorization/google`}
-        >
-          {t("auth.google")}
-        </a>
-        <a
-          className={styles.provider}
-          href={`${API_URL}/oauth2/authorization/github`}
-        >
-          {t("auth.github")}
-        </a>
-        {demoOn && (
+        {!options && !optionsFailed && (
+          <p className={styles.demoNote}>{t("auth.loadingOptions")}</p>
+        )}
+        {optionsFailed && <p className={styles.error}>{t("auth.error")}</p>}
+        {options?.password && (
+          <form className={styles.passwordForm} onSubmit={signInWithPassword}>
+            <label className={styles.field}>
+              <span>{t("auth.email")}</span>
+              <input
+                type="email"
+                autoComplete="username"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <label className={styles.field}>
+              <span>{t("auth.password")}</span>
+              <input
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+            {passwordError && (
+              <p className={styles.error} role="alert">
+                {passwordError}
+              </p>
+            )}
+            <button
+              type="submit"
+              className={styles.signInButton}
+              disabled={passwordBusy}
+            >
+              {t("auth.signIn")}
+            </button>
+          </form>
+        )}
+        {options?.oauth && (
+          <>
+            <a
+              className={styles.provider}
+              href={`${API_URL}/oauth2/authorization/google`}
+            >
+              {t("auth.google")}
+            </a>
+            <a
+              className={styles.provider}
+              href={`${API_URL}/oauth2/authorization/github`}
+            >
+              {t("auth.github")}
+            </a>
+          </>
+        )}
+        {options?.demo && (
           <>
             <p className={styles.or}>{t("auth.or")}</p>
             <button
