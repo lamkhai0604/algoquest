@@ -1,0 +1,254 @@
+{
+  "id": "L26-short-forms",
+  "level": 26,
+  "difficulty": "Easy",
+  "use": "practice",
+  "status": "ready",
+  "order": 2,
+  "title": "Short Forms",
+  "statement": "A note-taking app shortens long words. Given a list of short forms and a sentence of words separated by single spaces, replace each word that starts with some short form by the shortest such short form. Words with no matching short form stay as they are. Return the new sentence.",
+  "examples": [
+    {
+      "input": "forms = [\"cat\", \"bat\", \"rat\"], sentence = \"the cattle was rattled by the battery\"",
+      "output": "\"the cat was rat by the bat\""
+    },
+    {
+      "input": "forms = [\"a\", \"b\"], sentence = \"aadsfasf absbs bbab cadsfafs\"",
+      "output": "\"a a b cadsfafs\""
+    }
+  ],
+  "constraints": [
+    "1 <= forms.length <= 1000",
+    "1 <= sentence.length <= 10^4",
+    "lowercase letters and single spaces"
+  ],
+  "answerKey": {
+    "pattern": "A trie of short forms; walk each word until a form ends or a letter is missing",
+    "keyPoints": [
+      "Insert every short form and mark where each ends",
+      "For each word, walk the trie letter by letter",
+      "Stop at the first end mark (the shortest form) or keep the word if the path breaks"
+    ],
+    "timeComplexity": "O(total letters of forms + sentence length)",
+    "spaceComplexity": "O(total letters of forms)",
+    "edgeCases": [
+      "A form equal to a whole word",
+      "Two forms where one is a prefix of the other: the shorter wins",
+      "No forms match"
+    ],
+    "acceptableSlowerApproaches": [
+      "For each word try every form: O(words · forms · L)",
+      "Try every prefix of each word in a hash set: O(sentence length · L), also fine"
+    ]
+  },
+  "hints": [
+    "Which short form should win when several match?",
+    "The shortest one: the first end mark you meet while walking the trie.",
+    "Insert forms with an end flag; for each word, walk until an end flag or a missing child."
+  ],
+  "starterCode": {
+    "javascript": "function shortForms(forms, sentence) {\n  // return the shortened sentence\n}",
+    "java": "class Solution {\n  String shortForms(String[] forms, String sentence) {\n    // return the shortened sentence\n  }\n}"
+  },
+  "similarLeetCode": "Replace Words",
+  "tests": [
+    {
+      "input": [
+        [
+          "cat",
+          "bat",
+          "rat"
+        ],
+        "the cattle was rattled by the battery"
+      ],
+      "expected": "the cat was rat by the bat"
+    },
+    {
+      "input": [
+        [
+          "a",
+          "b"
+        ],
+        "aadsfasf absbs bbab cadsfafs"
+      ],
+      "expected": "a a b cadsfafs"
+    },
+    {
+      "input": [
+        [
+          "xyz"
+        ],
+        "xy xyz xyzw"
+      ],
+      "expected": "xy xyz xyz"
+    },
+    {
+      "input": [
+        [
+          "ab",
+          "abc"
+        ],
+        "abcd ab a"
+      ],
+      "expected": "ab ab a"
+    },
+    {
+      "input": [
+        [
+          "c",
+          "a",
+          "c",
+          "dbc",
+          "aa",
+          "b",
+          "ab",
+          "c",
+          "cca",
+          "a",
+          "a",
+          "d",
+          "bbc",
+          "aa",
+          "c",
+          "db",
+          "ba",
+          "abb",
+          "ccc",
+          "d"
+        ],
+        "aad ccd cccaad dbbcbac cd ccbbc adbab c dbc ddcdcac cadb abcab d aacdad cdb cdaac cadda bbddbc dbbddc db a cab caabd abacad dbdbab cdcdb cdb dbd abcb d acd cc abbbab accacca cb dcccc c bddbbb cacccad dcdbdc"
+      ],
+      "expected": "a c c d c c a c d d c a d a c c c b d d a c c a d c c d a d a c a a c d c b c d"
+    },
+    {
+      "input": [
+        [
+          "eca",
+          "bbbe",
+          "bbe",
+          "bea",
+          "cded",
+          "dcbe",
+          "bc",
+          "bda",
+          "abd",
+          "becb",
+          "dda",
+          "ebba",
+          "dbab",
+          "ce",
+          "edad",
+          "deda",
+          "ca",
+          "da",
+          "eb",
+          "ab",
+          "ce",
+          "dddd",
+          "aaed",
+          "ebcd",
+          "cd",
+          "adde",
+          "aa",
+          "cd",
+          "acde",
+          "bca",
+          "eeb",
+          "ed",
+          "ecb",
+          "acde",
+          "cbe",
+          "bc",
+          "bb",
+          "da",
+          "eb",
+          "ccde",
+          "dcc",
+          "ba",
+          "ccc",
+          "acc",
+          "bead",
+          "deed",
+          "dedb",
+          "dae",
+          "edce",
+          "bc",
+          "bcda",
+          "cae",
+          "abcd",
+          "cea",
+          "dae",
+          "edee",
+          "aecc",
+          "ad",
+          "ddbe",
+          "dad",
+          "beb",
+          "ae",
+          "ccb",
+          "dcdc",
+          "ed",
+          "ce",
+          "cacd",
+          "bbd",
+          "cecd",
+          "bd",
+          "eaba",
+          "bad",
+          "aea",
+          "bb",
+          "cb",
+          "ac",
+          "ae",
+          "ac",
+          "ad",
+          "ecd",
+          "dab",
+          "eb",
+          "cacd",
+          "decd",
+          "bb",
+          "dd",
+          "cae",
+          "cd",
+          "bb",
+          "edba",
+          "dbe",
+          "aec",
+          "ccad",
+          "bd",
+          "dd",
+          "bec",
+          "ddb",
+          "dae",
+          "deb",
+          "ac"
+        ],
+        "bcbb dbe ca ecaac cdaecab dbeebbc bacbec ba ddedb ed bedddb ccbddb bbdbaa cbbbeca dbbdb deddbaa cbc daaa ecce d ceaca ebeee ecacb db bcbdcd eb cedebd dabbea caba dbc cdcaeab a ece d cebabe bd ccbdb bebd ddb b ccdeba adbe bbeecdb dded d cb dabde ddbd cada ed e ccdecc dce eebdbd adce bbabb abd aed bcccb bbeacdd ccddaec abb bbd dbbcca edbdae ebb aadedb cb ce daacab dddbeae ec b c babd ded ec cae ad bdcae debc abbd d ececd daaad caa aeaad daeaaba c cde cedbad bbcbce eacbd bccbaee bec ba bcdca adecc cedbae ebccebd adebcec bebeec ccebb beeedce bb aece dcebade aaccac deceba aadbabc ccaae cb dbec edacacb c babdcd eadead dbab bb eedbd de cdde addacb acbdcbc dcebcce acc ceaced abb cccd ceddc acaba aecc ddab cddbac beade aadbcc bdaabce d edb edec cb bdbbcda bcca bc ad eeec cc b cbbbcb ebabeae dedecce edbbccd aead ddee cecde dbee bcbe c addb be c cea aadd eae bcedba bddbdc ed ed adbd cbdce daaa b eabe c ecb a bcdeec aab de cb dbaddc ccce cadcae ddeb db ac eabcdde d acca bbeeec dbbd e aaacebd ddacd eadacd caaeec eebd b eaceedd dceeb a acca c dee adccc deeba ddcb c bcacdbc abdc eddea ada ceae a cdad abad dbe dad eccbca ecee acdda dad a aaccbde edbadd acebe eaac dcb deeeae cbcbcab cbdaa eaedd bbacb cb ebbdae ebceab c abc badcddc dbdaa abaece dbca eee bacbee ccc d bcbbca cad be eccb eaad bbebdc bed eac dceb cb cdedbba db ceb deedbbc cdbbbc c bedccda ac aecbb aee eceecad cdddabb ad acdaec cdabad bec acec e bed eecbeca adaa caeccaa bdba bcabad badeeec edc abaa dbeceb ededa d b addad deada cda bcbbc aec be eaeaee b c abb bcbbbca ddaed bdacbcc aa bcccb eeeec cbe eaeedc dabdceb b dadc abeeca bcdcda ceac ddaeca aa cc ca ee cdab eaae abbc c edcbeea cdbbbcc aabddee ecce edbaacc ccdd caaadbd bb bedcc bbdd cabeace eecb eade eedbedd b deacdbb dcd baaabb baade eecda ededdcb aaeede da dcbebba db ebadecd ccee be ebbbc ab cedea a addee adbeac cddb e ee deca ad bebab bddbca eda dba acadc bdccba adcca dcbeeaa ace bdaedc b cbeac babc bdaaa d ebaddb ae adace abdabbd c deadee dddebdb ddccca bad dbade aaad bd ad ddc ece a cbad c acb c d ea bebc bcedac bd be"
+      ],
+      "expected": "bc dbe ca eca cd dbe ba ba dd ed bedddb ccb bb cb dbbdb deddbaa cb da ecce d ce eb eca db bc eb ce da ca dbc cd a ece d ce bd ccb beb dd b ccde ad bb dd d cb da dd ca ed e ccde dce eeb ad bb ab ae bc bb ccddaec ab bb dbbcca ed eb aa cb ce da dd ec b c ba ded ec ca ad bd deb ab d ececd da ca ae da c cd ce bb eacbd bc bec ba bc ad ce eb ad beb ccebb beeedce bb ae dcebade aa deceba aa ccaae cb dbe ed c ba eadead dbab bb eedbd de cd ad ac dcebcce ac ce ab ccc ce ac ae dd cd bea aa bd d ed ed cb bd bc bc ad eeec cc b cb eb dedecce ed ae dd ce dbe bc c ad be c ce aa eae bc bd ed ed ad cb da b eabe c ecb a bc aa de cb dbaddc ccc ca dd db ac eabcdde d ac bb dbbd e aa dd eadacd ca eeb b eaceedd dceeb a ac c dee ad deeba dd c bc ab ed ad ce a cd ab dbe da eccbca ecee ac da a aa ed ac eaac dcb deeeae cb cb eaedd bb cb eb eb c ab ba dbdaa ab dbca eee ba ccc d bc ca be eccb eaad bb bed eac dceb cb cd db ce deed cd c bedccda ac ae ae eceecad cd ad ac cd bec ac e bed eecbeca ad ca bd bc ba ed ab dbe ed d b ad deada cd bc ae be eaeaee b c ab bc dd bd aa bc eeeec cb eaeedc da b da ab bc ce dd aa cc ca ee cd eaae ab c ed cd aa ecce ed ccdd ca bb bedcc bb ca eecb eade eedbedd b deacdbb dcd ba ba eecda ed aa da dcbe db eb ccee be eb ab ce a ad ad cd e ee deca ad beb bd ed dba ac bd ad dcbe ac bd b cb ba bd d eb ae ad ab c deadee dd dd ba dbade aa bd ad dd ece a cb c ac c d ea beb bc bd be"
+    },
+    {
+      "input": [
+        [
+          "x",
+          "xx",
+          "yx",
+          "xy",
+          "x"
+        ],
+        "xxxy xyyyxz yxzyzyz zzy zxzzzz yxzxyxx zy xyyxzz zyz yyxzyy xyyzz xxzzy yyzxz xy x yxy xyxyz z z zyzxx z xzxzzz z xxz yyx yxzy yz zxyz xzy yzzz yzyy xxxz yyzyxy xzyy zxzxx zyz z zxxxxzx xzx xxyyx zxxzxz xzzxzzy zyx xx y y x xz yz xxyy xz zx xxxzz y yxxxzyy zxyx y xxxx yzxyzy xzxyyyz xxx xyzyxxx yyxxyyz xzyyyxx yyx zxyxz yxzx xyxxz zyxx yxyx zy yzyz z x xzxx zyyzyx yzyz z xxyzxxx yx xzy zzxy xyxxx yx zzx xyzyzz yy xzxzy zzxxxzz y yyxz x zxzxy y zzxzyxx zz zxxzyxy yy xzyyyxx xyy zyyy zyxy zx yyyxxxz x zxzyyy zyxz xzzxz yyyzxyx x xz zx yx yxx zyxzzxx zyz xyyxzyy zxzxyz zy yy xyzx zyyx yzyzzyz zyyzzxz xzxzyy zyzzyyx yyxzzx xzy yz yz zyy yzyxzzz xyyzy xzy y yyzzyz y xyxz xyxzxzy xzxzx xxyz z x yyzyy yxyxxy xxy zzyxyxz x z z zzxzxy zzyyxzz yyzzzzx xzzxxyx yy yxzzxy xx yyxzyy xzyxz z xyzyz zzx xyzz x zz zxyz z zy zzxyxyy zyyxyy zx yyy xyyzxx yyxzxxx yzxzxyz yyyzx zzzyzx xzxyyxx zyyxyy xx yy yz yz zzxxx yyzy yyzzyzy yxyyxz xx x zzyzzyy yyx zzyzz yzzxx zxxyzzz xy yxxxz yxz zyzzyy zyxx zyxyyz zyx xyy zz xy zyyyzx zyx zxyz zzxz xyyxzxx zxxxy x z xyyx zx xzzzxyx xyy x xxzzyzz xyyxzxy xzzyzyy xxzyyx zxzxzx x zyzy yzxxx xxzxyy zzxxxx zz xzyxyy xzxxxy zzz x xx zyx yxyyyz yy zx xxzzxxz yx xy yxzx yxyz yzz yyzx yzzyzz x xxxzz xyyy zzx xyyzyy zzzz yz yyzzyy y yzyx xyyxzxy zzz y yzz zzxxzz yz yzzzz yzzzzz xzzy xyzyyzx xy x zyyyx yyxyx xzxy x zx yxx zz z yyz y yxzxy z yyxy xxxyyz yx xy zyzxz x yx zxy zzzx zx zxzyy xxxzzzz zxxzzy xxyxxxz xxxx zzxxzzz xy xyyzxx y yxyx zzxxxy"
+      ],
+      "expected": "x x yx zzy zxzzzz yx zy x zyz yyxzyy x x yyzxz x x yx x z z zyzxx z x z x yyx yx yz zxyz x yzzz yzyy x yyzyxy x zxzxx zyz z zxxxxzx x x zxxzxz x zyx x y y x x yz x x zx x y yx zxyx y x yzxyzy x x x yyxxyyz x yyx zxyxz yx x zyxx yx zy yzyz z x x zyyzyx yzyz z x yx x zzxy x yx zzx x yy x zzxxxzz y yyxz x zxzxy y zzxzyxx zz zxxzyxy yy x x zyyy zyxy zx yyyxxxz x zxzyyy zyxz x yyyzxyx x x zx yx yx zyxzzxx zyz x zxzxyz zy yy x zyyx yzyzzyz zyyzzxz x zyzzyyx yyxzzx x yz yz zyy yzyxzzz x x y yyzzyz y x x x x z x yyzyy yx x zzyxyxz x z z zzxzxy zzyyxzz yyzzzzx x yy yx x yyxzyy x z x zzx x x zz zxyz z zy zzxyxyy zyyxyy zx yyy x yyxzxxx yzxzxyz yyyzx zzzyzx x zyyxyy x yy yz yz zzxxx yyzy yyzzyzy yx x x zzyzzyy yyx zzyzz yzzxx zxxyzzz x yx yx zyzzyy zyxx zyxyyz zyx x zz x zyyyzx zyx zxyz zzxz x zxxxy x z x zx x x x x x x x zxzxzx x zyzy yzxxx x zzxxxx zz x x zzz x x zyx yx yy zx x yx x yx yx yzz yyzx yzzyzz x x x zzx x zzzz yz yyzzyy y yzyx x zzz y yzz zzxxzz yz yzzzz yzzzzz x x x x zyyyx yyxyx x x zx yx zz z yyz y yx z yyxy x yx x zyzxz x yx zxy zzzx zx zxzyy x zxxzzy x x zzxxzzz x x y yx zzxxxy"
+    },
+    {
+      "input": [
+        [
+          "e"
+        ],
+        "e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e"
+      ],
+      "expected": "e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e"
+    }
+  ]
+}

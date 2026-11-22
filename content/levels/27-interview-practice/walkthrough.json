@@ -1,0 +1,427 @@
+[
+  {
+    "title": "The question",
+    "body": "The interviewer says: \"Given a list of numbers and a target, return the positions of two numbers that add up to the target.\" Example: [7, 2, 11, 15, 4] with target 6. Before anything else, listen and repeat the question in your own words.",
+    "code": "// 1 clarify  2 examples  3 brute force  4 improve\n// 5 code  6 test  7 explain",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "listen"
+        },
+        {
+          "name": "seen",
+          "value": "·"
+        },
+        {
+          "name": "note",
+          "value": "restate the task"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Clarify",
+    "body": "Ask about what the statement leaves open: Can numbers repeat? Can one number be used twice? Is there always exactly one answer? Return positions or values? Here: exactly one answer, two different positions, return the positions. Limits: up to 100,000 numbers.",
+    "code": "// n ≤ 10^5 → aim for O(n) or O(n log n)",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "clarify"
+        },
+        {
+          "name": "seen",
+          "value": "·"
+        },
+        {
+          "name": "note",
+          "value": "one answer, 2 positions, n ≤ 10^5"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Brute force first",
+    "body": "Say the simple idea out loud: try every pair. It is correct and shows you understand the task, but it is O(n²), about 5 × 10⁹ pairs for 100,000 numbers. Too slow, so look for something better.",
+    "code": "for (let i = 0; i < n; i++)\n  for (let j = i + 1; j < n; j++)\n    if (a[i] + a[j] === target) return [i, j];",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "brute force"
+        },
+        {
+          "name": "seen",
+          "value": "·"
+        },
+        {
+          "name": "note",
+          "value": "O(n²): too slow for 10^5"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "i"
+        },
+        {
+          "index": 1,
+          "label": "j"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Improve",
+    "body": "Each number x needs exactly one partner: target − x. If the numbers already seen are stored in a hash map from value to position, finding the partner takes O(1). One pass gives O(n) time and O(n) space.",
+    "code": "const seen = new Map();   // value → position",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "improve"
+        },
+        {
+          "name": "seen",
+          "value": "·"
+        },
+        {
+          "name": "note",
+          "value": "partner of x is target − x"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ],
+      "predict": {
+        "question": "Scanning left to right, what should you remember so that each number's partner can be found at once?",
+        "options": [
+          "Each number seen so far and its position, in a hash map",
+          "Only the largest number so far",
+          "The sum of everything so far",
+          "Nothing: sort the list first"
+        ],
+        "answer": 0,
+        "explanation": "The partner of x is target − x. If every earlier number is in a hash map, checking for the partner is O(1).",
+        "hides": [
+          "note"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Trace position 0",
+    "body": "Position 0: 7 needs -1, which has not been seen. Store 7 → 0 and move on.",
+    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "code + trace"
+        },
+        {
+          "name": "seen",
+          "value": "7→0"
+        },
+        {
+          "name": "note",
+          "value": "need -1: not seen"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ],
+      "markers": [
+        {
+          "index": 0,
+          "label": "i"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Trace position 1",
+    "body": "Position 1: 2 needs 4, which has not been seen. Store 2 → 1 and move on.",
+    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "code + trace"
+        },
+        {
+          "name": "seen",
+          "value": "7→0, 2→1"
+        },
+        {
+          "name": "note",
+          "value": "need 4: not seen"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ],
+      "markers": [
+        {
+          "index": 1,
+          "label": "i"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Trace position 2",
+    "body": "Position 2: 11 needs -5, which has not been seen. Store 11 → 2 and move on.",
+    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "code + trace"
+        },
+        {
+          "name": "seen",
+          "value": "7→0, 2→1, 11→2"
+        },
+        {
+          "name": "note",
+          "value": "need -5: not seen"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ],
+      "markers": [
+        {
+          "index": 2,
+          "label": "i"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Trace position 3",
+    "body": "Position 3: 15 needs -9, which has not been seen. Store 15 → 3 and move on.",
+    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "code + trace"
+        },
+        {
+          "name": "seen",
+          "value": "7→0, 2→1, 11→2, 15→3"
+        },
+        {
+          "name": "note",
+          "value": "need -9: not seen"
+        },
+        {
+          "name": "result",
+          "value": "·"
+        }
+      ],
+      "markers": [
+        {
+          "index": 3,
+          "label": "i"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Trace position 4",
+    "body": "Position 4: 4 needs 2. 2 is in the map at position 1, so the answer is [1, 4]. Stop.",
+    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "code + trace"
+        },
+        {
+          "name": "seen",
+          "value": "7→0, 2→1, 11→2, 15→3"
+        },
+        {
+          "name": "note",
+          "value": "need 2: found"
+        },
+        {
+          "name": "result",
+          "value": "[1, 4]"
+        }
+      ],
+      "markers": [
+        {
+          "index": 4,
+          "label": "i"
+        },
+        {
+          "index": 1,
+          "label": "partner"
+        }
+      ],
+      "predict": {
+        "question": "Position 4 holds 4, so it needs 2. The map holds 7→0, 2→1, 11→2, 15→3. What happens?",
+        "options": [
+          "2 is in the map at 1: return [1, 4]",
+          "2 is missing: add 4 and go on",
+          "Start again from the left",
+          "Return −1"
+        ],
+        "answer": 0,
+        "explanation": "2 was stored at position 1, and 2 + 4 = 6.",
+        "hides": [
+          "note",
+          "result"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Test",
+    "body": "Run the code on cases that could break it, out loud: [3, 3] with target 6 (the same value twice: the map check happens before storing, so it works); a pair at the very end; negative numbers; the smallest input of two numbers.",
+    "code": "twoSum([3, 3], 6)        // [0, 1]\ntwoSum([1, -4, 9], 5)    // [1, 2]\ntwoSum([2, 4], 6)        // [0, 1]",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "test"
+        },
+        {
+          "name": "seen",
+          "value": "·"
+        },
+        {
+          "name": "note",
+          "value": "duplicates, negatives, n = 2"
+        },
+        {
+          "name": "result",
+          "value": "[1, 4]"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Explain",
+    "body": "Finish with the summary an interviewer wants to hear: one pass with a hash map, O(n) time and O(n) space. Mention the trade-off: sorting with two pointers uses O(1) extra space but O(n log n) time, and loses the original positions unless you keep them.",
+    "code": "// time O(n), space O(n)\n// alternative: sort + two pointers, O(n log n), O(1) extra",
+    "visual": {
+      "cells": [
+        "7",
+        "2",
+        "11",
+        "15",
+        "4"
+      ],
+      "vars": [
+        {
+          "name": "stage",
+          "value": "explain"
+        },
+        {
+          "name": "seen",
+          "value": "·"
+        },
+        {
+          "name": "note",
+          "value": "O(n) time, O(n) space"
+        },
+        {
+          "name": "result",
+          "value": "[1, 4]"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,572 @@
+{
+  "id": "L26-autocomplete",
+  "level": 26,
+  "difficulty": "Medium",
+  "use": "practice",
+  "status": "ready",
+  "order": 1,
+  "title": "Autocomplete",
+  "statement": "A shop's search box suggests products as a customer types. After each letter of the query, suggest up to three product names that start with the letters typed so far, in alphabetical order (smallest first). Return the list of suggestions after each letter.",
+  "examples": [
+    {
+      "input": "products = [\"mobile\", \"mouse\", \"moneypot\", \"monitor\", \"mousepad\"], query = \"mouse\"",
+      "output": "[[\"mobile\", \"moneypot\", \"monitor\"], [\"mobile\", \"moneypot\", \"monitor\"], [\"mouse\", \"mousepad\"], [\"mouse\", \"mousepad\"], [\"mouse\", \"mousepad\"]]"
+    },
+    {
+      "input": "products = [\"havana\"], query = \"tatiana\"",
+      "output": "[[], [], [], [], [], [], []]"
+    }
+  ],
+  "constraints": [
+    "1 <= products.length <= 1000",
+    "1 <= products[i].length, query.length <= 30",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "A trie whose nodes keep the three smallest words below them (or sort and binary search)",
+    "keyPoints": [
+      "Sort the products first",
+      "Insert each product; on every node along its path, add it to that node's list if the list has fewer than 3 words",
+      "For each prefix of the query, read the list at that node (empty once the path breaks)"
+    ],
+    "timeComplexity": "O(total letters · log) for sorting + O(total letters) for building",
+    "spaceComplexity": "O(total letters)",
+    "edgeCases": [
+      "Query with no match",
+      "Fewer than three matches",
+      "Products that are prefixes of each other"
+    ],
+    "acceptableSlowerApproaches": [
+      "Filter all products for each prefix: O(query length · n · L)",
+      "Sort, then binary search the first match for each prefix: O(n log n + query length · log n)"
+    ]
+  },
+  "hints": [
+    "If the products are sorted first, which three to keep at each trie node is easy. Why?",
+    "Inserted in sorted order, the first three words to reach a node are its three smallest.",
+    "Keep a list of at most 3 words per node; after the path breaks, all answers are empty."
+  ],
+  "starterCode": {
+    "javascript": "function autocomplete(products, query) {\n  // return the suggestions after each letter\n}",
+    "java": "class Solution {\n  List<List<String>> autocomplete(String[] products, String query) {\n    // return the suggestions after each letter\n  }\n}"
+  },
+  "similarLeetCode": "Search Suggestions System",
+  "tests": [
+    {
+      "input": [
+        [
+          "mobile",
+          "mouse",
+          "moneypot",
+          "monitor",
+          "mousepad"
+        ],
+        "mouse"
+      ],
+      "expected": [
+        [
+          "mobile",
+          "moneypot",
+          "monitor"
+        ],
+        [
+          "mobile",
+          "moneypot",
+          "monitor"
+        ],
+        [
+          "mouse",
+          "mousepad"
+        ],
+        [
+          "mouse",
+          "mousepad"
+        ],
+        [
+          "mouse",
+          "mousepad"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "havana"
+        ],
+        "tatiana"
+      ],
+      "expected": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "input": [
+        [
+          "bags",
+          "baggage",
+          "banner",
+          "box",
+          "cloths"
+        ],
+        "bags"
+      ],
+      "expected": [
+        [
+          "baggage",
+          "bags",
+          "banner"
+        ],
+        [
+          "baggage",
+          "bags",
+          "banner"
+        ],
+        [
+          "baggage",
+          "bags"
+        ],
+        [
+          "bags"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "a",
+          "ab",
+          "abc",
+          "abcd"
+        ],
+        "abcd"
+      ],
+      "expected": [
+        [
+          "a",
+          "ab",
+          "abc"
+        ],
+        [
+          "ab",
+          "abc",
+          "abcd"
+        ],
+        [
+          "abc",
+          "abcd"
+        ],
+        [
+          "abcd"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "abaac",
+          "acb",
+          "amc",
+          "baa",
+          "bab",
+          "bamcb",
+          "bbaabbma",
+          "bbaccc",
+          "bbbccccc",
+          "bbmcaccm",
+          "bcacba",
+          "bcam",
+          "bccacm",
+          "bcccmm",
+          "camcmmm",
+          "cbbcm",
+          "ccaa",
+          "cccca",
+          "cccccc",
+          "cmbbb",
+          "cmbmcccb",
+          "maambcb",
+          "macabbb",
+          "mamcac",
+          "mbam",
+          "mcbama",
+          "mcbcbmcb",
+          "mccbma",
+          "mmbm",
+          "mmcmc"
+        ],
+        "ab"
+      ],
+      "expected": [
+        [
+          "abaac",
+          "acb",
+          "amc"
+        ],
+        [
+          "abaac"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "aaabda",
+          "aacbdaba",
+          "aacccc",
+          "aadm",
+          "abad",
+          "abbbmdddb",
+          "abbcaa",
+          "abcabm",
+          "abcmdmbba",
+          "abdaddc",
+          "abmdmmddm",
+          "acama",
+          "acbmmbab",
+          "acccmb",
+          "accdmcb",
+          "acm",
+          "acmbd",
+          "adacbb",
+          "adamd",
+          "adb",
+          "adbma",
+          "admcbcm",
+          "amaamdcd",
+          "amabd",
+          "amcbad",
+          "amma",
+          "ammacbam",
+          "baa",
+          "baaacadca",
+          "baacbmbad",
+          "baba",
+          "babdbba",
+          "babdbbd",
+          "bacbmcc",
+          "bad",
+          "bambbm",
+          "bamc",
+          "bbbbcdbb",
+          "bbcb",
+          "bbdcb",
+          "bbmb",
+          "bbmbab",
+          "bcadcbbd",
+          "bcadddmad",
+          "bcdmmdd",
+          "bdbm",
+          "bmamm",
+          "bmbb",
+          "bmbdma",
+          "bmcc",
+          "bmcdddcdm",
+          "bmda",
+          "bmdcmd",
+          "bmm",
+          "caa",
+          "cab",
+          "cabmd",
+          "cacbd",
+          "cadbddam",
+          "cambb",
+          "cambmmamm",
+          "cbbb",
+          "cbbbaaab",
+          "cbdmd",
+          "ccb",
+          "cccbb",
+          "ccdb",
+          "ccdcmdd",
+          "ccdmmmm",
+          "cda",
+          "cdabbm",
+          "cdadm",
+          "cdba",
+          "cdc",
+          "cdcad",
+          "cdmdmmab",
+          "cmaamb",
+          "cmaccdc",
+          "cmadcbmb",
+          "cmbbd",
+          "cmcdcmbcm",
+          "cmma",
+          "cmmaabb",
+          "cmmdccbb",
+          "daammb",
+          "dabdd",
+          "dacdc",
+          "dadbacamd",
+          "damacb",
+          "dbambcacb",
+          "dbcbcb",
+          "dbdd",
+          "dccdbmcba",
+          "dcmmbmd",
+          "dda",
+          "ddaa",
+          "ddbb",
+          "ddbbmda",
+          "ddbmcda",
+          "ddcca",
+          "ddccdad",
+          "ddccmcbm",
+          "dddaac",
+          "dddcdb",
+          "dddcddmb",
+          "dddma",
+          "dmaaa",
+          "dmab",
+          "dmam",
+          "dmcacdm",
+          "dmdaaaa",
+          "dmmaaa",
+          "dmmmbmab",
+          "mab",
+          "mabbd",
+          "maca",
+          "madmaaddb",
+          "mam",
+          "mbb",
+          "mbbacb",
+          "mbcbbdbbb",
+          "mbcdc",
+          "mbdcbaamc",
+          "mbmmcb",
+          "mcabmm",
+          "mcbaaacbd",
+          "mcbm",
+          "mcd",
+          "mcmcaadda",
+          "mdabmdcmc",
+          "mdbaaad",
+          "mdbcm",
+          "mdbdbmcbc",
+          "mdbmcm",
+          "mdc",
+          "mdcdbcba",
+          "mdcdbddc",
+          "mdcmd",
+          "mddbac",
+          "mdmbdam",
+          "mmcam",
+          "mmccc",
+          "mmccca",
+          "mmd",
+          "mmm",
+          "mmmcb",
+          "mmmd",
+          "mmmdbc",
+          "mmmdcccc"
+        ],
+        "bad"
+      ],
+      "expected": [
+        [
+          "baa",
+          "baaacadca",
+          "baacbmbad"
+        ],
+        [
+          "baa",
+          "baaacadca",
+          "baacbmbad"
+        ],
+        [
+          "bad"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "aaabda",
+          "aacbdaba",
+          "aacccc",
+          "aadm",
+          "abad",
+          "abbbmdddb",
+          "abbcaa",
+          "abcabm",
+          "abcmdmbba",
+          "abdaddc",
+          "abmdmmddm",
+          "acama",
+          "acbmmbab",
+          "acccmb",
+          "accdmcb",
+          "acm",
+          "acmbd",
+          "adacbb",
+          "adamd",
+          "adb",
+          "adbma",
+          "admcbcm",
+          "amaamdcd",
+          "amabd",
+          "amcbad",
+          "amma",
+          "ammacbam",
+          "baa",
+          "baaacadca",
+          "baacbmbad",
+          "baba",
+          "babdbba",
+          "babdbbd",
+          "bacbmcc",
+          "bad",
+          "bambbm",
+          "bamc",
+          "bbbbcdbb",
+          "bbcb",
+          "bbdcb",
+          "bbmb",
+          "bbmbab",
+          "bcadcbbd",
+          "bcadddmad",
+          "bcdmmdd",
+          "bdbm",
+          "bmamm",
+          "bmbb",
+          "bmbdma",
+          "bmcc",
+          "bmcdddcdm",
+          "bmda",
+          "bmdcmd",
+          "bmm",
+          "caa",
+          "cab",
+          "cabmd",
+          "cacbd",
+          "cadbddam",
+          "cambb",
+          "cambmmamm",
+          "cbbb",
+          "cbbbaaab",
+          "cbdmd",
+          "ccb",
+          "cccbb",
+          "ccdb",
+          "ccdcmdd",
+          "ccdmmmm",
+          "cda",
+          "cdabbm",
+          "cdadm",
+          "cdba",
+          "cdc",
+          "cdcad",
+          "cdmdmmab",
+          "cmaamb",
+          "cmaccdc",
+          "cmadcbmb",
+          "cmbbd",
+          "cmcdcmbcm",
+          "cmma",
+          "cmmaabb",
+          "cmmdccbb",
+          "daammb",
+          "dabdd",
+          "dacdc",
+          "dadbacamd",
+          "damacb",
+          "dbambcacb",
+          "dbcbcb",
+          "dbdd",
+          "dccdbmcba",
+          "dcmmbmd",
+          "dda",
+          "ddaa",
+          "ddbb",
+          "ddbbmda",
+          "ddbmcda",
+          "ddcca",
+          "ddccdad",
+          "ddccmcbm",
+          "dddaac",
+          "dddcdb",
+          "dddcddmb",
+          "dddma",
+          "dmaaa",
+          "dmab",
+          "dmam",
+          "dmcacdm",
+          "dmdaaaa",
+          "dmmaaa",
+          "dmmmbmab",
+          "mab",
+          "mabbd",
+          "maca",
+          "madmaaddb",
+          "mam",
+          "mbb",
+          "mbbacb",
+          "mbcbbdbbb",
+          "mbcdc",
+          "mbdcbaamc",
+          "mbmmcb",
+          "mcabmm",
+          "mcbaaacbd",
+          "mcbm",
+          "mcd",
+          "mcmcaadda",
+          "mdabmdcmc",
+          "mdbaaad",
+          "mdbcm",
+          "mdbdbmcbc",
+          "mdbmcm",
+          "mdc",
+          "mdcdbcba",
+          "mdcdbddc",
+          "mdcmd",
+          "mddbac",
+          "mdmbdam",
+          "mmcam",
+          "mmccc",
+          "mmccca",
+          "mmd",
+          "mmm",
+          "mmmcb",
+          "mmmd",
+          "mmmdbc",
+          "mmmdcccc"
+        ],
+        "mda"
+      ],
+      "expected": [
+        [
+          "mab",
+          "mabbd",
+          "maca"
+        ],
+        [
+          "mdabmdcmc",
+          "mdbaaad",
+          "mdbcm"
+        ],
+        [
+          "mdabmdcmc"
+        ]
+      ]
+    },
+    {
+      "input": [
+        [
+          "zz"
+        ],
+        "z"
+      ],
+      "expected": [
+        [
+          "zz"
+        ]
+      ]
+    }
+  ]
+}

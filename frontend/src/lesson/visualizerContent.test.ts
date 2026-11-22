@@ -625,6 +625,68 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(done).toHaveLength(n);
   });
 
+  it("Level 26: the trie grows as words are inserted, with counts on every node", () => {
+    const steps = walkthrough("26-tries");
+    type Node = {
+      id: number;
+      count: number;
+      end: boolean;
+      next: Map<string, Node>;
+    };
+    const nodes: Node[] = [{ id: 0, count: 0, end: false, next: new Map() }];
+    const root = nodes[0]!;
+    for (const step of steps.slice(1, 5)) {
+      const word = value(step, "word")!;
+      let node = root;
+      node.count++;
+      for (const ch of word) {
+        let child = node.next.get(ch);
+        if (!child) {
+          child = { id: nodes.length, count: 0, end: false, next: new Map() };
+          nodes.push(child);
+          node.next.set(ch, child);
+        }
+        child.count++;
+        node = child;
+      }
+      node.end = true;
+      const v = step.visual!;
+      expect(v.cells).toEqual(nodes.map((n) => String(n.count)));
+      expect(v.edges).toHaveLength(nodes.length - 1);
+      expect(v.weights).toHaveLength(nodes.length - 1);
+      expect(v.visited).toEqual(nodes.filter((n) => n.end).map((n) => n.id));
+      expect(v.markers![0]!.index).toBe(node.id);
+    }
+    const ca = root.next.get("c")!.next.get("a")!;
+    expect(value(steps[5]!, "result")).toBe(`${ca.count} words`);
+  });
+
+  it("Level 27: the routine runs in order and the trace finds the pair", () => {
+    const steps = walkthrough("27-interview-practice");
+    const stages = steps.map((s) => value(s, "stage"));
+    const order = [
+      "listen",
+      "clarify",
+      "brute force",
+      "improve",
+      "code + trace",
+      "test",
+      "explain",
+    ];
+    expect([...new Set(stages)]).toEqual(order);
+    const nums = steps[0]!.visual!.cells.map(Number);
+    const target = 6;
+    const seen = new Map<number, number>();
+    let answer = "";
+    for (let i = 0; i < nums.length && !answer; i++) {
+      const need = target - nums[i]!;
+      if (seen.has(need)) answer = `[${seen.get(need)}, ${i}]`;
+      seen.set(nums[i]!, i);
+    }
+    const trace = steps.filter((s) => value(s, "stage") === "code + trace");
+    expect(value(trace.at(-1)!, "result")).toBe(answer);
+  });
+
   it("Level 11: each step clears the lowest 1 bit and counts it", () => {
     const steps = walkthrough("11-bit-manipulation-and-math");
     let n = parseInt(steps[0]!.visual!.cells.join(""), 2);
@@ -670,6 +732,8 @@ describe("lesson visualizers match their reference algorithms", () => {
       "23-dynamic-programming-1d-and-2d",
       "24-graph-and-grid-problems",
       "25-shortest-path-and-topological-sort",
+      "26-tries",
+      "27-interview-practice",
     ]) {
       for (const step of walkthrough(folder)) {
         const predict = step.visual?.predict;

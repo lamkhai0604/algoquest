@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Why say the brute-force idea out loud even if you will not code it?",
+    "options": [
+      "It shows you understand the problem and gives a baseline to improve on",
+      "Interviewers only accept brute force",
+      "It is always fast enough",
+      "It saves you from testing"
+    ],
+    "answer": 0,
+    "explanation": "Naming the O(n²) idea and its cost sets up the reason for the better one."
+  },
+  {
+    "question": "You finished coding. What comes next?",
+    "options": [
+      "Walk through a small example and edge cases by hand, then state time and space",
+      "Say you are done",
+      "Rewrite the code in another language",
+      "Ask for the next question immediately"
+    ],
+    "answer": 0,
+    "explanation": "Tracing finds off-by-one errors before the interviewer does, and the complexity summary closes the answer."
+  },
+  {
+    "question": "You are stuck for a few minutes. What is the best move?",
+    "options": [
+      "Say what you have tried, what blocks you, and try a smaller example or a related pattern",
+      "Stay silent until an idea comes",
+      "Guess a solution and start coding",
+      "Ask the interviewer for the answer"
+    ],
+    "answer": 0,
+    "explanation": "Thinking out loud lets the interviewer help with a hint and shows how you approach problems."
+  }
+]

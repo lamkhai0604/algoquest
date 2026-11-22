@@ -1,0 +1,11 @@
+{
+  "question": "In a 45-minute interview you hear a problem and already see a clever solution. What should you do first?",
+  "options": [
+    "Repeat the problem, ask about unclear details and agree on an example before coding",
+    "Start coding the clever idea at once to save time",
+    "Write the brute force in full code first",
+    "Stay quiet and think until you have the perfect answer"
+  ],
+  "answer": 0,
+  "explanation": "Most failed interviews solve the wrong problem or miss a detail. Two minutes of clarifying and one worked example make sure the clever idea fits, and the interviewer sees how you think."
+}

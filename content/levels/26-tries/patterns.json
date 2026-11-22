@@ -1,0 +1,155 @@
+[
+  {
+    "id": "P26-search-suggest",
+    "level": 26,
+    "title": "Search Bar Suggestions",
+    "statement": "An online store has 500,000 product names. As a customer types, the search bar must show up to five names that start with what has been typed, after every key press.",
+    "examples": [
+      "\"lap\" → laptop, laptop bag, lapel pin"
+    ],
+    "constraints": [
+      "5 × 10⁵ names",
+      "Up to 40 letters each"
+    ],
+    "approaches": [
+      {
+        "id": "trie-top",
+        "name": "A trie whose nodes keep the top five names below them",
+        "hint": "Precomputed per prefix",
+        "label": "best",
+        "time": "O(L) per key press after building",
+        "space": "O(total letters)",
+        "why": "Each key press is one step down and a ready list."
+      },
+      {
+        "id": "sorted-search",
+        "name": "Sort the names and binary search the first match for each prefix",
+        "hint": "Sorted array",
+        "label": "valid",
+        "time": "O(L log n) per key press",
+        "space": "O(total letters)",
+        "why": "Also fast and simpler to store; a little slower per key press."
+      },
+      {
+        "id": "scan",
+        "name": "Check every name with startsWith on each key press",
+        "hint": "Filter all",
+        "label": "unsuitable",
+        "time": "O(n · L) per key press",
+        "space": "O(1)",
+        "why": "Half a million checks for every letter typed."
+      },
+      {
+        "id": "hash",
+        "name": "A hash set of names",
+        "hint": "Exact lookup",
+        "label": "unsuitable",
+        "time": "O(L)",
+        "space": "O(total letters)",
+        "why": "Answers only exact names, not prefixes."
+      }
+    ]
+  },
+  {
+    "id": "P26-content-filter",
+    "level": 26,
+    "title": "Chat Word Filter",
+    "statement": "A game chat must find every blocked word (from a list of 10,000) inside each message as it is sent. Messages are up to 500 characters.",
+    "examples": [
+      "Blocked [\"bad\", \"worse\"]; \"not bad at all\" → \"bad\" found"
+    ],
+    "constraints": [
+      "10⁴ blocked words",
+      "Messages ≤ 500 characters"
+    ],
+    "approaches": [
+      {
+        "id": "trie-scan",
+        "name": "A trie of blocked words; from each message position, walk the trie as far as it goes",
+        "hint": "One walk per start",
+        "label": "best",
+        "time": "O(message length · longest word)",
+        "space": "O(total letters)",
+        "why": "Shared prefixes are checked once, and a walk stops as soon as no blocked word continues."
+      },
+      {
+        "id": "aho",
+        "name": "Aho–Corasick automaton",
+        "hint": "Trie with failure links",
+        "label": "valid",
+        "time": "O(message length + matches)",
+        "space": "O(total letters)",
+        "why": "Fastest, but more complex to build than needed here."
+      },
+      {
+        "id": "each-word",
+        "name": "Run indexOf for every blocked word",
+        "hint": "Search each word",
+        "label": "unsuitable",
+        "time": "O(words · message length)",
+        "space": "O(1)",
+        "why": "About 5 million steps per message."
+      },
+      {
+        "id": "split",
+        "name": "Split the message on spaces and look words up in a hash set",
+        "hint": "Whole words only",
+        "label": "unsuitable",
+        "time": "O(message length)",
+        "space": "O(words)",
+        "why": "Misses blocked words hidden inside longer words."
+      }
+    ]
+  },
+  {
+    "id": "P26-ip-routing",
+    "level": 26,
+    "title": "Router Address Lookup",
+    "statement": "A network router has 100,000 address prefixes (bit strings up to 32 bits) and must pick, for each incoming address, the longest prefix that matches it.",
+    "examples": [
+      "Prefixes 10*, 1011*; address 10110001 → 1011*"
+    ],
+    "constraints": [
+      "10⁵ prefixes",
+      "Millions of lookups"
+    ],
+    "approaches": [
+      {
+        "id": "bit-trie",
+        "name": "A binary trie of prefixes; walk the address bits and remember the last prefix end seen",
+        "hint": "Bit by bit",
+        "label": "best",
+        "time": "O(32) per lookup",
+        "space": "O(total prefix bits)",
+        "why": "Constant time per address, however many prefixes."
+      },
+      {
+        "id": "hash-lengths",
+        "name": "A hash set per prefix length, checked from 32 down",
+        "hint": "Try each length",
+        "label": "valid",
+        "time": "O(32) hash lookups",
+        "space": "O(prefixes)",
+        "why": "Also bounded, but each step hashes; slower in practice."
+      },
+      {
+        "id": "scan-all",
+        "name": "Compare the address with every prefix",
+        "hint": "Check all",
+        "label": "unsuitable",
+        "time": "O(prefixes · 32) per lookup",
+        "space": "O(1)",
+        "why": "Far too slow at millions of lookups."
+      },
+      {
+        "id": "sort",
+        "name": "Sort prefixes by length and take the first match",
+        "hint": "Longest first",
+        "label": "unsuitable",
+        "time": "O(prefixes) per lookup",
+        "space": "O(prefixes)",
+        "why": "Still scans the whole list for each address."
+      }
+    ]
+  }
+]

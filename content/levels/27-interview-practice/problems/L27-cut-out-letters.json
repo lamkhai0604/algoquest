@@ -1,0 +1,116 @@
+{
+  "id": "L27-cut-out-letters",
+  "level": 27,
+  "difficulty": "Easy",
+  "use": "test",
+  "status": "ready",
+  "title": "Cut-Out Letters",
+  "statement": "A prankster makes a note by cutting letters out of a magazine; each magazine letter can be used once. Return true if the note can be made from the magazine.",
+  "examples": [
+    {
+      "input": "note = \"aa\", magazine = \"aab\"",
+      "output": "true"
+    },
+    {
+      "input": "note = \"aa\", magazine = \"ab\"",
+      "output": "false"
+    }
+  ],
+  "constraints": [
+    "1 <= note.length, magazine.length <= 10^5",
+    "lowercase letters only"
+  ],
+  "answerKey": {
+    "pattern": "Count the magazine letters, then spend them on the note",
+    "keyPoints": [
+      "26 counters from the magazine",
+      "For each note letter, subtract one; if a counter goes below 0, return false",
+      "Otherwise true"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(1)",
+    "edgeCases": [
+      "Note longer than the magazine",
+      "Same letters",
+      "Letter missing from the magazine"
+    ],
+    "acceptableSlowerApproaches": [
+      "For each note letter search and remove from the magazine: O(n · m)"
+    ]
+  },
+  "hints": [
+    "What matters about the magazine: the order of letters, or how many of each?",
+    "Only the counts.",
+    "Count magazine letters; decrement for each note letter and fail on a negative count."
+  ],
+  "starterCode": {
+    "javascript": "function cutOutLetters(note, magazine) {\n  // return whether the note can be made\n}",
+    "java": "class Solution {\n  boolean cutOutLetters(String note, String magazine) {\n    // return whether the note can be made\n  }\n}"
+  },
+  "similarLeetCode": "Ransom Note",
+  "tests": [
+    {
+      "input": [
+        "aa",
+        "aab"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "aa",
+        "ab"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "a",
+        "b"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "abc",
+        "cba"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "zzz",
+        "zz"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "caadadeebaacdfdffbeabdbeeecfbd",
+        "daecffcfbcbfdbbfbceababbbcbaaadaffccceabebfccafbeebaeffbabaf"
+      ],
+      "expected": false
+    },
+    {
+      "input": [
+        "fcbafebfcadbcafcabebbeaabdfdedadafffcbeafceaededdbdbbbacabbdeebeecaaadbecfcaeebaedbddadcecdfffcaecefccdeceaeecfffdaafcbdcecddfbbaeafaabbbbccddbeffbbecdfedaccbdecdebbaebfcfbbccbefbeaabfbbcdafbddcfbafcc",
+        "afececfeaccfaebfafaabcacdccadefffcdecefbafcceccfcddffaebaacfcccdaafdebfecafcbfdacfdeaaffeabefcefcadcecacacdaabcbcecdbebedddabbfabfaacbddedfbaefcdddfbbedbdcbefaaafccaccfffbccaeeabadaaddcdacfbccadaceaeaedebedcddfaddceaedaabaebcebfcbbeecbaaaffaceeecdedceebbafaffbfbfdbefafddaffbafceefcdddabccdcdfeccdabfedfdbfedadfaaacfdcaddacdfcbfcadcdbbdebdecdcbfdcacadbdcccfbbfefeeaeefacdbeabcceeecddefeaeaffaaadfecffacbeecebfddcdfbedcbebbeeddfdbbafdcfaeecccdfcdfafdefedcbcdbabfdccfdecfbfeadeaecfaedccafbcdcabdbfcbbdadaccfafeccdcbbdcaeebdcecbfacceecdbbcbfbadabaadfaddbdddedeeaedeedbaafbbefbebddaeefaaffddfedccafaeddfeeceaffaedbcacfbebfcaaabcbeccccacdaeffaeddcecbdacecacfffbffdabbcffbcbabfdcdafdeadaaffbbeafaccbdfcededfaaeaacaedefcfeebcfdfecbbedaaeebacbefeedcfddbffecffbfdddfadbcaedecfdbeceafdbedecedfddbedfedbdbfdaffdbcedfdfcdaaeffbeefdeaabeacccecbadcebfeacfcfdcfaeddaedfebfcefcddccfaadbfbcffaffbbdcffceedbbcdbbcbcdff"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "feedbaecaafbbecffeadfaffffaecfaededbdbfebbbbabbedbdefdabbcffcfbbdedcecbaafdecadabddedaebeafbdcfdbcfabcdeefafdfcbdfacffffdecfedabddccedefffaecfacddefabdcdfffecccbefccefcfbbcefafecefcdbffdebaaabeadbaddfaafcaddacdbfeabdefbcbeafdaeedbcaaedfcdcddbcefcfdcdcdbcdfdfedbcfefffbbeddaedefcaeadbfdacecbadccbdffaeeeafabdfbffeeffccefeececaadfdedbfdbabcbaadbadbbefbaafecbddfaccababedbfbcadddccdbdadafdebdccaefdedfcefdcbafabaadfeecdcbecaebbeedfecdedbfdbbdeddceffedbdebecadcedabcdddcceeaacbeafefdecfeeeebfbecddbdbedfe",
+        "bacccbafcfafafabedcabecdeddddbaaebebefedbcdedcaabecaadbdfcdbdfaaeebffaaafbfacebebdfddfcaadcdaaeeeeddebcccedacfcaddceeddabbedabadfeeeeddbcadaacbfcdccaeccfdfeaadbacfeddcedaebfcaddbebeeddeefdffecaccceddefbddbadcbabdedfafaefadadceeaeeddccabecabaaacaafebdeffeeeecaaafbbbfdcceebaaccaaddfedefdbcfffdadbedbfbeeaeaebcdeebadfebaaafadedebcbcebbdabceecaacfdbdcdddbaefefebdaddedefbffcfaceceebbefcaefbfddbdddeaceaddbcfbaeebfddfdefcdcabaebfaadcbbdeeebfedfdeaadfbbdceeedeaedbddacbfefaceaaafffbeceeeaddbfdaaffaecbefecfcaacbfccfbdbaedfcafdfccfbffadbcfdeceddedafabeebaeaeebecfedbbaeebeabbbccbbecaadbdffffebdeadbddeaafefffbdefdadcbecacfbafefefcfcaddfbaafcdcfcbfadfddfafaeedcbfdfbbfbdfaddfaaaaebbdaaacabacdeabaccefaafdcdadfccacefaacfcbefacfacbcadbcebeeefebbffcbacdaecfbdfccfdbcebadddedbfdbfdaddcccefcefdcbbacecbbdabfbdcbdfccbcfeefeebadbebecabddfcfeecaeddaabdcbfffdfcbdfbbecafdcdedfeacdecdebfdbfeaacdcfcdbfdeeedacafddcadceaeedafafbbaadffbcddeceadbaeacecccdbedbcecaefcacecafbabddabdeafabcdeffbfcecbdaddccffbcfaeadbfefbdecdfecfabfdbacbcfdaeaccebcdcdafdabbcfcccdbaaddecccceabaddbabfcdeddeddebcbebaeadefaadadecefaddfbcceeccefdbaccaabdbffebaabedafdebcabadcecbdaedcdcfeddefbcfefdecbdbebfcfbacedbfaafbccbeaabdbbeccadfceecebacdbbfecacfbaddddbcfbcfbacdadbcceefddfcbbedcbaeeaafeafdddeaeddbcedcdaaaedebcacfadedcdfecdbaeffbcfffbdcbfefacbacffdebcedbbdccbaecaffaceddcedebafeddcdcfdaefbfbdccdecdffdbfbbfedafdcdbeceafbdcfdaeceecffedccccfefddafafbeceeacbccaeacfcccafdfbaeebcfcceaaaaeebedbcabedbffcbdccacbcfebfeabeaffbbfbaafcfdfcaceefadbccfafaaefebdeacdcdedddffbadceccdccbfcfdbceecbadcafabffcdcdecdaddcabbececdcbdfafcdabfcabdebbcccfabcfdacaeecfafcdbbbeecefacbbababbafbdedcebefddfddffacdbcafeffacefaaebbaebebdafffeaedefccccfccaababbdeecbefdfceebdfeedaedebebcddafbbbafebfdcfbcbbaaffcdaabffeceebafdbfaeeafbaffdfbacfdabeabecacebedeaafbdbfaaaefaebcbaceeadeedffedecacccbececfbfcbbacbcdcddafcefefebabdecbedcfbccbecbacfaadcdacaeffcdfebededabadfabfdfbbcacedbaaaebfdfadbaaabaaeefdbecdaafbcbcdfdfdabfaccedfbbacecdededcfdacffbdbbfbbddeccbaaddcabdfcfeff"
+      ],
+      "expected": true
+    },
+    {
+      "input": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      ],
+      "expected": true
+    }
+  ]
+}

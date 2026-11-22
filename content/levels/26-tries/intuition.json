@@ -1,0 +1,11 @@
+{
+  "question": "A phone keyboard suggests words as you type. It stores 200,000 words. After you type \"pre\", what is the cheapest way to find every stored word that starts with \"pre\"?",
+  "options": [
+    "Walk p, r, e down a tree of letters; everything below that node starts with \"pre\"",
+    "Check all 200,000 words with startsWith",
+    "Put the words in a hash set and look up \"pre\"",
+    "Sort the words every time a letter is typed"
+  ],
+  "answer": 0,
+  "explanation": "A trie shares common beginnings, so finding the prefix takes three steps however many words there are. A hash set can only answer exact words, not prefixes."
+}
