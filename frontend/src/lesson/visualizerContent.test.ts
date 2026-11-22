@@ -567,7 +567,12 @@ describe("lesson visualizers match their reference algorithms", () => {
       for (const i of wave) {
         const r = Math.floor(i / cols);
         const c = i % cols;
-        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        for (const [dr, dc] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ] as const) {
           const nr = r + dr;
           const nc = c + dc;
           const j = nr * cols + nc;
