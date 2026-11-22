@@ -1420,49 +1420,49 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           className={styles.stage}
           style={stageHeight ? { minHeight: stageHeight } : undefined}
         >
-        {visual &&
-          (visual.edges && visual.explore ? (
-            <Explorer key={index} visual={visual} />
-          ) : visual.intervals ? (
-            <Timeline
+          {visual &&
+            (visual.edges && visual.explore ? (
+              <Explorer key={index} visual={visual} />
+            ) : visual.intervals ? (
+              <Timeline
+                visual={visual}
+                previous={previousVisual}
+                masked={waiting}
+              />
+            ) : visual.edges ? (
+              <Graph
+                visual={shownCells ?? visual}
+                previous={previousVisual}
+                masked={waiting}
+              />
+            ) : visual.tree ? (
+              <Tree visual={visual} previous={previousVisual} />
+            ) : visual.next ? (
+              <Nodes
+                visual={visual}
+                previous={steps[index - 1]?.visual ?? null}
+                hidden={hidden}
+              />
+            ) : visual.rows ? (
+              <Table visual={shownCells ?? visual} previous={previousVisual} />
+            ) : (
+              <Cells visual={shownCells ?? visual} previous={previousVisual} />
+            ))}
+          {visual?.queue && (
+            <QueueStrip
               visual={visual}
               previous={previousVisual}
-              masked={waiting}
+              masked={hidden.includes("queue")}
             />
-          ) : visual.edges ? (
-            <Graph
-              visual={shownCells ?? visual}
-              previous={previousVisual}
-              masked={waiting}
-            />
-          ) : visual.tree ? (
-            <Tree visual={visual} previous={previousVisual} />
-          ) : visual.next ? (
-            <Nodes
+          )}
+          {visual?.stack && (
+            <StackStrip
               visual={visual}
-              previous={steps[index - 1]?.visual ?? null}
-              hidden={hidden}
+              previous={previousVisual}
+              masked={hidden.includes("stack")}
             />
-          ) : visual.rows ? (
-            <Table visual={shownCells ?? visual} previous={previousVisual} />
-          ) : (
-            <Cells visual={shownCells ?? visual} previous={previousVisual} />
-          ))}
-        {visual?.queue && (
-          <QueueStrip
-            visual={visual}
-            previous={previousVisual}
-            masked={hidden.includes("queue")}
-          />
-        )}
-        {visual?.stack && (
-          <StackStrip
-            visual={visual}
-            previous={previousVisual}
-            masked={hidden.includes("stack")}
-          />
-        )}
-        {visual && <Variables visual={visual} hidden={hidden} />}
+          )}
+          {visual && <Variables visual={visual} hidden={hidden} />}
         </div>
         {predict && (
           <Predict
