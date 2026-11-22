@@ -84,7 +84,7 @@ describe("profile", () => {
       screen.getByRole("button", { name: "Your progress" }),
     );
     const progress = screen.getByRole("group", { name: "Your progress" });
-    expect(within(progress).getByText("Total XP")).toBeVisible();
+    expect(within(progress).getByText(/Total XP/)).toBeVisible();
     await userEvent.click(screen.getByRole("button", { name: "Account menu" }));
     const menu = screen.getByRole("group", { name: "Account menu" });
     expect(within(menu).getByRole("link", { name: "Profile" })).toHaveAttribute(

@@ -111,6 +111,7 @@ describe("sign-in", () => {
     expect(
       await screen.findByRole("heading", { name: "Learning Path" }),
     ).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Account menu" }));
     expect(screen.getByText("Ann")).toBeVisible();
     expect(getToken()).toBe("jwt-1");
     const exchanges = fetchFn.mock.calls.filter(([url]) => isExchange(url));
