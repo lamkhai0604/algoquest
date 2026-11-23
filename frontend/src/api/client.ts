@@ -44,6 +44,8 @@ export interface ApiClient {
   post<T>(path: string, body?: unknown): Promise<T>;
   put<T>(path: string, body?: unknown): Promise<T>;
   delete<T>(path: string): Promise<T>;
+  /** GETs a file, such as a zip export, as a Blob. */
+  download(path: string): Promise<Blob>;
   /** Subscribes to the "waking the server" state; returns an unsubscribe. */
   onWakingChange(listener: (waking: boolean) => void): () => void;
   isWaking(): boolean;
@@ -88,11 +90,12 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     method: "GET" | "POST" | "PUT" | "DELETE",
     path: string,
     body?: unknown,
+    asFile = false,
   ): Promise<T> {
     const attempts = method === "GET" ? retries + 1 : 1;
     const headers: Record<string, string> = {
       ...extraHeaders(),
-      Accept: "application/json",
+      Accept: asFile ? "*/*" : "application/json",
     };
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
@@ -129,6 +132,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
           throw new ApiError(response.status, await readProblem(response));
         }
         if (response.status === 204) return undefined as T;
+        if (asFile) return (await response.blob()) as T;
         return (await response.json()) as T;
       }
     } finally {
@@ -149,6 +153,9 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     },
     delete<T>(path: string) {
       return request<T>("DELETE", path);
+    },
+    download(path: string) {
+      return request<Blob>("GET", path, undefined, true);
     },
     onWakingChange(listener) {
       listeners.add(listener);

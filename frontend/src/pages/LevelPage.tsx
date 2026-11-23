@@ -15,6 +15,7 @@ import type { Level, ProblemItem } from "../game/types";
 import { TestStartCard } from "../leveltest/TestStartCard";
 import { PatternChallenges } from "../pattern/PatternChallenges";
 import game from "./Game.module.css";
+import { LevelNotes, useCanKeepNotes } from "../notes/LevelNotes";
 import styles from "./Pages.module.css";
 
 function ProblemStatus({ problem }: { problem: ProblemItem }) {
@@ -115,6 +116,7 @@ export function LevelPage() {
   const { t, locale } = useTranslation();
   const number = Number(useParams().number);
   const { levels, rules } = useGame();
+  const canKeepNotes = useCanKeepNotes();
   const problems = useApiGet<ProblemItem[]>(
     `/api/v1/levels/${number}/problems?lang=${locale}`,
   );
@@ -150,6 +152,7 @@ export function LevelPage() {
           </div>
         </Card>
       )}
+      {level && canKeepNotes && <LevelNotes level={number} />}
       {level && problems.state.status === "ready" && (
         <PracticeRound level={level} problems={problems.state.data} />
       )}
