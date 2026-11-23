@@ -66,7 +66,11 @@ export async function downloadAllNotes(): Promise<void> {
 }
 
 /** "3 hours ago", "yesterday", in the reader's language. */
-export function sinceText(iso: string, locale: string, now = Date.now()): string {
+export function sinceText(
+  iso: string,
+  locale: string,
+  now = Date.now(),
+): string {
   const seconds = Math.round((new Date(iso).getTime() - now) / 1000);
   const format = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
   const steps: [Intl.RelativeTimeFormatUnit, number][] = [

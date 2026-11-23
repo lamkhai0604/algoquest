@@ -179,8 +179,7 @@ describe("notes", () => {
 
     await userEvent.type(title, " 2");
     await waitFor(
-      () =>
-        expect(calls(fetchFn, "PUT", "/api/v1/notes/n-1")).toHaveLength(1),
+      () => expect(calls(fetchFn, "PUT", "/api/v1/notes/n-1")).toHaveLength(1),
       { timeout: 3000 },
     );
     const body = sentBody(calls(fetchFn, "PUT", "/api/v1/notes/n-1")[0]);

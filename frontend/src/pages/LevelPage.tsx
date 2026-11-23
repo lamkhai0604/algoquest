@@ -15,7 +15,8 @@ import type { Level, ProblemItem } from "../game/types";
 import { TestStartCard } from "../leveltest/TestStartCard";
 import { PatternChallenges } from "../pattern/PatternChallenges";
 import game from "./Game.module.css";
-import { LevelNotes, useCanKeepNotes } from "../notes/LevelNotes";
+import { LevelNotes } from "../notes/LevelNotes";
+import { useCanKeepNotes } from "../notes/useCanKeepNotes";
 import styles from "./Pages.module.css";
 
 function ProblemStatus({ problem }: { problem: ProblemItem }) {
