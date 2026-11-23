@@ -288,9 +288,9 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-606 | Notes backend: `note` table, owner-scoped API (list, search, create, read, update, delete), `notes.manage` permission, Markdown zip export | D-074 | P1 | In progress |
-| T-607 | Notes frontend: Notes in the navigation, note list with search and tag filter, TipTap editor with toolbar and autosave, delete with confirmation, English and Vietnamese | D-074 | P1 | In progress |
-| T-608 | Notes on the level page: the notes linked to the level, and a button that starts a note for it | D-074 | P2 | In progress |
+| T-606 | Notes backend: `note` table, owner-scoped API (list, search, create, read, update, delete), `notes.manage` permission, Markdown zip export | D-074 | P1 | Built 2026-11-22: backend tests (owner only, other accounts' notes hidden, validation, export); PO review pending |
+| T-607 | Notes frontend: Notes in the navigation, note list with search and tag filter, TipTap editor with toolbar and autosave, delete with confirmation, English and Vietnamese | D-074 | P1 | Built 2026-11-22: frontend tests; PO review pending |
+| T-608 | Notes on the level page: the notes linked to the level, and a button that starts a note for it | D-074 | P2 | Built 2026-11-22: frontend test; PO review pending |
 | T-609 | Sprint 22 report | D-007 | P2 | To do |
 
 ## Maintenance
