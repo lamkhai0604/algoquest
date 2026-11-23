@@ -24,6 +24,8 @@
     "difficultyHard": "Khó"
   },
   "nav": {
+    "discreteMath": "Toán rời rạc",
+    "truthTables": "Bảng chân trị",
     "knowledgeLesson": "Bài học",
     "knowledgeCheck": "Kiểm tra kiến thức",
     "knowledge": "Kiến thức",
