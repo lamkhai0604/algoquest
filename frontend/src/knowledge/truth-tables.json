@@ -1,0 +1,68 @@
+{
+  "en": {
+    "lesson": "# Reading the table\n\n`P` and `Q` are propositions. `T` means true and `F` means false. Each row shows one possible pair. NOT uses only `P`, so its result repeats when `P` stays the same.\n\n| P | Q | ¬P | P ∧ Q | P ∨ Q | P ⊕ Q | P → Q | P ↔ Q | NAND | NOR |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T | T | F | T | T | F | T | T | F | F |\n| T | F | F | F | T | T | F | F | T | F |\n| F | T | T | F | T | T | T | F | T | F |\n| F | F | T | F | F | F | T | T | T | T |\n\n| Operator | JavaScript | Meaning |\n| --- | --- | --- |\n| NOT | `!p` | Flip P. |\n| AND | `p && q` | Both are true. |\n| OR | `p \\|\\| q` | At least one is true. |\n| XOR | `p !== q` | Exactly one is true. |\n| Implication | `!p \\|\\| q` | False only when P is true and Q is false. |\n| Biconditional | `p === q` | The two values match. |\n| NAND | `!(p && q)` | Flip AND. |\n| NOR | `!(p \\|\\| q)` | Flip OR. |\n\n# OR and XOR with payment options\n\n```javascript\nconst payByCard = true;\nconst payByCash = true;\n\nconsole.log(payByCard || payByCash);  // true\nconsole.log(payByCard !== payByCash); // false\n```\n\nChange `payByCash` to `false` and run again. Now both expressions return `true` because exactly one payment option is selected. This XOR example compares Boolean values.\n\n# Implication and an assignment rule\n\n```javascript\nconst submittedOnTime = true;\nconst graded = false;\n\nconst ruleHolds = !submittedOnTime || graded;\nconsole.log(ruleHolds); // false\n```\n\nThe rule says that an on-time submission gets graded. It is false when an on-time submission goes ungraded. Change `submittedOnTime` to `false` and run again. The rule now evaluates to `true` because it applies only to on-time submissions.\n\n# Other Boolean expressions\n\n```javascript\nconst p = false;\nconst q = false;\n\nconsole.log(!p);         // true\nconsole.log(p && q);     // false\nconsole.log(p === q);    // true\nconsole.log(!(p && q));  // true\nconsole.log(!(p || q));  // true\n```\n\nChange `p` to `true` and compare each result with the matching row.\n",
+    "questions": [
+      {
+        "question": "If both payment options are selected, which expression is false?",
+        "options": [
+          "payByCard || payByCash",
+          "payByCard !== payByCash",
+          "payByCard && payByCash"
+        ],
+        "answer": 1,
+        "explanation": "XOR is true only when the two Boolean inputs differ."
+      },
+      {
+        "question": "When is P → Q false?",
+        "options": ["P = T, Q = F", "P = F, Q = T", "P = F, Q = F"],
+        "answer": 0,
+        "explanation": "The premise must be true and the conclusion false."
+      },
+      {
+        "question": "What is false === false?",
+        "options": ["false", "undefined", "true"],
+        "answer": 2,
+        "explanation": "The two Boolean values are equal."
+      },
+      {
+        "question": "When P is true and Q is false, what are NAND and NOR, in that order?",
+        "options": ["F, T", "T, F", "T, T"],
+        "answer": 1,
+        "explanation": "AND is false, so NAND is true. OR is true, so NOR is false."
+      }
+    ]
+  },
+  "vi": {
+    "lesson": "# Cách đọc bảng\n\n`P` và `Q` là hai mệnh đề. `T` là đúng, `F` là sai. Mỗi hàng là một tổ hợp. Phép NOT chỉ dùng `P`, nên các hàng có cùng `P` cho cùng kết quả NOT.\n\n| P | Q | ¬P | P ∧ Q | P ∨ Q | P ⊕ Q | P → Q | P ↔ Q | NAND | NOR |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T | T | F | T | T | F | T | T | F | F |\n| T | F | F | F | T | T | F | F | T | F |\n| F | T | T | F | T | T | T | F | T | F |\n| F | F | T | F | F | F | T | T | T | T |\n\n| Phép logic | JavaScript | Cách đọc |\n| --- | --- | --- |\n| NOT | `!p` | Đảo P. |\n| AND | `p && q` | Cả hai đúng. |\n| OR | `p \\|\\| q` | Có ít nhất một vế đúng. |\n| XOR | `p !== q` | Có đúng một vế đúng. |\n| Implication | `!p \\|\\| q` | Chỉ sai khi P đúng và Q sai. |\n| Biconditional | `p === q` | Hai giá trị giống nhau. |\n| NAND | `!(p && q)` | Đảo kết quả AND. |\n| NOR | `!(p \\|\\| q)` | Đảo kết quả OR. |\n\n# OR và XOR khi chọn cách thanh toán\n\n```javascript\nconst payByCard = true;\nconst payByCash = true;\n\nconsole.log(payByCard || payByCash);  // true\nconsole.log(payByCard !== payByCash); // false\n```\n\nĐổi `payByCash` thành `false` rồi chạy lại. Lúc này cả hai biểu thức đều trả về `true` vì đã chọn đúng một cách thanh toán. Ví dụ XOR này so sánh hai giá trị Boolean.\n\n# Phép kéo theo và quy tắc chấm bài\n\n```javascript\nconst submittedOnTime = true;\nconst graded = false;\n\nconst ruleHolds = !submittedOnTime || graded;\nconsole.log(ruleHolds); // false\n```\n\nQuy tắc nói rằng bài nộp đúng hạn sẽ được chấm. Nếu bài nộp đúng hạn mà chưa được chấm, quy tắc sai. Đổi `submittedOnTime` thành `false` rồi chạy lại. Kết quả là `true` vì quy tắc chỉ áp dụng cho bài nộp đúng hạn.\n\n# Các biểu thức Boolean khác\n\n```javascript\nconst p = false;\nconst q = false;\n\nconsole.log(!p);         // true\nconsole.log(p && q);     // false\nconsole.log(p === q);    // true\nconsole.log(!(p && q));  // true\nconsole.log(!(p || q));  // true\n```\n\nĐổi `p` thành `true` rồi đối chiếu từng kết quả với hàng tương ứng trong bảng.\n",
+    "questions": [
+      {
+        "question": "Nếu chọn cả hai cách thanh toán, biểu thức nào trả về false?",
+        "options": [
+          "payByCard || payByCash",
+          "payByCard !== payByCash",
+          "payByCard && payByCash"
+        ],
+        "answer": 1,
+        "explanation": "XOR chỉ đúng khi hai giá trị Boolean khác nhau."
+      },
+      {
+        "question": "Khi nào P → Q sai?",
+        "options": ["P = T, Q = F", "P = F, Q = T", "P = F, Q = F"],
+        "answer": 0,
+        "explanation": "Tiền đề phải đúng và kết luận phải sai."
+      },
+      {
+        "question": "Biểu thức false === false trả về gì?",
+        "options": ["false", "undefined", "true"],
+        "answer": 2,
+        "explanation": "Hai giá trị Boolean bằng nhau."
+      },
+      {
+        "question": "Khi P đúng và Q sai, NAND và NOR lần lượt cho kết quả gì?",
+        "options": ["F, T", "T, F", "T, T"],
+        "answer": 1,
+        "explanation": "AND sai nên NAND đúng. OR đúng nên NOR sai."
+      }
+    ]
+  }
+}
