@@ -129,8 +129,7 @@ public class PasswordSignInController {
     // The guest account is shown as "Guest"; the Owner keeps whatever name it already has.
     String displayName = matched.name().equals("Guest") ? "Guest" : null;
     UUID userId =
-        access.signIn(
-            new SignInProfile("password", matched.email(), matched.email(), displayName));
+        access.signIn(new SignInProfile("password", matched.email(), matched.email(), displayName));
     return new SignInCode(loginCodes.issue(userId));
   }
 

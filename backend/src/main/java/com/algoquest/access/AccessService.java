@@ -50,8 +50,8 @@ public class AccessService {
 
   /**
    * Finds or creates the user for a sign-in. New users get the Player role. The user whose email
-   * matches {@code OWNER_EMAIL} also gets the Owner role, recorded as a system action, and the
-   * user whose email matches {@code GUEST_ACCOUNT} gets the Guest role (D-075).
+   * matches {@code OWNER_EMAIL} also gets the Owner role, recorded as a system action, and the user
+   * whose email matches {@code GUEST_ACCOUNT} gets the Guest role (D-075).
    */
   @Transactional
   public UUID signIn(SignInProfile profile) {
