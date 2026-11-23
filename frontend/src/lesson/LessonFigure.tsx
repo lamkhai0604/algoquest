@@ -97,7 +97,7 @@ export function LessonFigure({ figure }: { figure: Figure }) {
 
   if (figure.kind === "image") {
     return (
-      <figure className={styles.figure}>
+      <figure className={cx(styles.figure, styles.figureBanner)}>
         <img
           className={styles.figImage}
           src={figure.src}

@@ -10,6 +10,10 @@
 
 ## Problem hook
 
+```figure
+{"kind": "image", "src": "/lesson-images/linked-list-treasure-hunt.webp", "alt": "Clues on trees joined by dotted arrows to a chest"}
+```
+
 A music app keeps a playlist of 50,000 songs and lets you drop a new song **right after the one playing now**.
 
 In an array, every song after that point has to shift one place to the right: up to 50,000 moves for one tap. In a linked list, each song only knows which song comes **next**. Adding a song means changing two pointers: the new song points at the old next song, and the current song points at the new one. Two steps, whatever the size of the playlist.

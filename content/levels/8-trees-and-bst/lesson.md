@@ -10,6 +10,10 @@
 
 ## Problem hook
 
+```figure
+{"kind": "image", "src": "/lesson-images/trees-family.webp", "alt": "A tree that splits into two branches at each fork"}
+```
+
 A phone's contact list has 1,000,000 names. You type "Mai". Checking every name would take a million steps.
 
 Now imagine the names arranged like a guessing game. The first name you check is in the middle of the alphabet. If "Mai" comes before it, you never look at the second half again; if it comes after, you never look at the first half. Each check throws away half of what is left, so about 20 checks find any name.
