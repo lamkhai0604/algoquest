@@ -10,6 +10,10 @@
 
 ## Problem hook
 
+```figure
+{"kind": "image", "src": "/lesson-images/heap-hospital.webp", "alt": "A waiting room where the most urgent person is called first"}
+```
+
 An airport has one runway. Planes ask to land all the time, and the controller must always pick the plane with the **least fuel** first.
 
 Sorting the waiting planes after every new request costs O(n log n) each time. Scanning them all for the lowest fuel costs O(n). With hundreds of requests a minute, both get slow.

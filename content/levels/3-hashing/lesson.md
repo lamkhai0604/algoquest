@@ -8,6 +8,10 @@
 
 ## Problem hook
 
+```figure
+{"kind": "image", "src": "/lesson-images/hashing-coat-check.webp", "alt": "A coat check counter with coats on hooks"}
+```
+
 A door scanner logged 100,000 badge IDs. Did anyone badge in twice?
 
 Comparing every ID with every other ID takes about 5 billion comparisons. If instead you keep a collection of IDs you have already seen, and that collection answers "seen it?" instantly, one pass of 100,000 steps is enough. That instant lookup is what a **hash set** gives you.

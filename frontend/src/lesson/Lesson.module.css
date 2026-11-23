@@ -1308,6 +1308,13 @@
   font-size: var(--text-sm);
 }
 
+/* A decorative image runs edge to edge, with no frame of its own. */
+.figureBanner {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
 .figImage {
   display: block;
   width: 100%;

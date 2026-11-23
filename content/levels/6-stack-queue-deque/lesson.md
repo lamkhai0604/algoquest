@@ -10,6 +10,10 @@
 
 ## Problem hook
 
+```figure
+{"kind": "image", "src": "/lesson-images/stack-queue-plates-line.webp", "alt": "A pile of plates beside a line at a counter"}
+```
+
 You type a message, then press **Undo** three times. The editor removes your **last** three actions, newest first: the change you made a second ago goes before the one from a minute ago.
 
 Now picture a printer shared by an office. Ten people press Print. The printer handles the jobs in the order they **arrived**: the first job sent comes out first.

@@ -10,6 +10,10 @@
 
 ## Problem hook
 
+```figure
+{"kind": "image", "src": "/lesson-images/graph-metro.webp", "alt": "A metro map with ripples spreading from one station"}
+```
+
 A city has 300 metro stations and 400 tunnels between them. A rider at Station 12 asks: "What is the fewest number of stops to Station 205?"
 
 There is no first or last station and no left or right. Lists, trees and heaps do not fit. Stations and tunnels form a **graph**, and the answer comes from spreading out from Station 12 one ring of stations at a time until Station 205 appears. Every station and tunnel is looked at about once, so even a large network answers in a few milliseconds.

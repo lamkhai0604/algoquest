@@ -9,6 +9,10 @@
 
 ## Problem hook
 
+```figure
+{"kind": "image", "src": "/lesson-images/arrays-lockers.webp", "alt": "A row of lockers with one open door"}
+```
+
 A music app keeps a playlist of 100,000 songs in an array. A user adds a new song at the **front**.
 
 The array stores songs in a row of numbered slots, so every one of the 100,000 songs has to move one slot to the right to make room. Adding a song at the **end** moves nothing. Same playlist, same song: one operation takes 100,000 steps and the other takes one. Knowing which array operations are cheap is the first step to writing fast code.

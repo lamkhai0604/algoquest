@@ -292,6 +292,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-607 | Notes frontend: Notes in the navigation, note list with search and tag filter, TipTap editor with toolbar and autosave, delete with confirmation, English and Vietnamese | D-074 | P1 | Built 2026-11-22: frontend tests; PO review pending |
 | T-608 | Notes on the level page: the notes linked to the level, and a button that starts a note for it | D-074 | P2 | Built 2026-11-22: frontend test; PO review pending |
 | T-609 | Sprint 22 report | D-007 | P2 | To do |
+| T-603 | Decorative images for the seven core lessons, made by the PO with Gemini from the prompts in [lesson-images.md](lesson-images.md); WebP, 1600 px wide, with alt text (moved from Later) | D-072 | P3 | Built 2026-11-22: content test checks every image file exists; PO review pending |
 
 ## Maintenance
 
@@ -303,7 +304,6 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 
 | ID | Title | Req |
 | --- | --- | --- |
-| T-603 | Decorative images for the core lessons: prompts and file names in [lesson-images.md](lesson-images.md); waiting on the PO's images (moved from Sprint 21) | D-072 |
 | T-403 | Leaderboard with labelled dummy players (moved from Sprint 4) | FR-14 |
 | T-501 | Hard problems and hard test mode for real | FR-11, D-024 |
 | T-502 | Levels 4–27 content, about 2 levels per sprint | SRS §6, D-048 |
