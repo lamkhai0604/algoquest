@@ -144,6 +144,19 @@ describe("sign-in", () => {
     });
   });
 
+  it("says when the server offers no way to sign in", async () => {
+    fakeApi({
+      "GET /api/v1/auth/options": () =>
+        json(200, { demo: false, oauth: false, password: false }),
+    });
+    renderAt("/sign-in");
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Sign-in is turned off on the server.",
+    );
+    expect(screen.queryByLabelText("Password")).toBeNull();
+  });
+
   it("says when the email or password is wrong", async () => {
     fakeApi({
       "GET /api/v1/auth/options": () =>
