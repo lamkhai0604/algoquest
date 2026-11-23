@@ -36,6 +36,7 @@ type Load =
 /** Opens a note, or a blank one at /notes/new (D-074). */
 export function NoteEditorPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { id = "new" } = useParams();
   const [params] = useSearchParams();
   const [loaded, setLoaded] = useState<{ id: string; load: Load } | null>(null);
@@ -94,7 +95,10 @@ export function NoteEditorPage() {
           startLevel={
             Number.isInteger(levelParam) && levelParam > 0 ? levelParam : null
           }
-          onCreated={setCreated}
+          onCreated={(newId) => {
+            setCreated(newId);
+            void navigate(`/notes/${newId}`, { replace: true });
+          }}
         />
       )}
     </div>
@@ -103,14 +107,20 @@ export function NoteEditorPage() {
 
 type SaveState = "saved" | "dirty" | "saving" | "failed";
 
-function NoteEditor({
+/**
+ * The note editor with autosave. `compact` is the quick-note drawer's version (D-076): the level
+ * stays as given, and tags and delete are left to the full page.
+ */
+export function NoteEditor({
   note,
   startLevel,
   onCreated,
+  compact = false,
 }: {
   note: Note | null;
   startLevel: number | null;
   onCreated: (id: string) => void;
+  compact?: boolean;
 }) {
   const { t, locale } = useTranslation();
   const navigate = useNavigate();
@@ -208,7 +218,6 @@ function NoteEditor({
         noteId.current = saved.id;
         setUpdatedAt(saved.updatedAt);
         onCreated(saved.id);
-        void navigate(`/notes/${saved.id}`, { replace: true });
       }
       savedVersion.current = at;
       saving.current = false;
@@ -222,7 +231,7 @@ function NoteEditor({
       saving.current = false;
       setStatus("failed");
     }
-  }, [input, navigate, onCreated]);
+  }, [input, onCreated]);
 
   useEffect(() => {
     saveRef.current = save;
@@ -325,72 +334,74 @@ function NoteEditor({
             changed();
           }}
         />
-        <div className={styles.fields}>
-          <label className={styles.field}>
-            <span>{t("notes.level")}</span>
-            <select
-              value={level ?? ""}
-              onChange={(event) => {
-                const next = event.target.value
-                  ? Number(event.target.value)
-                  : null;
-                setLevel(next);
-                fields.current.level = next;
-                changed();
-              }}
-            >
-              <option value="">{t("notes.noLevel")}</option>
-              {levelOptions.map((option) => (
-                <option key={option.number} value={option.number}>
-                  {option.number} · {option.title}
-                </option>
-              ))}
-              {level !== null &&
-                !levelOptions.some((o) => o.number === level) && (
-                  <option value={level}>{level}</option>
-                )}
-            </select>
-          </label>
-          <div className={styles.field}>
-            <span id="note-tags">{t("notes.tags")}</span>
-            <span
-              className={styles.tagEditor}
-              role="group"
-              aria-labelledby="note-tags"
-            >
-              {tags.map((tag) => (
-                <span key={tag} className={styles.tagSmall}>
-                  {tag}
-                  <button
-                    type="button"
-                    className={styles.tagRemove}
-                    aria-label={`${t("notes.removeTag")} ${tag}`}
-                    onClick={() =>
-                      changeTags(tags.filter((other) => other !== tag))
-                    }
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))}
-              <input
-                className={styles.tagInput}
-                aria-label={t("notes.addTag")}
-                placeholder={
-                  tags.length < MAX_TAGS ? `+ ${t("notes.addTag")}` : ""
-                }
-                value={tagDraft}
-                aria-invalid={tagError}
+        {!compact && (
+          <div className={styles.fields}>
+            <label className={styles.field}>
+              <span>{t("notes.level")}</span>
+              <select
+                value={level ?? ""}
                 onChange={(event) => {
-                  setTagError(false);
-                  setTagDraft(event.target.value);
+                  const next = event.target.value
+                    ? Number(event.target.value)
+                    : null;
+                  setLevel(next);
+                  fields.current.level = next;
+                  changed();
                 }}
-                onKeyDown={onTagKey}
-                onBlur={() => addTag(tagDraft)}
-              />
-            </span>
+              >
+                <option value="">{t("notes.noLevel")}</option>
+                {levelOptions.map((option) => (
+                  <option key={option.number} value={option.number}>
+                    {option.number} · {option.title}
+                  </option>
+                ))}
+                {level !== null &&
+                  !levelOptions.some((o) => o.number === level) && (
+                    <option value={level}>{level}</option>
+                  )}
+              </select>
+            </label>
+            <div className={styles.field}>
+              <span id="note-tags">{t("notes.tags")}</span>
+              <span
+                className={styles.tagEditor}
+                role="group"
+                aria-labelledby="note-tags"
+              >
+                {tags.map((tag) => (
+                  <span key={tag} className={styles.tagSmall}>
+                    {tag}
+                    <button
+                      type="button"
+                      className={styles.tagRemove}
+                      aria-label={`${t("notes.removeTag")} ${tag}`}
+                      onClick={() =>
+                        changeTags(tags.filter((other) => other !== tag))
+                      }
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+                <input
+                  className={styles.tagInput}
+                  aria-label={t("notes.addTag")}
+                  placeholder={
+                    tags.length < MAX_TAGS ? `+ ${t("notes.addTag")}` : ""
+                  }
+                  value={tagDraft}
+                  aria-invalid={tagError}
+                  onChange={(event) => {
+                    setTagError(false);
+                    setTagDraft(event.target.value);
+                  }}
+                  onKeyDown={onTagKey}
+                  onBlur={() => addTag(tagDraft)}
+                />
+              </span>
+            </div>
           </div>
-        </div>
+        )}
         {tagError && (
           <p className={styles.problem} role="alert">
             {t("notes.tagRule")}
@@ -398,16 +409,22 @@ function NoteEditor({
         )}
         {editor && <NoteToolbar editor={editor} />}
         <EditorContent editor={editor} className={styles.body} />
-        <div className={styles.foot}>
-          <span>
-            {updatedAt
-              ? `${t("notes.lastChange")} ${sinceText(updatedAt, locale)}`
-              : ""}
-          </span>
-          <Button variant="ghost" size="sm" onClick={() => setConfirming(true)}>
-            <span className={styles.danger}>{t("notes.delete")}</span>
-          </Button>
-        </div>
+        {!compact && (
+          <div className={styles.foot}>
+            <span>
+              {updatedAt
+                ? `${t("notes.lastChange")} ${sinceText(updatedAt, locale)}`
+                : ""}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setConfirming(true)}
+            >
+              <span className={styles.danger}>{t("notes.delete")}</span>
+            </Button>
+          </div>
+        )}
       </section>
       {confirming && (
         <ConfirmDialog

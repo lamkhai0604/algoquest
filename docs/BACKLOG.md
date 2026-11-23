@@ -294,6 +294,14 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-609 | Sprint 22 report | D-007 | P2 | To do |
 | T-603 | Decorative images for the seven core lessons, made by the PO with Gemini from the prompts in [lesson-images.md](lesson-images.md); WebP, 1600 px wide, with alt text (moved from Later) | D-072 | P3 | Built 2026-11-22: content test checks every image file exists; PO review pending |
 
+## Sprint 23 — Guest account and quick notes ([plan](sprints/sprint-23.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-610 | Guest account: `GUEST_ACCOUNT` and `GUEST_PASSWORD` settings, password sign-in for the guest, `GUEST` role with `game.play` and `notes.manage` | FR-01, FR-17, D-075 | P1 | Built 2026-11-23: backend tests (guest signs in, can keep notes, cannot reach admin, never sees the Owner's notes; the guest password does not open the Owner account); PO review pending. The PO sets the two settings on Render |
+| T-611 | Quick notes on the lesson page: Note button by the title (floating when scrolled), side panel or bottom sheet with this level's notes and the compact editor, N and Escape | FR-03, D-076 | P1 | Built 2026-11-23: frontend tests; PO review pending |
+| T-612 | Sprint 23 report | D-007 | P2 | To do |
+
 ## Maintenance
 
 | ID | Title | Req | Priority | Status |

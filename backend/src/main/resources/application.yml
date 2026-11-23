@@ -60,6 +60,10 @@ algoquest:
   # Owner sign-in with email and password (D-073). Set OWNER_PASSWORD only on the host, never in
   # the repository; at least 12 characters. Empty turns password sign-in off.
   owner-password: ${OWNER_PASSWORD:}
+  # The shared guest account (D-075): it learns and keeps its own notes, and cannot see the
+  # Owner's notes or the admin pages. Both empty turns it off; the password needs 12 characters.
+  guest-email: ${GUEST_ACCOUNT:}
+  guest-password: ${GUEST_PASSWORD:}
   signin:
     # Google and GitHub sign-in (D-073): off unless turned on.
     oauth-enabled: ${OAUTH_SIGNIN_ENABLED:false}
