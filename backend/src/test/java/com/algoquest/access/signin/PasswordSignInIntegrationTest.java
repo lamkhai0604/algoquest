@@ -24,11 +24,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-/** Owner sign-in with email and password; Google, GitHub and demo sign-in off (D-073). */
+/**
+ * Owner and guest sign-in with email and password; Google, GitHub and demo sign-in off (D-073,
+ * D-075).
+ */
 @SpringBootTest(
     properties = {
       "algoquest.owner-email=Owner@Example.com",
       "algoquest.owner-password=test-only-password-123",
+      "algoquest.guest-email=guest@algoquest.app",
+      "algoquest.guest-password=guest-only-password-456",
       "algoquest.jwt-secret=integration-test-secret-of-32-characters"
     })
 @ActiveProfiles("test")
@@ -124,5 +129,61 @@ class PasswordSignInIntegrationTest {
 
     clock.advance(PasswordSignInController.WINDOW.plus(Duration.ofSeconds(1)));
     signIn("owner@example.com", "test-only-password-123").andExpect(status().isOk());
+  }
+
+  private String bearer(String email, String password) throws Exception {
+    String body =
+        signIn(email, password)
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    return "Bearer " + token(body.replaceAll(".*\"code\":\"([^\"]+)\".*", "$1"));
+  }
+
+  @Test
+  void theGuestSignsInAndCanLearnAndKeepNotesButNotAdminister() throws Exception {
+    String guest = bearer("Guest@AlgoQuest.app", "guest-only-password-456");
+
+    mvc.perform(get("/api/v1/me").header("Authorization", guest))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.email").value("guest@algoquest.app"))
+        .andExpect(jsonPath("$.roles[?(@ == 'GUEST')]").exists())
+        .andExpect(jsonPath("$.roles[?(@ == 'OWNER')]").doesNotExist())
+        .andExpect(jsonPath("$.permissions[?(@ == 'notes.manage')]").exists())
+        .andExpect(jsonPath("$.permissions[?(@ == 'game.play')]").exists());
+    mvc.perform(get("/api/v1/admin/users").header("Authorization", guest))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void theGuestNeverSeesTheOwnersNotes() throws Exception {
+    String owner = bearer("owner@example.com", "test-only-password-123");
+    String guest = bearer("guest@algoquest.app", "guest-only-password-456");
+
+    String created =
+        mvc.perform(
+                post("/api/v1/notes")
+                    .header("Authorization", owner)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        "{\"title\":\"Owner only\",\"body\":{\"type\":\"doc\",\"content\":[]},"
+                            + "\"bodyText\":\"\",\"tags\":[],\"level\":null}"))
+            .andExpect(status().is2xxSuccessful())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    String id = created.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+
+    mvc.perform(get("/api/v1/notes").header("Authorization", guest))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[?(@.title == 'Owner only')]").doesNotExist());
+    mvc.perform(get("/api/v1/notes/" + id).header("Authorization", guest))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void theGuestPasswordDoesNotOpenTheOwnerAccount() throws Exception {
+    signIn("owner@example.com", "guest-only-password-456").andExpect(status().isUnauthorized());
   }
 }

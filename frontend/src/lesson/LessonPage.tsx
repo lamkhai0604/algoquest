@@ -13,6 +13,8 @@ import {
 import { useGame } from "../game/gameContext";
 import pages from "../pages/Pages.module.css";
 import { useTranslation } from "../i18n";
+import { QuickNotes } from "../notes/QuickNotes";
+import { useCanKeepNotes } from "../notes/useCanKeepNotes";
 import styles from "./Lesson.module.css";
 import {
   CodeLanguageContext,
@@ -319,6 +321,7 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
 export function LessonPage() {
   const { t, locale } = useTranslation();
   const number = Number(useParams().number);
+  const canKeepNotes = useCanKeepNotes();
   const { state, reload } = useApiGet<Lesson>(
     `/api/v1/levels/${number}/lesson?lang=${locale}`,
   );
@@ -336,11 +339,14 @@ export function LessonPage() {
           <span>{t("lesson.lesson")}</span>
         </nav>
       </div>
-      <h1 className={pages.title}>
-        {state.status === "ready"
-          ? `${t("lesson.lesson")}: ${state.data.title}`
-          : t("lesson.lesson")}
-      </h1>
+      <div className={styles.titleRow}>
+        <h1 className={pages.title}>
+          {state.status === "ready"
+            ? `${t("lesson.lesson")}: ${state.data.title}`
+            : t("lesson.lesson")}
+        </h1>
+        {canKeepNotes && <QuickNotes level={number} />}
+      </div>
       {state.status === "loading" && (
         <LoadingState label={t("lesson.loading")} />
       )}

@@ -290,4 +290,128 @@ describe("notes", () => {
     expect(sinceText("2026-11-21T12:00:00Z", "en", now)).toBe("yesterday");
     expect(sinceText("2026-11-22T11:59:50Z", "en", now)).toBe("now");
   });
+
+  describe("quick notes on the lesson page", () => {
+    const LESSON = {
+      level: 1,
+      title: "Big-O & Basics",
+      markdown: "# Big-O & Basics\n\n## Intuition\n\nRead the list **once**.",
+      walkthrough: [],
+      quickCheck: [],
+      quickCheckDone: false,
+    };
+
+    const lessonApi = (extra: Record<string, () => Response> = {}) =>
+      fakeApi({
+        "GET /api/v1/me": () => json(200, OWNER),
+        "GET /api/v1/levels": () => json(200, LEVELS),
+        "GET /api/v1/levels/1/lesson": () => json(200, LESSON),
+        "GET /api/v1/notes": () => json(200, [SUMMARIES[0]]),
+        "GET /api/v1/notes/n-1": () => json(200, NOTE),
+        ...extra,
+      });
+
+    it("is not offered to an account without notes", async () => {
+      fakeApi({
+        "GET /api/v1/me": () => json(200, ME),
+        "GET /api/v1/levels": () => json(200, LEVELS),
+        "GET /api/v1/levels/1/lesson": () => json(200, LESSON),
+      });
+      renderSignedInAt("/levels/1/lesson");
+      expect(
+        await screen.findByRole("heading", { name: "Lesson: Big-O & Basics" }),
+      ).toBeVisible();
+      expect(
+        screen.queryByRole("button", { name: "Open quick notes (N)" }),
+      ).toBeNull();
+    });
+
+    it("opens beside the lesson, lists this level's notes and opens one", async () => {
+      const fetchFn = lessonApi();
+      renderSignedInAt("/levels/1/lesson");
+
+      await userEvent.click(
+        await screen.findByRole("button", { name: "Open quick notes (N)" }),
+      );
+      const panel = await screen.findByRole("complementary", {
+        name: "Notes · Level 1",
+      });
+      // The lesson stays on the page while the panel is open.
+      expect(
+        screen.getByRole("heading", { name: "Lesson: Big-O & Basics" }),
+      ).toBeVisible();
+      await userEvent.click(
+        await within(panel).findByRole("button", { name: /Monotonic stack/ }),
+      );
+      expect(
+        await within(panel).findByRole("textbox", { name: "Title" }),
+      ).toHaveValue("Monotonic stack");
+      expect(calls(fetchFn, "GET", "/api/v1/notes?level=1")).toHaveLength(1);
+      // Tags and delete stay on the full Notes page.
+      expect(
+        within(panel).queryByRole("button", { name: "Delete note" }),
+      ).toBeNull();
+    });
+
+    it("saves a new note for the level without leaving the lesson", async () => {
+      const fetchFn = lessonApi({
+        "POST /api/v1/notes": () =>
+          json(201, { ...NOTE, id: "n-9", title: "Idea", tags: [] }),
+      });
+      renderSignedInAt("/levels/1/lesson");
+
+      await userEvent.click(
+        await screen.findByRole("button", { name: "Open quick notes (N)" }),
+      );
+      const panel = await screen.findByRole("complementary", {
+        name: "Notes · Level 1",
+      });
+      await userEvent.click(
+        within(panel).getByRole("button", {
+          name: "+ New note for this level",
+        }),
+      );
+      await userEvent.type(
+        within(panel).getByRole("textbox", { name: "Title" }),
+        "Idea",
+      );
+      await waitFor(
+        () => expect(calls(fetchFn, "POST", "/api/v1/notes")).toHaveLength(1),
+        { timeout: 3000 },
+      );
+      expect(
+        sentBody(calls(fetchFn, "POST", "/api/v1/notes")[0]),
+      ).toMatchObject({ title: "Idea", level: 1 });
+      expect(
+        screen.getByRole("heading", { name: "Lesson: Big-O & Basics" }),
+      ).toBeVisible();
+    });
+
+    it("opens and closes with N and closes with Escape", async () => {
+      lessonApi();
+      renderSignedInAt("/levels/1/lesson");
+      await screen.findByRole("button", { name: "Open quick notes (N)" });
+
+      await userEvent.keyboard("n");
+      expect(
+        await screen.findByRole("complementary", { name: "Notes · Level 1" }),
+      ).toBeVisible();
+      await userEvent.keyboard("{Escape}");
+      await waitFor(() =>
+        expect(
+          screen.queryByRole("complementary", { name: "Notes · Level 1" }),
+        ).toBeNull(),
+      );
+      await userEvent.keyboard("N");
+      expect(
+        await screen.findByRole("complementary", { name: "Notes · Level 1" }),
+      ).toBeVisible();
+      await userEvent.click(
+        screen.getByRole("button", { name: "Close notes" }),
+      );
+      expect(
+        screen.queryByRole("complementary", { name: "Notes · Level 1" }),
+      ).toBeNull();
+    });
+  });
 });
