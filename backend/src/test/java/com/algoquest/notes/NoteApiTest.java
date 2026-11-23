@@ -107,14 +107,18 @@ class NoteApiTest {
 
   private String createdId(String json) throws Exception {
     String body =
-        create(owner, json).andExpect(status().isCreated()).andReturn().getResponse()
+        create(owner, json)
+            .andExpect(status().isCreated())
+            .andReturn()
+            .getResponse()
             .getContentAsString();
     return body.replaceAll("^\\{\"id\":\"([^\"]+)\".*$", "$1");
   }
 
   @Test
   void theOwnerWritesFindsChangesAndDeletesANote() throws Exception {
-    String id = createdId(note("  Monotonic stack ", DOC, "[\" Stack \",\"stack\",\"pattern\"]", "1"));
+    String id =
+        createdId(note("  Monotonic stack ", DOC, "[\" Stack \",\"stack\",\"pattern\"]", "1"));
 
     mvc.perform(get("/api/v1/notes/" + id).with(owner))
         .andExpect(status().isOk())
@@ -181,7 +185,13 @@ class NoteApiTest {
     create(owner, note("T", DOC, "[]", "99"))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.detail").value("There is no level 99."));
-    create(owner, note("T", DOC, "[\"a\",\"b\",\"c\",\"d\",\"e\",\"f\",\"g\",\"h\",\"i\",\"j\",\"k\"]", "null"))
+    create(
+            owner,
+            note(
+                "T",
+                DOC,
+                "[\"a\",\"b\",\"c\",\"d\",\"e\",\"f\",\"g\",\"h\",\"i\",\"j\",\"k\"]",
+                "null"))
         .andExpect(status().isBadRequest());
     create(owner, note("T", DOC, "[\"<b>\"]", "null")).andExpect(status().isBadRequest());
     String unsafe =
@@ -204,7 +214,8 @@ class NoteApiTest {
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "application/zip"))
             .andExpect(
-                header().string("Content-Disposition", Matchers.containsString("algoquest-notes.zip")))
+                header()
+                    .string("Content-Disposition", Matchers.containsString("algoquest-notes.zip")))
             .andReturn()
             .getResponse()
             .getContentAsByteArray();

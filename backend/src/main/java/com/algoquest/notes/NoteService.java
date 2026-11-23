@@ -182,8 +182,7 @@ public class NoteService {
     return new Fields(title, bodyJson, text, new ArrayList<>(tags), level);
   }
 
-  private static final Pattern SAFE_LINK =
-      Pattern.compile("(?i)(https?://|mailto:)[^\\s]*");
+  private static final Pattern SAFE_LINK = Pattern.compile("(?i)(https?://|mailto:)[^\\s]*");
 
   /** Every link mark in the document points to a web page or an email address. */
   static boolean safeLinks(JsonNode node) {

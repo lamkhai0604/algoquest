@@ -12,22 +12,42 @@ class NoteMarkdownTest {
 
   private static String markdown(String content) {
     return NoteMarkdown.of(
-        "Title", List.of(), null, JSON.readTree("{\"type\":\"doc\",\"content\":[" + content + "]}"));
+        "Title",
+        List.of(),
+        null,
+        JSON.readTree("{\"type\":\"doc\",\"content\":[" + content + "]}"));
   }
 
   private static String text(String value, String marks) {
-    return "{\"type\":\"text\",\"text\":\"" + value + "\"" + (marks.isEmpty() ? "" : ",\"marks\":[" + marks + "]") + "}";
+    return "{\"type\":\"text\",\"text\":\""
+        + value
+        + "\""
+        + (marks.isEmpty() ? "" : ",\"marks\":[" + marks + "]")
+        + "}";
   }
 
   @Test
   void marksBecomeMarkdown() {
     String paragraph =
         "{\"type\":\"paragraph\",\"content\":["
-            + text("bold", "{\"type\":\"bold\"}") + "," + text(" ", "") + ","
-            + text("lean", "{\"type\":\"italic\"}") + "," + text(" ", "") + ","
-            + text("under", "{\"type\":\"underline\"}") + "," + text(" ", "") + ","
-            + text("x = 1", "{\"type\":\"code\"}") + "," + text(" ", "") + ","
-            + text("site", "{\"type\":\"link\",\"attrs\":{\"href\":\"https://example.com\"}}") + ","
+            + text("bold", "{\"type\":\"bold\"}")
+            + ","
+            + text(" ", "")
+            + ","
+            + text("lean", "{\"type\":\"italic\"}")
+            + ","
+            + text(" ", "")
+            + ","
+            + text("under", "{\"type\":\"underline\"}")
+            + ","
+            + text(" ", "")
+            + ","
+            + text("x = 1", "{\"type\":\"code\"}")
+            + ","
+            + text(" ", "")
+            + ","
+            + text("site", "{\"type\":\"link\",\"attrs\":{\"href\":\"https://example.com\"}}")
+            + ","
             + text(" a*b_c", "")
             + "]}";
     assertThat(markdown(paragraph))
@@ -39,18 +59,25 @@ class NoteMarkdownTest {
   @Test
   void blocksBecomeMarkdown() {
     String doc =
-        "{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[" + text("Steps", "") + "]},"
+        "{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":["
+            + text("Steps", "")
+            + "]},"
             + "{\"type\":\"orderedList\",\"attrs\":{\"start\":1},\"content\":["
             + "{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"content\":["
-            + text("one", "") + "]},{\"type\":\"bulletList\",\"content\":["
+            + text("one", "")
+            + "]},{\"type\":\"bulletList\",\"content\":["
             + "{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"content\":["
-            + text("inner", "") + "]}]}]}]},"
+            + text("inner", "")
+            + "]}]}]}]},"
             + "{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"content\":["
-            + text("two", "") + "]}]}]},"
+            + text("two", "")
+            + "]}]}]},"
             + "{\"type\":\"codeBlock\",\"attrs\":{\"language\":\"java\"},\"content\":["
-            + text("int a = 1;\\nint b = 2;", "") + "]},"
+            + text("int a = 1;\\nint b = 2;", "")
+            + "]},"
             + "{\"type\":\"blockquote\",\"content\":[{\"type\":\"paragraph\",\"content\":["
-            + text("quote", "") + "]}]},"
+            + text("quote", "")
+            + "]}]},"
             + "{\"type\":\"horizontalRule\"}";
     assertThat(markdown(doc))
         .isEqualTo(

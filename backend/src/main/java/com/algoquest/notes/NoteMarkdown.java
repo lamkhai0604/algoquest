@@ -100,7 +100,10 @@ final class NoteMarkdown {
   private static String plain(JsonNode nodes) {
     StringBuilder text = new StringBuilder();
     for (JsonNode node : nodes) {
-      text.append(node.path("type").asString("").equals("hardBreak") ? "\n" : node.path("text").asString(""));
+      text.append(
+          node.path("type").asString("").equals("hardBreak")
+              ? "\n"
+              : node.path("text").asString(""));
     }
     return text.toString();
   }

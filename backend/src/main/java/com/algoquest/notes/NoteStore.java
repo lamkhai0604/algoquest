@@ -90,8 +90,7 @@ public class NoteStore {
 
   public Optional<StoredNote> find(UUID userId, UUID id) {
     return jdbc
-        .query(
-            "select * from note where id = ? and user_id = ?", NoteStore::read, id, userId)
+        .query("select * from note where id = ? and user_id = ?", NoteStore::read, id, userId)
         .stream()
         .findFirst();
   }

@@ -284,6 +284,15 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-602 | Figures in the core lessons: arrays (insert, grid), hashing (buckets and a collision), linked lists (insert, reverse), stack and queue, BST search, heap push, BFS rings | FR-03, D-072 | P1 | Done 2026-11-21: content checks, including frame-by-frame replay of stack and queue figures; screenshots; PO review OK |
 | T-604 | Sprint 21 report | D-007 | P2 | Done 2026-11-21: [report](reports/sprint-21-report.md) |
 
+## Sprint 22 — Notes ([plan](sprints/sprint-22.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-606 | Notes backend: `note` table, owner-scoped API (list, search, create, read, update, delete), `notes.manage` permission, Markdown zip export | D-074 | P1 | In progress |
+| T-607 | Notes frontend: Notes in the navigation, note list with search and tag filter, TipTap editor with toolbar and autosave, delete with confirmation, English and Vietnamese | D-074 | P1 | In progress |
+| T-608 | Notes on the level page: the notes linked to the level, and a button that starts a note for it | D-074 | P2 | In progress |
+| T-609 | Sprint 22 report | D-007 | P2 | To do |
+
 ## Maintenance
 
 | ID | Title | Req | Priority | Status |
