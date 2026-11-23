@@ -13,7 +13,9 @@ public enum Permission {
   ADMIN_CONFIG_EDIT("admin.config.edit"),
   ADMIN_USERS_VIEW("admin.users.view"),
   ADMIN_ROLES_GRANT("admin.roles.grant"),
-  ADMIN_AUDIT_LOG_VIEW("admin.auditLog.view");
+  ADMIN_AUDIT_LOG_VIEW("admin.auditLog.view"),
+  /** Writes and reads one's own notes (D-074). Only the Owner holds it. */
+  NOTES_MANAGE("notes.manage");
 
   private final String code;
 

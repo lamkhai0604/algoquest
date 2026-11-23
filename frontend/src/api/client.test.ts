@@ -22,6 +22,28 @@ describe("createApiClient", () => {
     expect(init.headers).toMatchObject({ Authorization: "Bearer token-1" });
   });
 
+  it("downloads a file as a Blob with the bearer token", async () => {
+    const fetchFn = vi.fn().mockResolvedValue(
+      new Response(new Uint8Array([80, 75, 3, 4]), {
+        status: 200,
+        headers: { "Content-Type": "application/zip" },
+      }),
+    );
+    const api = createApiClient({
+      baseUrl: "http://api",
+      getToken: () => "token-1",
+      fetchFn,
+    });
+
+    const file = await api.download("/api/v1/notes/export");
+    expect(file.size).toBe(4);
+    const [, init] = fetchFn.mock.calls[0] as [string, RequestInit];
+    expect(init.headers).toMatchObject({
+      Authorization: "Bearer token-1",
+      Accept: "*/*",
+    });
+  });
+
   it("retries a GET on 503 and then succeeds", async () => {
     const fetchFn = vi
       .fn()

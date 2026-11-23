@@ -19,6 +19,8 @@ export interface HeaderAccount {
   isAdmin?: boolean;
   /** Marks a visitor's demo account (D-062). */
   isDemo?: boolean;
+  /** Shows Notes in the main navigation (D-074: accounts with notes.manage). */
+  hasNotes?: boolean;
   onSignOut: () => void;
 }
 
@@ -122,6 +124,9 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
               {t("nav.map")}
             </NavLink>
             <NavLink to="/knowledge">{t("nav.knowledge")}</NavLink>
+            {account.hasNotes && (
+              <NavLink to="/notes">{t("nav.notes")}</NavLink>
+            )}
           </nav>
         )}
       </div>

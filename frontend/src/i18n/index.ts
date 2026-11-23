@@ -31,7 +31,8 @@ export type TranslationKey =
   | `auth.${keyof typeof en.auth}`
   | `misc.${keyof typeof en.misc}`
   | `levelExtra.${keyof typeof en.levelExtra}`
-  | `profileMore.${keyof typeof en.profileMore}`;
+  | `profileMore.${keyof typeof en.profileMore}`
+  | `notes.${keyof typeof en.notes}`;
 
 export function isLocale(value: string): value is Locale {
   return value === "en" || value === "vi";

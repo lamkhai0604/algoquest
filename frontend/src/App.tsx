@@ -19,6 +19,8 @@ import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
 import { PatternPage } from "./pattern/PatternPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { NoteEditorPage } from "./notes/NoteEditorPage";
+import { NotesPage } from "./notes/NotesPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { UiKitPage } from "./pages/UiKitPage";
 import { VipPage } from "./pages/VipPage";
@@ -41,6 +43,7 @@ export function AppRoutes() {
       onSignOut: signOut,
       isAdmin: state.user.permissions.some((p) => p.startsWith("admin.")),
       isDemo: state.user.roles.includes("DEMO"),
+      hasNotes: state.user.permissions.includes("notes.manage"),
     };
   }
 
@@ -66,6 +69,22 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <JsOperatorsPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/notes"
+            element={
+              <RequireAuth>
+                <NotesPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/notes/:id"
+            element={
+              <RequireAuth>
+                <NoteEditorPage />
               </RequireAuth>
             }
           />

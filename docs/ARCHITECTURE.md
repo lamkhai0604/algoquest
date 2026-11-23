@@ -285,6 +285,10 @@ sequenceDiagram
 | POST | `/api/v1/admin/users/{id}/roles` | `admin.roles.grant` | FR-17, FR-18.4 |
 | DELETE | `/api/v1/admin/users/{id}/roles/{role}` | `admin.roles.grant` | FR-17, FR-18.4 |
 | GET | `/api/v1/admin/audit-log` | `admin.auditLog.view` | FR-17.6 |
+| GET | `/api/v1/notes?q=&tag=&level=` | `notes.manage` | D-074 |
+| POST | `/api/v1/notes` | `notes.manage` | D-074 |
+| GET, PUT, DELETE | `/api/v1/notes/{id}` (own notes only) | `notes.manage` | D-074 |
+| GET | `/api/v1/notes/export` (zip of Markdown files) | `notes.manage` | D-074 |
 | GET | `/test-login` | smoke profile only | Smoke test |
 | GET | `/actuator/health` | — | Hosting |
 
@@ -463,6 +467,7 @@ Schema changes only through Flyway migrations. `PROBLEM_PROGRESS (user_id, probl
 | `admin.users.view` | ✓ | | |
 | `admin.roles.grant` | ✓ | | |
 | `admin.auditLog.view` | ✓ | | |
+| `notes.manage` (own notes, D-074) | ✓ | | |
 
 A user's permissions are the union of their role assignments. `admin.roles.grant` can only grant roles whose permissions the granter also holds. The first Owner comes from `OWNER_EMAIL`; the last Owner cannot be removed.
 
