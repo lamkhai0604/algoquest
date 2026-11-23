@@ -31,21 +31,27 @@ public class AccessService {
   private final RoleAssignmentRepository assignments;
   private final AuditLog auditLog;
   private final String ownerEmail;
+  private final String guestEmail;
 
   public AccessService(
       AppUserRepository users,
       RoleAssignmentRepository assignments,
       AuditLog auditLog,
-      @Value("${algoquest.owner-email:}") String ownerEmail) {
+      @Value("${algoquest.owner-email:}") String ownerEmail,
+      @Value("${algoquest.guest-email:}") String guestEmail) {
     this.users = users;
     this.assignments = assignments;
     this.auditLog = auditLog;
     this.ownerEmail = normalizeEmail(ownerEmail);
+    String guest = normalizeEmail(guestEmail);
+    // The guest account never shares the owner's email, so it can never become the Owner.
+    this.guestEmail = guest.equals(this.ownerEmail) ? "" : guest;
   }
 
   /**
    * Finds or creates the user for a sign-in. New users get the Player role. The user whose email
-   * matches {@code OWNER_EMAIL} also gets the Owner role, recorded as a system action.
+   * matches {@code OWNER_EMAIL} also gets the Owner role, recorded as a system action, and the user
+   * whose email matches {@code GUEST_ACCOUNT} gets the Guest role (D-075).
    */
   @Transactional
   public UUID signIn(SignInProfile profile) {
@@ -60,6 +66,9 @@ public class AccessService {
     }
     if (!ownerEmail.isEmpty() && ownerEmail.equals(user.getEmail())) {
       ensureRole(null, user.getId(), Role.OWNER, Scope.GLOBAL, "configured owner email");
+    }
+    if (!guestEmail.isEmpty() && guestEmail.equals(user.getEmail())) {
+      ensureRole(null, user.getId(), Role.GUEST, Scope.GLOBAL, "configured guest account");
     }
     users.flush(); // other modules may reference the user through plain SQL in this transaction
     return user.getId();

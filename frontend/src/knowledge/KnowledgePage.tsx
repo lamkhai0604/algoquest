@@ -2,14 +2,17 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { Badge, Card, cx } from "../components";
 import { useTranslation } from "../i18n";
+import type { TranslationKey } from "../i18n";
 import lessonStyles from "../lesson/Lesson.module.css";
 import { MarkdownBlocks } from "../lesson/Markdown";
 import { parseMarkdown } from "../lesson/parseMarkdown";
 import { QuickCheckQuestionCard } from "../lesson/QuickCheckQuestionCard";
+import type { QuickCheckQuestion } from "../lesson/types";
 import styles from "../pages/Pages.module.css";
 import knowledgeStyles from "./Knowledge.module.css";
 import questions from "./js-operators-check.json";
 import operators from "./js-operators.json";
+import truthTables from "./truth-tables.json";
 
 export function KnowledgePage() {
   const { t } = useTranslation();
@@ -25,19 +28,65 @@ export function KnowledgePage() {
           </li>
         </ul>
       </Card>
+      <Card>
+        <h2 className={styles.planned}>{t("nav.discreteMath")}</h2>
+        <ul className={styles.topics}>
+          <li>
+            <Link to="/knowledge/discrete-math/truth-tables">
+              {t("nav.truthTables")}
+            </Link>
+          </li>
+        </ul>
+      </Card>
     </div>
   );
 }
 
 export function JsOperatorsPage() {
+  const { locale } = useTranslation();
+
+  return (
+    <KnowledgeLesson
+      title="nav.jsOperators"
+      category="JS"
+      lesson={operators[locale]}
+      lessonQuestions={questions[locale]}
+    />
+  );
+}
+
+export function TruthTablesPage() {
   const { locale, t } = useTranslation();
+  const { lesson, questions } = truthTables[locale];
+
+  return (
+    <KnowledgeLesson
+      title="nav.truthTables"
+      category={t("nav.discreteMath")}
+      lesson={lesson}
+      lessonQuestions={questions}
+    />
+  );
+}
+
+function KnowledgeLesson({
+  title,
+  category,
+  lesson,
+  lessonQuestions,
+}: {
+  title: TranslationKey;
+  category: string;
+  lesson: string;
+  lessonQuestions: QuickCheckQuestion[];
+}) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"lesson" | "check">("lesson");
   const [picks, setPicks] = useState<(number | null)[]>([]);
   const tabs = [
     { id: "lesson", label: t("nav.knowledgeLesson") },
     { id: "check", label: t("nav.knowledgeCheck") },
   ] as const;
-  const lessonQuestions = questions[locale];
   const complete = lessonQuestions.every(
     (question, index) => picks[index] === question.answer,
   );
@@ -45,12 +94,12 @@ export function JsOperatorsPage() {
   return (
     <div className={styles.page}>
       <div>
-        <Link to="/knowledge">{t("nav.knowledge")}</Link> / JS
+        <Link to="/knowledge">{t("nav.knowledge")}</Link> / {category}
       </div>
-      <h1 className={styles.title}>{t("nav.jsOperators")}</h1>
+      <h1 className={styles.title}>{t(title)}</h1>
       <div
         role="tablist"
-        aria-label={t("nav.jsOperators")}
+        aria-label={t(title)}
         className={cx(lessonStyles.steps, knowledgeStyles.tabs)}
       >
         {tabs.map(({ id, label }) => (
@@ -94,7 +143,7 @@ export function JsOperatorsPage() {
         tabIndex={0}
       >
         <Card>
-          <MarkdownBlocks blocks={parseMarkdown(operators[locale])} />
+          <MarkdownBlocks blocks={parseMarkdown(lesson)} />
         </Card>
       </div>
       <div

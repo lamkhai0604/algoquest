@@ -24,6 +24,8 @@
     "difficultyHard": "Khó"
   },
   "nav": {
+    "discreteMath": "Toán rời rạc",
+    "truthTables": "Bảng chân trị",
     "knowledgeLesson": "Bài học",
     "knowledgeCheck": "Kiểm tra kiến thức",
     "knowledge": "Kiến thức",
@@ -519,7 +521,7 @@
     "allTags": "Tất cả",
     "loading": "Đang tải ghi chú…",
     "loadError": "Chưa tải được ghi chú.",
-    "forbidden": "Ghi chú chỉ dành cho chủ trang này.",
+    "forbidden": "Tài khoản này không dùng được Notes.",
     "notFound": "Ghi chú này không tồn tại hoặc đã bị xoá.",
     "empty": "Chưa có ghi chú nào. Bắt đầu với “Ghi chú mới”.",
     "noMatch": "Không có ghi chú nào khớp.",
@@ -553,6 +555,13 @@
     "linkPrompt": "Địa chỉ liên kết (https://…)",
     "levelNotes": "Ghi chú của tôi cho level này",
     "levelNew": "Ghi chú mới cho level này",
-    "levelEmpty": "Chưa có ghi chú nào cho level này."
+    "levelEmpty": "Chưa có ghi chú nào cho level này.",
+    "quickOpen": "Ghi chú",
+    "quickOpenLabel": "Mở ghi chú nhanh (N)",
+    "quickTitle": "Ghi chú · Level",
+    "quickClose": "Đóng ghi chú",
+    "quickBack": "Tất cả ghi chú của level này",
+    "quickFullPage": "Mở trong trang Notes",
+    "quickKeys": "Phím N để mở hoặc đóng ngăn này. Ghi chú tự lưu."
   }
 }

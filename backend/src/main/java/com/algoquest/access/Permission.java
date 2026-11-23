@@ -14,7 +14,7 @@ public enum Permission {
   ADMIN_USERS_VIEW("admin.users.view"),
   ADMIN_ROLES_GRANT("admin.roles.grant"),
   ADMIN_AUDIT_LOG_VIEW("admin.auditLog.view"),
-  /** Writes and reads one's own notes (D-074). Only the Owner holds it. */
+  /** Writes and reads one's own notes (D-074). The Owner and the Guest hold it (D-075). */
   NOTES_MANAGE("notes.manage");
 
   private final String code;

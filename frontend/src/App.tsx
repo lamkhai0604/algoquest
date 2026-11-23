@@ -12,7 +12,11 @@ import { AppFooter, AppHeader, WakingServer } from "./components";
 import type { HeaderAccount } from "./components";
 import { hintsLeft, streakDays, totalXp, useGame } from "./game/gameContext";
 import { GameProvider } from "./game/GameProvider";
-import { JsOperatorsPage, KnowledgePage } from "./knowledge/KnowledgePage";
+import {
+  JsOperatorsPage,
+  KnowledgePage,
+  TruthTablesPage,
+} from "./knowledge/KnowledgePage";
 import { LessonPage } from "./lesson/LessonPage";
 import { LevelTestPage } from "./leveltest/LevelTestPage";
 import { HomePage } from "./pages/HomePage";
@@ -61,6 +65,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <KnowledgePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/knowledge/discrete-math/truth-tables"
+            element={
+              <RequireAuth>
+                <TruthTablesPage />
               </RequireAuth>
             }
           />

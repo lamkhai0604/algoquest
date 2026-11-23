@@ -24,6 +24,8 @@
     "difficultyHard": "Hard"
   },
   "nav": {
+    "discreteMath": "Discrete Math",
+    "truthTables": "Truth Tables",
     "knowledgeLesson": "Lesson",
     "knowledgeCheck": "Knowledge Check",
     "knowledge": "Knowledge",
@@ -519,7 +521,7 @@
     "allTags": "All",
     "loading": "Loading notes…",
     "loadError": "The notes could not be loaded.",
-    "forbidden": "Notes are only for the owner of this site.",
+    "forbidden": "Notes are not available for this account.",
     "notFound": "This note does not exist or was deleted.",
     "empty": "No notes yet. Start with “New note”.",
     "noMatch": "No notes match.",
@@ -553,6 +555,13 @@
     "linkPrompt": "Link address (https://…)",
     "levelNotes": "My notes for this level",
     "levelNew": "New note for this level",
-    "levelEmpty": "No notes for this level yet."
+    "levelEmpty": "No notes for this level yet.",
+    "quickOpen": "Note",
+    "quickOpenLabel": "Open quick notes (N)",
+    "quickTitle": "Notes · Level",
+    "quickClose": "Close notes",
+    "quickBack": "All notes for this level",
+    "quickFullPage": "Open in Notes",
+    "quickKeys": "N opens and closes this panel. Notes save by themselves."
   }
 }

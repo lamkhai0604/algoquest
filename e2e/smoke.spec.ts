@@ -20,8 +20,10 @@ test("owner signs in, sees the level map, reaches admin, signs out", async ({
   await page.goto(`${API}/test-login?email=owner@example.com`);
 
   await expect(page.getByRole("heading", { name: "Learning Path" })).toBeVisible();
-  await expect(page.getByText("Smoke Tester")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/level-map.png` });
+  // The name, admin link, and sign-out live in the account menu.
+  await page.getByRole("button", { name: "Account menu" }).click();
+  await expect(page.getByText("Smoke Tester")).toBeVisible();
 
   const token = await page.evaluate(() => {
     const raw = window.sessionStorage.getItem("algoquest.session");
@@ -181,6 +183,7 @@ test("Vietnamese Level 1 exercise text and opened hints survive EN/VI switching"
   await page.goto(`${API}/test-login?email=locale-learner@example.com`);
   await expect(page.getByRole("heading", { name: "Learning Path" })).toBeVisible();
 
+  await page.getByRole("button", { name: "Account menu" }).click();
   await page.getByRole("combobox", { name: "Language" }).selectOption("vi");
   await expect(page.getByRole("heading", { name: "Lộ trình học" })).toBeVisible();
 
@@ -202,6 +205,7 @@ test("Vietnamese Level 1 exercise text and opened hints survive EN/VI switching"
     fullPage: true,
   });
 
+  await page.getByRole("button", { name: "Menu tài khoản" }).click();
   await page.getByRole("combobox", { name: "Ngôn ngữ" }).selectOption("en");
   await expect(page.getByRole("heading", { name: "Max Temperature" })).toBeVisible();
   await expect(

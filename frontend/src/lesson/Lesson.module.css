@@ -1369,3 +1369,12 @@
     transform: none;
   }
 }
+
+/* The lesson title with the quick-notes button beside it (D-076). */
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}

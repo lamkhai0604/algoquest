@@ -419,3 +419,172 @@
     font-size: var(--text-lg);
   }
 }
+
+/* Quick notes on the lesson page (D-076): a button by the title, a floating copy once the title
+   scrolls away, and a panel at the side (at the bottom on a phone). */
+.quickButton,
+.quickFloat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 6px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.quickButton:hover,
+.quickFloat:hover,
+.quickButton:focus-visible,
+.quickFloat:focus-visible {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.quickButton[aria-expanded="true"] {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
+}
+
+.quickFloat {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 30;
+  box-shadow: var(--shadow-card);
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, 100vw);
+  border-left: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  animation: drawer-in 180ms ease-out;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+.drawerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.drawerTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+}
+
+.drawerTitle:focus {
+  outline: none;
+}
+
+.drawerClose,
+.drawerBack {
+  border: 0;
+  background: none;
+  color: var(--color-text-2);
+  font: inherit;
+  cursor: pointer;
+}
+
+.drawerClose {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-md);
+}
+
+.drawerClose:hover,
+.drawerClose:focus-visible,
+.drawerBack:hover,
+.drawerBack:focus-visible {
+  color: var(--color-text);
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.drawerBack {
+  align-self: flex-start;
+  padding: 0;
+  font-size: var(--text-sm);
+}
+
+.drawerBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.drawerFoot {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.drawerLink {
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+}
+
+.levelNoteButton {
+  width: 100%;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .drawer {
+    top: auto;
+    left: 0;
+    width: 100%;
+    height: 60vh;
+    border-top: 1px solid var(--color-border);
+    border-left: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation-name: sheet-in;
+  }
+
+  .drawerFoot {
+    display: none;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer {
+    animation: none;
+  }
+}
