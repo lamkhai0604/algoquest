@@ -59,10 +59,24 @@ export function NoteToolbar({ editor }: { editor: Editor }) {
   );
 
   return (
-    <div className={styles.toolbar} role="toolbar" aria-label={t("notes.toolbar")}>
+    <div
+      className={styles.toolbar}
+      role="toolbar"
+      aria-label={t("notes.toolbar")}
+    >
       {tool("notes.bold", state.bold, () => run().toggleBold().run(), <b>B</b>)}
-      {tool("notes.italic", state.italic, () => run().toggleItalic().run(), <i>I</i>)}
-      {tool("notes.underline", state.underline, () => run().toggleUnderline().run(), <u>U</u>)}
+      {tool(
+        "notes.italic",
+        state.italic,
+        () => run().toggleItalic().run(),
+        <i>I</i>,
+      )}
+      {tool(
+        "notes.underline",
+        state.underline,
+        () => run().toggleUnderline().run(),
+        <u>U</u>,
+      )}
       <span className={styles.sep} aria-hidden="true" />
       {tool(
         "notes.large",
@@ -83,10 +97,25 @@ export function NoteToolbar({ editor }: { editor: Editor }) {
         t("notes.normal"),
       )}
       <span className={styles.sep} aria-hidden="true" />
-      {tool("notes.bullets", state.bullets, () => run().toggleBulletList().run(), "•")}
-      {tool("notes.numbers", state.numbers, () => run().toggleOrderedList().run(), "1.")}
+      {tool(
+        "notes.bullets",
+        state.bullets,
+        () => run().toggleBulletList().run(),
+        "•",
+      )}
+      {tool(
+        "notes.numbers",
+        state.numbers,
+        () => run().toggleOrderedList().run(),
+        "1.",
+      )}
       <span className={styles.sep} aria-hidden="true" />
-      {tool("notes.code", state.code, () => run().toggleCodeBlock().run(), "</>")}
+      {tool(
+        "notes.code",
+        state.code,
+        () => run().toggleCodeBlock().run(),
+        "</>",
+      )}
       {tool("notes.link", state.link, toggleLink, "🔗")}
     </div>
   );

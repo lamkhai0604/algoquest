@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { ApiError } from "../api";
-import { Button, ButtonLink, ErrorState, LoadingState, cx } from "../components";
+import {
+  Button,
+  ButtonLink,
+  ErrorState,
+  LoadingState,
+  cx,
+} from "../components";
 import { useTranslation } from "../i18n";
 import styles from "./Notes.module.css";
 import { downloadAllNotes, listNotes, sinceText } from "./notesApi";
@@ -148,7 +154,9 @@ export function NotesPage() {
             <li key={note.id}>
               <Link to={`/notes/${note.id}`} className={styles.card}>
                 <h2 className={styles.cardTitle}>{note.title}</h2>
-                {note.snippet && <p className={styles.snippet}>{note.snippet}</p>}
+                {note.snippet && (
+                  <p className={styles.snippet}>{note.snippet}</p>
+                )}
                 {note.tags.length > 0 && (
                   <span className={styles.cardTags}>
                     {note.tags.map((name) => (
@@ -160,7 +168,9 @@ export function NotesPage() {
                 )}
                 <span className={styles.meta}>
                   <span className={styles.level}>
-                    {note.level !== null ? `${t("notes.level")} ${note.level}` : ""}
+                    {note.level !== null
+                      ? `${t("notes.level")} ${note.level}`
+                      : ""}
                   </span>
                   <span>{sinceText(note.updatedAt, locale)}</span>
                 </span>

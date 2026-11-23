@@ -52,7 +52,11 @@ export function LevelNotes({ level }: { level: number }) {
           </ul>
         )}
         <div>
-          <ButtonLink to={`/notes/new?level=${level}`} variant="secondary" size="sm">
+          <ButtonLink
+            to={`/notes/new?level=${level}`}
+            variant="secondary"
+            size="sm"
+          >
             + {t("notes.levelNew")}
           </ButtonLink>
         </div>

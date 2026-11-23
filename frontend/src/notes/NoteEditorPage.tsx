@@ -23,7 +23,10 @@ import type { Note, NoteInput } from "./notesApi";
 export const SAVE_DELAY_MS = 1000;
 const MAX_TAGS = 10;
 const TAG = /^[\p{L}\p{N}][\p{L}\p{N} ._+#-]{0,29}$/u;
-const EMPTY_DOC: JSONContent = { type: "doc", content: [{ type: "paragraph" }] };
+const EMPTY_DOC: JSONContent = {
+  type: "doc",
+  content: [{ type: "paragraph" }],
+};
 
 type Load =
   | { status: "loading" }
@@ -51,7 +54,8 @@ export function NoteEditorPage() {
       .catch((error: unknown) => {
         if (!live) return;
         const missing =
-          error instanceof ApiError && (error.status === 404 || error.status === 400);
+          error instanceof ApiError &&
+          (error.status === 404 || error.status === 400);
         setLoaded({ id, load: { status: "error", notFound: missing } });
       });
     return () => {
@@ -87,7 +91,9 @@ export function NoteEditorPage() {
         <NoteEditor
           key={load.note?.id ?? "new"}
           note={load.note}
-          startLevel={Number.isInteger(levelParam) && levelParam > 0 ? levelParam : null}
+          startLevel={
+            Number.isInteger(levelParam) && levelParam > 0 ? levelParam : null
+          }
           onCreated={setCreated}
         />
       )}
@@ -111,7 +117,9 @@ function NoteEditor({
   const { levels } = useGame();
   const [title, setTitle] = useState(note?.title ?? "");
   const [tags, setTags] = useState<string[]>(note?.tags ?? []);
-  const [level, setLevel] = useState<number | null>(note ? note.level : startLevel);
+  const [level, setLevel] = useState<number | null>(
+    note ? note.level : startLevel,
+  );
   const [tagDraft, setTagDraft] = useState("");
   const [tagError, setTagError] = useState(false);
   const [status, setStatus] = useState<SaveState>("saved");
@@ -163,7 +171,11 @@ function NoteEditor({
   const input = useCallback((): NoteInput | null => {
     if (!editor) return null;
     const bodyText = editor.getText({ blockSeparator: "\n" });
-    const { title: rawTitle, tags: currentTags, level: currentLevel } = fields.current;
+    const {
+      title: rawTitle,
+      tags: currentTags,
+      level: currentLevel,
+    } = fields.current;
     // A new note is not stored until it has something in it.
     if (!noteId.current && !rawTitle.trim() && !bodyText.trim()) return null;
     return {
@@ -212,7 +224,6 @@ function NoteEditor({
     }
   }, [input, navigate, onCreated]);
 
-
   useEffect(() => {
     saveRef.current = save;
   }, [save]);
@@ -256,7 +267,11 @@ function NoteEditor({
     if (event.key === "Enter" || event.key === ",") {
       event.preventDefault();
       addTag(tagDraft);
-    } else if (event.key === "Backspace" && tagDraft === "" && tags.length > 0) {
+    } else if (
+      event.key === "Backspace" &&
+      tagDraft === "" &&
+      tags.length > 0
+    ) {
       changeTags(tags.slice(0, -1));
     }
   };
@@ -284,7 +299,9 @@ function NoteEditor({
   return (
     <>
       <p className={styles.status} role="status">
-        {status === "saved" && updatedAt && <span className={styles.saved}>✓ {t("notes.saved")}</span>}
+        {status === "saved" && updatedAt && (
+          <span className={styles.saved}>✓ {t("notes.saved")}</span>
+        )}
         {status === "saving" && t("notes.saving")}
         {status === "failed" && (
           <span className={styles.failed}>
@@ -314,7 +331,9 @@ function NoteEditor({
             <select
               value={level ?? ""}
               onChange={(event) => {
-                const next = event.target.value ? Number(event.target.value) : null;
+                const next = event.target.value
+                  ? Number(event.target.value)
+                  : null;
                 setLevel(next);
                 fields.current.level = next;
                 changed();
@@ -326,14 +345,19 @@ function NoteEditor({
                   {option.number} · {option.title}
                 </option>
               ))}
-              {level !== null && !levelOptions.some((o) => o.number === level) && (
-                <option value={level}>{level}</option>
-              )}
+              {level !== null &&
+                !levelOptions.some((o) => o.number === level) && (
+                  <option value={level}>{level}</option>
+                )}
             </select>
           </label>
           <div className={styles.field}>
             <span id="note-tags">{t("notes.tags")}</span>
-            <span className={styles.tagEditor} role="group" aria-labelledby="note-tags">
+            <span
+              className={styles.tagEditor}
+              role="group"
+              aria-labelledby="note-tags"
+            >
               {tags.map((tag) => (
                 <span key={tag} className={styles.tagSmall}>
                   {tag}
@@ -341,7 +365,9 @@ function NoteEditor({
                     type="button"
                     className={styles.tagRemove}
                     aria-label={`${t("notes.removeTag")} ${tag}`}
-                    onClick={() => changeTags(tags.filter((other) => other !== tag))}
+                    onClick={() =>
+                      changeTags(tags.filter((other) => other !== tag))
+                    }
                   >
                     ✕
                   </button>
@@ -350,7 +376,9 @@ function NoteEditor({
               <input
                 className={styles.tagInput}
                 aria-label={t("notes.addTag")}
-                placeholder={tags.length < MAX_TAGS ? `+ ${t("notes.addTag")}` : ""}
+                placeholder={
+                  tags.length < MAX_TAGS ? `+ ${t("notes.addTag")}` : ""
+                }
                 value={tagDraft}
                 aria-invalid={tagError}
                 onChange={(event) => {
@@ -372,7 +400,9 @@ function NoteEditor({
         <EditorContent editor={editor} className={styles.body} />
         <div className={styles.foot}>
           <span>
-            {updatedAt ? `${t("notes.lastChange")} ${sinceText(updatedAt, locale)}` : ""}
+            {updatedAt
+              ? `${t("notes.lastChange")} ${sinceText(updatedAt, locale)}`
+              : ""}
           </span>
           <Button variant="ghost" size="sm" onClick={() => setConfirming(true)}>
             <span className={styles.danger}>{t("notes.delete")}</span>

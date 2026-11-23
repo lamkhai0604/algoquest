@@ -124,7 +124,9 @@ export function AppHeader({ stats, account }: AppHeaderProps) {
               {t("nav.map")}
             </NavLink>
             <NavLink to="/knowledge">{t("nav.knowledge")}</NavLink>
-            {account.hasNotes && <NavLink to="/notes">{t("nav.notes")}</NavLink>}
+            {account.hasNotes && (
+              <NavLink to="/notes">{t("nav.notes")}</NavLink>
+            )}
           </nav>
         )}
       </div>

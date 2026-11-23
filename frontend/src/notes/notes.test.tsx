@@ -55,7 +55,11 @@ const NOTE = {
   updatedAt: "2026-11-22T10:00:00Z",
 };
 
-const calls = (fetchFn: ReturnType<typeof fakeApi>, method: string, end: string) =>
+const calls = (
+  fetchFn: ReturnType<typeof fakeApi>,
+  method: string,
+  end: string,
+) =>
   fetchFn.mock.calls.filter(
     ([url, init]) =>
       (init?.method ?? "GET") === method && String(url).includes(end),
@@ -78,7 +82,9 @@ describe("notes", () => {
       "GET /api/v1/levels": () => json(200, LEVELS),
     });
     renderSignedInAt("/knowledge");
-    expect(await screen.findByRole("link", { name: "Knowledge" })).toBeVisible();
+    expect(
+      await screen.findByRole("link", { name: "Knowledge" }),
+    ).toBeVisible();
     expect(screen.queryByRole("link", { name: "Notes" })).toBeNull();
   });
 
@@ -104,10 +110,9 @@ describe("notes", () => {
     );
     expect(screen.getByText("Level 1")).toBeVisible();
     const tags = screen.getByRole("group", { name: "Tags" });
-    expect(within(tags).getByRole("button", { name: "All · 2" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    expect(
+      within(tags).getByRole("button", { name: "All · 2" }),
+    ).toHaveAttribute("aria-pressed", "true");
 
     await userEvent.type(screen.getByRole("searchbox"), "stack");
     await waitFor(() =>
@@ -129,7 +134,13 @@ describe("notes", () => {
         new Response(new Uint8Array([80, 75, 3, 4]), { status: 200 }),
     });
     const createUrl = vi.fn(() => "blob:notes");
-    vi.stubGlobal("URL", Object.assign(URL, { createObjectURL: createUrl, revokeObjectURL: vi.fn() }));
+    vi.stubGlobal(
+      "URL",
+      Object.assign(URL, {
+        createObjectURL: createUrl,
+        revokeObjectURL: vi.fn(),
+      }),
+    );
     const click = vi
       .spyOn(HTMLAnchorElement.prototype, "click")
       .mockImplementation(() => undefined);
@@ -156,16 +167,22 @@ describe("notes", () => {
     const title = await screen.findByRole("textbox", { name: "Title" });
     expect(title).toHaveValue("Monotonic stack");
     expect(await screen.findByText("decreasing")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Remove tag stack" })).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Remove tag stack" }),
+    ).toBeVisible();
     expect(screen.getByRole("combobox", { name: "Level" })).toHaveValue("1");
     const toolbar = screen.getByRole("toolbar", { name: "Formatting" });
     expect(within(toolbar).getByRole("button", { name: "Bold" })).toBeVisible();
-    expect(within(toolbar).getByRole("button", { name: "Large" })).toBeVisible();
+    expect(
+      within(toolbar).getByRole("button", { name: "Large" }),
+    ).toBeVisible();
 
     await userEvent.type(title, " 2");
-    await waitFor(() => expect(calls(fetchFn, "PUT", "/api/v1/notes/n-1")).toHaveLength(1), {
-      timeout: 3000,
-    });
+    await waitFor(
+      () =>
+        expect(calls(fetchFn, "PUT", "/api/v1/notes/n-1")).toHaveLength(1),
+      { timeout: 3000 },
+    );
     const body = sentBody(calls(fetchFn, "PUT", "/api/v1/notes/n-1")[0]);
     expect(body).toMatchObject({
       title: "Monotonic stack 2",
@@ -182,16 +199,26 @@ describe("notes", () => {
       "GET /api/v1/me": () => json(200, OWNER),
       "GET /api/v1/levels": () => json(200, LEVELS),
       "POST /api/v1/notes": () =>
-        json(201, { ...NOTE, id: "n-9", title: "Fresh", tags: ["dp"], body: DOC }),
+        json(201, {
+          ...NOTE,
+          id: "n-9",
+          title: "Fresh",
+          tags: ["dp"],
+          body: DOC,
+        }),
     });
     renderSignedInAt("/notes/new?level=1");
 
     const title = await screen.findByRole("textbox", { name: "Title" });
-    await userEvent.type(screen.getByRole("textbox", { name: "add tag" }), "DP{Enter}");
+    await userEvent.type(
+      screen.getByRole("textbox", { name: "add tag" }),
+      "DP{Enter}",
+    );
     await userEvent.type(title, "Fresh");
-    await waitFor(() => expect(calls(fetchFn, "POST", "/api/v1/notes")).toHaveLength(1), {
-      timeout: 3000,
-    });
+    await waitFor(
+      () => expect(calls(fetchFn, "POST", "/api/v1/notes")).toHaveLength(1),
+      { timeout: 3000 },
+    );
     expect(sentBody(calls(fetchFn, "POST", "/api/v1/notes")[0])).toMatchObject({
       title: "Fresh",
       tags: ["dp"],
@@ -211,9 +238,15 @@ describe("notes", () => {
     });
     renderSignedInAt("/notes/n-1");
 
-    await userEvent.click(await screen.findByRole("button", { name: "Delete note" }));
-    const dialog = await screen.findByRole("dialog", { name: "Delete this note?" });
-    await userEvent.click(within(dialog).getByRole("button", { name: "Delete note" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Delete note" }),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Delete this note?",
+    });
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Delete note" }),
+    );
 
     expect(
       await screen.findByText("No notes yet. Start with “New note”."),
