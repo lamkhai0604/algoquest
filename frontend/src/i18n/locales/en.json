@@ -24,6 +24,8 @@
     "difficultyHard": "Hard"
   },
   "nav": {
+    "discreteMath": "Discrete Math",
+    "truthTables": "Truth Tables",
     "knowledgeLesson": "Lesson",
     "knowledgeCheck": "Knowledge Check",
     "knowledge": "Knowledge",
