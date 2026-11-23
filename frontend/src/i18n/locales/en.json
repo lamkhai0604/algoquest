@@ -233,7 +233,8 @@
     "signIn": "Sign in",
     "wrongPassword": "The email or password is wrong.",
     "tooManyAttempts": "Too many wrong attempts. Try again in 15 minutes.",
-    "loadingOptions": "Waking the server…"
+    "loadingOptions": "Waking the server…",
+    "noMethods": "Sign-in is turned off on the server. The owner needs to set OWNER_EMAIL and OWNER_PASSWORD (at least 12 characters) on the host."
   },
   "misc": {
     "notFound": "Page not found",

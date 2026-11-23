@@ -102,6 +102,11 @@ export function SignInPage() {
           <p className={styles.demoNote}>{t("auth.loadingOptions")}</p>
         )}
         {optionsFailed && <p className={styles.error}>{t("auth.error")}</p>}
+        {options && !options.password && !options.oauth && !options.demo && (
+          <p className={styles.error} role="alert">
+            {t("auth.noMethods")}
+          </p>
+        )}
         {options?.password && (
           <form className={styles.passwordForm} onSubmit={signInWithPassword}>
             <label className={styles.field}>
