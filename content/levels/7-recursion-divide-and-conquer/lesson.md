@@ -37,6 +37,21 @@ If each call moves closer to the base case, the recursion ends. If not, it never
 
 Merge sort from Level 4 is the classic example. Halving is what makes it fast: an input of n items can be halved only about log2(n) times.
 
+```figure
+{
+  "kind": "visual",
+  "caption": "Merge sort halves the array, sorts each half, then merges two sorted halves. The shaded cells are the range being worked on.",
+  "frames": [
+    {"op": "start: split into halves of 4", "visual": {"cells": ["7", "4", "2", "1", "8", "3", "6", "5"]}},
+    {"op": "left half: sort each pair, then merge", "visual": {"cells": ["4", "7", "1", "2", "8", "3", "6", "5"], "window": [0, 3]}},
+    {"op": "left half merged: 1 2 4 7", "visual": {"cells": ["1", "2", "4", "7", "8", "3", "6", "5"], "window": [0, 3]}},
+    {"op": "right half: sort pairs 8 3 and 6 5", "visual": {"cells": ["1", "2", "4", "7", "3", "8", "5", "6"], "window": [4, 7]}},
+    {"op": "right half merged: 3 5 6 8", "visual": {"cells": ["1", "2", "4", "7", "3", "5", "6", "8"], "window": [4, 7]}},
+    {"op": "merge 1 2 4 7 with 3 5 6 8", "visual": {"cells": ["1", "2", "3", "4", "5", "6", "7", "8"]}}
+  ]
+}
+```
+
 ## When to use
 
 Look for these signals in a problem statement:
