@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Find **23** in this sorted list of 10 numbers. The shaded range `lo..hi` is where 23 can still be; at first that is everything.",
-    "code": "let lo = 0, hi = nums.length - 1;",
+    "code": "function search(nums, target) {\n  let lo = 0, hi = nums.length - 1;\n  while (lo <= hi) {\n    const mid = lo + Math.floor((hi - lo) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) lo = mid + 1;\n    else hi = mid - 1;\n  }\n  return -1;\n}",
+    "lines": [
+      2,
+      2
+    ],
     "visual": {
       "cells": [
         "2",
@@ -49,7 +53,10 @@
   {
     "title": "Check index 4",
     "body": "mid = 0 + (9 − 0) / 2 = 4, and nums[4] = 16 < 23. Everything from 0 to 4 is too small, so lo = mid + 1 = 5.",
-    "code": "const mid = lo + Math.floor((hi - lo) / 2);\nif (nums[mid] < target) lo = mid + 1;\nelse hi = mid - 1;",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "2",
@@ -113,7 +120,10 @@
   {
     "title": "Check index 7",
     "body": "mid = 5 + (9 − 5) / 2 = 7, and nums[7] = 56 > 23. Everything from 7 to 9 is too big, so hi = mid − 1 = 6.",
-    "code": "const mid = lo + Math.floor((hi - lo) / 2);\nif (nums[mid] < target) lo = mid + 1;\nelse hi = mid - 1;",
+    "lines": [
+      4,
+      7
+    ],
     "visual": {
       "cells": [
         "2",
@@ -177,7 +187,10 @@
   {
     "title": "Check index 5",
     "body": "mid = 5 + (6 − 5) / 2 = 5, and nums[5] = 23: found at index **5** after 3 looks.",
-    "code": "if (nums[mid] === target) return mid;",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "2",
@@ -228,6 +241,10 @@
   {
     "title": "Why it is fast",
     "body": "Each look halved the range: 10 → 5 → 2 → 1. A list of 1,000,000 needs at most 20 looks: **O(log n)** time and O(1) space. It only works because the list is sorted.",
+    "lines": [
+      5,
+      5
+    ],
     "visual": {
       "cells": [
         "2",

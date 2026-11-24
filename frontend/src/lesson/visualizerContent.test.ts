@@ -126,26 +126,42 @@ describe("lesson visualizers match their reference algorithms", () => {
     expect(value(steps.at(-1)!, "result")).toBe("true");
   });
 
-  it("Level 7: the call stack grows to the base case, then each call returns its sum", () => {
+  it("Level 7: the staircase grows to the base case, then each call returns its sum", () => {
     const steps = walkthrough("7-recursion-divide-and-conquer");
     const a = [3, 1, 4];
-    const depths = steps.map((step) => step.visual!.cells.length);
-    expect(depths).toEqual([1, 2, 3, 4, 3, 2, 1, 0]);
+    const sum = (i: number) => a.slice(i).reduce((x, y) => x + y, 0);
+    const live = steps.map(
+      (step) => step.visual!.calls!.filter((c) => c.state !== "done").length,
+    );
+    expect(live).toEqual([1, 2, 3, 4, 3, 2, 1, 0]);
     for (const step of steps) {
-      step.visual!.cells.forEach((cell, i) => expect(cell).toBe(`sum(${i})`));
-      expect(value(step, "call stack depth")).toBe(
-        String(step.visual!.cells.length),
+      const calls = step.visual!.calls!;
+      calls.forEach((call, i) => {
+        expect(call.text).toBe(`sum(${i})`);
+        expect(call.depth).toBe(i);
+        if (call.state === "done") expect(call.result).toBe(String(sum(i)));
+      });
+      // The deepest call still running is the active one; the ones above it wait.
+      const running = calls.filter((c) => c.state !== "done");
+      running.forEach((call, i) =>
+        expect(call.state).toBe(
+          i === running.length - 1 ? "active" : "waiting",
+        ),
       );
+      expect(value(step, "call stack depth")).toBe(String(running.length));
     }
     // Returns arrive newest call first: sum(3), sum(2), sum(1), sum(0).
     const returned = steps
       .map((step) => value(step, "last return"))
       .filter((v) => v !== "·")
       .map((v) => Number(v!.split("=").at(-1)));
-    const expected = [3, 2, 1, 0].map((i) =>
-      a.slice(i).reduce((x, y) => x + y, 0),
-    );
-    expect(returned).toEqual(expected);
+    expect(returned).toEqual([3, 2, 1, 0].map(sum));
+    // Every step lights a line of the one function shown in step 1.
+    const lines = steps[0]!.code!.split("\n").length;
+    for (const step of steps) {
+      expect(step.lines![0]).toBeGreaterThanOrEqual(1);
+      expect(step.lines![1]).toBeLessThanOrEqual(lines);
+    }
   });
 
   it("Level 8: the tree is a valid BST and the search follows the BST rule", () => {

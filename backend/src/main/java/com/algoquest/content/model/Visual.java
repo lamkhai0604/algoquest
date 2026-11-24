@@ -17,8 +17,9 @@ import java.util.List;
  * a graph step interactive (D-064), and optional intervals: one {@code [start, end]} per cell,
  * drawn as bars on a shared time axis, with the indexes of kept intervals and a sweep line (D-066),
  * and an optional table layout: the cells in {@code rows} rows with row and column labels and the
- * indexes of the cells a step reads (D-068), and optional edge weights, one label per edge (D-069).
- * Everything except {@code cells} is optional.
+ * indexes of the cells a step reads (D-068), and optional edge weights, one label per edge (D-069),
+ * and optional recursive calls drawn as a staircase, one box per call indented by its depth
+ * (D-078). Everything except {@code cells} is optional.
  */
 public record Visual(
     List<String> cells,
@@ -45,7 +46,8 @@ public record Visual(
     List<String> rowLabels,
     List<String> columnLabels,
     List<Integer> reads,
-    List<String> weights) {
+    List<String> weights,
+    List<Call> calls) {
 
   /** The most cells a tree may have: five levels. */
   public static final int MAX_TREE_CELLS = 31;
@@ -84,6 +86,19 @@ public record Visual(
 
   /** A label drawn on one cell, such as {@code i} for the current index. */
   public record Marker(int index, String label) {}
+
+  /**
+   * One recursive call in the staircase (D-078): its text, how deep it is (0 for the first call),
+   * its state ({@code active}, {@code waiting} for a call it made, or {@code done}), and what it
+   * returned, if anything yet.
+   */
+  public record Call(String text, int depth, String state, String result) {}
+
+  /** The most calls a staircase may show. */
+  public static final int MAX_CALLS = 16;
+
+  /** Calls are indented at most this deep. */
+  public static final int MAX_CALL_DEPTH = 6;
 
   /** A variable and its value after the step. */
   public record Variable(String name, String value) {}

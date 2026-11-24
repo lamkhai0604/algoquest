@@ -618,6 +618,94 @@ describe("lesson page", () => {
     expect(screen.getByText("0 → 1")).toBeInTheDocument();
   });
 
+  it("lights the running code line and keeps the code for later steps", async () => {
+    const lesson = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Enter",
+          body: "Start the call.",
+          code: "function f(n) {\n  if (n === 0) return 0;\n  return n + f(n - 1);\n}",
+          lines: [1, 1],
+        },
+        { title: "Recurse", body: "Call again.", lines: [3, 3] },
+        { title: "Plain", body: "No code here." },
+      ],
+    };
+    open(lesson, 2);
+
+    expect(await screen.findByText("Running line 1")).toBeVisible();
+    const lit = () =>
+      document.querySelectorAll<HTMLElement>("[aria-current='step']");
+    expect(lit()).toHaveLength(1);
+    expect(lit()[0]).toHaveTextContent("function f(n) {");
+
+    await userEvent.click(screen.getByRole("button", { name: "Next step" }));
+    // The code from step 1 stays in view, with line 3 lit now.
+    expect(screen.getByText("Running line 3")).toBeVisible();
+    expect(lit()[0]).toHaveTextContent("return n + f(n - 1);");
+
+    await userEvent.click(screen.getByRole("button", { name: "Next step" }));
+    expect(screen.queryByText(/Running line/)).toBeNull();
+  });
+
+  it("draws recursive calls as a staircase and hides a fresh result until the prediction", async () => {
+    const call = (
+      text: string,
+      depth: number,
+      state: string,
+      result?: string,
+    ) => ({
+      text,
+      depth,
+      state,
+      ...(result ? { result } : {}),
+    });
+    const lesson = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Deep",
+          body: "Two calls.",
+          visual: {
+            cells: ["3"],
+            calls: [call("f(1)", 0, "waiting"), call("f(0)", 1, "active")],
+          },
+        },
+        {
+          title: "Return",
+          body: "f(0) returns.",
+          visual: {
+            cells: ["3"],
+            vars: [{ name: "last", value: "0" }],
+            calls: [call("f(1)", 0, "active"), call("f(0)", 1, "done", "0")],
+            predict: {
+              question: "What does f(0) return?",
+              options: ["0", "1"],
+              answer: 0,
+              explanation: "The base case.",
+              hides: ["last"],
+            },
+          },
+        },
+      ],
+    };
+    open(lesson as unknown as Lesson, 2);
+
+    const calls = await screen.findByRole("list", { name: "Calls" });
+    const items = within(calls).getAllByRole("listitem");
+    expect(items[0]).toHaveTextContent("f(1)waiting");
+    expect(items[1]).toHaveTextContent("f(0)running");
+    expect(items[1]).toHaveAttribute("data-depth", "1");
+
+    await userEvent.click(screen.getByRole("button", { name: "Next step" }));
+    const after = within(screen.getByRole("list", { name: "Calls" }));
+    expect(after.getAllByRole("listitem")[1]).toHaveTextContent("f(0)→ ?");
+    await userEvent.click(screen.getByRole("button", { name: "0" }));
+    expect(after.getAllByRole("listitem")[1]).toHaveTextContent("f(0)→ 0");
+    expect(after.getAllByRole("listitem")[0]).toHaveTextContent("f(1)running");
+  });
+
   it("plays the steps by itself and pauses", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     try {

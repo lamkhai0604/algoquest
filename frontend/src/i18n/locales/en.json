@@ -211,7 +211,13 @@
     "figPlay": "Play",
     "figStop": "Stop",
     "figure": "Diagram",
-    "figFrame": "Step"
+    "figFrame": "Step",
+    "codeLine": "Running line {line}",
+    "codeLines": "Running lines {first}–{last}",
+    "calls": "Calls",
+    "callActive": "running",
+    "callWaiting": "waiting",
+    "callDone": "done"
   },
   "auth": {
     "title": "Sign in to {appName}",
@@ -223,7 +229,7 @@
     "expired": "The sign-in link expired or was already used.",
     "notFinished": "Sign-in did not finish",
     "again": "Sign in again",
-    "feature1": "Learn 11 core topics with step-by-step, animated walkthroughs",
+    "feature1": "Learn 27 levels, from the core data structures to interview patterns, with animated walkthroughs",
     "feature2": "Explain your approach in words; an AI grades it like an interviewer",
     "feature3": "Write JavaScript or Java against hidden tests for double XP",
     "or": "or",

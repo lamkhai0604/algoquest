@@ -211,7 +211,13 @@
     "figPlay": "Chạy",
     "figStop": "Dừng",
     "figure": "Hình minh hoạ",
-    "figFrame": "Bước"
+    "figFrame": "Bước",
+    "codeLine": "Đang chạy dòng {line}",
+    "codeLines": "Đang chạy dòng {first}–{last}",
+    "calls": "Lời gọi",
+    "callActive": "đang chạy",
+    "callWaiting": "đang chờ",
+    "callDone": "xong"
   },
   "auth": {
     "title": "Đăng nhập {appName}",
@@ -223,7 +229,7 @@
     "expired": "Liên kết đăng nhập đã hết hạn hoặc đã được sử dụng.",
     "notFinished": "Đăng nhập chưa hoàn tất",
     "again": "Đăng nhập lại",
-    "feature1": "Học 11 chủ đề nền tảng qua minh hoạ từng bước có hoạt cảnh",
+    "feature1": "Học 27 level, từ cấu trúc dữ liệu nền tảng đến các dạng bài phỏng vấn, qua minh hoạ có hoạt cảnh",
     "feature2": "Giải thích cách làm bằng lời; AI chấm như một người phỏng vấn",
     "feature3": "Viết JavaScript hoặc Java chạy với test ẩn để nhận gấp đôi XP",
     "or": "hoặc",
