@@ -142,7 +142,9 @@ function QuickPanel({
         {view.kind === "list" && (
           <QuickList level={level} onOpen={openNote} onNew={startNew} />
         )}
-        {view.kind === "loading" && <LoadingState label={t("notes.loading")} />}
+        {view.kind === "loading" && (
+          <LoadingState label={t("notes.loading")} lines={0} />
+        )}
         {view.kind === "error" && <ErrorState message={t("notes.loadError")} />}
         {view.kind === "edit" && (
           <NoteEditor
@@ -200,7 +202,9 @@ function QuickList({
         </Button>
       </div>
       {failed && <ErrorState message={t("notes.loadError")} onRetry={retry} />}
-      {!failed && notes === null && <LoadingState label={t("notes.loading")} />}
+      {!failed && notes === null && (
+        <LoadingState label={t("notes.loading")} lines={0} />
+      )}
       {notes !== null && notes.length === 0 && (
         <p className={styles.lead}>{t("notes.levelEmpty")}</p>
       )}

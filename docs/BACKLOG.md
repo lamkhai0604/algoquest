@@ -288,25 +288,34 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-606 | Notes backend: `note` table, owner-scoped API (list, search, create, read, update, delete), `notes.manage` permission, Markdown zip export | D-074 | P1 | Built 2026-11-22: backend tests (owner only, other accounts' notes hidden, validation, export); PO review pending |
-| T-607 | Notes frontend: Notes in the navigation, note list with search and tag filter, TipTap editor with toolbar and autosave, delete with confirmation, English and Vietnamese | D-074 | P1 | Built 2026-11-22: frontend tests; PO review pending |
-| T-608 | Notes on the level page: the notes linked to the level, and a button that starts a note for it | D-074 | P2 | Built 2026-11-22: frontend test; PO review pending |
-| T-609 | Sprint 22 report | D-007 | P2 | To do |
-| T-603 | Decorative images for the seven core lessons, made by the PO with Gemini from the prompts in [lesson-images.md](lesson-images.md); WebP, 1600 px wide, with alt text (moved from Later) | D-072 | P3 | Built 2026-11-22: content test checks every image file exists; PO review pending |
+| T-606 | Notes backend: `note` table, owner-scoped API (list, search, create, read, update, delete), `notes.manage` permission, Markdown zip export | D-074 | P1 | Done 2026-11-23: backend tests; PO review OK |
+| T-607 | Notes frontend: Notes in the navigation, note list with search and tag filter, TipTap editor with toolbar and autosave, delete with confirmation, English and Vietnamese | D-074 | P1 | Done 2026-11-23: frontend tests; PO review OK |
+| T-608 | Notes on the level page: the notes linked to the level, and a button that starts a note for it | D-074 | P2 | Done 2026-11-23: frontend test; PO review OK |
+| T-609 | Sprint 22 report | D-007 | P2 | Done 2026-11-23: [report](reports/sprint-22-report.md) |
+| T-603 | Decorative images for the seven core lessons, made by the PO with Gemini from the prompts in [lesson-images.md](lesson-images.md); WebP, 1600 px wide, with alt text (moved from Later) | D-072 | P3 | Done 2026-11-23: content test checks every image file exists; PO review OK; merged in PR #54 |
 
 ## Sprint 23 — Guest account and quick notes ([plan](sprints/sprint-23.md))
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-610 | Guest account: `GUEST_ACCOUNT` and `GUEST_PASSWORD` settings, password sign-in for the guest, `GUEST` role with `game.play` and `notes.manage` | FR-01, FR-17, D-075 | P1 | Built 2026-11-23: backend tests (guest signs in, can keep notes, cannot reach admin, never sees the Owner's notes; the guest password does not open the Owner account); PO review pending. The PO sets the two settings on Render |
-| T-611 | Quick notes on the lesson page: Note button by the title (floating when scrolled), side panel or bottom sheet with this level's notes and the compact editor, N and Escape | FR-03, D-076 | P1 | Built 2026-11-23: frontend tests; PO review pending |
-| T-612 | Sprint 23 report | D-007 | P2 | To do |
+| T-610 | Guest account: `GUEST_ACCOUNT` and `GUEST_PASSWORD` settings, password sign-in for the guest, `GUEST` role with `game.play` and `notes.manage` | FR-01, FR-17, D-075 | P1 | Done 2026-11-23: backend tests; PO set the guest settings on Render and checked the guest sign-in |
+| T-611 | Quick notes on the lesson page: Note button by the title (floating when scrolled), side panel or bottom sheet with this level's notes and the compact editor, N and Escape | FR-03, D-076 | P1 | Done 2026-11-23: frontend tests; PO review OK |
+| T-612 | Sprint 23 report | D-007 | P2 | Done 2026-11-23: [report](reports/sprint-23-report.md) |
+
+## Sprint 24 — Code lines and the recursion staircase ([plan](sprints/sprint-24.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-613 | Code panel in walkthroughs: a step's `lines` lights the lines it runs in the code in view (its own code or the latest earlier code); Levels 7 and 15 show one whole function | FR-03, D-077 | P1 | Built 2026-11-23: backend and frontend tests; content test for Level 7; PO review pending |
+| T-614 | Recursion staircase: `visual.calls` draws each call as a box indented by depth (running, waiting, done with its result); Level 7 walkthrough uses it | FR-03, D-078 | P1 | Built 2026-11-23: backend and frontend tests; content test checks every call against a reference sum; PO review pending |
+| T-615 | Small fixes: the sign-in page names 27 levels instead of 11 topics; loading notices show placeholder bars | FR-01, NFR-05 | P3 | Built 2026-11-23: frontend tests; PO review pending |
+| T-616 | Sprint 24 report | D-007 | P2 | To do |
 
 ## Maintenance
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-605 | Owner-only sign-in with email and password; Google, GitHub and demo sign-in off by default | FR-01, FR-17, D-073 | P1 | Built 2026-11-22: backend tests (sign-in, wrong password, lock after 5 attempts, OAuth and demo off); frontend tests; screenshots; PO review pending. The PO sets `OWNER_PASSWORD` on Render |
+| T-605 | Owner-only sign-in with email and password; Google, GitHub and demo sign-in off by default | FR-01, FR-17, D-073 | P1 | Done 2026-11-23: backend and frontend tests; PO review OK. The PO set `OWNER_PASSWORD` on Render |
 
 ## Later (unscheduled)
 

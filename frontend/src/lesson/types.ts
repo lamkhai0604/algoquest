@@ -63,12 +63,27 @@ export interface Visual {
   columnLabels?: string[] | null;
   /** Indexes of the cells this step reads, shaded (D-068). */
   reads?: number[] | null;
+  /** Recursive calls drawn as a staircase, one box per call (D-078). */
+  calls?: VisualCall[] | null;
+}
+
+/** One recursive call in the staircase (D-078). */
+export interface VisualCall {
+  text: string;
+  /** 0 for the first call; each level deeper is indented one step. */
+  depth: number;
+  /** Running now, waiting for a call it made, or finished. */
+  state: "active" | "waiting" | "done";
+  /** What the call returned, once it has. */
+  result?: string | null;
 }
 
 export interface WalkthroughStep {
   title: string;
   body: string;
   code?: string | null;
+  /** First and last line (from 1) of the code in view that this step runs (D-077). */
+  lines?: number[] | null;
   visual?: Visual | null;
 }
 
