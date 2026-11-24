@@ -359,8 +359,7 @@ class ContentLoaderTest {
 
   @Test
   void onlyOneCallIsActive() throws IOException {
-    replace(
-        level.resolve("walkthrough.json"), "\"state\": \"waiting\"", "\"state\": \"active\"");
+    replace(level.resolve("walkthrough.json"), "\"state\": \"waiting\"", "\"state\": \"active\"");
 
     assertThat(problemsAfterLoad())
         .anyMatch(p -> p.contains("step 1") && p.contains("at most one call can be active"));

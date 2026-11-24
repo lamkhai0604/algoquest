@@ -182,7 +182,7 @@ describe("lesson visualizers match their reference algorithms", () => {
     // The search path for the target, by the BST rule.
     const target = Number(value(steps[0]!, "target"));
     const path: number[] = [];
-    for (let i = 0; at(i) !== null; ) {
+    for (let i = 0; at(i) !== null;) {
       path.push(i);
       if (at(i) === target) break;
       i = target < at(i)! ? 2 * i + 1 : 2 * i + 2;
@@ -205,7 +205,7 @@ describe("lesson visualizers match their reference algorithms", () => {
     // Reference sift-up, recording the array after each change.
     const heap = [...start, pushed];
     const states = [start, [...heap]];
-    for (let i = heap.length - 1; i > 0; ) {
+    for (let i = heap.length - 1; i > 0;) {
       const parent = (i - 1) >> 1;
       if (heap[i]! >= heap[parent]!) break;
       [heap[i], heap[parent]] = [heap[parent]!, heap[i]!];
