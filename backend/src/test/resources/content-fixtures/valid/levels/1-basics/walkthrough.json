@@ -9,7 +9,25 @@
         "10",
         "1"
       ],
-      "tree": true
+      "tree": true,
+      "calls": [
+        {
+          "text": "best(0, 3)",
+          "depth": 0,
+          "state": "waiting"
+        },
+        {
+          "text": "best(0, 1)",
+          "depth": 1,
+          "state": "done",
+          "result": "8"
+        },
+        {
+          "text": "best(2, 3)",
+          "depth": 1,
+          "state": "active"
+        }
+      ]
     }
   },
   {
@@ -62,6 +80,10 @@
   },
   {
     "title": "Finish",
+    "lines": [
+      1,
+      1
+    ],
     "body": "Return best.",
     "visual": {
       "cells": [

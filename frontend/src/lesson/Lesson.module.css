@@ -1378,3 +1378,121 @@
   justify-content: space-between;
   gap: var(--space-3);
 }
+
+/* Code panel with the running lines lit (D-077). */
+.codeLines pre {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: var(--space-2) 0;
+}
+
+.codeLine {
+  display: block;
+  padding: 0 var(--space-3) 0 0;
+  border-left: 3px solid transparent;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.codeLineOn {
+  border-left-color: var(--color-xp);
+  background: color-mix(in srgb, var(--color-xp) 18%, transparent);
+}
+
+.codeNumber {
+  display: inline-block;
+  width: 3ch;
+  margin-right: var(--space-3);
+  color: var(--color-text-faint);
+  text-align: right;
+  user-select: none;
+}
+
+/* Recursion staircase (D-078). */
+.calls {
+  --call-step: 22px;
+
+  margin: 0 0 var(--space-3);
+}
+
+.callList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.call {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  max-width: 360px;
+  padding: 4px var(--space-3);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-sunken);
+  font: 600 14px var(--font-mono);
+}
+
+.callActive {
+  border-color: var(--color-xp);
+  background: color-mix(in srgb, var(--color-xp) 14%, var(--color-surface));
+}
+
+.callWaiting {
+  border-style: dashed;
+  color: var(--color-text-muted);
+}
+
+.callDone {
+  border-color: var(--color-success);
+}
+
+.callText {
+  white-space: nowrap;
+}
+
+.callState {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.callDone .callState {
+  color: var(--color-success);
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .calls {
+    --call-step: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .callIn {
+    animation: call-in 0.35s ease-out;
+  }
+
+  .callPop {
+    display: inline-block;
+    animation: call-pop 0.4s ease-out;
+  }
+
+  @keyframes call-in {
+    from {
+      opacity: 0;
+      transform: translate(-10px, -6px);
+    }
+  }
+
+  @keyframes call-pop {
+    40% {
+      transform: scale(1.3);
+    }
+  }
+}

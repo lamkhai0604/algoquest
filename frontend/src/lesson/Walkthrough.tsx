@@ -7,7 +7,7 @@ import { Predict } from "./Predict";
 import type { Answer } from "./Predict";
 import { traceSearch } from "./traceSearch";
 import type { TraceState } from "./traceSearch";
-import type { Visual, WalkthroughStep } from "./types";
+import type { Visual, VisualCall, WalkthroughStep } from "./types";
 
 /**
  * Motion helpers (D-065). They use the Web Animations API on top of the final
@@ -982,6 +982,123 @@ function QueueStrip({
  * Pushed items drop in on the right; items popped in this step fade out after
  * the top. While a prediction hides "stack", it shows "?".
  */
+/**
+ * The code in view with the lines this step runs lit (D-077). The code is the step's own, or the
+ * latest code of an earlier step, so a whole function can be shown once and followed line by line.
+ */
+function CodeLines({ code, lines }: { code: string; lines: number[] }) {
+  const { t } = useTranslation();
+  const [first = 1, last = first] = lines;
+  const lit = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const node = lit.current;
+    const box = node?.closest("pre");
+    if (!node || !box) return;
+    // Keep the lit line in view inside the code box without moving the page.
+    const top = node.offsetTop - box.clientHeight / 3;
+    box.scrollTop = Math.max(0, top);
+  }, [first]);
+  return (
+    <figure className={cx(styles.code, styles.codeLines)}>
+      <figcaption className={styles.codeHeader}>
+        <span>
+          {first === last
+            ? t("walkthrough.codeLine").replace("{line}", String(first))
+            : t("walkthrough.codeLines")
+                .replace("{first}", String(first))
+                .replace("{last}", String(last))}
+        </span>
+      </figcaption>
+      <pre>
+        <code>
+          {code.split("\n").map((text, i) => {
+            const number = i + 1;
+            const on = number >= first && number <= last;
+            return (
+              <span
+                key={i}
+                ref={number === first ? lit : undefined}
+                className={cx(styles.codeLine, on && styles.codeLineOn)}
+                aria-current={on ? "step" : undefined}
+              >
+                <span className={styles.codeNumber} aria-hidden="true">
+                  {number}
+                </span>
+                {text || " "}
+                {"\n"}
+              </span>
+            );
+          })}
+        </code>
+      </pre>
+    </figure>
+  );
+}
+
+/**
+ * Recursive calls as a staircase (D-078): each call is a box indented by its depth. The running
+ * call is lit, a call waiting for the one it made is dashed, and a finished call shows its result.
+ * Calls that were not in the previous step slide in; a result that just arrived pops.
+ */
+const CALL_STATE_KEYS = {
+  active: "walkthrough.callActive",
+  waiting: "walkthrough.callWaiting",
+  done: "walkthrough.callDone",
+} as const;
+
+function CallStair({
+  calls,
+  previous,
+  masked,
+}: {
+  calls: VisualCall[];
+  previous: VisualCall[] | null | undefined;
+  /** While a prediction is open, a result that just arrived shows as "?". */
+  masked: boolean;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div className={styles.calls}>
+      <span className={styles.queueLabel}>{t("walkthrough.calls")}</span>
+      <ol className={styles.callList} aria-label={t("walkthrough.calls")}>
+        {calls.map((call, i) => {
+          const before = previous?.[i];
+          const isNew = previous != null && before?.text !== call.text;
+          const justReturned =
+            previous != null &&
+            call.state === "done" &&
+            before?.state !== "done";
+          return (
+            <li
+              key={`${i}-${call.text}`}
+              className={cx(
+                styles.call,
+                call.state === "active" && styles.callActive,
+                call.state === "waiting" && styles.callWaiting,
+                call.state === "done" && styles.callDone,
+                isNew && styles.callIn,
+              )}
+              data-depth={call.depth}
+              style={{ marginLeft: `calc(${call.depth} * var(--call-step))` }}
+            >
+              <span className={styles.callText}>{call.text}</span>
+              <span className={styles.callState}>
+                {call.state === "done" && call.result != null ? (
+                  <span className={cx(justReturned && styles.callPop)}>
+                    → {masked && justReturned ? "?" : call.result}
+                  </span>
+                ) : (
+                  t(CALL_STATE_KEYS[call.state])
+                )}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
 function StackStrip({
   visual,
   previous,
@@ -1349,6 +1466,12 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
   }, [count]);
 
   const step = steps[index];
+  // The code panel follows the latest code at or before this step (D-077).
+  const codeInView =
+    steps
+      .slice(0, index + 1)
+      .reverse()
+      .find((s) => s.code)?.code ?? null;
   // The stage keeps the tallest height it has reached, so the controls
   // under it stay in place while stepping back and forth.
   const stageRef = useRef<HTMLDivElement>(null);
@@ -1489,6 +1612,13 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
               masked={hidden.includes("stack")}
             />
           )}
+          {visual?.calls && (
+            <CallStair
+              calls={visual.calls}
+              previous={previousVisual?.calls}
+              masked={waiting}
+            />
+          )}
           {visual && <Variables visual={visual} hidden={hidden} />}
         </div>
         {predict && (
@@ -1507,7 +1637,11 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
               <p>
                 <InlineText text={step.body} />
               </p>
-              {step.code && <CodeBlock code={step.code} />}
+              {step.lines && codeInView ? (
+                <CodeLines code={codeInView} lines={step.lines} />
+              ) : (
+                step.code && <CodeBlock code={step.code} />
+              )}
             </>
           )}
         </div>

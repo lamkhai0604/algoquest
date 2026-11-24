@@ -156,9 +156,28 @@ final class ContentValidator {
       if (steps.size() < 3) {
         problems.add(folder + "walkthrough.json: needs at least 3 steps");
       }
+      String codeInView = null;
       for (int i = 0; i < steps.size(); i++) {
         if (blank(steps.get(i).title()) || blank(steps.get(i).body())) {
           problems.add(folder + "walkthrough.json, step " + (i + 1) + ": title and body required");
+        }
+        if (!blank(steps.get(i).code())) {
+          codeInView = steps.get(i).code();
+        }
+        List<Integer> lines = steps.get(i).lines();
+        if (lines != null) {
+          int count = codeInView == null ? 0 : codeInView.split("\n", -1).length;
+          if (lines.size() != 2
+              || lines.contains(null)
+              || lines.get(0) < 1
+              || lines.get(0) > lines.get(1)
+              || lines.get(1) > count) {
+            problems.add(
+                folder
+                    + "walkthrough.json, step "
+                    + (i + 1)
+                    + ": lines needs [first, last] inside the code of this or an earlier step");
+          }
         }
         if (steps.get(i).visual() != null) {
           checkVisual(
@@ -231,7 +250,8 @@ final class ContentValidator {
       for (int i = 0; i < english.walkthrough().size(); i++) {
         WalkthroughStep source = english.walkthrough().get(i);
         WalkthroughStep target = localized.walkthrough().get(i);
-        if (!java.util.Objects.equals(source.code(), target.code())) {
+        if (!java.util.Objects.equals(source.code(), target.code())
+            || !java.util.Objects.equals(source.lines(), target.lines())) {
           issues.add(
               folder
                   + "walkthrough.json, step "
@@ -262,6 +282,7 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.rings(), b.rings())
               || !java.util.Objects.equals(a.window(), b.window())
               || !java.util.Objects.equals(a.stack(), b.stack())
+              || !java.util.Objects.equals(a.calls(), b.calls())
               || a.explores() != b.explores()
               || !java.util.Objects.equals(a.intervals(), b.intervals())
               || !java.util.Objects.equals(a.chosen(), b.chosen())
@@ -556,6 +577,39 @@ final class ContentValidator {
     }
   }
 
+  private static final Set<String> CALL_STATES = Set.of("active", "waiting", "done");
+
+  /** The recursion staircase (D-078): a few calls, each with text, a depth and a known state. */
+  private static void checkCalls(List<String> problems, String where, List<Visual.Call> calls) {
+    if (calls == null) {
+      return;
+    }
+    if (calls.isEmpty() || calls.size() > Visual.MAX_CALLS || calls.contains(null)) {
+      problems.add(where + ": calls needs 1 to " + Visual.MAX_CALLS + " calls");
+      return;
+    }
+    long active = 0;
+    for (Visual.Call call : calls) {
+      if (blank(call.text())
+          || call.depth() < 0
+          || call.depth() > Visual.MAX_CALL_DEPTH
+          || !CALL_STATES.contains(call.state())) {
+        problems.add(
+            where
+                + ": each call needs text, a depth from 0 to "
+                + Visual.MAX_CALL_DEPTH
+                + " and a state: active, waiting or done");
+        return;
+      }
+      if (call.state().equals("active")) {
+        active++;
+      }
+    }
+    if (active > 1) {
+      problems.add(where + ": at most one call can be active");
+    }
+  }
+
   private static void checkVisual(List<String> problems, String where, Visual visual) {
     if (visual.cells() == null) {
       problems.add(where + ": visual needs cells (use [] for none)");
@@ -609,6 +663,7 @@ final class ContentValidator {
     if (visual.stack() != null && visual.stack().contains(null)) {
       problems.add(where + ": stack items must be text");
     }
+    checkCalls(problems, where, visual.calls());
     checkIntervals(problems, where, visual);
     checkTable(problems, where, visual);
     if (visual.weights() != null

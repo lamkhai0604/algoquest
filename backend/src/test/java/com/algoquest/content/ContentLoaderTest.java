@@ -342,6 +342,31 @@ class ContentLoaderTest {
   }
 
   @Test
+  void codeLinesAndCallsAreChecked() throws IOException {
+    Path walkthrough = level.resolve("walkthrough.json");
+    replace(walkthrough, "\"lines\": [\n      1,\n      1", "\"lines\": [\n      1,\n      2");
+    replace(
+        walkthrough,
+        "\"depth\": 1,\n          \"state\": \"done\"",
+        "\"depth\": 9,\n          \"state\": \"done\"");
+
+    List<String> problems = problemsAfterLoad();
+
+    assertThat(problems)
+        .anyMatch(p -> p.contains("step 3") && p.contains("lines needs"))
+        .anyMatch(p -> p.contains("step 1") && p.contains("each call needs"));
+  }
+
+  @Test
+  void onlyOneCallIsActive() throws IOException {
+    replace(
+        level.resolve("walkthrough.json"), "\"state\": \"waiting\"", "\"state\": \"active\"");
+
+    assertThat(problemsAfterLoad())
+        .anyMatch(p -> p.contains("step 1") && p.contains("at most one call can be active"));
+  }
+
+  @Test
   void figureRulesAreChecked() throws IOException {
     Path lesson = level.resolve("lesson.md");
     replace(lesson, "\"items\": [\"A\"]}, {\"op\": \"pop", "\"items\": [\"\"]}, {\"op\": \"pop");
