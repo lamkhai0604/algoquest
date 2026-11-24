@@ -2,6 +2,11 @@
   {
     "title": "The task",
     "body": "Reverse the list **1 → 2 → 3** in place. Each box is a node: its value and where its `next` points. `prev` starts at `null` and `curr` at the head. No values move; only the arrows turn around.",
+    "code": "function reverse(head) {\n  let prev = null, curr = head;\n  while (curr !== null) {\n    const nextNode = curr.next;\n    curr.next = prev;\n    prev = curr;\n    curr = nextNode;\n  }\n  return prev;\n}",
+    "lines": [
+      1,
+      2
+    ],
     "visual": {
       "cells": [
         "1",
@@ -38,7 +43,10 @@
   {
     "title": "Save the rest",
     "body": "Before touching node 1, save `curr.next` in `nextNode`. Without it, changing node 1's pointer would lose nodes 2 and 3.",
-    "code": "const nextNode = curr.next;",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "1",
@@ -79,7 +87,10 @@
   {
     "title": "Turn node 1 around",
     "body": "Point node 1 at `prev`, which is `null`. Node 1 will be the last node of the reversed list. Node 2 is still reachable through `nextNode`.",
-    "code": "curr.next = prev;",
+    "lines": [
+      5,
+      5
+    ],
     "visual": {
       "cells": [
         "1",
@@ -133,7 +144,10 @@
   {
     "title": "Move forward",
     "body": "`prev` moves to node 1 and `curr` moves to the saved node 2. The reversed part is 1 → null; the part still to do is 2 → 3.",
-    "code": "prev = curr;\ncurr = nextNode;",
+    "lines": [
+      6,
+      7
+    ],
     "visual": {
       "cells": [
         "1",
@@ -174,7 +188,10 @@
   {
     "title": "Turn node 2 around",
     "body": "Save `nextNode` = node 3, then point node 2 back at `prev`, node 1. Now 2 → 1 → null.",
-    "code": "const nextNode = curr.next;\ncurr.next = prev;",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "1",
@@ -232,7 +249,10 @@
   {
     "title": "Last node",
     "body": "Move forward (`prev` = node 2, `curr` = node 3), save `nextNode` = `null`, and point node 3 at node 2. Then `prev` = node 3 and `curr` = `null`.",
-    "code": "prev = curr;\ncurr = nextNode;",
+    "lines": [
+      6,
+      7
+    ],
     "visual": {
       "cells": [
         "1",
@@ -269,7 +289,10 @@
   {
     "title": "Return prev",
     "body": "`curr` is `null`, so the loop stops. `prev` holds node 3, the new head: **3 → 2 → 1**. Three nodes, three pointer changes: O(n) time and O(1) extra space.",
-    "code": "return prev;",
+    "lines": [
+      9,
+      9
+    ],
     "visual": {
       "cells": [
         "1",

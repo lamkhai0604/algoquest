@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "For every number, find the next greater number to its right (−1 if none). The stack holds the numbers still waiting for an answer; from bottom to top it always decreases.",
-    "code": "const stack = [];",
+    "code": "function nextGreater(nums) {\n  const answer = new Array(nums.length).fill(-1);\n  const stack = [];\n  for (let i = 0; i < nums.length; i++) {\n    while (stack.length && nums[i] > nums[stack.at(-1)]) {\n      answer[stack.pop()] = nums[i];\n    }\n    stack.push(i);\n  }\n  return answer;\n}",
+    "lines": [
+      2,
+      3
+    ],
     "visual": {
       "cells": [
         "2",
@@ -33,7 +37,10 @@
   {
     "title": "Read 2 (i = 0)",
     "body": "2 arrives. The stack is empty, so 2 is pushed and waits.",
-    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "2",
@@ -72,7 +79,10 @@
   {
     "title": "Read 7 (i = 1)",
     "body": "7 arrives. It is greater than 2 on top of the stack, so it answers it and it is popped. Then 7 is pushed to wait for its own answer.",
-    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "2",
@@ -111,7 +121,10 @@
   {
     "title": "Read 3 (i = 2)",
     "body": "3 arrives. It is not greater than the top of the stack (7), so nothing is answered; 3 is pushed and waits.",
-    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "2",
@@ -151,7 +164,10 @@
   {
     "title": "Read 5 (i = 3)",
     "body": "5 arrives. It is greater than 3 on top of the stack, so it answers it and it is popped. Then 5 is pushed to wait for its own answer.",
-    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "2",
@@ -206,7 +222,10 @@
   {
     "title": "Read 4 (i = 4)",
     "body": "4 arrives. It is not greater than the top of the stack (5), so nothing is answered; 4 is pushed and waits.",
-    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "2",
@@ -247,7 +266,10 @@
   {
     "title": "Read 6 (i = 5)",
     "body": "6 arrives. It is greater than 4, 5 on top of the stack, so it answers them and they are popped. Then 6 is pushed to wait for its own answer.",
-    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "2",
@@ -302,7 +324,10 @@
   {
     "title": "Read 8 (i = 6)",
     "body": "8 arrives. It is greater than 6, 7 on top of the stack, so it answers them and they are popped. Then 8 is pushed to wait for its own answer.",
-    "code": "while (stack.length && nums[i] > nums[top]) {\n  answer[stack.pop()] = nums[i];\n}\nstack.push(i);",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "2",
@@ -341,7 +366,10 @@
   {
     "title": "Leftovers",
     "body": "The numbers still on the stack never met a greater number, so their answer is −1. Each number was pushed once and popped at most once: **O(n)** time.",
-    "code": "// whatever is left on the stack gets -1",
+    "lines": [
+      10,
+      10
+    ],
     "visual": {
       "cells": [
         "2",

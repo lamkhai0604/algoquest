@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Find the fewest tunnels from station **0** to station **6**. Breadth-first search starts with 0 in the queue, marked as seen (shaded), at distance 0.",
-    "code": "const queue = [start];\ndist[start] = 0;",
+    "code": "function distance(graph, start, goal) {\n  const dist = new Array(graph.length).fill(-1);\n  dist[start] = 0;\n  const queue = [start];\n  while (queue.length > 0) {\n    const v = queue.shift();\n    if (v === goal) return dist[v];\n    for (const next of graph[v]) {\n      if (dist[next] === -1) {\n        dist[next] = dist[v] + 1;\n        queue.push(next);\n      }\n    }\n  }\n  return -1;\n}",
+    "lines": [
+      2,
+      4
+    ],
     "visual": {
       "cells": [
         "0",
@@ -98,7 +102,10 @@
   {
     "title": "Visit 0",
     "body": "Take 0 from the front. Its neighbours 1 and 2 are new, so they are marked, get distance 1, and join the back of the queue.",
-    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "0",
@@ -213,7 +220,10 @@
   {
     "title": "Visit 1",
     "body": "Take 1. Neighbour 0 is already seen and is skipped. 3 and 4 are new: distance 2, into the queue.",
-    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "0",
@@ -344,7 +354,10 @@
   {
     "title": "Visit 2",
     "body": "Take 2. 0 is seen, and so is **4**: it was added from 1 and must not be added twice. Only 5 is new.",
-    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "0",
@@ -459,7 +472,10 @@
   {
     "title": "Visit 3",
     "body": "Take 3. Neighbour 6 is new, reached through 0 → 1 → 3 → 6: distance 3. It joins the queue.",
-    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "0",
@@ -588,7 +604,10 @@
   {
     "title": "Visit 4",
     "body": "Take 4. All its neighbours (1, 2 and 6) are already seen, so nothing is added.",
-    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "0",
@@ -697,7 +716,10 @@
   {
     "title": "Visit 5",
     "body": "Take 5. Its only neighbour, 2, is seen.",
-    "code": "const v = queue.shift();\nfor (const next of graph[v]) {\n  if (dist[next] === -1) {\n    dist[next] = dist[v] + 1;\n    queue.push(next);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "0",
@@ -805,7 +827,10 @@
   {
     "title": "Reach 6",
     "body": "Take 6: the target. BFS reached it in the third ring, so **3 tunnels** is the fewest. The colours show the rings: every vertex was first reached along a shortest route. Each vertex and edge was handled once: O(V + E).",
-    "code": "return dist[v];",
+    "lines": [
+      6,
+      7
+    ],
     "visual": {
       "cells": [
         "0",

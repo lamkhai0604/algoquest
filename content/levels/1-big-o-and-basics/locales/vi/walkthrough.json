@@ -2,6 +2,11 @@
   {
     "title": "Bài toán",
     "body": "Tìm nhiệt độ lớn nhất trong **[3, -2, 9, 4]**. Chúng ta duyệt danh sách một lần và giữ một biến `best`.",
+    "code": "function highest(temps) {\n  if (temps.length === 0) return null;\n  let best = temps[0];\n  for (const t of temps) {\n    if (t > best) best = t;\n  }\n  return best;\n}",
+    "lines": [
+      1,
+      1
+    ],
     "visual": {
       "cells": [
         "3",
@@ -16,7 +21,10 @@
   {
     "title": "Xử lý danh sách rỗng",
     "body": "Danh sách có phần tử nên ta có thể bắt đầu. Nếu rỗng, trả về null ngay thay vì đọc `temps[0]`.",
-    "code": "if (temps.length === 0) return null;",
+    "lines": [
+      2,
+      2
+    ],
     "visual": {
       "cells": [
         "3",
@@ -31,7 +39,10 @@
   {
     "title": "Bắt đầu từ giá trị đầu tiên",
     "body": "Đặt `best = 3`. Khởi tạo bằng phần tử đầu tiên, thay vì 0, giúp có kết quả đúng cả khi mọi nhiệt độ đều âm.",
-    "code": "let best = temps[0]; // 3",
+    "lines": [
+      3,
+      3
+    ],
     "visual": {
       "cells": [
         "3",
@@ -60,7 +71,10 @@
   {
     "title": "Xét -2",
     "body": "-2 không lớn hơn 3 nên `best` vẫn là 3. Chỉ cần một phép so sánh, không tốn thêm bộ nhớ.",
-    "code": "if (-2 > best) ... // no change, best = 3",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "3",
@@ -102,7 +116,10 @@
   {
     "title": "Xét 9",
     "body": "9 lớn hơn 3 nên `best` được cập nhật thành 9.",
-    "code": "if (9 > best) best = 9; // best = 9",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "3",
@@ -144,7 +161,10 @@
   {
     "title": "Xét 4 và kết thúc",
     "body": "4 không lớn hơn 9. Vòng lặp kết thúc và trả về **9**. Chúng ta so sánh mỗi phần tử một lần: **O(n) thời gian**, chỉ giữ một biến: **O(1) bộ nhớ**.",
-    "code": "return best; // 9",
+    "lines": [
+      4,
+      7
+    ],
     "visual": {
       "cells": [
         "3",

@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Does this list loop? Node [5] points back to node [2], so it does, but the code cannot see that. Floyd's algorithm starts `slow` and `fast` at the head.",
-    "code": "let slow = head, fast = head;",
+    "code": "function cycleStart(head) {\n  let slow = head, fast = head;\n  while (fast !== null && fast.next !== null) {\n    slow = slow.next;\n    fast = fast.next.next;\n    if (slow === fast) break;\n  }\n  if (fast === null || fast.next === null) return null;\n  let a = head;\n  while (a !== slow) {\n    a = a.next;\n    slow = slow.next;\n  }\n  return a;\n}",
+    "lines": [
+      2,
+      2
+    ],
     "visual": {
       "cells": [
         "3",
@@ -45,7 +49,10 @@
   {
     "title": "Step 1",
     "body": "slow moves one step to [1]; fast moves two steps to [2].",
-    "code": "slow = slow.next;\nfast = fast.next.next;\nif (slow === fast) break;",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "3",
@@ -92,7 +99,10 @@
   {
     "title": "Step 2",
     "body": "slow moves one step to [2]; fast moves two steps to [4].",
-    "code": "slow = slow.next;\nfast = fast.next.next;\nif (slow === fast) break;",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "3",
@@ -139,7 +149,10 @@
   {
     "title": "Step 3",
     "body": "slow moves one step to [3]; fast moves two steps to [2].",
-    "code": "slow = slow.next;\nfast = fast.next.next;\nif (slow === fast) break;",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "3",
@@ -199,7 +212,10 @@
   {
     "title": "Step 4",
     "body": "slow moves one step to [4]; fast moves two steps to [4]. They are on the **same node**: the list has a cycle.",
-    "code": "slow = slow.next;\nfast = fast.next.next;\nif (slow === fast) break;",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "3",
@@ -242,7 +258,10 @@
   {
     "title": "Find the start",
     "body": "To find where the cycle begins, `a` starts again at the head while `slow` stays at the meeting point [4]. Now both move **one** step at a time.",
-    "code": "let a = head;",
+    "lines": [
+      9,
+      9
+    ],
     "visual": {
       "cells": [
         "3",
@@ -289,7 +308,10 @@
   {
     "title": "Single step 1",
     "body": "a moves to [1], slow moves to [5].",
-    "code": "a = a.next;\nslow = slow.next;",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "3",
@@ -336,7 +358,10 @@
   {
     "title": "Single step 2",
     "body": "a moves to [2], slow moves to [2]. They meet at **[2]**, the node where the cycle starts. O(n) time, and only two pointers: O(1) space.",
-    "code": "a = a.next;\nslow = slow.next;",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "3",

@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Build the prefix array for **[3, 1, 4, 2, 5]**, then answer range sums with one subtraction. `prefix[i]` is the total of the first i items, so it starts with a 0 for \"nothing yet\".",
-    "code": "const prefix = [0];",
+    "code": "function buildPrefix(nums) {\n  const prefix = [0];\n  for (let i = 0; i < nums.length; i++) {\n    prefix[i + 1] = prefix[i] + nums[i];\n  }\n  return prefix;\n}\n\nfunction rangeSum(prefix, l, r) {\n  return prefix[r + 1] - prefix[l];\n}",
+    "lines": [
+      2,
+      2
+    ],
     "visual": {
       "cells": [
         "3",
@@ -22,7 +26,10 @@
   {
     "title": "Add nums[0] = 3",
     "body": "prefix[1] = prefix[0] + nums[0] = 0 + 3 = 3.",
-    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "3",
@@ -48,7 +55,10 @@
   {
     "title": "Add nums[1] = 1",
     "body": "prefix[2] = prefix[1] + nums[1] = 3 + 1 = 4.",
-    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "3",
@@ -74,7 +84,10 @@
   {
     "title": "Add nums[2] = 4",
     "body": "prefix[3] = prefix[2] + nums[2] = 4 + 4 = 8.",
-    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "3",
@@ -113,7 +126,10 @@
   {
     "title": "Add nums[3] = 2",
     "body": "prefix[4] = prefix[3] + nums[3] = 8 + 2 = 10.",
-    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "3",
@@ -139,7 +155,10 @@
   {
     "title": "Add nums[4] = 5",
     "body": "prefix[5] = prefix[4] + nums[4] = 10 + 5 = 15. The array is built in one pass: O(n).",
-    "code": "prefix[i + 1] = prefix[i] + nums[i];",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "3",
@@ -165,7 +184,10 @@
   {
     "title": "Sum of nums[1..3]",
     "body": "The sum of items 1 to 3 is everything up to index 3 minus everything before index 1: prefix[4] − prefix[1] = 10 − 3 = **7**. One subtraction, whatever the length of the range.",
-    "code": "return prefix[r + 1] - prefix[l];",
+    "lines": [
+      10,
+      10
+    ],
     "visual": {
       "cells": [
         "3",
@@ -203,7 +225,10 @@
   {
     "title": "Sum of nums[2..4]",
     "body": "Another query, still O(1): prefix[5] − prefix[2] = 15 − 4 = **11**, which is 4 + 2 + 5.",
-    "code": "return prefix[r + 1] - prefix[l];",
+    "lines": [
+      10,
+      10
+    ],
     "visual": {
       "cells": [
         "3",
