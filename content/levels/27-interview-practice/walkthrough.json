@@ -154,7 +154,11 @@
   {
     "title": "Trace position 0",
     "body": "Position 0: 7 needs -1, which has not been seen. Store 7 → 0 and move on.",
-    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "code": "function twoSum(nums, target) {\n  const seen = new Map(); // value → position\n  for (let i = 0; i < nums.length; i++) {\n    const need = target - nums[i];\n    if (seen.has(need)) return [seen.get(need), i];\n    seen.set(nums[i], i);\n  }\n}",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "7",
@@ -192,7 +196,10 @@
   {
     "title": "Trace position 1",
     "body": "Position 1: 2 needs 4, which has not been seen. Store 2 → 1 and move on.",
-    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "7",
@@ -230,7 +237,10 @@
   {
     "title": "Trace position 2",
     "body": "Position 2: 11 needs -5, which has not been seen. Store 11 → 2 and move on.",
-    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "7",
@@ -268,7 +278,10 @@
   {
     "title": "Trace position 3",
     "body": "Position 3: 15 needs -9, which has not been seen. Store 15 → 3 and move on.",
-    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "7",
@@ -306,7 +319,10 @@
   {
     "title": "Trace position 4",
     "body": "Position 4: 4 needs 2. 2 is in the map at position 1, so the answer is [1, 4]. Stop.",
-    "code": "for (let i = 0; i < nums.length; i++) {\n  const need = target - nums[i];\n  if (seen.has(need)) return [seen.get(need), i];\n  seen.set(nums[i], i);\n}",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "7",

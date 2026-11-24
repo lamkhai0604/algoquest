@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "List every subset of **[1, 2, 3]**. Each level of the tree decides one number: the left branch **takes** it, the right branch **skips** it. A path from the top to the bottom is one subset. The tree is drawn as the search reaches each node.",
-    "code": "explore(0, []);",
+    "code": "function subsets(items) {\n  const result = [];\n  const path = [];\n  function explore(i) {\n    if (i === items.length) {\n      result.push([...path]);\n      return;\n    }\n    path.push(items[i]); // take\n    explore(i + 1);\n    path.pop(); // undo\n    explore(i + 1); // skip\n  }\n  explore(0);\n  return result;\n}",
+    "lines": [
+      14,
+      14
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -47,7 +51,10 @@
   {
     "title": "Take 1",
     "body": "Take 1: the path is [1].",
-    "code": "path.push(x);\nexplore(…);\npath.pop();   // undo",
+    "lines": [
+      9,
+      10
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -92,7 +99,10 @@
   {
     "title": "Take 2",
     "body": "Take 2: the path is [1, 2].",
-    "code": "path.push(x);\nexplore(…);\npath.pop();   // undo",
+    "lines": [
+      9,
+      10
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -137,7 +147,10 @@
   {
     "title": "Take 3",
     "body": "Take 3: the path is [1, 2, 3]. All three numbers are decided, so record it. That is subset 1 of 8. Then undo the last choice.",
-    "code": "path.push(x);\nexplore(…);\npath.pop();   // undo",
+    "lines": [
+      9,
+      10
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -182,7 +195,10 @@
   {
     "title": "Skip 3",
     "body": "Skip 3: the path is [1, 2]. All three numbers are decided, so record it. That is subset 2 of 8. Then undo the last choice.",
-    "code": "// skip x\nexplore(…);",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -241,7 +257,10 @@
   {
     "title": "Skip 2",
     "body": "Skip 2: the path is [1].",
-    "code": "// skip x\nexplore(…);",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -286,7 +305,10 @@
   {
     "title": "Take 3",
     "body": "Take 3: the path is [1, 3]. All three numbers are decided, so record it. That is subset 3 of 8. Then undo the last choice.",
-    "code": "path.push(x);\nexplore(…);\npath.pop();   // undo",
+    "lines": [
+      9,
+      10
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -331,7 +353,10 @@
   {
     "title": "Skip 3",
     "body": "Skip 3: the path is [1]. All three numbers are decided, so record it. That is subset 4 of 8. Then undo the last choice.",
-    "code": "// skip x\nexplore(…);",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -376,7 +401,10 @@
   {
     "title": "Skip 1",
     "body": "Skip 1: the path is [].",
-    "code": "// skip x\nexplore(…);",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -435,7 +463,10 @@
   {
     "title": "Take 2",
     "body": "Take 2: the path is [2].",
-    "code": "path.push(x);\nexplore(…);\npath.pop();   // undo",
+    "lines": [
+      9,
+      10
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -480,7 +511,10 @@
   {
     "title": "Take 3",
     "body": "Take 3: the path is [2, 3]. All three numbers are decided, so record it. That is subset 5 of 8. Then undo the last choice.",
-    "code": "path.push(x);\nexplore(…);\npath.pop();   // undo",
+    "lines": [
+      9,
+      10
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -525,7 +559,10 @@
   {
     "title": "Skip 3",
     "body": "Skip 3: the path is [2]. All three numbers are decided, so record it. That is subset 6 of 8. Then undo the last choice.",
-    "code": "// skip x\nexplore(…);",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -570,7 +607,10 @@
   {
     "title": "Skip 2",
     "body": "Skip 2: the path is [].",
-    "code": "// skip x\nexplore(…);",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -615,7 +655,10 @@
   {
     "title": "Take 3",
     "body": "Take 3: the path is [3]. All three numbers are decided, so record it. That is subset 7 of 8. Then undo the last choice.",
-    "code": "path.push(x);\nexplore(…);\npath.pop();   // undo",
+    "lines": [
+      9,
+      10
+    ],
     "visual": {
       "cells": [
         "∅",
@@ -660,7 +703,10 @@
   {
     "title": "Skip 3",
     "body": "Skip 3: the path is []. All three numbers are decided, so record it. That is subset 8 of 8. That was the last leaf: 2³ = **8 subsets**, one per path. With n numbers the tree has 2ⁿ leaves, so the search is O(n · 2ⁿ).",
-    "code": "// skip x\nexplore(…);",
+    "lines": [
+      11,
+      12
+    ],
     "visual": {
       "cells": [
         "∅",

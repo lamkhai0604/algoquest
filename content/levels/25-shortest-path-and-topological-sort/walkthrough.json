@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Six towns and two-way roads; the number on each road is its length in km. Find the shortest distance from **A** to every town. Distances start at ∞ except A = 0. Repeatedly settle the closest town that is not settled yet, and try its roads.",
-    "code": "const dist = new Array(n).fill(Infinity);\ndist[start] = 0;\nconst heap = [[0, start]];",
+    "code": "function shortest(adj, start) {\n  const dist = new Array(adj.length).fill(Infinity);\n  dist[start] = 0;\n  const heap = [[0, start]];\n  while (heap.length > 0) {\n    const [d, u] = heap.pop(); // closest unsettled town\n    if (d > dist[u]) continue; // stale entry\n    for (const [v, w] of adj[u]) {\n      if (d + w < dist[v]) {\n        dist[v] = d + w; // shorter route found\n        heap.push([dist[v], v]);\n      }\n    }\n  }\n  return dist;\n}",
+    "lines": [
+      2,
+      4
+    ],
     "visual": {
       "cells": [
         "A",
@@ -126,7 +130,10 @@
   {
     "title": "Settle A",
     "body": "Settle **A** at 0: it is the closest unsettled town, so no later route can beat it. Try its roads: B: ∞ → 4; C: ∞ → 2.",
-    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "A",
@@ -269,7 +276,10 @@
   {
     "title": "Settle C",
     "body": "Settle **C** at 2: it is the closest unsettled town, so no later route can beat it. Try its roads: B: 4 → 3; D: ∞ → 10; E: ∞ → 12.",
-    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "A",
@@ -417,7 +427,10 @@
   {
     "title": "Settle B",
     "body": "Settle **B** at 3: it is the closest unsettled town, so no later route can beat it. Try its roads: D: 10 → 8.",
-    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "A",
@@ -573,7 +586,10 @@
   {
     "title": "Settle D",
     "body": "Settle **D** at 8: it is the closest unsettled town, so no later route can beat it. Try its roads: E: 12 → 10; F: ∞ → 14.",
-    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "A",
@@ -719,7 +735,10 @@
   {
     "title": "Settle E",
     "body": "Settle **E** at 10: it is the closest unsettled town, so no later route can beat it. Try its roads: F: 14 → 12.",
-    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "A",
@@ -877,7 +896,10 @@
   {
     "title": "Settle F",
     "body": "Settle **F** at 12: it is the closest unsettled town, so no later route can beat it. All its neighbours are already settled. Every town is settled: A 0, C 2, B 3, D 8, E 10, F 12.",
-    "code": "const [d, u] = heap.pop();          // closest unsettled town\nif (d > dist[u]) continue;           // stale entry\nfor (const [v, w] of adj[u]) {\n  if (d + w < dist[v]) {\n    dist[v] = d + w;                  // shorter route found\n    heap.push([dist[v], v]);\n  }\n}",
+    "lines": [
+      6,
+      13
+    ],
     "visual": {
       "cells": [
         "A",

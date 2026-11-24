@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Approved by the PO on 2026-11-23, after a review of a runnable prototype |
+| Status | Closed 2026-11-24 ([report](../reports/sprint-24-report.md)) |
 | Goal | Walkthroughs show which line of code each step runs, and recursion is drawn as a staircase of calls |
 | Duration | About 1 day from approval |
-| Tasks | T-613, T-614, T-615, T-616 ([BACKLOG.md](../BACKLOG.md)) |
+| Tasks | T-613, T-614, T-615, T-616, T-617 ([BACKLOG.md](../BACKLOG.md)) |
 | Requirements | FR-01, FR-03, NFR-05; decisions D-077, D-078 |
 
 ## Increment at the end of the sprint

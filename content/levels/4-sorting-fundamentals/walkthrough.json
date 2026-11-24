@@ -2,6 +2,11 @@
   {
     "title": "The task",
     "body": "Sort **[5, 2, 4, 1]** with insertion sort. The left part of the array is the sorted part. Each round takes the next item, `j`, and swaps it left while its left neighbor is bigger, like sliding a new card into a sorted hand.",
+    "code": "function insertionSort(a) {\n  for (let i = 1; i < a.length; i++) {\n    let j = i;\n    while (j > 0 && a[j - 1] > a[j]) {\n      [a[j - 1], a[j]] = [a[j], a[j - 1]];\n      j--;\n    }\n  }\n  return a;\n}",
+    "lines": [
+      1,
+      1
+    ],
     "visual": {
       "cells": [
         "5",
@@ -30,7 +35,10 @@
   {
     "title": "Place 2",
     "body": "`j` points at 2. Its left neighbor 5 is bigger, so they swap. Now 2 is at the front and nothing is left of it: this round is done.",
-    "code": "while (j > 0 && a[j - 1] > a[j]) {\n  [a[j - 1], a[j]] = [a[j], a[j - 1]];\n  j--;\n}",
+    "lines": [
+      2,
+      7
+    ],
     "visual": {
       "cells": [
         "2",
@@ -63,7 +71,10 @@
   {
     "title": "Place 4",
     "body": "`j` points at 4. Its neighbor 5 is bigger, so they swap. Next to 4 is now 2, which is smaller, so 4 stops. The sorted part is [2, 4, 5].",
-    "code": "// 5 > 4: swap. 2 > 4? No: stop.",
+    "lines": [
+      3,
+      7
+    ],
     "visual": {
       "cells": [
         "2",
@@ -108,6 +119,10 @@
   {
     "title": "Place 1: first swap",
     "body": "The last item, 1, is smaller than everything in the sorted part, so it has the longest trip. First it swaps with 5.",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "2",
@@ -140,6 +155,10 @@
   {
     "title": "Place 1: second swap",
     "body": "4 is bigger than 1, so they swap.",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "2",
@@ -172,6 +191,10 @@
   {
     "title": "Place 1: third swap",
     "body": "2 is bigger than 1, so they swap. 1 reaches index 0, where nothing is left of it, and the round ends.",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "1",
@@ -218,6 +241,10 @@
   {
     "title": "Done",
     "body": "The array is sorted: **[1, 2, 4, 5]**. In the worst case (reverse order) every item swaps past all the items before it: 0 + 1 + 2 + … + (n − 1) = n(n − 1)/2 swaps, which is O(n²). On an already sorted array no item moves: O(n).",
+    "lines": [
+      9,
+      9
+    ],
     "visual": {
       "cells": [
         "1",

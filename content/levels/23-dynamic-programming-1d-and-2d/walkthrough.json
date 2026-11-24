@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Find the longest sequence of letters shared, in order, by **ABC** (rows) and **ACB** (columns). Cell (i, j) will hold the answer for the first i letters of ABC and the first j letters of ACB. The top row and the left column compare with an empty prefix, so they are 0.",
-    "code": "const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));",
+    "code": "function lcs(a, b) {\n  const n = a.length, m = b.length;\n  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));\n  for (let i = 1; i <= n; i++) {\n    for (let j = 1; j <= m; j++) {\n      dp[i][j] = a[i - 1] === b[j - 1]\n        ? dp[i - 1][j - 1] + 1 // match: extend the diagonal\n        : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter\n    }\n  }\n  return dp[n][m];\n}",
+    "lines": [
+      2,
+      3
+    ],
     "visual": {
       "cells": [
         "0",
@@ -54,7 +58,10 @@
   {
     "title": "Cell (1, 1)",
     "body": "A and A match, so they can end a shared sequence: take the diagonal cell (without both letters) and add 1. Cell = 1.",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",
@@ -115,7 +122,10 @@
   {
     "title": "Cell (1, 2)",
     "body": "A and C differ, so one of them is not in the shared sequence: take the better of the cell above (drop A) and the cell to the left (drop C). Cell = 1.",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",
@@ -177,7 +187,10 @@
   {
     "title": "Cell (1, 3)",
     "body": "A and B differ, so one of them is not in the shared sequence: take the better of the cell above (drop A) and the cell to the left (drop B). Cell = 1.",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",
@@ -239,7 +252,10 @@
   {
     "title": "Cell (2, 1)",
     "body": "B and A differ, so one of them is not in the shared sequence: take the better of the cell above (drop B) and the cell to the left (drop A). Cell = 1.",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",
@@ -301,7 +317,10 @@
   {
     "title": "Cell (2, 2)",
     "body": "B and C differ, so one of them is not in the shared sequence: take the better of the cell above (drop B) and the cell to the left (drop C). Cell = 1.",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",
@@ -378,7 +397,10 @@
   {
     "title": "Cell (2, 3)",
     "body": "B and B match, so they can end a shared sequence: take the diagonal cell (without both letters) and add 1. Cell = 2.",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",
@@ -454,7 +476,10 @@
   {
     "title": "Cell (3, 1)",
     "body": "C and A differ, so one of them is not in the shared sequence: take the better of the cell above (drop C) and the cell to the left (drop A). Cell = 1.",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",
@@ -516,7 +541,10 @@
   {
     "title": "Cell (3, 2)",
     "body": "C and C match, so they can end a shared sequence: take the diagonal cell (without both letters) and add 1. Cell = 2.",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",
@@ -577,7 +605,10 @@
   {
     "title": "Cell (3, 3)",
     "body": "C and B differ, so one of them is not in the shared sequence: take the better of the cell above (drop C) and the cell to the left (drop B). Cell = 2. The bottom-right cell is the answer: 2 (for example AB or AC). 3 × 3 cells, each filled once: O(n · m).",
-    "code": "dp[i][j] = a[i - 1] === b[j - 1]\n  ? dp[i - 1][j - 1] + 1                // match: extend the diagonal\n  : Math.max(dp[i - 1][j], dp[i][j - 1]); // drop a letter",
+    "lines": [
+      6,
+      8
+    ],
     "visual": {
       "cells": [
         "0",

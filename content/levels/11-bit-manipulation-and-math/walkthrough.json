@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Count the 1 bits of **44**, which is **101100** in binary. Each box is one bit. The trick: `n & (n - 1)` removes exactly the lowest 1 bit, so we count how many times we can do that before n becomes 0. Read the boxes left to right as one binary number; the small numbers above them are box positions, so bit 0 (worth 1) is the rightmost box.",
-    "code": "let count = 0;\nwhile (n !== 0) { n &= n - 1; count++; }",
+    "code": "function countOnes(n) {\n  let count = 0;\n  while (n !== 0) {\n    n &= n - 1;\n    count++;\n  }\n  return count;\n}",
+    "lines": [
+      1,
+      2
+    ],
     "visual": {
       "cells": [
         "1",
@@ -33,6 +37,10 @@
   {
     "title": "Look at n − 1",
     "body": "Subtracting 1 turns the lowest 1 bit into 0 and every 0 below it into 1: 44 − 1 = 43 = **101011**. Everything above the lowest 1 stays the same.",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "1",
@@ -84,7 +92,10 @@
   {
     "title": "First 1 removed",
     "body": "n becomes 40 = **101000** and count becomes 1. The lowest 1 is now one place further left.",
-    "code": "n &= n - 1; count++;",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "1",
@@ -115,7 +126,10 @@
   {
     "title": "Second 1 removed",
     "body": "40 & 39 = 101000 & 100111 = **100000**, which is 32. count becomes 2.",
-    "code": "n &= n - 1; count++;",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "1",
@@ -146,7 +160,10 @@
   {
     "title": "Last 1 removed",
     "body": "32 & 31 = 100000 & 011111 = **000000**. n is 0 and count is 3.",
-    "code": "n &= n - 1; count++;",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "0",
@@ -185,7 +202,10 @@
   {
     "title": "Done",
     "body": "The loop ran once per 1 bit, not once per bit position: **3** steps here, at most 31 for any 32-bit number. The same trick tests a power of two: `n > 0 && (n & (n - 1)) === 0`, because a power of two has exactly one 1 bit.",
-    "code": "return count;",
+    "lines": [
+      7,
+      7
+    ],
     "visual": {
       "cells": [
         "0",

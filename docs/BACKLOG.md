@@ -306,10 +306,17 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
-| T-613 | Code panel in walkthroughs: a step's `lines` lights the lines it runs in the code in view (its own code or the latest earlier code); Levels 7 and 15 show one whole function | FR-03, D-077 | P1 | Built 2026-11-23: backend and frontend tests; content test for Level 7; PO review pending |
-| T-614 | Recursion staircase: `visual.calls` draws each call as a box indented by depth (running, waiting, done with its result); Level 7 walkthrough uses it | FR-03, D-078 | P1 | Built 2026-11-23: backend and frontend tests; content test checks every call against a reference sum; PO review pending |
-| T-615 | Small fixes: the sign-in page names 27 levels instead of 11 topics; loading notices show placeholder bars | FR-01, NFR-05 | P3 | Built 2026-11-23: frontend tests; PO review pending |
-| T-616 | Sprint 24 report | D-007 | P2 | To do |
+| T-613 | Code panel in walkthroughs: a step's `lines` lights the lines it runs in the code in view (its own code or the latest earlier code); Levels 7 and 15 show one whole function | FR-03, D-077 | P1 | Done 2026-11-24: backend and frontend tests; content test for Level 7; PO review OK; merged in PR #62 |
+| T-614 | Recursion staircase: `visual.calls` draws each call as a box indented by depth (running, waiting, done with its result); Level 7 walkthrough uses it | FR-03, D-078 | P1 | Done 2026-11-24: backend and frontend tests; content test against a reference sum; PO review OK; merged in PR #62 |
+| T-615 | Small fixes: the sign-in page names 27 levels instead of 11 topics; loading notices show placeholder bars | FR-01, NFR-05 | P3 | Done 2026-11-24: frontend tests; PO review OK; merged in PR #62 |
+| T-617 | Code lines in the remaining walkthroughs: each level shows one whole function in its first step and lights the lines of every step (24 of 27 levels; Level 22 is pattern recognition and Level 27 keeps its own snippets outside the trace) | FR-03, D-077 | P2 | Done 2026-11-24: content check of every line range in CI; merged to `dev` |
+| T-616 | Sprint 24 report | D-007 | P2 | Done 2026-11-24: [report](reports/sprint-24-report.md) |
+
+## Phase 4 planning — System Design ([syllabus](SYSTEM-DESIGN-SYLLABUS.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-618 | Phase 4 syllabus: levels 28 to 41, references for checking facts, lesson format, design prompts and rubric, authoring workflow, delivery plan | D-007, D-056 | P1 | Draft written 2026-11-24; PO review pending |
 
 ## Maintenance
 

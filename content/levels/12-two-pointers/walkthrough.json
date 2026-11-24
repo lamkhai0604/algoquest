@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "The array is sorted. Find two numbers that add up to **13**. `left` starts at the smallest number and `right` at the largest; the shaded range is what is still possible.",
-    "code": "let left = 0, right = nums.length - 1;",
+    "code": "function pairWithSum(nums, target) {\n  let left = 0, right = nums.length - 1;\n  while (left < right) {\n    const sum = nums[left] + nums[right];\n    if (sum === target) return [left, right];\n    if (sum < target) left++;\n    else right--;\n  }\n  return null;\n}",
+    "lines": [
+      2,
+      2
+    ],
     "visual": {
       "cells": [
         "-4",
@@ -45,7 +49,10 @@
   {
     "title": "Compare -4 + 11",
     "body": "-4 + 11 = 7, less than 13. Even the largest partner is not enough for -4, so `left` moves right.",
-    "code": "const sum = nums[left] + nums[right];\nif (sum < target) left++;\nelse right--;",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "-4",
@@ -101,7 +108,10 @@
   {
     "title": "Compare 1 + 11",
     "body": "1 + 11 = 12, less than 13. Even the largest partner is not enough for 1, so `left` moves right.",
-    "code": "const sum = nums[left] + nums[right];\nif (sum < target) left++;\nelse right--;",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "-4",
@@ -144,7 +154,10 @@
   {
     "title": "Compare 3 + 11",
     "body": "3 + 11 = 14, more than 13. Even the smallest partner makes 11 too big, so `right` moves left.",
-    "code": "const sum = nums[left] + nums[right];\nif (sum < target) left++;\nelse right--;",
+    "lines": [
+      4,
+      7
+    ],
     "visual": {
       "cells": [
         "-4",
@@ -200,7 +213,10 @@
   {
     "title": "Compare 3 + 8",
     "body": "3 + 8 = 11, less than 13. Even the largest partner is not enough for 3, so `left` moves right.",
-    "code": "const sum = nums[left] + nums[right];\nif (sum < target) left++;\nelse right--;",
+    "lines": [
+      4,
+      6
+    ],
     "visual": {
       "cells": [
         "-4",
@@ -243,7 +259,10 @@
   {
     "title": "Compare 5 + 8",
     "body": "5 + 8 = 13. Found the pair at indexes **[3, 4]**.",
-    "code": "if (sum === target) return [left, right];",
+    "lines": [
+      4,
+      5
+    ],
     "visual": {
       "cells": [
         "-4",

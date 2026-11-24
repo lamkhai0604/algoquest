@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "A warehouse floor: **S** marks the two charging stations, **#** marks shelves. For every free cell, find the walking distance to the **nearest** station. Instead of one search per cell, start one BFS from both stations at once.",
-    "code": "const queue = stations.map(([r, c]) => [r, c, 0]); // every source first",
+    "code": "function distances(grid, stations) {\n  const dist = grid.map((row) => row.map(() => undefined));\n  const queue = stations.map(([r, c]) => [r, c, 0]); // every source first\n  for (const [r, c] of stations) dist[r][c] = 0;\n  for (const [r, c, d] of queue) {\n    for (const [nr, nc] of neighbours(r, c)) {\n      if (free(nr, nc) && dist[nr][nc] === undefined) {\n        dist[nr][nc] = d + 1;\n        queue.push([nr, nc, d + 1]);\n      }\n    }\n  }\n  return dist;\n}",
+    "lines": [
+      3,
+      3
+    ],
     "visual": {
       "cells": [
         "S",
@@ -59,7 +63,10 @@
   {
     "title": "Wave 0",
     "body": "Wave 0: both stations go into the queue with distance 0. They are the sources of one shared search.",
-    "code": "const queue = stations.map(([r, c]) => [r, c, 0]);",
+    "lines": [
+      3,
+      4
+    ],
     "visual": {
       "cells": [
         "0",
@@ -117,7 +124,10 @@
   {
     "title": "Wave 1",
     "body": "Wave 1: every cell taken from the last wave (shaded) visits its free, unfilled neighbours and gives them distance 1. 4 new cells filled.",
-    "code": "for (const [r, c, d] of queue) {\n  for (const [nr, nc] of neighbours(r, c)) {\n    if (free(nr, nc) && dist[nr][nc] === undefined) {\n      dist[nr][nc] = d + 1;\n      queue.push([nr, nc, d + 1]);\n    }\n  }\n}",
+    "lines": [
+      5,
+      11
+    ],
     "visual": {
       "cells": [
         "0",
@@ -178,7 +188,10 @@
   {
     "title": "Wave 2",
     "body": "Wave 2: every cell taken from the last wave (shaded) visits its free, unfilled neighbours and gives them distance 2. 5 new cells filled.",
-    "code": "for (const [r, c, d] of queue) {\n  for (const [nr, nc] of neighbours(r, c)) {\n    if (free(nr, nc) && dist[nr][nc] === undefined) {\n      dist[nr][nc] = d + 1;\n      queue.push([nr, nc, d + 1]);\n    }\n  }\n}",
+    "lines": [
+      5,
+      11
+    ],
     "visual": {
       "cells": [
         "0",
@@ -262,7 +275,10 @@
   {
     "title": "Wave 3",
     "body": "Wave 3: every cell taken from the last wave (shaded) visits its free, unfilled neighbours and gives them distance 3. 3 new cells filled.",
-    "code": "for (const [r, c, d] of queue) {\n  for (const [nr, nc] of neighbours(r, c)) {\n    if (free(nr, nc) && dist[nr][nc] === undefined) {\n      dist[nr][nc] = d + 1;\n      queue.push([nr, nc, d + 1]);\n    }\n  }\n}",
+    "lines": [
+      5,
+      11
+    ],
     "visual": {
       "cells": [
         "0",
@@ -326,7 +342,10 @@
   {
     "title": "Wave 4",
     "body": "Wave 4: every cell taken from the last wave (shaded) visits its free, unfilled neighbours and gives them distance 4. 2 new cells filled. The queue is empty: all 16 free cells have their nearest-station distance, each visited once, O(rows · columns).",
-    "code": "for (const [r, c, d] of queue) {\n  for (const [nr, nc] of neighbours(r, c)) {\n    if (free(nr, nc) && dist[nr][nc] === undefined) {\n      dist[nr][nc] = d + 1;\n      queue.push([nr, nc, d + 1]);\n    }\n  }\n}",
+    "lines": [
+      5,
+      11
+    ],
     "visual": {
       "cells": [
         "0",
