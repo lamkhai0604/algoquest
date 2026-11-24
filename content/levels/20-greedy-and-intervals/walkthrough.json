@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Seven meetings want one room. They are already **sorted by end time**, top to bottom. Walk down the list and keep a meeting whenever it starts at or after the end of the last kept meeting (the dashed line).",
-    "code": "const sorted = [...meetings].sort((a, b) => a[1] - b[1]);\nlet count = 0, lastEnd = -Infinity;",
+    "code": "function maxMeetings(meetings) {\n  const sorted = [...meetings].sort((a, b) => a[1] - b[1]);\n  let count = 0, lastEnd = -Infinity;\n  for (const [start, end] of sorted) {\n    if (start >= lastEnd) {\n      count++;\n      lastEnd = end;\n    }\n  }\n  return count;\n}",
+    "lines": [
+      2,
+      3
+    ],
     "visual": {
       "cells": [
         "A",
@@ -63,7 +67,10 @@
   {
     "title": "Meeting A",
     "body": "A = [1, 3] starts at 1, and nothing is kept yet, so it fits. Keep it: the line moves to its end, 3.",
-    "code": "for (const [start, end] of sorted) {\n  if (start >= lastEnd) {\n    count++;\n    lastEnd = end;\n  }\n}",
+    "lines": [
+      5,
+      7
+    ],
     "visual": {
       "cells": [
         "A",
@@ -133,7 +140,10 @@
   {
     "title": "Meeting B",
     "body": "B = [2, 5] starts at 2, before 3, so it overlaps a kept meeting. Skip it.",
-    "code": "for (const [start, end] of sorted) {\n  if (start >= lastEnd) {\n    count++;\n    lastEnd = end;\n  }\n}",
+    "lines": [
+      5,
+      5
+    ],
     "visual": {
       "cells": [
         "A",
@@ -203,7 +213,10 @@
   {
     "title": "Meeting C",
     "body": "C = [4, 7] starts at 4, which is at or after 3, so it fits. Keep it: the line moves to its end, 7.",
-    "code": "for (const [start, end] of sorted) {\n  if (start >= lastEnd) {\n    count++;\n    lastEnd = end;\n  }\n}",
+    "lines": [
+      5,
+      7
+    ],
     "visual": {
       "cells": [
         "A",
@@ -274,7 +287,10 @@
   {
     "title": "Meeting D",
     "body": "D = [1, 8] starts at 1, before 7, so it overlaps a kept meeting. Skip it.",
-    "code": "for (const [start, end] of sorted) {\n  if (start >= lastEnd) {\n    count++;\n    lastEnd = end;\n  }\n}",
+    "lines": [
+      5,
+      5
+    ],
     "visual": {
       "cells": [
         "A",
@@ -359,7 +375,10 @@
   {
     "title": "Meeting E",
     "body": "E = [5, 9] starts at 5, before 7, so it overlaps a kept meeting. Skip it.",
-    "code": "for (const [start, end] of sorted) {\n  if (start >= lastEnd) {\n    count++;\n    lastEnd = end;\n  }\n}",
+    "lines": [
+      5,
+      5
+    ],
     "visual": {
       "cells": [
         "A",
@@ -430,7 +449,10 @@
   {
     "title": "Meeting F",
     "body": "F = [8, 10] starts at 8, which is at or after 7, so it fits. Keep it: the line moves to its end, 10.",
-    "code": "for (const [start, end] of sorted) {\n  if (start >= lastEnd) {\n    count++;\n    lastEnd = end;\n  }\n}",
+    "lines": [
+      5,
+      7
+    ],
     "visual": {
       "cells": [
         "A",
@@ -517,7 +539,10 @@
   {
     "title": "Meeting G",
     "body": "G = [9, 12] starts at 9, before 10, so it overlaps a kept meeting. Skip it. Done: 3 meetings, A, C and F. Sorting by end and one pass give the most meetings in O(n log n).",
-    "code": "for (const [start, end] of sorted) {\n  if (start >= lastEnd) {\n    count++;\n    lastEnd = end;\n  }\n}",
+    "lines": [
+      5,
+      5
+    ],
     "visual": {
       "cells": [
         "A",

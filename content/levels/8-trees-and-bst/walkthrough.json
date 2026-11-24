@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Find **7** in this binary search tree. In every node, smaller values live in the left subtree and larger values in the right subtree. Start at the root.",
-    "code": "let node = root;",
+    "code": "function search(root, target) {\n  let node = root;\n  while (node !== null) {\n    if (target < node.val) node = node.left;\n    else if (target > node.val) node = node.right;\n    else return node;\n  }\n  return null;\n}",
+    "lines": [
+      2,
+      2
+    ],
     "visual": {
       "cells": [
         "8",
@@ -46,7 +50,10 @@
   {
     "title": "Compare at 8",
     "body": "7 is smaller than 8, so 7 can only be in the left subtree. The whole right side (10, 14, 13) is skipped.",
-    "code": "if (target < node.val) node = node.left;",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "8",
@@ -103,7 +110,10 @@
   {
     "title": "Compare at 3",
     "body": "7 is larger than 3, so go right. Node 1, on the left, is skipped.",
-    "code": "else if (target > node.val) node = node.right;",
+    "lines": [
+      5,
+      5
+    ],
     "visual": {
       "cells": [
         "8",
@@ -147,7 +157,10 @@
   {
     "title": "Compare at 6",
     "body": "7 is larger than 6, so go right again.",
-    "code": "else if (target > node.val) node = node.right;",
+    "lines": [
+      5,
+      5
+    ],
     "visual": {
       "cells": [
         "8",
@@ -204,7 +217,10 @@
   {
     "title": "Found 7",
     "body": "The node's value equals the target: found. Only 4 of the 9 nodes were looked at.",
-    "code": "else return node; // target === node.val",
+    "lines": [
+      6,
+      6
+    ],
     "visual": {
       "cells": [
         "8",

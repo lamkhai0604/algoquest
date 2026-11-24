@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Six courses; an arrow a → b means **a before b**. Count the arrows into each course (its in-degree). Courses 0 and 1 have none, so they can go first and wait in the queue.",
-    "code": "for (const [a, b] of edges) indegree[b]++;\nfor (v …) if (indegree[v] === 0) queue.push(v);",
+    "code": "function courseOrder(n, edges) {\n  const indegree = new Array(n).fill(0);\n  const out = Array.from({ length: n }, () => []);\n  for (const [a, b] of edges) {\n    out[a].push(b);\n    indegree[b]++;\n  }\n  const queue = [];\n  for (let v = 0; v < n; v++) if (indegree[v] === 0) queue.push(v);\n  const order = [];\n  while (queue.length > 0) {\n    const v = queue.shift();\n    order.push(v);\n    for (const w of out[v])\n      if (--indegree[w] === 0) queue.push(w);\n  }\n  return order.length === n ? order : [];\n}",
+    "lines": [
+      2,
+      9
+    ],
     "visual": {
       "cells": [
         "0",
@@ -89,7 +93,10 @@
   {
     "title": "Take 0",
     "body": "Take course 0 and add it to the order. Its arrows go to 2: their in-degrees drop by one. Nothing new is free yet.",
-    "code": "const v = queue.shift();\norder.push(v);\nfor (const w of out[v])\n  if (--indegree[w] === 0) queue.push(w);",
+    "lines": [
+      12,
+      15
+    ],
     "visual": {
       "cells": [
         "0",
@@ -189,7 +196,10 @@
   {
     "title": "Take 1",
     "body": "Take course 1 and add it to the order. Its arrows go to 2, 3: their in-degrees drop by one. 2 and 3 reach 0 and join the queue.",
-    "code": "const v = queue.shift();\norder.push(v);\nfor (const w of out[v])\n  if (--indegree[w] === 0) queue.push(w);",
+    "lines": [
+      12,
+      15
+    ],
     "visual": {
       "cells": [
         "0",
@@ -309,7 +319,10 @@
   {
     "title": "Take 2",
     "body": "Take course 2 and add it to the order. Its arrows go to 4: their in-degrees drop by one. Nothing new is free yet.",
-    "code": "const v = queue.shift();\norder.push(v);\nfor (const w of out[v])\n  if (--indegree[w] === 0) queue.push(w);",
+    "lines": [
+      12,
+      15
+    ],
     "visual": {
       "cells": [
         "0",
@@ -411,7 +424,10 @@
   {
     "title": "Take 3",
     "body": "Take course 3 and add it to the order. Its arrows go to 4: their in-degrees drop by one. 4 reaches 0 and joins the queue.",
-    "code": "const v = queue.shift();\norder.push(v);\nfor (const w of out[v])\n  if (--indegree[w] === 0) queue.push(w);",
+    "lines": [
+      12,
+      15
+    ],
     "visual": {
       "cells": [
         "0",
@@ -527,7 +543,10 @@
   {
     "title": "Take 4",
     "body": "Take course 4 and add it to the order. Its arrows go to 5: their in-degrees drop by one. 5 reaches 0 and joins the queue.",
-    "code": "const v = queue.shift();\norder.push(v);\nfor (const w of out[v])\n  if (--indegree[w] === 0) queue.push(w);",
+    "lines": [
+      12,
+      15
+    ],
     "visual": {
       "cells": [
         "0",
@@ -631,7 +650,10 @@
   {
     "title": "Take 5",
     "body": "Take course 5 and add it to the order. It has no arrows out. All 6 courses are in the order, so there is no cycle. Every course and arrow was handled once: **O(V + E)**.",
-    "code": "const v = queue.shift();\norder.push(v);\nfor (const w of out[v])\n  if (--indegree[w] === 0) queue.push(w);",
+    "lines": [
+      12,
+      15
+    ],
     "visual": {
       "cells": [
         "0",

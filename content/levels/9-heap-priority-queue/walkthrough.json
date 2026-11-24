@@ -2,6 +2,11 @@
   {
     "title": "A min-heap",
     "body": "This min-heap is stored as an array, **[2, 5, 3, 8, 9, 7]**, drawn as a tree: the children of position i are positions 2i + 1 and 2i + 2. The rule: every parent is **no larger** than its children, so the smallest value is always at the root.",
+    "code": "function push(heap, value) {\n  heap.push(value);\n  let i = heap.length - 1;\n  while (i > 0) {\n    const p = (i - 1) >> 1;\n    if (heap[p] <= heap[i]) break;\n    [heap[i], heap[p]] = [heap[p], heap[i]];\n    i = p;\n  }\n}",
+    "lines": [
+      1,
+      1
+    ],
     "visual": {
       "cells": [
         "2",
@@ -33,7 +38,10 @@
   {
     "title": "Add at the end",
     "body": "To push **1**, put it in the next free spot: position 6, the right child of 3. The shape stays a complete tree, but 1 is smaller than its parent, so the order rule is broken.",
-    "code": "heap.push(1); let i = heap.length - 1;",
+    "lines": [
+      2,
+      3
+    ],
     "visual": {
       "cells": [
         "2",
@@ -70,7 +78,10 @@
   {
     "title": "Sift up: swap with 3",
     "body": "1 is smaller than its parent 3, so they swap. 1 moves up to position 2.",
-    "code": "const p = (i - 1) >> 1;\nif (heap[i] < heap[p]) swap(i, p);",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "2",
@@ -120,7 +131,10 @@
   {
     "title": "Sift up: swap with 2",
     "body": "1 is smaller than 2, so they swap. 1 is now the root.",
-    "code": "swap(i, p); i = p;",
+    "lines": [
+      5,
+      8
+    ],
     "visual": {
       "cells": [
         "1",
@@ -157,6 +171,10 @@
   {
     "title": "Done",
     "body": "1 reached the root, so sift-up stops. The rule holds everywhere again, and `peek()` now gives 1. The value moved up at most one level per swap, so a push takes **O(log n)** for a heap of n items. Pop works the other way: move the last item to the root and **sift down**, swapping with the smaller child.",
+    "lines": [
+      4,
+      4
+    ],
     "visual": {
       "cells": [
         "1",

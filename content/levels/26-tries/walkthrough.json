@@ -2,7 +2,11 @@
   {
     "title": "The task",
     "body": "Store the words **car**, **cat**, **cart** and **dog** so that prefix questions are fast. Each node is a prefix; each edge adds one letter. The number in a node counts the words that pass through it, and a filled node marks the end of a word.",
-    "code": "const root = { children: {}, count: 0, end: false };",
+    "code": "const root = { children: {}, count: 0, end: false };\n\nfunction insert(word) {\n  let node = root;\n  node.count++;\n  for (const ch of word) {\n    node.children[ch] ??= { children: {}, count: 0, end: false };\n    node = node.children[ch];\n    node.count++;\n  }\n  node.end = true;\n}\n\nfunction countPrefix(prefix) {\n  let node = root;\n  for (const ch of prefix) {\n    node = node.children[ch];\n    if (!node) return 0;\n  }\n  return node.count;\n}\n\nfunction search(word) {\n  let node = root;\n  for (const ch of word) {\n    node = node.children[ch];\n    if (!node) return false; // the path breaks\n  }\n  return node.end;\n}",
+    "lines": [
+      1,
+      1
+    ],
     "visual": {
       "cells": [
         "0"
@@ -36,7 +40,10 @@
   {
     "title": "Insert car",
     "body": "Insert **car**: walk from the root letter by letter. Create 3 new nodes for car. Every node on the path counts one more word, and the last node is marked as a word end.",
-    "code": "let node = root;\nnode.count++;\nfor (const ch of word) {\n  node.children[ch] ??= { children: {}, count: 0, end: false };\n  node = node.children[ch];\n  node.count++;\n}\nnode.end = true;",
+    "lines": [
+      4,
+      11
+    ],
     "visual": {
       "cells": [
         "1",
@@ -124,7 +131,10 @@
   {
     "title": "Insert cat",
     "body": "Insert **cat**: walk from the root letter by letter. The path ca already exists, so it is shared. Create 1 new node for t. Every node on the path counts one more word, and the last node is marked as a word end.",
-    "code": "let node = root;\nnode.count++;\nfor (const ch of word) {\n  node.children[ch] ??= { children: {}, count: 0, end: false };\n  node = node.children[ch];\n  node.count++;\n}\nnode.end = true;",
+    "lines": [
+      4,
+      11
+    ],
     "visual": {
       "cells": [
         "2",
@@ -223,7 +233,10 @@
   {
     "title": "Insert cart",
     "body": "Insert **cart**: walk from the root letter by letter. The path car already exists, so it is shared. Create 1 new node for t. Every node on the path counts one more word, and the last node is marked as a word end.",
-    "code": "let node = root;\nnode.count++;\nfor (const ch of word) {\n  node.children[ch] ??= { children: {}, count: 0, end: false };\n  node = node.children[ch];\n  node.count++;\n}\nnode.end = true;",
+    "lines": [
+      4,
+      11
+    ],
     "visual": {
       "cells": [
         "3",
@@ -337,7 +350,10 @@
   {
     "title": "Insert dog",
     "body": "Insert **dog**: walk from the root letter by letter. Create 3 new nodes for dog. Every node on the path counts one more word, and the last node is marked as a word end.",
-    "code": "let node = root;\nnode.count++;\nfor (const ch of word) {\n  node.children[ch] ??= { children: {}, count: 0, end: false };\n  node = node.children[ch];\n  node.count++;\n}\nnode.end = true;",
+    "lines": [
+      4,
+      11
+    ],
     "visual": {
       "cells": [
         "4",
@@ -478,7 +494,10 @@
   {
     "title": "Count prefix ca",
     "body": "How many words start with **ca**? Walk c, then a. The answer is already stored in that node: car, cat and cart pass through it.",
-    "code": "let node = root;\nfor (const ch of prefix) {\n  node = node.children[ch];\n  if (!node) return 0;\n}\nreturn node.count;",
+    "lines": [
+      15,
+      20
+    ],
     "visual": {
       "cells": [
         "4",
@@ -630,7 +649,10 @@
   {
     "title": "Search cab",
     "body": "Is **cab** stored? Walk c, then a. The a node has no child b, so the search stops: no word and no prefix cab.",
-    "code": "for (const ch of word) {\n  node = node.children[ch];\n  if (!node) return false;   // the path breaks\n}\nreturn node.end;",
+    "lines": [
+      24,
+      27
+    ],
     "visual": {
       "cells": [
         "4",
@@ -782,7 +804,10 @@
   {
     "title": "Search car",
     "body": "Is **car** stored as a word? Walk c, a, r. The r node is marked as a word end, so yes, even though cart continues below it. Each search costs the length of the word, not the number of words stored.",
-    "code": "return node.end;",
+    "lines": [
+      24,
+      29
+    ],
     "visual": {
       "cells": [
         "4",
