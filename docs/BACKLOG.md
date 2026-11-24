@@ -312,6 +312,12 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-617 | Code lines in the remaining walkthroughs: each level shows one whole function in its first step and lights the lines of every step (24 of 27 levels; Level 22 is pattern recognition and Level 27 keeps its own snippets outside the trace) | FR-03, D-077 | P2 | Done 2026-11-24: content check of every line range in CI; merged to `dev` |
 | T-616 | Sprint 24 report | D-007 | P2 | Done 2026-11-24: [report](reports/sprint-24-report.md) |
 
+## Phase 4 planning — System Design ([syllabus](SYSTEM-DESIGN-SYLLABUS.md))
+
+| ID | Title | Req | Priority | Status |
+| --- | --- | --- | --- | --- |
+| T-618 | Phase 4 syllabus: levels 28 to 41, references for checking facts, lesson format, design prompts and rubric, authoring workflow, delivery plan | D-007, D-056 | P1 | Draft written 2026-11-24; PO review pending |
+
 ## Maintenance
 
 | ID | Title | Req | Priority | Status |
