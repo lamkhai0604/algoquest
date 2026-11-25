@@ -1,0 +1,865 @@
+[
+  {
+    "title": "Everything while the customer waits",
+    "body": "After \"Place order\", the app server saves the order (30 ms), sends the confirmation email through the email provider (400 ms), builds the invoice PDF (800 ms) and calls the warehouse's API (200 ms), all before it answers. The customer waits 30 + 400 + 800 + 200 = **1,430 ms**, and when the email provider is slow, the whole page is slow or times out.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shopper",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5,
+            "note": "+ invoice 800 ms"
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Warehouse API",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              1,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "save order",
+          "value": "30 ms"
+        },
+        {
+          "name": "email",
+          "value": "400 ms"
+        },
+        {
+          "name": "invoice",
+          "value": "800 ms"
+        },
+        {
+          "name": "warehouse",
+          "value": "200 ms"
+        },
+        {
+          "name": "customer waits",
+          "value": "1,430 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A message instead of the work",
+    "body": "Now the app server saves the order and puts one message, \"order 123 placed\", on a **queue** kept by a **message broker** (about 5 ms), then answers. The customer waits about 30 + 5 = **35 ms**. The email, the invoice and the warehouse call still happen, a moment later, done by **workers** that take messages from the queue: this is **asynchronous work**. The app server is the **producer**; the workers are the **consumers**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shopper",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5,
+            "note": "order 123 placed"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "save order",
+          "value": "30 ms"
+        },
+        {
+          "name": "put message on queue",
+          "value": "5 ms"
+        },
+        {
+          "name": "customer waits",
+          "value": "about 35 ms"
+        }
+      ],
+      "predict": {
+        "question": "The app server saves the order (30 ms) and puts a message on the queue (5 ms), then answers. The email, invoice and warehouse call happen later. About how long does the customer wait?",
+        "options": [
+          "About 35 ms",
+          "About 1,430 ms",
+          "About 400 ms",
+          "About 5 ms"
+        ],
+        "answer": 0,
+        "explanation": "The customer waits only for the steps before the answer: 30 ms to save and 5 ms to queue the message, about 35 ms. The 1,400 ms of email, invoice and warehouse work happens after the answer, so it no longer adds to the wait. Saving the order is still part of the request.",
+        "hides": [
+          "customer waits"
+        ]
+      }
+    }
+  },
+  {
+    "title": "How many workers?",
+    "body": "A worker does one job at a time. Building an invoice takes 0.8 seconds, so one worker finishes 1 ÷ 0.8 = 1.25 invoices per second. At a sale, 50 orders arrive per second: 50 ÷ 1.25 = **40 workers** busy all the time, or 50 × 0.8 = 40 in one step. To keep them at most 70% busy, run 40 ÷ 0.7 ≈ 57.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shopper",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 8,
+            "y": 4,
+            "note": "1.25 invoices/s each"
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Warehouse API",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              4,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "orders per second",
+          "value": "50"
+        },
+        {
+          "name": "time per invoice",
+          "value": "0.8 s"
+        },
+        {
+          "name": "workers busy",
+          "value": "40"
+        }
+      ],
+      "predict": {
+        "question": "50 orders arrive per second, and building one invoice takes a worker 0.8 seconds. How many workers are busy all the time just to keep up?",
+        "options": [
+          "40",
+          "50",
+          "63",
+          "8"
+        ],
+        "answer": 0,
+        "explanation": "Each second brings 50 invoices, each needing 0.8 seconds of a worker: 50 × 0.8 = 40 worker-seconds per second, so 40 workers are busy at once. 63 comes from dividing 50 by 0.8 instead of multiplying.",
+        "hides": [
+          "workers busy"
+        ]
+      }
+    }
+  },
+  {
+    "title": "The backlog grows",
+    "body": "With only 30 workers, capacity is 30 × 1.25 = 37.5 invoices per second. At 50 per second, the **backlog** grows by 50 − 37.5 = 12.5 per second: after a 10-minute sale, 12.5 × 600 = **7,500** invoices are waiting. The order page is still fast, because the queue absorbs the difference. When orders fall to 10 per second, the backlog drains at 37.5 − 10 = 27.5 per second: 7,500 ÷ 27.5 ≈ 273 seconds, about 4.5 minutes.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shopper",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5,
+            "note": "7,500 waiting",
+            "state": "hot"
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 8,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "arriving",
+          "value": "50/s"
+        },
+        {
+          "name": "done by 30 workers",
+          "value": "37.5/s"
+        },
+        {
+          "name": "backlog after 10 min",
+          "value": "7,500"
+        },
+        {
+          "name": "drain time",
+          "value": "about 4.5 min"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A crash before the ack",
+    "body": "A worker takes the message for order 123 and the broker hides it from other workers for 30 seconds (the **visibility timeout**). The worker sends the email, then crashes before its **acknowledgment**. No ack arrives, so after 30 seconds the broker gives the message to another worker, which sends the email again. This is **at-least-once delivery**: nothing is lost, but work can repeat. Acknowledging before sending would be worse: a crash would lose the email.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shopper",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 8,
+            "y": 4,
+            "note": "crashed before ack",
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Warehouse API",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "email sent",
+          "value": "yes"
+        },
+        {
+          "name": "ack sent",
+          "value": "no"
+        },
+        {
+          "name": "after 30 s",
+          "value": "message given again"
+        },
+        {
+          "name": "emails sent",
+          "value": "2"
+        }
+      ],
+      "predict": {
+        "question": "A worker sends the confirmation email for order 123, then crashes before acknowledging the message. What happens next?",
+        "options": [
+          "The message is lost, because the worker crashed",
+          "The broker gives the message to another worker, and the email is sent again",
+          "The broker deletes the message, because the email was sent",
+          "The broker asks the email provider whether the email was sent"
+        ],
+        "answer": 1,
+        "explanation": "The broker only knows that no ack arrived. After the visibility timeout it hands the message to another worker, which repeats the work: a second email. The broker cannot see what the worker did, so it chooses to repeat rather than lose work.",
+        "hides": [
+          "emails sent",
+          "after 30 s"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Make repeats harmless",
+    "body": "The fix is an **idempotency key**. The worker sends the order id with the email request, and the email provider ignores a second request with the same key, so the customer gets one email however often the message repeats. Inside your own database, a unique constraint does the same job (SD 4): a second insert of \"email sent for order 123\" fails. With at-least-once delivery, every consumer must make its work safe to repeat.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shopper",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 8,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 1,
+            "note": "key 123: seen"
+          },
+          {
+            "kind": "server",
+            "label": "Warehouse API",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "idempotency key",
+          "value": "order 123"
+        },
+        {
+          "name": "second request",
+          "value": "ignored"
+        },
+        {
+          "name": "emails received",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "The warehouse is down",
+    "body": "The warehouse's API stops answering. Retrying at once, again and again, would add load just when it can least take it. The worker **retries with exponential backoff**: it waits 1, 2, 4, 8 and 16 seconds, 31 seconds in all, plus a little random **jitter** so that thousands of messages do not retry at the same moment. A message that still fails after its last retry goes to a **dead-letter queue**, where a person can look at it, instead of being retried forever.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shopper",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 8,
+            "y": 4,
+            "note": "wait 1, 2, 4, 8, 16 s"
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Warehouse API",
+            "x": 10,
+            "y": 7,
+            "state": "down"
+          },
+          {
+            "kind": "queue",
+            "label": "Dead letters",
+            "x": 6,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          6
+        ],
+        "drop": true,
+        "flows": [
+          {
+            "path": [
+              4,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "retry waits",
+          "value": "1, 2, 4, 8, 16 s"
+        },
+        {
+          "name": "total wait",
+          "value": "31 s"
+        },
+        {
+          "name": "after the last retry",
+          "value": "dead-letter queue"
+        }
+      ]
+    }
+  },
+  {
+    "title": "One event, many listeners",
+    "body": "In **publish-subscribe**, the app publishes \"order placed\" once, and each subscriber gets its own copy in its own queue: email, invoice and warehouse each have their own workers, so a down warehouse does not delay emails. An **event log**, such as Kafka, also keeps every message for a set time, such as 7 days; each consumer tracks its own position, its **offset**, and can read the history again. If a backlog passes its limit, the producer applies **back-pressure**: it slows down, refuses new work, or skips optional work such as marketing emails.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shopper",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Order placed",
+            "x": 5,
+            "y": 4,
+            "note": "published once"
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "queue",
+            "label": "Invoice queue",
+            "x": 10,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Warehouse queue",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              5
+            ]
+          },
+          {
+            "path": [
+              3,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "published",
+          "value": "once"
+        },
+        {
+          "name": "copies",
+          "value": "one per subscriber"
+        },
+        {
+          "name": "event log keeps",
+          "value": "7 days, read by offset"
+        }
+      ]
+    }
+  }
+]

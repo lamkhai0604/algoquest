@@ -1,0 +1,11 @@
+{
+  "question": "A waiter pins each order ticket on a rail in the kitchen and goes straight back to the tables. Why can the waiter take the next table's order right away?",
+  "options": [
+    "The rail holds the ticket until a cook is free, so the waiter does not wait for the cooking",
+    "The cooks cook every dish the moment it is ordered",
+    "The ticket makes the food cook faster",
+    "The waiter only takes orders when the kitchen is empty"
+  ],
+  "answer": 0,
+  "explanation": "The rail is a queue: it holds the work until a cook (a worker) takes it, so the waiter (the producer) only spends the time it takes to pin the ticket. The cooking still takes as long as before; it just no longer holds the waiter. If tickets arrive faster than the cooks cook, the rail gets longer: a backlog."
+}
