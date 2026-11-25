@@ -13,7 +13,8 @@
     ],
     "scope": [
       "The homepage only",
-      "Article pages and personalization are out of scope"
+      "Article pages and personalization are out of scope",
+      "The 30-second freshness applies while the database works; a database outage is out of scope"
     ],
     "criteria": {
       "requirements": [
@@ -33,12 +34,12 @@
         "Explains why the hit rate stays high or why database load stays low"
       ],
       "tradeoffs": [
-        "Names a risk with its condition, such as: when the key expires, many servers miss at once and hit the database (thundering herd), so only one server rebuilds; or if the refresh job stops, the page goes stale, so servers check the copy's age and alert after 30 s; or a shorter TTL gives fresher news but more rebuilds"
+        "Names a risk with its condition, such as: when the key expires, many servers miss at once and hit the database (thundering herd), so only one server rebuilds; or if the refresh job stops, the page goes stale, so servers rebuild it themselves early enough to stay within 30 s; or a shorter TTL gives fresher news but more rebuilds"
       ]
     },
     "fullMarkDesigns": [
       "Design A, cache-aside: servers read the homepage key; on a miss only one server rebuilds it while the others serve the old copy, and the new copy gets a TTL of 20 s. Freshness: 2 + 20 + 2 = 24 s, within 30. Database load: one rebuild per expiry, far under 1,333 reads per second, so the hit rate is close to 100% (≥ 93.4% needed). Risk: thundering herd at expiry, prevented by the single rebuilder.",
-      "Design B, refresh job: a job rebuilds the homepage every 10 s and writes it to the cache; servers only read the cache. Freshness: 10 + 2 = 12 s. Database load: one build every 10 s. Trade-off: the job is a new part; if it stops, the copy ages, so servers alert when the copy is older than 30 s and fall back to rebuilding it themselves."
+      "Design B, refresh job: a job rebuilds the homepage every 10 s and writes it to the cache; servers only read the cache. Freshness: 10 + 2 = 12 s. Database load: one build every 10 s. Trade-off: the job is a new part; servers check the copy's age on every read, and if it is older than 25 s (the job has stopped) one server rebuilds it, so news is at most 2 + 25 + 2 = 29 s old, and an alert is raised."
     ],
     "reference": {
       "assumptions": [
@@ -63,7 +64,8 @@
       "A round trip from Europe or the United States to Singapore takes about 160–220 ms; loading a photo from Singapore on a new connection takes about 3 round trips plus the transfer",
       "A CDN has edge servers in Europe and the United States; from a nearby edge, a cached 200 KB photo loads in about 100 ms",
       "Photos never change after upload; an edited photo is uploaded under a new file name",
-      "Requirement: a photo already requested in a reader's region within the last week loads within 300 ms"
+      "Requirement: a photo served from an edge's cached copy loads within 300 ms. A first request in a region, or a request after the edge's copy expired, goes to Singapore and may be slower",
+      "Exercise assumption: an edge keeps a photo until its TTL ends, counted from when the edge fetched it from the origin; most views of a photo happen in the month after it is posted"
     ],
     "scope": [
       "Photo delivery only",
@@ -71,7 +73,7 @@
     ],
     "criteria": {
       "requirements": [
-        "States the 300 ms requirement and that it applies to photos already requested in the region, not the very first request"
+        "States the 300 ms requirement for photos served from an edge's copy, and that first requests and requests after expiry may be slower"
       ],
       "estimation": [
         "Distance: 3 round trips × 160 ms = 480 ms or more before the transfer, over 300 ms, so meeting it needs a nearby copy; a cached copy at an edge takes about 100 ms",
@@ -81,7 +83,7 @@
         "Readers → CDN edge server in their region → origin in Singapore on a miss"
       ],
       "data": [
-        "A TTL long enough that photos requested within a week stay at the edge, made safe by never changing a photo under the same name",
+        "A TTL that keeps photos at the edge through the month most views happen, made safe by never changing a photo under the same name",
         "Explains that the first request in a region is a miss and goes to the origin"
       ],
       "tradeoffs": [
@@ -90,12 +92,12 @@
     },
     "fullMarkDesigns": [
       "Design A: a CDN in front of the origin with a one-year TTL; edited photos get new file names, so no invalidation is needed. Repeat requests in a region load from the edge in about 100 ms. Distance estimate: 3 × 160 = 480 ms from Singapore, too slow without the edge. Trade-off: removing a photo needs a CDN purge.",
-      "Design B: a CDN with a 7-day TTL, after which the edge revalidates with the origin; popular photos stay at the edge, and a removed photo disappears within a week even without a purge. Load estimate: about 100 photos per second at peak, under the origin's 300, so the revalidations are affordable. Trade-off: a photo not requested for a week may be fetched from Singapore again."
+      "Design B: a CDN with a 7-day TTL; when the edge's copy expires, the next request in that region checks with the origin and is slow, then the copy is cached for another week. A removed photo disappears within a week even without a purge. Load estimate: about 100 photos per second at peak, under the origin's 300, so the weekly re-checks are affordable. Trade-off: each popular photo has one slow request per region per week, which the requirement allows."
     ],
     "reference": {
       "assumptions": [
         "Most photos are read many times in each region",
-        "The CDN keeps photos at an edge for at least the TTL when they are requested"
+        "An edge keeps a photo until its TTL ends"
       ],
       "design": "Readers fetch photos from a CDN. The nearest edge server returns a cached copy in about 100 ms; on a miss it fetches the photo from the origin in Singapore and keeps it.\nBecause photos never change and an edit gets a new file name, the TTL can be very long, so edges almost never go back to the origin.\nDistance is the problem: 3 round trips × 160–220 ms is 480 ms or more from Singapore. Load is not: about 20 photos per second on average and 100 at peak, under the origin's 300.\nThe first request for a photo in a region still crosses to Singapore, which the requirement allows.",
       "alternatives": [

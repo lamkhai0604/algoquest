@@ -91,7 +91,7 @@
       ]
     },
     "fullMarkDesigns": [
-      "Design A: users table with id as primary key and a unique constraint on email; optional profile fields in a JSON column because they vary. Login uses the unique index: about 1 ms, and 2,000 lookups per second against 10,000. A duplicate sign-up fails the constraint and gets \"email already used\". Without the index the database would manage about 3 lookups per second.",
+      "Design A: users table with id as primary key and a unique constraint on email; optional profile fields in a JSON column because they vary. Login uses the unique index: about 1 ms, and 2,000 lookups per second against 10,000. A duplicate sign-up fails the constraint and gets \"email already used\". Without the index the database would manage about 3 lookups per second. Trade-off: the email index adds work to each of the 50 sign-ups per second, a small price for 2,000 fast logins.",
       "Design B: accounts in a relational table with a unique email constraint (same 1 ms lookups, 2,000 of 10,000 per second), and the varied profile fields in a document store keyed by user id, which login never touches. Trade-off: two stores to run and back up, in exchange for profiles that change shape freely."
     ],
     "reference": {

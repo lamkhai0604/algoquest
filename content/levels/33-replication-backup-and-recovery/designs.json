@@ -7,10 +7,11 @@
     "facts": [
       "Peak: about 30,000 reads and 1,500 writes per second",
       "Each database server can safely handle about 5,000 queries per second; applying a replicated write costs about as much as one query",
-      "About 2% of reads are a user's own posts and comments just after they change them, and must show the change; other reads may be a few seconds old",
+      "About 2% of reads are a user's own posts and comments just after they change them, and must show the change",
       "Replication lag is normally under 1 second; replicas more than 10 seconds behind can be taken out of service",
       "When the database server fails, the app must work again within a few minutes",
-      "Each write must be confirmed within 20 ms; a follower in the same data center adds about 1 ms to a synchronous write"
+      "Each write must be confirmed within 20 ms. Measured: the leader alone confirms a write in about 8 ms; waiting for a follower in the same data center to save it adds about 1 ms",
+      "Other reads may be up to 10 seconds old"
     ],
     "scope": [
       "The main database only",
@@ -37,18 +38,18 @@
       ]
     },
     "fullMarkDesigns": [
-      "Design A: one leader takes 1,500 writes plus 600 fresh reads per second (2,100 of 5,000); 9 asynchronous read replicas (plus a spare) serve 29,400 reads, each with 3,500 of read room after applying 1,500 writes. A user's own data is read from the leader for 30 s after a change, longer than the 10 s the team allows replicas to lag. Failover promotes the most up-to-date replica within a minute; writes within the lag, usually under a second, can be lost.",
-      "Design B: the same leader and replica count from the same arithmetic, with one follower in the same data center synchronous (about 1 ms per write, within 20 ms) and used for failover, so confirmed writes survive; read-your-writes by tracking each change's position in the log and reading only from a replica that has reached it. Trade-off: if the synchronous follower stops answering, writes wait until another follower is made synchronous."
+      "Design A: one leader takes 1,500 writes plus 600 fresh reads per second (2,100 of 5,000); 9 asynchronous read replicas (plus a spare) serve 29,400 reads, each with 3,500 of read room after applying 1,500 writes. A user's own data is read from the leader for 30 s after a change, longer than the 10 s the team allows replicas to lag. Writes are confirmed in about 8 ms, within 20 ms. Failover promotes the most up-to-date replica within a minute; writes within the lag, usually under a second, can be lost.",
+      "Design B: the same leader (1,500 + 600 = 2,100 of 5,000) and 9 replicas (29,400 ÷ 3,500 = 8.4), with one follower in the same data center synchronous: 8 + 1 = 9 ms per write, within 20 ms; it is the one promoted on failover, so confirmed writes survive; read-your-writes by tracking each change's position in the log and reading only from a replica that has reached it. Trade-off: if the synchronous follower stops answering, writes wait until another follower is made synchronous."
     ],
     "reference": {
       "assumptions": [
         "Reads and writes keep this ratio at peak",
         "All servers are in one data center"
       ],
-      "design": "Writes and the 2% of reads that must be fresh go to the leader: 1,500 + 600 = 2,100 queries per second, under 5,000.\nThe other 29,400 reads go to read replicas. Each replica applies all 1,500 writes per second, leaving 3,500 for reads: 29,400 ÷ 3,500 = 8.4, so 9 replicas, plus a spare.\nAfter a user posts or comments, their own feed and profile are read from the leader for 30 seconds. Replicas more than 10 seconds behind are taken out of service.\nOne follower is synchronous (about 1 ms per write), so a failover to it loses no confirmed write; it is promoted within a minute and the old leader is fenced off.",
+      "design": "Writes and the 2% of reads that must be fresh go to the leader: 1,500 + 600 = 2,100 queries per second, under 5,000.\nThe other 29,400 reads go to read replicas. Each replica applies all 1,500 writes per second, leaving 3,500 for reads: 29,400 ÷ 3,500 = 8.4, so 9 replicas, plus a spare.\nAfter a user posts or comments, their own feed and profile are read from the leader for 30 seconds. Replicas more than 10 seconds behind are taken out of service.\nOne follower is synchronous, so a write is confirmed in about 8 + 1 = 9 ms, within 20 ms, and a failover to that follower loses no confirmed write; it is promoted within a minute and the old leader is fenced off.",
       "alternatives": [
-        "A bigger single server: simpler, but no failover and the same limit later",
-        "A cache in front of the feed (SD 3): fewer reads reach the database, and can be combined with replicas"
+        "A cache in front of the feed (SD 3): fewer reads reach the database, and can be combined with replicas",
+        "Rejected: a bigger single server, because it has no failover and the app must work again within minutes"
       ]
     }
   },
@@ -60,7 +61,8 @@
     "facts": [
       "The database holds about 50 GB and grows about 1 GB a month",
       "A restore copies data at about 100 MB per second; replaying a day of archived log takes about 10 minutes; checks before reopening take about 15 minutes",
-      "The clinic accepts losing at most 5 minutes of changes (RPO)",
+      "If the database or the data center is lost, the clinic accepts losing at most 5 minutes of changes (RPO)",
+      "After a mistaken change, restoring to just before it is accepted; staff re-enter the valid appointments made after it from the day's booking records (out of scope for the design)",
       "The clinic must be working again within 2 hours of a disaster (RTO)",
       "Mistakes are sometimes noticed only days later, at most about 2 weeks",
       "Storage in another region, under a separate account, is available for backups"
@@ -71,12 +73,12 @@
     ],
     "criteria": {
       "requirements": [
-        "States RPO 5 minutes and RTO 2 hours, and that both a mistaken delete and a lost data center must be covered",
+        "States RPO 5 minutes for a lost database or data center, RTO 2 hours, and that a mistaken change is recovered by restoring to just before it",
         "Explains why the existing replica does not meet the requirement for a mistaken delete"
       ],
       "estimation": [
-        "Restore time: 50,000 MB ÷ 100 MB/s = 500 s ≈ 8 minutes, plus log replay and checks, well within 2 hours",
-        "Or RPO: the log is archived at least every 5 minutes, so at most 5 minutes of changes are lost"
+        "Restore time: 50,000 MB ÷ 100 MB/s = 500 s ≈ 8 minutes, plus log replay and checks, within 2 hours on the worst day for the chosen backup schedule",
+        "Or RPO: the log is archived at least every 5 minutes, so a lost database or data center loses at most 5 minutes of changes"
       ],
       "design": [
         "Full backups on a schedule, the database log archived often, both stored outside the data center, and a restore path to a chosen time"
@@ -90,15 +92,15 @@
       ]
     },
     "fullMarkDesigns": [
-      "Design A: a nightly full backup and the database log archived every minute, both copied to the other region's separate account and kept 35 days. Restore: 500 s ≈ 8 minutes of copying + up to 10 minutes of replay + 15 minutes of checks ≈ 33 minutes, within 2 hours; RPO about 1 minute. The replica covers a failed server; backups cover mistakes and a lost data center. A restore is tested every month.",
-      "Design B: a weekly full backup and the log archived every 5 minutes, kept 30 days in the other region. Restore after a mistake on day 6: 8 minutes of copying + 6 × 10 = 60 minutes of replay + 15 minutes of checks ≈ 83 minutes, within 2 hours; RPO 5 minutes. Trade-off: fewer full backups to store, but restores get slower as the week goes on, so the monthly test uses the worst day."
+      "Design A: a nightly full backup and the database log archived every minute, both copied to the other region's separate account and kept 35 days. Restore: 500 s ≈ 8 minutes of copying + up to 10 minutes of replay + 15 minutes of checks ≈ 33 minutes, within 2 hours. A lost data center loses at most about 1 minute of changes; a mistake is undone by restoring to just before it, and staff re-enter later appointments. The replica covers a failed server. A restore is tested every month.",
+      "Design B: a weekly full backup and the log archived every 5 minutes, kept 30 days in the other region. Worst day, just before the next weekly backup: 8 minutes of copying + 7 × 10 = 70 minutes of replay + 15 minutes of checks ≈ 93 minutes, within 2 hours; a lost data center loses at most 5 minutes of changes. Trade-off: fewer full backups to store, but restores get slower as the week goes on, so the monthly test uses the worst day."
     ],
     "reference": {
       "assumptions": [
         "The backup storage is in another region",
         "A new database server can be started within minutes"
       ],
-      "design": "Every night a full backup is taken, and the database log is archived every minute. Both are copied to storage in another region, under a separate account, so that no one can delete live data and backups with the same access. Backups are kept for 35 days, longer than the 2 weeks a mistake may take to notice.\nAfter a mistaken delete, a new server restores the last full backup before the delete and replays the log up to one minute before it: 50,000 MB ÷ 100 MB/s = 500 s, about 8 minutes, plus at most 10 minutes of replay and 15 minutes of checks, about 33 minutes, well within the 2-hour RTO, with at most about 1 minute of changes lost.\nThe replica still handles a failed server within minutes. A restore is tested every month.",
+      "design": "Every night a full backup is taken, and the database log is archived every minute. Both are copied to storage in another region, under a separate account, so that no one can delete live data and backups with the same access. Backups are kept for 35 days, longer than the 2 weeks a mistake may take to notice.\nAfter a mistaken delete, a new server restores the last full backup before the delete and replays the log up to one minute before it: 50,000 MB ÷ 100 MB/s = 500 s, about 8 minutes, plus at most 10 minutes of replay and 15 minutes of checks, about 33 minutes, well within the 2-hour RTO. Appointments made after the mistake are re-entered by staff. If the whole data center is lost, the same restore runs to the last archived minute, losing at most about 1 minute of changes.\nThe replica still handles a failed server within minutes. A restore is tested every month.",
       "alternatives": [
         "Weekly full backups with log archiving: less storage, slower restores late in the week",
         "Rejected: only the replica, because a mistaken delete is copied to it",
