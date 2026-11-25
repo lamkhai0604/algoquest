@@ -344,8 +344,8 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-651 | Show quick-check, prediction, intuition and pattern-challenge options in a random order; answers keep their content indices | FR-03, D-084 | P1 | Done 2026-11-25: frontend unit test; CI |
 | T-652 | SD 4 content review round 1 and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | In progress 2026-11-25: round 1 found 2 Major and 2 Minor issues, fixed in T-653; translation pending |
 | T-653 | SD 4 review round 1 fixes: full lock and version protocols in the walkthrough, load test instead of an unsupported capacity claim, scoped index-cost rule and isolation default, stronger distractors | FR-03, D-057 | P1 | Done 2026-11-25: content check in CI |
-| T-654 | SD 5 (Level 32) APIs and Service Boundaries in English: lesson, 8-step walkthrough with four predictions (status code, offset paging, polling load, parallel calls), intuition; 27 glossary terms | FR-03, D-079, D-082 | P1 | In progress 2026-11-25: quick check and challenges assigned (T-655); fact check assigned (G-07) |
-| T-655 | SD 5 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Assigned 2026-11-25 |
+| T-654 | SD 5 (Level 32) APIs and Service Boundaries in English: lesson, 8-step walkthrough with four predictions (status code, offset paging, polling load, parallel calls), intuition; 27 glossary terms | FR-03, D-079, D-082 | P1 | Done 2026-11-25: content check in CI; facts F32–F40 confirmed (G-07); review and Vietnamese translation pending |
+| T-655 | SD 5 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude (quick-check distractors reworded); content check in CI |
 
 ## Maintenance
 

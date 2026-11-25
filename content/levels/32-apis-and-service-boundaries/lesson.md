@@ -103,7 +103,7 @@ With server-sent events, the same 100,000 customers keep 100,000 connections ope
 **What a chain of calls costs.**
 
 - **Latency adds up when calls run one after another.** If the order page calls Restaurants (40 ms), then Drivers (30 ms), then Payments (50 ms), they take 40 + 30 + 50 = 120 ms. If the three calls do not depend on each other and run in parallel, they take as long as the slowest: 50 ms.
-- **Failures multiply.** If a request needs 5 services in a chain and each is available 99.9% of the time, the request works about 0.999⁵ ≈ 99.5% of the time. Over 30 days, 0.1% is about 43 minutes of failures, but 0.5% is about 3.6 hours.
+- **Failures multiply.** If a request needs 5 services in a chain and each is available 99.9% of the time, and they fail independently of each other, the request works about 0.999⁵ ≈ 99.5% of the time. Over 30 days, 0.1% is about 43 minutes of failures, but 0.5% is about 3.6 hours.
 
 ## Common mistakes
 
