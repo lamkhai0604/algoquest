@@ -128,8 +128,8 @@ final class ContentValidator {
       if (blank(level.summary())) {
         problems.add(where + ": summary is missing");
       }
-      if (level.phase() < 1 || level.phase() > 3) {
-        problems.add(where + ": phase must be 1, 2, or 3");
+      if (level.phase() < 1 || level.phase() > 4) {
+        problems.add(where + ": phase must be 1, 2, 3, or 4");
       } else if (i > 0 && level.phase() < levels.get(i - 1).phase()) {
         problems.add(where + ": phase must not go back (levels are listed phase by phase)");
       }

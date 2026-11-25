@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Why can a far-away server feel slow even if its code is fast?",
+    "options": [
+      "Each round trip for connection setup waits for the signal to travel the distance",
+      "Far servers cannot use HTTP",
+      "The browser refuses to wait more than 50 ms",
+      "Distance changes the content of the page"
+    ],
+    "answer": 0,
+    "explanation": "Setup needs several round trips before any page data moves, and each trip takes at least the time the signal needs to cross the distance."
+  },
+  {
+    "question": "A page takes 2 seconds. The network round trip is 40 ms, and the database query takes 1.6 seconds. What is the best first step?",
+    "options": [
+      "Buy a faster network connection",
+      "Make the database query faster, for example with an index or a cache",
+      "Move the server to another continent",
+      "Add more browser tabs"
+    ],
+    "answer": 1,
+    "explanation": "The query is the biggest part of the time, so improving it helps most. The network is only 40 ms."
+  },
+  {
+    "question": "Estimate: 2 million users each make 15 requests a day. About how many requests per second on average? (Use 1 day ≈ 10⁵ seconds.)",
+    "options": [
+      "About 300 requests per second",
+      "About 3,000 requests per second",
+      "About 30 requests per second",
+      "About 300,000 requests per second"
+    ],
+    "answer": 0,
+    "explanation": "2 × 10⁶ users × 15 requests = 3 × 10⁷ requests a day. Divided by 10⁵ seconds, that is about 300 requests per second on average. Peak traffic can be several times higher."
+  }
+]

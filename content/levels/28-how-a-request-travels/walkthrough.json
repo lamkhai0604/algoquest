@@ -1,0 +1,26 @@
+[
+  {
+    "title": "The user types a web address",
+    "body": "The browser needs a server address. The name `shop.example` must be turned into an IP address. First the browser checks its own cache; if it has no answer, it asks a DNS resolver. This step is often 20–100 ms the first time and almost zero after that."
+  },
+  {
+    "title": "Open a connection",
+    "body": "The browser opens a TCP connection, which takes one round trip. For HTTPS it then sets up encryption (TLS), which takes another round trip or so. Both trips are pure waiting: no page data moves yet. This is why a far-away server feels slow even when its code is fast."
+  },
+  {
+    "title": "Send the request",
+    "body": "The browser sends an HTTP request, for example `GET /products/42`. It carries the method, the path, headers such as cookies, and sometimes a body. One more round trip passes before the answer starts to arrive."
+  },
+  {
+    "title": "The server does the work",
+    "body": "The request reaches an application server. The server checks the user, reads the product from a **database**, and builds the page. A slow query or a missing index shows up here, not in the network. In many slow pages, most of the time is spent in this step."
+  },
+  {
+    "title": "The response travels back",
+    "body": "The server sends the response over the same connection. Large files such as images are separate requests, and each one repeats the path. Reusing an open connection avoids paying the setup cost again."
+  },
+  {
+    "title": "Count the hops, then fix the biggest one",
+    "body": "Write each hop and its time. If the server takes 600 ms and the network takes 100 ms, a faster network does not fix the page. Fix the server first, then look at the number of separate requests, and only then think about moving the server closer to users."
+  }
+]

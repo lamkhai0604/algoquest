@@ -1,0 +1,11 @@
+{
+  "question": "A page takes 3 seconds. Which measurement tells you the most about where to start?",
+  "options": [
+    "Time spent in each hop: DNS, connection, server, and database",
+    "The number of servers you own",
+    "The colour of the page",
+    "The average load for the whole year"
+  ],
+  "answer": 0,
+  "explanation": "Latency is the sum of the hops on the path. You need the time of each hop before you can choose a fix that helps."
+}
