@@ -1,0 +1,147 @@
+[
+  {
+    "id": "P30-product-page",
+    "level": 30,
+    "title": "A Busy Product Page",
+    "statement": "A shop's product page gets 5,000 reads per second at peak. The database can serve about 1,000 reads per second and cannot be upgraded this quarter. Product details change a few times a day, and a price that is up to 60 seconds old is acceptable. Which read path fits best?",
+    "examples": [
+      "Most reads ask for a few hundred popular products",
+      "A price change must reach users within 60 seconds"
+    ],
+    "constraints": [
+      "The database stays at about 1,000 reads per second",
+      "Data may be up to 60 seconds old"
+    ],
+    "approaches": [
+      {
+        "id": "no-cache",
+        "name": "Read every request from the database and add more servers in front of it",
+        "hint": "More servers, same database",
+        "label": "unsuitable",
+        "time": "All 5,000 reads per second reach the database",
+        "space": "No cache memory",
+        "why": "More servers only send more reads to the same database, which can serve about 1,000 per second. The bottleneck stays."
+      },
+      {
+        "id": "cache-ttl-delete",
+        "name": "Cache-aside with a 60-second TTL, and delete the cache entry on every change",
+        "hint": "Fast reads, fresh after changes",
+        "label": "best",
+        "time": "Hits ≈1 ms; with a 90% hit rate, 500 database reads per second",
+        "space": "Memory for the popular products",
+        "why": "Most reads become hits, so the database stays within its limit. Deleting on change makes new prices visible at once, and the TTL keeps any missed delete within the 60-second rule."
+      },
+      {
+        "id": "cache-ttl-only",
+        "name": "Cache-aside with a 60-second TTL and no delete on change",
+        "hint": "Let entries expire",
+        "label": "valid",
+        "time": "Same hit rate and database load",
+        "space": "Memory for the popular products",
+        "why": "This meets both requirements, because a changed price is shown within 60 seconds. It is simpler, but users see old prices for up to a minute after every change, which deleting on change avoids."
+      },
+      {
+        "id": "cache-forever",
+        "name": "Cache-aside with no TTL and no delete",
+        "hint": "Cache once, keep forever",
+        "label": "unsuitable",
+        "time": "Fast reads",
+        "space": "Memory grows with every product read",
+        "why": "A changed price would never reach the cache, which breaks the 60-second rule."
+      }
+    ]
+  },
+  {
+    "id": "P30-balance",
+    "level": 30,
+    "title": "Showing an Account Balance",
+    "statement": "A banking app shows a user's account balance. Right after a transfer, the balance on screen must be exact. Balance reads are about 300 per second, and the database serves them easily. The profile name and settings shown next to the balance change rarely. What should the team cache?",
+    "examples": [
+      "A user sends money and opens the balance screen one second later"
+    ],
+    "constraints": [
+      "The balance must be exact right after a change",
+      "The database has plenty of capacity for 300 reads per second"
+    ],
+    "approaches": [
+      {
+        "id": "cache-balance-5min",
+        "name": "Cache the balance with a 5-minute TTL",
+        "hint": "Fewer database reads",
+        "label": "unsuitable",
+        "time": "Fast reads",
+        "space": "Small",
+        "why": "A user could see the old balance for up to 5 minutes after a transfer, which breaks the first requirement."
+      },
+      {
+        "id": "cache-settings-only",
+        "name": "Read the balance from the database; cache only the rarely changing profile name and settings",
+        "hint": "Cache what can be a little old",
+        "label": "best",
+        "time": "Balance read from the database, settings ≈1 ms",
+        "space": "Small",
+        "why": "The balance is always exact, and the database has capacity for it. Caching the rarely changing parts still saves work where slightly old data is harmless."
+      },
+      {
+        "id": "no-cache",
+        "name": "Do not cache anything on this screen",
+        "hint": "Keep it simple",
+        "label": "valid",
+        "time": "All reads from the database",
+        "space": "None",
+        "why": "This meets both requirements, because the database handles 300 reads per second easily. It gives up a small saving on the settings that could safely be cached."
+      }
+    ]
+  },
+  {
+    "id": "P30-images",
+    "level": 30,
+    "title": "Product Images Around the World",
+    "statement": "A shop with its servers in Virginia, USA, sells worldwide. Product photos are 200 to 500 KB each, the same for every user, and change only when a seller uploads a new photo. Users in Asia wait several seconds for the images. How should the images be served?",
+    "examples": [
+      "A user in Hanoi opens a product page with 8 photos"
+    ],
+    "constraints": [
+      "A new photo must replace the old one for all users within an hour",
+      "Photos are the same for every user"
+    ],
+    "approaches": [
+      {
+        "id": "bigger-origin",
+        "name": "Move the photos to a faster server in Virginia",
+        "hint": "More power at the origin",
+        "label": "unsuitable",
+        "time": "Each photo still crosses the ocean",
+        "space": "No change",
+        "why": "The slow part is the distance to Asia, not the server's speed, so a faster server in Virginia does not remove the long round trips."
+      },
+      {
+        "id": "cdn-short-ttl",
+        "name": "Serve photos through a CDN with a TTL of one hour",
+        "hint": "Edge copies, refreshed hourly",
+        "label": "valid",
+        "time": "Nearby edge when it has a copy",
+        "space": "Copies at edge servers",
+        "why": "This meets both requirements: photos come from a nearby edge, and a new photo appears within an hour. Edges fetch every photo again each hour, even unchanged ones, which costs more traffic to the origin."
+      },
+      {
+        "id": "cdn-versioned",
+        "name": "Serve photos through a CDN with a long TTL, and give every new photo a new file name",
+        "hint": "A new name means a new copy",
+        "label": "best",
+        "time": "Nearby edge for almost every photo",
+        "space": "Copies at edge servers",
+        "why": "Unchanged photos stay at the edges for a long time, and a new upload gets a new name, so the page links to the new file at once. This meets the one-hour rule with fewer requests to the origin."
+      },
+      {
+        "id": "server-memory",
+        "name": "Keep the photos in the Virginia server's memory",
+        "hint": "A cache at the origin",
+        "label": "unsuitable",
+        "time": "Fast server, same distance",
+        "space": "Server memory",
+        "why": "An origin cache saves disk reads in Virginia, but users in Asia still wait for every round trip across the ocean."
+      }
+    ]
+  }
+]
