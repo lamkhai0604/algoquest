@@ -1,0 +1,429 @@
+[
+  {
+    "title": "Người dùng nhập địa chỉ web",
+    "body": "Trước khi gửi bất cứ dữ liệu gì, browser (trình duyệt) cần biết IP address (địa chỉ IP) của server (máy chủ). Browser tra tên shop.example bằng **DNS (hệ thống tên miền)**: đầu tiên kiểm tra cache (bộ nhớ đệm) của chính nó; nếu chưa có câu trả lời thì hỏi DNS resolver (máy chủ phân giải DNS). Đây là bước tra cứu, không phải trạm mà request (yêu cầu) đi xuyên qua. Lần đầu thường mất 20–100 ms; các lần sau gần như không mất thời gian vì kết quả đã được cache.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Trình duyệt",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ app",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "DNS lookup"
+        },
+        {
+          "name": "time so far",
+          "value": "≈50 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Mở kết nối",
+    "body": "Browser mở TCP connection (kết nối TCP), mất một round trip (lượt đi và về). Với https://, browser còn thiết lập mã hóa TLS: thêm một round trip với TLS 1.3 hoặc hai với TLS 1.2 cũ hơn. Trong các lượt này, browser chỉ chờ; dữ liệu trang chưa được truyền. Vì vậy, server ở xa vẫn có thể khiến trang chậm dù code chạy nhanh.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Trình duyệt",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ app",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "2 round trips, no data yet"
+        },
+        {
+          "name": "time so far",
+          "value": "≈110 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Gửi request",
+    "body": "Browser gửi HTTP request (yêu cầu HTTP), ví dụ GET /products/42. Request mang method (phương thức), path (đường dẫn), headers (thông tin bổ sung) như cookies và đôi khi có body (phần nội dung). Thêm một round trip trôi qua trước khi phản hồi bắt đầu đến.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Trình duyệt",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ app",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "1 more round trip"
+        },
+        {
+          "name": "time so far",
+          "value": "≈140 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Thời gian còn lại nằm ở đâu?",
+    "body": "Request đến application server (máy chủ ứng dụng). Server kiểm tra người dùng là ai, đọc thông tin sản phẩm từ **database (cơ sở dữ liệu)** và tạo trang. Database query (truy vấn) chậm hoặc thiếu index (chỉ mục) sẽ làm tăng thời gian ở đây, không phải trên network (mạng). Trong ví dụ này, server work (xử lý trên server) mất khoảng 600 ms, chiếm phần lớn tổng 800 ms.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Trình duyệt",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ app",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "server work and queries"
+        },
+        {
+          "name": "time so far",
+          "value": "≈740 ms"
+        }
+      ],
+      "predict": {
+        "question": "Đã trôi qua khoảng 140 ms, và cả trang mất khoảng 800 ms. Phần lớn 660 ms còn lại có khả năng nằm ở đâu?",
+        "options": [
+          "Đường truyền từ Singapore trở lại browser",
+          "Xử lý trên server và các database queries",
+          "Tra cứu DNS lần thứ hai cho cùng tên miền",
+          "Mở thêm một TCP connection"
+        ],
+        "answer": 1,
+        "explanation": "Gửi một trang nhỏ trở lại chỉ mất vài chục mili giây (khoảng 60 ms trong ví dụ), ít hơn nhiều so với 660 ms. Kết quả DNS đã được cache và kết nối đã mở nên không phải làm lại. Vậy phần thời gian lớn nhất nằm ở server và database.",
+        "hides": [
+          "step",
+          "time so far"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Phản hồi quay về",
+    "body": "Server gửi response (phản hồi) về browser qua kết nối đang mở, nên không phải trả thêm chi phí thiết lập kết nối. Các tệp lớn như hình ảnh tạo thành request riêng; mỗi request đó lại đi qua các bước gửi yêu cầu.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Trình duyệt",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ app",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "response comes back"
+        },
+        {
+          "name": "time so far",
+          "value": "≈800 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Tính thời gian từng bước",
+    "body": "Ghi lại từng bước và thời gian của nó. Các bước liên quan đến network cộng lại khoảng 200 ms (DNS 50, setup 60, request 30, response 60), còn server mất khoảng 600 ms. Dù network không tốn thời gian nào, trang vẫn cần 600 ms. Hãy sửa bước chậm nhất trước, sau đó kiểm tra số request riêng biệt, rồi mới cân nhắc chuyển server đến gần người dùng hơn.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Trình duyệt",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ app",
+            "x": 6,
+            "y": 3,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "DNS",
+          "value": "≈50 ms"
+        },
+        {
+          "name": "setup",
+          "value": "≈60 ms"
+        },
+        {
+          "name": "request",
+          "value": "≈30 ms"
+        },
+        {
+          "name": "server",
+          "value": "≈600 ms"
+        },
+        {
+          "name": "response",
+          "value": "≈60 ms"
+        },
+        {
+          "name": "note",
+          "value": "rough example numbers"
+        }
+      ],
+      "predict": {
+        "question": "Các bước network mất khoảng 200 ms, còn server work mất khoảng 600 ms. Thay đổi nào tiết kiệm nhiều thời gian nhất? Giả sử: data center gần hơn giảm mỗi round trip từ khoảng 30 ms xuống 10 ms (trang cần 4 lượt: 2 cho setup, 1 cho request, 1 cho response); DNS provider nhanh hơn giảm thời gian tra cứu từ 50 ms xuống 20 ms; database index giảm server work từ 600 ms xuống 200 ms; dùng lại kết nối đang mở bỏ qua 60 ms setup.",
+        "options": [
+          "Chuyển sang data center gần hơn",
+          "Dùng DNS provider nhanh hơn",
+          "Thêm database index",
+          "Dùng lại kết nối đang mở"
+        ],
+        "answer": 2,
+        "explanation": "Tính mức tiết kiệm của từng cách. Data center gần hơn: 4 lượt × (30 − 10) ms = 80 ms. (Dòng response khoảng 60 ms vì gồm một round trip và thời gian truyền dữ liệu trang; chỉ phần round trip ngắn lại.) DNS nhanh hơn: 50 − 20 = 30 ms. Index: 600 − 200 = 400 ms. Dùng lại kết nối: 60 ms. Index tiết kiệm nhiều nhất vì rút ngắn bước lớn nhất. Hãy cải thiện phần tốn thời gian nhất trước.",
+        "hides": [
+          "server"
+        ]
+      }
+    }
+  }
+]

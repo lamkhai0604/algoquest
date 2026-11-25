@@ -25,6 +25,14 @@ content/levels/1-big-o-and-basics/
 
 Do **not** duplicate the canonical problem JSON, answer keys, tests, hints, XP, or user progress in a translation folder. Problem statements and Pattern Recognition content will be localized in a later independent phase after an explicit review of their data model.
 
+## Terminology (D-080)
+
+Technical terms stay in English in every language, because learners meet them in documentation, logs and interviews. `content/glossary/vi.json` fixes one Vietnamese explanation per term. In a Vietnamese lesson, the first use of a term is followed by its explanation from the glossary in brackets; later uses keep only the English term. A translator who needs a new term, or a different explanation, adds or edits its entry in the same pull request, and the reviewer checks it.
+
+## Translated walkthrough values (D-080)
+
+A translated walkthrough keeps every visual variable with its English name, in the same order, because predictions hide variables by name. The variable values may be translated. Architecture component labels may also be translated (D-079). All other visual data, code, highlighted lines, answer indices and option order stay identical to English.
+
 ## Stable section IDs
 
 Localized Markdown uses fixed section markers, independent of displayed text. Every translated lesson must include these level-two sections in order:

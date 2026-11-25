@@ -4,11 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
+import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.PatternChallenge;
 import com.algoquest.content.model.Problem;
 import com.algoquest.content.model.ProblemTranslation;
 import com.algoquest.content.model.Visual;
+import com.algoquest.content.model.WalkthroughStep;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -359,6 +361,79 @@ class ContentLoaderTest {
     assertThat(problems)
         .anyMatch(p -> p.contains("step 3") && p.contains("lines needs"))
         .anyMatch(p -> p.contains("step 1") && p.contains("each call needs"));
+  }
+
+  @Test
+  void translationsMayTranslateVariableValuesButKeepTheirNames() {
+    Lesson english = load().get(1).lesson();
+    String markdown =
+        "# Bài\n"
+            + String.join(
+                "",
+                java.util.stream.Stream.of(
+                        "objectives",
+                        "problem-hook",
+                        "intuition",
+                        "when-to-use",
+                        "template-code",
+                        "complexity",
+                        "common-mistakes",
+                        "edge-cases",
+                        "worked-example")
+                    .map(id -> "\n## [" + id + "] Mục\n\nNội dung.\n")
+                    .toList());
+
+    List<String> translatedValues =
+        ContentValidator.checkLocalizedLesson(
+            "vi/", english, withVariables(english, markdown, false));
+    List<String> renamed =
+        ContentValidator.checkLocalizedLesson(
+            "vi/", english, withVariables(english, markdown, true));
+
+    assertThat(translatedValues).noneMatch(p -> p.contains("visual values"));
+    assertThat(renamed).anyMatch(p -> p.contains("step 2") && p.contains("visual values"));
+  }
+
+  /** A translated copy of the lesson: step 2 variables get new values, and optionally new names. */
+  private static Lesson withVariables(Lesson english, String markdown, boolean rename) {
+    List<WalkthroughStep> steps = new java.util.ArrayList<>(english.walkthrough());
+    WalkthroughStep step = steps.get(1);
+    Visual v = step.visual();
+    List<Visual.Variable> vars =
+        v.vars().stream()
+            .map(x -> new Visual.Variable(rename ? x.name() + "-x" : x.name(), "giá trị"))
+            .toList();
+    Visual copy =
+        new Visual(
+            v.cells(),
+            v.markers(),
+            vars,
+            v.predict(),
+            v.swap(),
+            v.next(),
+            v.tree(),
+            v.edges(),
+            v.directed(),
+            v.visited(),
+            v.positions(),
+            v.activeEdges(),
+            v.queue(),
+            v.rings(),
+            v.window(),
+            v.stack(),
+            v.explore(),
+            v.intervals(),
+            v.chosen(),
+            v.line(),
+            v.rows(),
+            v.rowLabels(),
+            v.columnLabels(),
+            v.reads(),
+            v.weights(),
+            v.calls(),
+            v.arch());
+    steps.set(1, new WalkthroughStep(step.title(), step.body(), step.code(), step.lines(), copy));
+    return new Lesson(markdown, steps, english.quickCheck(), english.intuition());
   }
 
   @Test

@@ -1,0 +1,556 @@
+[
+  {
+    "title": "Một server không đủ",
+    "body": "Một server chạm giới hạn ở khoảng 300 requests mỗi giây. Peak traffic (lưu lượng cao điểm) là 900. Bạn có thể nâng cấp máy mạnh hơn (vertical scaling, mở rộng theo chiều dọc), nhưng mỗi máy đều có giới hạn và chỉ một lỗi có thể làm cả dịch vụ ngừng. Thêm nhiều server giống nhau (horizontal scaling, mở rộng theo chiều ngang) giúp vượt giới hạn một máy, miễn là các phần khác của hệ thống vẫn theo kịp.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ",
+            "x": 6,
+            "y": 3,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "peak",
+          "value": "900 requests/s"
+        },
+        {
+          "name": "one server",
+          "value": "max 300 requests/s"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Đặt load balancer phía trước",
+    "body": "Người dùng gửi request (yêu cầu) đến một địa chỉ duy nhất: load balancer (bộ cân bằng tải). Nó chuyển mỗi request đến một trong nhiều server. Người dùng không cần biết có bao nhiêu server; nhóm kỹ thuật có thể thêm hoặc bỏ server mà không thay đổi địa chỉ người dùng truy cập.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Bộ cân bằng tải",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 2",
+            "x": 7,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "users see",
+          "value": "one address"
+        },
+        {
+          "name": "servers",
+          "value": "3, can change"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Chọn server cho từng request",
+    "body": "**Round robin (luân phiên)** gửi request lần lượt đến từng server. Cách này đơn giản và hiệu quả khi các request mất thời gian tương tự. **Least connections (ít kết nối nhất)** gửi request mới đến server có ít kết nối đang mở nhất. Cách này thường tốt hơn khi một số request chậm hơn nhiều so với những request khác.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Bộ cân bằng tải",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 2",
+            "x": 7,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "order",
+          "value": "S1 → S2 → S3 → S1 …"
+        },
+        {
+          "name": "each server",
+          "value": "≈300 of 900/s"
+        }
+      ],
+      "predict": {
+        "question": "Round robin gửi request lần lượt: request 1 đến Server 1, request 2 đến Server 2, request 3 đến Server 3, request 4 đến Server 1, rồi tiếp tục. Server nào nhận request 5?",
+        "options": [
+          "Server 1",
+          "Server 3",
+          "Server 2",
+          "Server có ít request đang mở nhất"
+        ],
+        "answer": 2,
+        "explanation": "Sau Server 3, thứ tự bắt đầu lại: request 4 đến Server 1 nên request 5 đến Server 2. Round robin không kiểm tra server bận đến đâu; chọn server có ít request đang mở nhất là phương pháp khác, least connections.",
+        "hides": [
+          "order"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Giữ các server stateless",
+    "body": "Nếu shopping cart (giỏ hàng) của người dùng chỉ nằm trong memory (bộ nhớ) của Server 2, request gửi đến Server 1 sẽ không tìm thấy giỏ hàng. Hãy lưu giỏ hàng trong shared database (cơ sở dữ liệu dùng chung) hoặc shared session store (kho phiên dùng chung) mà server nào cũng đọc được. Khi đó, bất kỳ server nào cũng có thể trả lời request.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Bộ cân bằng tải",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 2",
+            "x": 7,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Phiên + CSDL",
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          4,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "server memory",
+          "value": "no user data"
+        },
+        {
+          "name": "shared store",
+          "value": "cart and session"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Một server ngừng phản hồi",
+    "body": "Load balancer gửi health check (yêu cầu kiểm tra tình trạng) đến từng server sau mỗi vài giây. Server không trả lời OK sẽ bị loại khỏi rotation (danh sách nhận request). Từ lúc server hỏng đến lần kiểm tra tiếp theo, request gửi đến nó có thể lỗi hoặc timeout (hết thời gian chờ). Một số load balancer hoặc client có thể retry (thử lại) trên server khác, nhưng chỉ nên thử lại những request an toàn để lặp. Khoảng kiểm tra ngắn phát hiện lỗi nhanh hơn nhưng tăng tải; khoảng dài khiến nhiều request đến server hỏng trước khi nó bị loại.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Bộ cân bằng tải",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 2",
+            "x": 7,
+            "y": 3,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "drop": true
+      },
+      "vars": [
+        {
+          "name": "Server 2",
+          "value": "stopped answering"
+        },
+        {
+          "name": "next health check",
+          "value": "in a few seconds"
+        },
+        {
+          "name": "after the check",
+          "value": "traffic to S1 and S3 only"
+        }
+      ],
+      "predict": {
+        "question": "Server 2 vừa ngừng phản hồi, và vài giây nữa mới đến health check tiếp theo. Load balancer gửi một request đến Server 2 ngay lúc này. Điều gì xảy ra với request đó?",
+        "options": [
+          "Nó chờ đến khi Server 2 khởi động lại rồi hoàn thành",
+          "Load balancer luôn chuyển ngay nó đến Server 1 trong mọi cấu hình",
+          "Health check chạy sớm để cứu request đó",
+          "Nó có thể lỗi hoặc timeout, trừ khi một retry chuyển nó đến server khác"
+        ],
+        "answer": 3,
+        "explanation": "Load balancer vẫn nghĩ Server 2 khỏe mạnh nên gửi request đến đó; request có thể lỗi hoặc timeout. Việc có retry hay không tùy cấu hình: một số load balancer hoặc client thử lại trên server khác, số khác thì không. Request không chờ server khởi động lại và health check chạy theo lịch riêng.",
+        "hides": [
+          "after the check"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Kiểm tra bottleneck tiếp theo",
+    "body": "Các server đã chia nhau xử lý tải, nhưng tất cả vẫn ghi dữ liệu vào một database (cơ sở dữ liệu) duy nhất. Scaling out chỉ chuyển giới hạn sang chỗ khác, không xóa bỏ giới hạn. Bước thiết kế tiếp theo là kiểm tra database, nội dung của Level 31.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Bộ cân bằng tải",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 2",
+            "x": 7,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Cơ sở dữ liệu",
+            "x": 9,
+            "y": 1,
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "servers",
+          "value": "share the load"
+        },
+        {
+          "name": "database",
+          "value": "still one"
+        }
+      ]
+    }
+  }
+]

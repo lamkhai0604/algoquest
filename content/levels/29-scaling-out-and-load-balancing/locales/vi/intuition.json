@@ -1,0 +1,11 @@
+{
+  "question": "Vì sao mở thêm quầy thanh toán hiệu quả nhất khi thu ngân nào cũng phục vụ được mọi khách?",
+  "options": [
+    "Vì mở thêm quầy luôn rẻ hơn đào tạo thu ngân làm nhanh hơn",
+    "Vì khách phải quay lại đúng một thu ngân sẽ không thể được chuyển đến quầy bất kỳ đang trống",
+    "Vì khách luôn thích gặp cùng một thu ngân",
+    "Vì thu ngân dùng chung một ngăn đựng tiền"
+  ],
+  "answer": 1,
+  "explanation": "Đây là stateless scaling (mở rộng dịch vụ không lưu trạng thái riêng). Nếu server phải giữ dữ liệu người dùng trong memory của nó, load balancer phải gửi người dùng về server đó, nên server rảnh không giúp được. Sticky sessions (gắn người dùng với một server) vẫn hoạt động nhưng kém linh hoạt hơn. Chi phí là vấn đề riêng."
+}

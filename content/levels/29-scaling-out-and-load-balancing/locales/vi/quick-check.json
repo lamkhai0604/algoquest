@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Dịch vụ giữ login session (phiên đăng nhập) trong memory (bộ nhớ) của server xử lý lúc đăng nhập. Điều gì xảy ra khi thêm server thứ hai sau load balancer (bộ cân bằng tải)?",
+    "options": [
+      "Server thứ hai tự động sao chép session từ server thứ nhất",
+      "Không sao, vì browser giữ toàn bộ session",
+      "Người dùng được gửi đến server khác trông như đã đăng xuất, vì server đó không có session của họ",
+      "Chỉ có load balancer chạy chậm đi"
+    ],
+    "answer": 2,
+    "explanation": "Session chỉ nằm trong memory của server thứ nhất; các server không tự chia sẻ memory. Browser chỉ giữ cookie có session id (mã phiên), không giữ cả session. Cách sửa là shared session store (kho phiên dùng chung) để mọi server đều đọc được."
+  },
+  {
+    "question": "Một số requests mất 2 seconds còn phần lớn chỉ mất 20 ms. Cách nào thường phân phối công việc đều hơn?",
+    "options": [
+      "Least connections (ít kết nối nhất), vì server đang xử lý request chậm có nhiều kết nối mở nên nhận ít request mới hơn",
+      "Round robin (luân phiên), vì mỗi server nhận cùng số request",
+      "Luôn gửi mỗi người dùng đến cùng một server",
+      "Chọn server có số thứ tự cao nhất"
+    ],
+    "answer": 0,
+    "explanation": "Round robin chia đều số request chứ không chia đều lượng công việc, nên request chậm có thể dồn vào một server. Least connections gửi công việc mới đến server có ít kết nối mở nhất, hiệu quả khi kết nối mở nghĩa là công việc đang xử lý. Kết nối lâu dài nhưng rảnh, như chat, có thể khiến số đếm gây hiểu nhầm. Nếu mọi request mất thời gian tương tự, round robin cũng hiệu quả."
+  },
+  {
+    "question": "Health check (kiểm tra tình trạng) chỉ xác nhận chương trình trên server còn chạy. Vì sao chưa đủ?",
+    "options": [
+      "Kiểm tra chương trình dùng quá nhiều memory",
+      "Chương trình đang chạy không thể trả lời HTTP",
+      "Cách kiểm tra này loại nhầm server khỏe mạnh quá thường xuyên",
+      "Server có thể vẫn chạy nhưng không phục vụ được, chẳng hạn khi mất kết nối database"
+    ],
+    "answer": 3,
+    "explanation": "Health check hữu ích phải kiểm tra những thứ server cần để trả lời request thực tế, chẳng hạn kết nối database. Chỉ kiểm tra chương trình còn chạy có thể vẫn thành công dù mọi request thực tế đều thất bại."
+  }
+]
