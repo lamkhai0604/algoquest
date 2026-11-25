@@ -34,12 +34,12 @@
       },
       {
         "id": "fixed-common-fields",
-        "name": "Keep only id and name in whichever store has the fastest lookup; discard product-specific fields",
-        "hint": "Optimize only the common fields",
+        "name": "Use one relational table with the currently known columns; drop new fields until a schema change is scheduled",
+        "hint": "Fix the columns now, extend later",
         "label": "unsuitable",
-        "time": "May make the stored record smaller",
-        "space": "Less data because fields are discarded",
-        "why": "Choosing by lookup speed alone loses lens_mount, material and other required fields. It violates the requirement to store and return every provided product field, regardless of which database wins a speed test."
+        "time": "One primary-key lookup",
+        "space": "Rows with the known columns only",
+        "why": "Reads are simple, but a new field such as a lens's weight is lost until the schema changes. It violates the requirement to store and return every provided product field. The relational option above stays valid because it adds the column when the field appears."
       }
     ]
   },

@@ -342,6 +342,8 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-649 | SD 4 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude (one distractor reworded); content check in CI |
 | T-650 | Open every System Design level (Level 28 onward) to every account | FR-09, D-084 | P1 | Done 2026-11-25: backend unit test; CI |
 | T-651 | Show quick-check, prediction, intuition and pattern-challenge options in a random order; answers keep their content indices | FR-03, D-084 | P1 | Done 2026-11-25: frontend unit test; CI |
+| T-652 | SD 4 content review round 1 and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | In progress 2026-11-25: round 1 found 2 Major and 2 Minor issues, fixed in T-653; translation pending |
+| T-653 | SD 4 review round 1 fixes: full lock and version protocols in the walkthrough, load test instead of an unsupported capacity claim, scoped index-cost rule and isolation default, stronger distractors | FR-03, D-057 | P1 | Done 2026-11-25: content check in CI |
 
 ## Maintenance
 

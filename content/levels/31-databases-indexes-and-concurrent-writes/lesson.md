@@ -24,7 +24,7 @@
 - **Conditional update.** An update that changes a row only if a condition still holds at the moment of writing, such as `WHERE seats_left > 0`.
 - **Unique constraint.** A rule that rejects a second row with the same value in a column, such as the same seat number for the same flight.
 - **Lock.** A mark that stops other transactions from changing a row until the holder finishes.
-- **Pessimistic and optimistic concurrency.** Pessimistic: lock the row first, so others wait. Optimistic: do not lock; when writing, check that the row has not changed since it was read (for example by a **version** number), and retry if it has.
+- **Pessimistic and optimistic concurrency.** Pessimistic: lock the row first, inside a transaction, so others wait until it commits. Optimistic: do not lock; when writing, check that the row has not changed since it was read (for example by a **version** number) and change the version in the same write, then read again and retry if 0 rows changed.
 
 ## Problem hook
 
@@ -89,7 +89,7 @@ Claim the last seat safely:
 
 So a lookup reads about 3 or 4 pages, which is why it is fast even on disk.
 
-**The cost of an index.** Every insert, update of an indexed column, or delete must also update each index on the table. An index also takes storage, often a sizable part of the table's own size. A table with five indexes does about six pieces of work for each new row.
+**The cost of an index.** Indexes are not free on writes. In this lesson's simplified model, inserting a row writes the row plus one entry in each index, so a table with five indexes does about six pieces of logical work for each new row. Deletes and updates of indexed columns also change the indexes; the exact work depends on the database. An index also takes storage, often a sizable part of the table's own size.
 
 ## Common mistakes
 
@@ -120,7 +120,7 @@ Databases offer several **isolation levels**, which say how much transactions ru
 1. **The rule to protect.** One seat of one concert can have at most one buyer. Put it in the database: a unique constraint on `(concert_id, seat_number)`.
 2. **Buying a seat.** Insert the row. If another buyer inserted the same seat first, the constraint rejects this insert, and the application answers "seat taken". No check-then-write gap exists, because the check and the write are one step inside the database.
 3. **Reading the sold seats.** The page asks for all rows with one `concert_id`. The unique constraint creates an index on `(concert_id, seat_number)`, which also serves this query, because the index is sorted by `concert_id` first. No extra index is needed.
-4. **Cost of that index on writes.** Each purchase adds one table row and one index entry: two pieces of work instead of one. At 2,000 attempts per second this is far below the thousands of simple writes per second a single server can usually handle, but a load test should confirm it.
+4. **Cost of that index on writes.** Each purchase adds one table row and one index entry: two pieces of work instead of one. Whether one server keeps up with 2,000 attempts per second is not settled by the rough figure that a server handles thousands of simple writes per second, because that figure is too close to 2,000. A load test must confirm it with the real pattern: many buyers for the same concert, rejected duplicate inserts, and the chosen durability settings.
 5. **Counting seats left.** Seats left = seats in the hall − sold rows for the concert. For a hall of 1,500 seats this counts at most 1,500 rows through the index, fast enough for one request, and the result can be cached for a few seconds (SD 3) because the page only shows an estimate. The purchase itself never relies on the cached count.
 
 **Answer:** A unique constraint on `(concert_id, seat_number)` makes double booking impossible and gives the index the page needs. Purchases are plain inserts that either succeed or are rejected; the displayed count may be a few seconds old, but the database decides every sale.
