@@ -22,7 +22,7 @@
 - **Cache (bộ nhớ đệm).** Bản sao dữ liệu được giữ ở nơi truy cập nhanh, để không phải lấy lại từ nguồn gốc chậm hơn.
 - **CDN (mạng phân phối nội dung).** Tên đầy đủ là content delivery network. Nhiều server ở các thành phố trên thế giới giữ bản sao tệp như hình ảnh. Người dùng tải tệp từ một thành phố gần mình. Mỗi server đó gọi là **edge server** — máy chủ biên (máy chủ CDN gần người dùng).
 - **Bottleneck (điểm nghẽn).** Bước chậm nhất hoặc bận nhất, giới hạn tốc độ của cả hệ thống, giống cổ chai hẹp.
-- **Index (chỉ mục).** Cấu trúc giúp database tìm dòng dữ liệu nhanh hơn, giống mục tra cứu ở cuối sách. Truy vấn trên cột không có index có thể phải đọc mọi dòng. Level 31 sẽ học kỹ hơn.
+- **Index (chỉ mục).** Cấu trúc giúp database tìm dòng dữ liệu nhanh hơn, giống mục tra cứu ở cuối sách. Truy vấn trên cột không có index có thể phải đọc mọi dòng. SD 4 sẽ học kỹ hơn.
 - **Latency (độ trễ).** Tổng thời gian một request cần để hoàn thành, kể cả lúc chờ trong hàng đợi.
 - **Throughput (thông lượng).** Số request hệ thống hoàn thành trong mỗi giây.
 - **Đơn vị thời gian.** 1 second (giây) = 1,000 milliseconds (ms, mili giây). 1 ms = 1,000 microseconds (µs, micro giây). 1 µs = 1,000 nanoseconds (ns, nano giây). Vậy 1 ms bằng một triệu ns.

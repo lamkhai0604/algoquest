@@ -17,6 +17,7 @@ import game from "./Game.module.css";
 import { translate, useTranslation } from "../i18n";
 import type { Locale } from "../i18n";
 import styles from "./Pages.module.css";
+import { levelLabel } from "../game/levelLabel";
 
 /** The three sections of the Learning Path, in order. */
 const PHASES = [
@@ -78,7 +79,7 @@ function ContinueCard({ level }: { level: Level }) {
       <div className={game.heroText}>
         <span className={game.eyebrow}>{t("common.continue")}</span>
         <h2 className={game.heroTitle}>
-          Level {level.number} · {level.title}
+          {levelLabel(level.number)} · {level.title}
         </h2>
         <p className={styles.lead}>{level.summary}</p>
         <div className={styles.row}>
@@ -122,7 +123,7 @@ function LevelTile({ level }: { level: Level }) {
   if (!level.available) {
     return (
       <li className={cx(game.tile, game.tileSoon)}>
-        <span className={game.tileNumber}>Level {level.number}</span>
+        <span className={game.tileNumber}>{levelLabel(level.number)}</span>
         <span className={game.tileTitle}>{level.title}</span>
         <Badge>{label.text}</Badge>
       </li>
@@ -132,7 +133,7 @@ function LevelTile({ level }: { level: Level }) {
     level.target > 0 ? Math.min(100, (level.xp / level.target) * 100) : 0;
   const body = (
     <>
-      <span className={game.tileNumber}>Level {level.number}</span>
+      <span className={game.tileNumber}>{levelLabel(level.number)}</span>
       <span className={game.tileTitle}>{level.title}</span>
       <span className={game.tileBar} aria-hidden="true">
         <i style={{ width: `${percent}%` }} />
@@ -153,7 +154,7 @@ function LevelTile({ level }: { level: Level }) {
       <Link
         to={`/levels/${level.number}`}
         className={game.tile}
-        aria-label={`Level ${level.number}: ${level.title}`}
+        aria-label={`${levelLabel(level.number)}: ${level.title}`}
       >
         {body}
       </Link>

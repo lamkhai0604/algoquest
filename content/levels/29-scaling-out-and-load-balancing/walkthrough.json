@@ -461,7 +461,7 @@
   },
   {
     "title": "Check the next bottleneck",
-    "body": "The servers now share the load, but every server still writes to one database. Scaling out moved the limit; it did not remove it. The next design step is to look at the database, which is the topic of Level 31.",
+    "body": "The servers now share the load, but every server still writes to one database. Scaling out moved the limit; it did not remove it. The next design step is to look at the database, which is the topic of SD 4.",
     "visual": {
       "cells": [],
       "arch": {

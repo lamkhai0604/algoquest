@@ -71,6 +71,8 @@ Links are kept in the review notes of each level. Rules: a number or product cla
 
 ## 4. Level plan
 
+Level numbers below are the fixed internal numbers. Learners see them counted from 1: Level 28 is shown as `SD 1` and Level 53 as `SD 26` (D-081).
+
 Case studies (43 to 51) and Levels 52 and 53 all build on Level 42; this is not repeated in each row.
 
 ### Stage 1 — Foundations (Levels 28 to 32)

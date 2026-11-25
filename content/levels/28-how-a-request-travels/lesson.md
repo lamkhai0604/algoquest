@@ -22,7 +22,7 @@
 - **Cache.** A fast copy of data kept close to where it is needed, so it does not have to be fetched again from the slower original.
 - **CDN (content delivery network).** Many servers in cities around the world that keep copies of files such as images, so a user downloads them from a nearby city. Each of those servers is called an **edge server**.
 - **Bottleneck.** The slowest or busiest step, the one that limits the whole system, like the narrow neck of a bottle.
-- **Index.** An extra structure a database keeps so it can find rows quickly, like the index at the back of a book. A query on a column with no index may have to read every row. Level 31 covers indexes.
+- **Index.** An extra structure a database keeps so it can find rows quickly, like the index at the back of a book. A query on a column with no index may have to read every row. SD 4 covers indexes.
 - **Latency.** How long one request takes, including any time it waits in a queue.
 - **Throughput.** How many requests a system finishes per second.
 - **Units of time.** 1 second = 1,000 milliseconds (ms). 1 ms = 1,000 microseconds (µs). 1 µs = 1,000 nanoseconds (ns). So 1 ms is a million ns.
