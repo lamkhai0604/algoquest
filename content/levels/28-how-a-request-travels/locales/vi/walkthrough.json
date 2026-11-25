@@ -53,7 +53,7 @@
       "vars": [
         {
           "name": "step",
-          "value": "DNS lookup"
+          "value": "tra cứu DNS"
         },
         {
           "name": "time so far",
@@ -116,7 +116,7 @@
       "vars": [
         {
           "name": "step",
-          "value": "2 round trips, no data yet"
+          "value": "2 lượt đi và về, chưa truyền dữ liệu"
         },
         {
           "name": "time so far",
@@ -179,7 +179,7 @@
       "vars": [
         {
           "name": "step",
-          "value": "1 more round trip"
+          "value": "thêm 1 lượt đi và về"
         },
         {
           "name": "time so far",
@@ -243,7 +243,7 @@
       "vars": [
         {
           "name": "step",
-          "value": "server work and queries"
+          "value": "xử lý trên server và truy vấn"
         },
         {
           "name": "time so far",
@@ -322,7 +322,7 @@
       "vars": [
         {
           "name": "step",
-          "value": "response comes back"
+          "value": "phản hồi quay về"
         },
         {
           "name": "time so far",
@@ -407,7 +407,7 @@
         },
         {
           "name": "note",
-          "value": "rough example numbers"
+          "value": "số liệu ví dụ gần đúng"
         }
       ],
       "predict": {
