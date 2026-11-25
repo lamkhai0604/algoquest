@@ -1575,7 +1575,7 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
         >
           {visual &&
             (visual.arch ? (
-              <Architecture arch={visual.arch} />
+              <Architecture arch={visual.arch} masked={waiting} />
             ) : visual.edges && visual.explore ? (
               <Explorer key={index} visual={visual} />
             ) : visual.intervals ? (

@@ -1,7 +1,7 @@
 [
   {
     "title": "The user types a web address",
-    "body": "The browser needs a server address. The name `shop.example` must be turned into an IP address. First the browser checks its own cache; if it has no answer, it asks a DNS resolver. This step is often 20–100 ms the first time and almost zero after that.",
+    "body": "Before anything is sent, the browser needs the server's IP address. It looks up the name `shop.example` with **DNS**: first in its own cache, and if there is no answer, by asking a DNS resolver. This is a lookup, not a stop the request passes through. It often takes 20–100 ms the first time and almost nothing after that, because the answer is cached.",
     "visual": {
       "cells": [],
       "arch": {
@@ -64,7 +64,7 @@
   },
   {
     "title": "Open a connection",
-    "body": "The browser opens a TCP connection, which takes one round trip. For HTTPS it then sets up encryption (TLS), which takes another round trip or so. Both trips are pure waiting: no page data moves yet. This is why a far-away server feels slow even when its code is fast.",
+    "body": "The browser opens a TCP connection, which takes one round trip. For `https://` it then sets up encryption (TLS): one more round trip with TLS 1.3, or two with the older TLS 1.2. These trips are pure waiting: no page data moves yet. This is why a far-away server feels slow even when its code is fast.",
     "visual": {
       "cells": [],
       "arch": {
@@ -127,7 +127,7 @@
   },
   {
     "title": "Send the request",
-    "body": "The browser sends an HTTP request, for example `GET /products/42`. It carries the method, the path, headers such as cookies, and sometimes a body. One more round trip passes before the answer starts to arrive.",
+    "body": "The browser sends an HTTP request, for example `GET /products/42`. It carries the method, the path, and headers such as cookies, and sometimes a body. One more round trip passes before the answer starts to arrive.",
     "visual": {
       "cells": [],
       "arch": {
@@ -190,7 +190,7 @@
   },
   {
     "title": "The server does the work",
-    "body": "The request reaches an application server. The server checks the user, reads the product from a **database**, and builds the page. A slow query or a missing index shows up here, not in the network. In many slow pages, most of the time is spent in this step.",
+    "body": "The request reaches an application server. The server checks who the user is, reads the product from a **database**, and builds the page. A slow query or a missing index shows up here, not in the network. In this example the server work takes about 600 ms, most of the 800 ms.",
     "visual": {
       "cells": [],
       "arch": {
@@ -249,12 +249,26 @@
           "name": "time so far",
           "value": "≈740 ms"
         }
-      ]
+      ],
+      "predict": {
+        "question": "About 140 ms have passed so far, and the whole page takes about 800 ms. Where do most of the remaining 660 ms most likely go?",
+        "options": [
+          "The trip back from Singapore to the browser",
+          "Server work and database queries",
+          "A second DNS lookup for the same name",
+          "Opening another TCP connection"
+        ],
+        "answer": 1,
+        "explanation": "Sending the page back takes tens of milliseconds (about 60 ms in this example), far less than 660 ms. The DNS answer is already cached and the connection is already open, so neither repeats. That leaves the work on the server and in the database.",
+        "hides": [
+          "time so far"
+        ]
+      }
     }
   },
   {
     "title": "The response travels back",
-    "body": "The server sends the response over the same connection. Large files such as images are separate requests, and each one repeats the path. Reusing an open connection avoids paying the setup cost again.",
+    "body": "The server sends the response to the browser over the connection that is already open, so the setup cost is not paid again. Large files such as images are separate requests, and each one goes through the request steps again.",
     "visual": {
       "cells": [],
       "arch": {
@@ -317,8 +331,8 @@
     }
   },
   {
-    "title": "Count the hops, then fix the biggest one",
-    "body": "Write each hop and its time. If the server takes 600 ms and the network takes 100 ms, a faster network does not fix the page. Fix the server first, then look at the number of separate requests, and only then think about moving the server closer to users.",
+    "title": "Count the steps, then fix the biggest one",
+    "body": "Write each step and its time. The network steps add up to about 200 ms (DNS 50, setup 60, request 30, response 60), and the server takes about 600 ms. Even a network that took no time at all would leave a 600 ms page. Fix the server work first, then look at the number of separate requests, and only then think about moving the server closer to users.",
     "visual": {
       "cells": [],
       "arch": {
@@ -387,10 +401,28 @@
           "value": "≈600 ms"
         },
         {
+          "name": "response",
+          "value": "≈60 ms"
+        },
+        {
           "name": "note",
           "value": "rough example numbers"
         }
-      ]
+      ],
+      "predict": {
+        "question": "The network steps take about 200 ms in total and the server work takes about 600 ms. Which single change cuts the most time?",
+        "options": [
+          "Move the server to a data center closer to the user",
+          "Use a faster DNS provider",
+          "Make the server work faster, for example with a database index or a cache",
+          "Open the TCP connection earlier"
+        ],
+        "answer": 2,
+        "explanation": "All network steps together are about 200 ms, so even removing them completely saves at most 200 ms. Halving the server work alone saves 300 ms. Improve the biggest part first.",
+        "hides": [
+          "server"
+        ]
+      }
     }
   }
 ]

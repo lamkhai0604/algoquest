@@ -2,34 +2,34 @@
   {
     "question": "A service stores each user's login session in the memory of the server that handled the login. What breaks when you add a second server behind a load balancer?",
     "options": [
-      "Users sent to the other server are logged out, because it has no session",
-      "The load balancer stops working",
-      "The database becomes faster",
-      "Nothing; memory is shared automatically"
+      "The second server copies the session from the first one automatically",
+      "Nothing, because the browser keeps the whole session",
+      "Users sent to the other server look logged out, because that server has no session for them",
+      "Only the load balancer slows down"
+    ],
+    "answer": 2,
+    "explanation": "The session lives only in the first server's memory; servers do not share memory by themselves. The browser holds only a cookie with a session id, not the session. The fix is a shared session store that every server can read."
+  },
+  {
+    "question": "In a service, some requests take 2 seconds and most take 20 ms. Which method usually spreads the work more evenly?",
+    "options": [
+      "Least connections, because a server busy with slow requests has more open connections and gets fewer new ones",
+      "Round robin, because every server gets the same number of requests",
+      "Sending each user to the same server every time",
+      "Choosing the server with the highest number"
     ],
     "answer": 0,
-    "explanation": "Session data is stateful. The fix is a shared session store, so any server can read the session."
+    "explanation": "Round robin gives every server the same number of requests, not the same amount of work, so slow requests can pile up on one server. Least connections sends new work to the least busy server. When all requests take about the same time, round robin works just as well."
   },
   {
-    "question": "Some requests take 2 seconds and others take 20 ms. Which algorithm usually spreads the load more evenly?",
+    "question": "A health check only confirms that the server's process is running. Why is that not enough?",
     "options": [
-      "Round robin, because it is the simplest",
-      "Least connections, because a busy server with slow requests has more open connections",
-      "Random placement, because it never fails",
-      "Send everything to the largest server"
-    ],
-    "answer": 1,
-    "explanation": "Least connections sends new work to the server that is least busy, so slow requests do not pile up on one server."
-  },
-  {
-    "question": "A health check only confirms that the server process is running. Why is that not enough?",
-    "options": [
-      "It does not show whether the server can serve requests, for example when it cannot reach its database",
-      "Health checks must always be disabled",
       "Process checks use too much memory",
-      "It is enough; no other check is needed"
+      "A running process cannot answer HTTP",
+      "The check would remove healthy servers too often",
+      "A server can be running but unable to serve, for example when it cannot reach its database"
     ],
-    "answer": 0,
-    "explanation": "A server can be running but unable to do useful work. A useful health check tests the things the server needs to answer a request."
+    "answer": 3,
+    "explanation": "A useful health check tests what the server needs to answer a real request, such as its database connection. A process check passes even when every real request would fail."
   }
 ]
