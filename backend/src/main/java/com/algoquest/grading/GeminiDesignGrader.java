@@ -16,7 +16,7 @@ import tools.jackson.databind.JsonNode;
  */
 public class GeminiDesignGrader implements DesignGrader {
 
-  static final String VERSION = "design-v1";
+  static final String VERSION = "design-v2";
 
   /** A design is longer than a short reason, so the model may take longer. */
   static final Duration TIMEOUT = Duration.ofSeconds(40);
@@ -89,7 +89,7 @@ public class GeminiDesignGrader implements DesignGrader {
 
   private static String load() {
     try (InputStream in =
-        GeminiDesignGrader.class.getResourceAsStream("/grading/design-prompt-v1.txt")) {
+        GeminiDesignGrader.class.getResourceAsStream("/grading/design-prompt-v2.txt")) {
       return new String(in.readAllBytes(), StandardCharsets.UTF_8).stripTrailing();
     } catch (IOException e) {
       throw new UncheckedIOException(e);
