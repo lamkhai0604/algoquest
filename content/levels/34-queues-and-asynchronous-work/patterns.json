@@ -1,0 +1,149 @@
+[
+  {
+    "id": "P34-sync-or-queue",
+    "level": 34,
+    "title": "A Fast Order Confirmation",
+    "statement": "The user must receive the saved order id before the order request finishes, within 200 ms. Email, invoice PDF and warehouse notification may happen later. Exercise assumptions at the stated load: saving the order takes 30 ms, durably enqueueing one event takes 5 ms, email takes 400 ms, invoice generation takes 800 ms and warehouse notification takes 200 ms. These times include the overhead relevant to this simplified answer-time budget. The request is successful only after the order is saved and the event is stored. The producer has a supplied recovery mechanism that completes publishing after a crash between save and enqueue; implementing that mechanism is outside scope. Downstream calls support stable idempotency keys; invoice storage can enforce one invoice per order. Which request path fits best?",
+    "examples": [
+      "The customer needs a real saved order id now, but can receive the email later."
+    ],
+    "constraints": [
+      "Return the saved order id within 200 ms under the supplied healthy-operation timings.",
+      "Before confirming success, save the order and durably enqueue its downstream work.",
+      "Arrange eventual execution of email, invoice and warehouse work; do not duplicate their effects on redelivery."
+    ],
+    "approaches": [
+      {
+        "id": "required-now-optional-later",
+        "name": "Save the order, publish the event, then answer; independent downstream consumers process it later",
+        "hint": "Separate confirmation from later effects",
+        "label": "best",
+        "time": "30 + 5 = 35 ms before answering",
+        "space": "Durable messages and downstream worker state",
+        "why": "The response has the saved id after both required steps complete: 35 ms is within 200 ms. Give each downstream subscriber its own event copy, use stable order-based keys and acknowledge only after its effect succeeds. This keeps slow calls off the response path while retaining work and making redelivery harmless. The supplied producer recovery mechanism covers the save/publish gap."
+      },
+      {
+        "id": "all-sequential",
+        "name": "Save the order and complete email, invoice and warehouse calls sequentially before answering",
+        "hint": "Finish each step before returning",
+        "label": "unsuitable",
+        "time": "30 + 400 + 800 + 200 = 1,430 ms",
+        "space": "Request resources remain occupied during downstream calls",
+        "why": "Even with no retries, 1,430 ms exceeds the 200 ms answer-time requirement. Doing optional work while the customer waits does not meet the deadline."
+      },
+      {
+        "id": "queue-entire-request",
+        "name": "Enqueue the whole order-creation job and immediately return a job receipt before the order is saved",
+        "hint": "Let a worker create the order later",
+        "label": "unsuitable",
+        "time": "About 5 ms to store the job receipt",
+        "space": "The queued order-creation request",
+        "why": "This answers quickly but returns only a job receipt, not the saved order id. The order has not been saved before success is reported, violating the explicit confirmation requirements. Queuing is suitable for the optional work here, not for the required saved result."
+      }
+    ]
+  },
+  {
+    "id": "P34-retry-policy",
+    "level": 34,
+    "title": "A Partner Recovers After Two Minutes",
+    "statement": "One queued job must call a partner API. This exercise considers that single pending job; no other jobs use this client's partner request budget. A temporary outage begins at the first attempt and lasts at most 120 seconds, after which attempts succeed. Every attempt finishes within 20 ms. Successful completion is required automatically within 300 seconds of the first attempt. The partner permits no more than one attempt per second from this client. The worker uses the same partner-supported idempotency key on all attempts, and keeps the message until success or a terminal deadline. For an unexpected failure beyond the stated outage assumptions, stop automatic attempts at 300 seconds, preserve the job in a dead-letter queue and alert a person; that exception is not counted as successful delivery. Choose a retry policy.",
+    "examples": [
+      "The partner rejects the first attempt but has recovered by 120 seconds at the latest."
+    ],
+    "constraints": [
+      "Under the bounded-outage assumption, complete successfully within 300 seconds.",
+      "Never send attempts closer than one second apart for this client.",
+      "Use the same idempotency key, acknowledge only after success, and preserve unexpected deadline failures for investigation."
+    ],
+    "approaches": [
+      {
+        "id": "bounded-backoff",
+        "name": "Retry with waits of 1, 2, 4, 8, 16 seconds, then up to 30 seconds, adding bounded jitter; stop at the deadline",
+        "hint": "Spread attempts while bounding the next opportunity",
+        "label": "best",
+        "time": "Each wait is at least 1 s and at most 30 s including jitter; allow up to 20 ms for an in-flight failed call and 20 ms for the successful call",
+        "space": "One retained job, stable key and retry/deadline state",
+        "why": "Use nonnegative jitter with the total wait capped at 30 seconds and no wait below 1 second. Attempts respect the partner budget. After recovery by 120 seconds, the next attempt completes by at most 120 + 0.02 + 30 + 0.02 = 150.04 seconds, below 300. Keep the same key and acknowledge only on success; if the exceptional deadline is reached, move the job to the dead-letter queue and alert. Backoff can recover sooner than a single long sleep without hammering the partner."
+      },
+      {
+        "id": "immediate-retries",
+        "name": "Retry immediately after every failed attempt without a delay or deadline",
+        "hint": "Try again as soon as the call returns",
+        "label": "unsuitable",
+        "time": "At 20 ms per failed call, up to 1 ÷ 0.02 = 50 attempts per second",
+        "space": "A continuously active retrying worker",
+        "why": "An outage with 20 ms failures permits 50 attempts per second under this policy, exceeding the limit of 1. It also ignores the terminal deadline and required dead-letter handling. Faster retries do not make a down partner recover."
+      },
+      {
+        "id": "fixed-wait",
+        "name": "After the first failure, wait 180 seconds before retrying; keep the key and apply the same terminal-deadline rule",
+        "hint": "Leave a long fixed recovery window",
+        "label": "valid",
+        "time": "First call ≤0.02 s + wait 180 s + successful call ≤0.02 s = at most 180.04 s",
+        "space": "One retained job, key and deadline state",
+        "why": "By the retry the bounded 120-second outage has ended. Completion by 180.04 seconds is below 300, and the attempts are more than 1 second apart. The stable key, acknowledgment-after-success and terminal dead-letter rule meet every fixed requirement. It is simpler but deliberately leaves extra waiting after an earlier recovery."
+      },
+      {
+        "id": "no-retry",
+        "name": "On the first failure, acknowledge the job and record an error for later review",
+        "hint": "Keep the worker free after a failed call",
+        "label": "unsuitable",
+        "time": "The first failed attempt ends within 20 ms",
+        "space": "An error record instead of a retained pending job",
+        "why": "The partner may recover within 120 seconds, but this policy never automatically tries again. Acknowledging the failed job removes its delivery opportunity, so it cannot guarantee successful completion within 300 seconds and does not preserve it for the specified retry/dead-letter flow."
+      }
+    ]
+  },
+  {
+    "id": "P34-fan-out",
+    "level": 34,
+    "title": "One Order Event, Three Independent Services",
+    "statement": "Every order-placed event must reach email, warehouse and analytics independently. Analytics must rebuild a report from any events created during the previous 7 days, including events it already processed. Exercise assumptions: the event log retains all events for 14 days, capacity is sufficient for the stated workload and rebuild time, and no event is removed early after a consumer reads it. Each service keeps its own progress. For a pub/sub alternative, independent subscriptions are durable but acknowledged messages are deleted unless a separate retained log is provided. Consumers use stable keys so redelivery is harmless. Which broker design fits best?",
+    "examples": [
+      "Email has already processed an event; analytics later needs to replay that same event for its weekly report."
+    ],
+    "constraints": [
+      "Give all three services every event; one service must not consume another's only copy.",
+      "Allow analytics to replay every event from the previous 7 days, including already processed ones.",
+      "Let each service track progress independently, with harmless redelivery."
+    ],
+    "approaches": [
+      {
+        "id": "retained-log",
+        "name": "Publish once to the retained event log; give each service its own consumer offset",
+        "hint": "Independent positions over one retained history",
+        "label": "best",
+        "time": "Consumers advance independently and analytics can rewind its own offset",
+        "space": "14 days of retained events plus offsets and deduplication state",
+        "why": "Each service reads the stream at its own position rather than competing for a single delivery. Fourteen days of retention covers the required 7-day history, and analytics can replay without changing the other offsets. Stable keys protect effects if records are read again. It meets all requirements without a separate fan-out broker."
+      },
+      {
+        "id": "pubsub-with-history",
+        "name": "Use pub/sub with separate email and warehouse subscriptions, plus a 14-day retained event log for analytics",
+        "hint": "Fan out live work and retain the analytics history",
+        "label": "valid",
+        "time": "Live subscriptions and the analytics offset progress independently",
+        "space": "Subscriber queues plus retained analytics history and consumer state",
+        "why": "Email and warehouse each get a copy; the analytics subscriber records every event in its retained log before acknowledging, using a stable event key to prevent duplicate log entries. Analytics processes and replays with its own offset. Fourteen days covers 7 days. This meets all requirements, but the extra subscription-to-log step adds operational work compared with reading one log directly."
+      },
+      {
+        "id": "shared-queue",
+        "name": "Put each order event once in one queue shared by email, warehouse and analytics workers",
+        "hint": "Distribute deliveries among the available workers",
+        "label": "unsuitable",
+        "time": "Each message is handled by one competing consumer",
+        "space": "Pending messages until acknowledgment",
+        "why": "The queue assigns a delivery to one worker rather than giving each service its own copy. Email could receive an event that warehouse and analytics never receive, violating fan-out. Acknowledged messages also provide no retained history for rebuilding."
+      },
+      {
+        "id": "pubsub-only",
+        "name": "Publish to three independent subscriber queues and delete each copy after acknowledgment, with no retained log",
+        "hint": "Give each service its own live delivery",
+        "label": "unsuitable",
+        "time": "Independent live consumption by all three subscribers",
+        "space": "Unacknowledged subscriber messages only",
+        "why": "This meets the live fan-out requirement but deletes completed messages. Analytics cannot read already acknowledged events from the previous 7 days, so it fails the replay requirement."
+      }
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Exercise assumption: 50 invoice jobs arrive each second. There are 30 workers, each handling one job at a time, and every job takes 0.8 seconds. Starting with an empty backlog, how fast does unfinished work accumulate while this load continues?",
+    "options": [
+      "12.5 jobs per second: worker capacity is 30 × (1 ÷ 0.8) = 37.5, below the arrival rate of 50.",
+      "26 jobs per second: worker capacity is 30 × 0.8 = 24, so 50 - 24 = 26.",
+      "No backlog grows: each worker can start a new job as soon as it receives one, even while its previous job is running.",
+      "20 jobs per second: the 30 workers finish 30 jobs per second regardless of job duration."
+    ],
+    "answer": 0,
+    "explanation": "One worker finishes 1 ÷ 0.8 = 1.25 jobs per second. Thirty finish 30 × 1.25 = 37.5. The arrival rate exceeds that capacity by 50 - 37.5 = 12.5 jobs per second, so unfinished work accumulates at that sustained rate. Multiplying workers by seconds per job gives the wrong capacity units. The calculation is a steady-load model, not a claim that fractional individual jobs finish each instant."
+  },
+  {
+    "question": "A worker completes an invoice database write, then crashes before acknowledging its message. Delivery is at least once. Which behavior and protection are correct?",
+    "options": [
+      "The broker recognizes that the database write succeeded and deletes the message without an acknowledgment.",
+      "The next worker should acknowledge before writing, so a crash cannot cause another delivery.",
+      "After the timeout the message may be delivered again; use the same job key and an atomic database uniqueness/check rule so the repeat does not create a second invoice.",
+      "Use a fresh random key on every attempt, so the database treats every redelivery as new work."
+    ],
+    "answer": 2,
+    "explanation": "The broker has not received the acknowledgment, so it may deliver the message again after the timeout. The repeated job must carry the same key, such as the order id. For this database effect, a unique constraint or an atomic check-and-write makes duplicates harmless. Acknowledge after completion, not before: an early acknowledgment can lose work if the worker crashes. The broker does not infer success from an unrelated database write."
+  },
+  {
+    "question": "Email, warehouse and analytics each need every order-placed event. Analytics also needs to read last week's events again. Assume the chosen system is configured to retain that history and each service must progress independently. Which broker setup fits?",
+    "options": [
+      "One shared queue with email, warehouse and analytics competing as workers.",
+      "A pub/sub topic whose subscriber copies are removed after acknowledgment, with no retained history.",
+      "One shared queue, with each worker acknowledging before passing the event to the next service.",
+      "An event log retaining the required history, with a separate consumer offset for each service."
+    ],
+    "answer": 3,
+    "explanation": "The event log retains events after they are read. Separate offsets let email, warehouse and analytics each receive the stream at their own pace, and analytics can reset its position to replay last week. A shared queue distributes work rather than giving every service a copy. Pub/sub without retained history supports fan-out but cannot supply last week's already acknowledged events."
+  }
+]
