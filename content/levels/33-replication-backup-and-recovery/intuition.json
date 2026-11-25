@@ -1,0 +1,11 @@
+{
+  "question": "Assistants copy every word the teacher writes on the main board onto three other boards. The teacher erases half the main board by mistake. What happens to the copies?",
+  "options": [
+    "The assistants copy the erasing too, so the copies lose the same notes",
+    "The copies keep the old notes, because they were written earlier",
+    "Only the copy nearest to the teacher loses them",
+    "The copies restore the main board automatically"
+  ],
+  "answer": 0,
+  "explanation": "The assistants copy every change, and erasing is a change. Copies that follow the original faithfully protect against a lost board, not against a mistake on it. To get the notes back you need a photo taken earlier and kept elsewhere: a backup."
+}

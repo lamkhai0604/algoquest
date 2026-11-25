@@ -480,6 +480,61 @@
           "term": "lost update",
           "vi": "mất cập nhật",
           "firstLevel": 31
+        },
+        {
+          "term": "replication",
+          "vi": "sao chép dữ liệu sang nhiều máy chủ",
+          "firstLevel": 33
+        },
+        {
+          "term": "leader",
+          "vi": "máy chủ chính nhận mọi lệnh ghi",
+          "firstLevel": 33
+        },
+        {
+          "term": "follower",
+          "vi": "máy chủ bản sao áp dụng thay đổi từ leader",
+          "firstLevel": 33
+        },
+        {
+          "term": "read replica",
+          "vi": "bản sao dùng để phục vụ lệnh đọc",
+          "firstLevel": 33
+        },
+        {
+          "term": "replication lag",
+          "vi": "độ trễ sao chép",
+          "firstLevel": 33
+        },
+        {
+          "term": "synchronous replication",
+          "vi": "sao chép đồng bộ",
+          "firstLevel": 33
+        },
+        {
+          "term": "asynchronous replication",
+          "vi": "sao chép bất đồng bộ",
+          "firstLevel": 33
+        },
+        {
+          "term": "read-your-writes",
+          "vi": "luôn thấy thay đổi của chính mình",
+          "firstLevel": 33
+        },
+        {
+          "term": "restore",
+          "vi": "khôi phục từ bản sao lưu",
+          "firstLevel": 33
+        },
+        {
+          "term": "point-in-time recovery",
+          "vi": "khôi phục về một thời điểm",
+          "firstLevel": 33
+        },
+        {
+          "term": "log archiving",
+          "vi": "lưu trữ nhật ký thay đổi",
+          "firstLevel": 33
         }
       ]
     },
@@ -575,6 +630,36 @@
           "term": "downtime",
           "vi": "thời gian ngừng hoạt động",
           "firstLevel": 29
+        },
+        {
+          "term": "failover",
+          "vi": "chuyển sang máy chủ dự phòng",
+          "firstLevel": 33
+        },
+        {
+          "term": "promotion",
+          "vi": "nâng follower thành leader",
+          "firstLevel": 33
+        },
+        {
+          "term": "RPO",
+          "vi": "lượng dữ liệu tối đa được phép mất",
+          "firstLevel": 33
+        },
+        {
+          "term": "RTO",
+          "vi": "thời gian tối đa để hệ thống hoạt động lại",
+          "firstLevel": 33
+        },
+        {
+          "term": "split brain",
+          "vi": "hai máy chủ cùng nghĩ mình là leader",
+          "firstLevel": 33
+        },
+        {
+          "term": "fencing",
+          "vi": "chặn leader cũ ghi dữ liệu",
+          "firstLevel": 33
         }
       ]
     },

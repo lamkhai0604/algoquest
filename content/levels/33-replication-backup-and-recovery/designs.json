@@ -1,0 +1,108 @@
+[
+  {
+    "id": "D33-photo-feed",
+    "level": 33,
+    "title": "A Photo Feed That Outgrew Its Database",
+    "prompt": "A photo-sharing app runs on one database server, and the feed is getting slow. Users post photos, like and comment; most traffic is people scrolling feeds. Design how the database scales and stays available.",
+    "facts": [
+      "Peak: about 30,000 reads and 1,500 writes per second",
+      "Each database server can safely handle about 5,000 queries per second; applying a replicated write costs about as much as one query",
+      "About 2% of reads are a user's own posts and comments just after they change them, and must show the change",
+      "Other reads may be a few seconds old",
+      "When the database server fails, the app must work again within a few minutes"
+    ],
+    "scope": [
+      "The main database only",
+      "Photo files are in separate storage and out of scope",
+      "Backups are out of scope for this prompt"
+    ],
+    "criteria": {
+      "requirements": [
+        "States that users must see their own changes at once while others may see them a few seconds late",
+        "States the failure requirement: working again within minutes when a server fails"
+      ],
+      "estimation": [
+        "Fresh reads: 2% of 30,000 = 600 per second to the leader; leader load 1,500 + 600 = 2,100, under 5,000",
+        "Replica read room: 5,000 − 1,500 = 3,500; 29,400 ÷ 3,500 = 8.4, so 9 replicas (10 with a spare)"
+      ],
+      "design": [
+        "A leader for writes and fresh reads, read replicas for the other reads, and the app choosing where each read goes"
+      ],
+      "data": [
+        "Explains that each replica applies every write, so read room per replica is the safe limit minus the writes",
+        "Read-your-writes rule, such as reading a user's own data from the leader for a short time after a change, or using a replica that has caught up to the change"
+      ],
+      "tradeoffs": [
+        "Names a failure with its condition, such as: if the leader fails with asynchronous replication, writes within the lag are lost; a synchronous follower avoids it at the cost of a round trip per write",
+        "Or: lag grows in busy moments, so replicas that fall too far behind are taken out of service"
+      ]
+    },
+    "fullMarkDesigns": [
+      "One leader takes 1,500 writes plus 600 fresh reads per second; 9 asynchronous read replicas (plus one spare) serve 29,400 reads, each with 3,500 of read room after applying 1,500 writes. A user's own data is read from the leader for 30 s after a change. Failover promotes a replica within a minute; up to the lag's worth of writes can be lost.",
+      "Same leader and replica count from the same arithmetic, with one synchronous follower in the same data center used for failover so confirmed writes survive, and read-your-writes by tracking each change's log position and reading only from replicas that have reached it. Trade-off: each write waits about one extra round trip."
+    ],
+    "reference": {
+      "assumptions": [
+        "Reads and writes keep this ratio at peak",
+        "All servers are in one data center"
+      ],
+      "design": "Writes and the 2% of reads that must be fresh go to the leader: 1,500 + 600 = 2,100 queries per second, under 5,000.\nThe other 29,400 reads go to read replicas. Each replica applies all 1,500 writes per second, leaving 3,500 for reads: 29,400 ÷ 3,500 = 8.4, so 9 replicas, plus a spare.\nAfter a user posts or comments, their own feed and profile are read from the leader for 30 seconds. Replicas more than 10 seconds behind are taken out of service.\nOne follower is synchronous, so a failover to it loses no confirmed write; it is promoted within a minute and the old leader is fenced off.",
+      "alternatives": [
+        "A bigger single server: simpler, but no failover and the same limit later",
+        "A cache in front of the feed (SD 3): fewer reads reach the database, and can be combined with replicas"
+      ]
+    }
+  },
+  {
+    "id": "D33-clinic-records",
+    "level": 33,
+    "title": "Backups for a Clinic's Appointments",
+    "prompt": "A small clinic chain keeps patient appointments in one database with one replica for failover. An insurance audit asks how the clinic would recover from a mistaken delete or from losing its data center. Design the backup and recovery plan.",
+    "facts": [
+      "The database holds about 50 GB and grows about 1 GB a month",
+      "A restore runs at about 100 MB per second",
+      "The clinic accepts losing at most 5 minutes of changes (RPO)",
+      "The clinic must be working again within 2 hours of a disaster (RTO)",
+      "Mistakes are sometimes noticed only days later"
+    ],
+    "scope": [
+      "The appointments database",
+      "Application servers and patient files are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States RPO 5 minutes and RTO 2 hours, and that both a mistaken delete and a lost data center must be covered",
+        "Explains why the existing replica does not meet the requirement for a mistaken delete"
+      ],
+      "estimation": [
+        "Restore time: 50,000 MB ÷ 100 MB/s = 500 s, about 8 minutes, plus log replay, well within 2 hours",
+        "Or: log archived at least every 5 minutes to meet the RPO"
+      ],
+      "design": [
+        "Full backups on a schedule, the database log archived often, both stored outside the data center, and a restore path to a chosen time"
+      ],
+      "data": [
+        "Where backups are kept (another region or account, with separate access) and how long (longer than mistakes take to notice, such as 30 days)",
+        "Point-in-time recovery: restore the last full backup, then replay the log up to just before the mistake"
+      ],
+      "tradeoffs": [
+        "Names a trade-off or failure with its condition, such as: an untested backup may fail, so restores are tested on a schedule; longer retention costs more storage; archiving the log more often costs more but lowers the RPO"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Nightly full backup and the database log archived every minute, both copied to storage in another region with separate access, kept 35 days. Restore: 50 GB at 100 MB/s ≈ 8 minutes plus log replay, far inside 2 hours; RPO about 1 minute. The replica covers a failed server; backups cover mistakes and a lost data center. A restore is tested every month.",
+      "Weekly full backups plus daily incremental backups and continuous log archiving (at most 5 minutes behind) to a separate account, kept for 60 days. Recovery from a mistake: point-in-time restore to a new server, then copy the deleted rows back. Trade-off: more backup pieces make a restore slower to assemble, so the monthly test measures it against the 2-hour RTO."
+    ],
+    "reference": {
+      "assumptions": [
+        "The backup storage is in another region",
+        "A new database server can be started within minutes"
+      ],
+      "design": "Every night a full backup is taken, and the database log is archived every minute. Both are copied to storage in another region, under a separate account so that no one can delete live data and backups with the same access. Backups are kept for 35 days, longer than a mistake usually takes to notice.\nAfter a mistaken delete, a new server restores the last full backup and replays the log up to one minute before the delete. 50,000 MB ÷ 100 MB/s = 500 s, about 8 minutes, plus replay: well within the 2-hour RTO, with at most about 1 minute of changes lost.\nThe replica still handles a failed server within minutes. A restore is tested every month.",
+      "alternatives": [
+        "Only the replica: fast failover, but a mistaken delete is copied to it",
+        "Snapshots once a day without log archiving: simpler, but up to 24 hours of changes could be lost, far over the 5-minute RPO"
+      ]
+    }
+  }
+]
