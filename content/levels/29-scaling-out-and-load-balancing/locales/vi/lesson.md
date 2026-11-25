@@ -55,7 +55,7 @@ Trong sơ đồ, shared database (cơ sở dữ liệu dùng chung) lưu dữ li
 Users -> Load balancer -> Server 1
                        -> Server 2
                        -> Server 3
-Servers -> shared database (and shared cache or session store, if needed)
+Servers -> shared database (và shared cache hoặc session store nếu cần)
 
 Danh sách kiểm tra:
   1. Mỗi server có stateless không? (không giữ dữ liệu người dùng chỉ trong memory riêng)
