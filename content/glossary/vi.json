@@ -118,7 +118,7 @@
         },
         {
           "term": "idempotent",
-          "vi": "gửi lại nhiều lần vẫn cho cùng kết quả",
+          "vi": "gửi lại nhiều lần vẫn giữ cùng trạng thái dự kiến",
           "firstLevel": 32
         },
         {

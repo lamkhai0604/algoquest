@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Response bị mất sau khi server xử lý request. Giả sử không client khác sửa resource và API theo đúng ý nghĩa method trong bài. Request nào có thể gửi lại nguyên vẹn và để lại cùng trạng thái cuối như gửi một lần?",
+    "options": [
+      "POST /orders với cùng chi tiết đơn, vì mất response nghĩa là đơn đầu chưa tạo.",
+      "PATCH /orders/42 thêm một món nữa, vì PATCH chỉ sửa một phần resource.",
+      "PUT /orders/42/delivery-note thay cả ghi chú bằng cùng nội dung, vì lặp thay thế để lại cùng trạng thái cuối.",
+      "POST /orders với cùng chi tiết trên cùng kết nối, vì HTTP loại request đã giao một lần."
+    ],
+    "answer": 2,
+    "explanation": "PUT thay cả resource này. Đặt ghi chú thành cùng nội dung lần nữa để lại trạng thái như đặt một lần. Mất response không nói được server đã làm việc chưa. Gửi POST /orders lại có thể tạo đơn thứ hai, gửi PATCH lại có thể thêm món thứ hai: cả hai đổi trạng thái hai lần. HTTP không tự phát hiện request lặp, dù cùng kết nối hay không; để POST gửi lại an toàn cần idempotency key (SD 7)."
+  },
+  {
+    "question": "Khách đăng nhập hợp lệ. Request chỉ một đơn tồn tại của khách khác mà họ không được xem. API này báo trực tiếp lỗi quyền thay vì giấu sự tồn tại của đơn. Status code nào phù hợp?",
+    "options": [
+      "403 Forbidden: khách đã xác thực nhưng không được phép xem đơn này.",
+      "401 Unauthorized: đơn của người khác, dù đăng nhập hợp lệ.",
+      "404 Not Found: đơn không nằm trong các đơn của khách này.",
+      "400 Bad Request: request hỏi đơn mà khách không được xem."
+    ],
+    "answer": 0,
+    "explanation": "Request đúng định dạng, đăng nhập hợp lệ và đơn tồn tại, nhưng thiếu quyền: 403. Ở đây 401 là thiếu hoặc sai đăng nhập, 404 là thiếu resource và 400 là request không hợp lệ. Chính sách API đã cho loại trường hợp giấu lỗi quyền bằng 404."
+  },
+  {
+    "question": "Lịch sử mới nhất trước có time tạo duy nhất, cố định. Sau khi trang 1 trả 20 mục đầu, một mục mới đến đầu danh sách. Vì sao OFFSET 20 có thể lặp mục ở trang 2, và cách nào sửa sự dịch chuyển đó?",
+    "options": [
+      "Mục mới khiến database lưu row trùng; thêm unique constraint trên order id.",
+      "Sắp mới nhất trước không ổn định; thêm order id làm column sắp thứ hai.",
+      "Trang 1 từ cache đã cũ; xóa cache trước khi hỏi trang 2.",
+      "Chèn làm vị trí row dịch chuyển nên mục cuối trang 1 cũ đi qua offset; dùng cursor cho các mục cũ hơn mục cuối đã hiện."
+    ],
+    "answer": 3,
+    "explanation": "Trang 1 ban đầu kết thúc ở vị trí 20. Thêm một mục đầu danh sách đẩy mục đó đến vị trí 21. OFFSET 20 bỏ vị trí 1 đến 20 và trả mục đó lần nữa. Cursor dùng time tạo cố định của mục cuối, nên trang tiếp theo đi đến mục cũ hơn thay vì đếm lại vị trí. Index trên customer_id và created_at hỗ trợ tra cứu. Không có row bị nhân đôi hay cache; column sắp thứ hai chỉ quan trọng khi time tạo có thể trùng, điều không xảy ra ở đây."
+  }
+]
