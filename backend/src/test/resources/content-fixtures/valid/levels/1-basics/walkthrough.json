@@ -261,7 +261,8 @@
             "label": "Server",
             "x": 4,
             "y": 2,
-            "state": "hot"
+            "state": "hot",
+            "note": "busy"
           },
           {
             "kind": "db",
@@ -284,6 +285,15 @@
           0,
           1,
           2
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1
+            ],
+            "drop": true
+          }
         ]
       }
     }

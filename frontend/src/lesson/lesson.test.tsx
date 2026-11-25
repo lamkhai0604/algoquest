@@ -769,6 +769,53 @@ describe("lesson page", () => {
     ).toBeInTheDocument();
   });
 
+  it("moves several requests at once and shows component notes", async () => {
+    const lesson = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Two buyers, one seat",
+          body: "Both try to claim the last seat.",
+          visual: {
+            cells: [],
+            arch: {
+              nodes: [
+                { kind: "client", label: "Buyer A", x: 0, y: 1 },
+                { kind: "client", label: "Buyer B", x: 0, y: 7 },
+                {
+                  kind: "db",
+                  label: "Database",
+                  x: 6,
+                  y: 4,
+                  note: "1 seat left",
+                },
+              ],
+              links: [
+                [0, 2],
+                [1, 2],
+              ],
+              path: [0, 2],
+              flows: [{ path: [1, 2], drop: true }],
+            },
+          },
+        },
+      ],
+    };
+    open(lesson as unknown as Lesson, 2);
+
+    const diagram = await screen.findByRole("img", {
+      name: "Buyer A → Database; Buyer B → Database",
+    });
+    expect(within(diagram).getByText("1 seat left")).toBeInTheDocument();
+    expect(diagram.querySelectorAll('[data-active="true"]')).toHaveLength(2);
+    expect(diagram.querySelectorAll('[data-flow="0"]').length).toBeGreaterThan(
+      0,
+    );
+    expect(diagram.querySelectorAll('[data-flow="1"]').length).toBeGreaterThan(
+      0,
+    );
+  });
+
   it("plays the steps by itself and pauses", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     try {

@@ -636,7 +636,7 @@ final class ContentValidator {
     return true;
   }
 
-  /** Translations may change component labels only. */
+  /** Translations may change component labels and notes only. */
   private static boolean sameArchitecture(Visual.Architecture a, Visual.Architecture b) {
     if (a == null || b == null) {
       return a == b;
@@ -658,7 +658,8 @@ final class ContentValidator {
     }
     return java.util.Objects.equals(a.links(), b.links())
         && java.util.Objects.equals(a.path(), b.path())
-        && a.drops() == b.drops();
+        && a.drops() == b.drops()
+        && java.util.Objects.equals(a.flows(), b.flows());
   }
 
   private static final Set<String> COMPONENT_STATES = Set.of("hot", "down");
@@ -692,6 +693,12 @@ final class ContentValidator {
                 + ": each component needs a known kind, a label of at most "
                 + Visual.MAX_COMPONENT_LABEL
                 + " characters, and a state of hot, down or none");
+        return;
+      }
+      if (node.note() != null
+          && (blank(node.note()) || node.note().length() > Visual.MAX_COMPONENT_NOTE)) {
+        problems.add(
+            where + ": a component note needs 1 to " + Visual.MAX_COMPONENT_NOTE + " characters");
         return;
       }
       if (node.x() < 0
@@ -732,18 +739,37 @@ final class ContentValidator {
     }
     List<Integer> path = arch.path();
     if (path != null) {
-      boolean valid = path.size() >= 2 && !path.contains(null);
-      for (int i = 0; valid && i + 1 < path.size(); i++) {
-        int a = path.get(i);
-        int b = path.get(i + 1);
-        valid = links.contains(Math.min(a, b) + "-" + Math.max(a, b));
-      }
-      if (!valid) {
+      if (!followsLinks(path, links)) {
         problems.add(where + ": path needs two or more components, each step along a link");
       }
     } else if (arch.drops()) {
       problems.add(where + ": drop needs a path");
     }
+    List<Visual.Flow> flows = arch.flows();
+    if (flows != null) {
+      if (flows.size() > Visual.MAX_FLOWS || flows.contains(null)) {
+        problems.add(where + ": arch has at most " + Visual.MAX_FLOWS + " extra flows");
+        return;
+      }
+      for (Visual.Flow flow : flows) {
+        if (flow.path() == null || !followsLinks(flow.path(), links)) {
+          problems.add(
+              where + ": each flow path needs two or more components, each step along a link");
+          return;
+        }
+      }
+    }
+  }
+
+  /** A path visits two or more components, and each step follows one of the given links. */
+  private static boolean followsLinks(List<Integer> path, Set<String> links) {
+    boolean valid = path.size() >= 2 && !path.contains(null);
+    for (int i = 0; valid && i + 1 < path.size(); i++) {
+      int a = path.get(i);
+      int b = path.get(i + 1);
+      valid = links.contains(Math.min(a, b) + "-" + Math.max(a, b));
+    }
+    return valid;
   }
 
   private static void checkVisual(List<String> problems, String where, Visual visual) {

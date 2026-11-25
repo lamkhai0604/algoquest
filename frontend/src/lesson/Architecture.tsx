@@ -9,7 +9,8 @@ import type { VisualArch, VisualComponent } from "./types";
  * plain SVG; the motion uses SVG animation, so nothing moves when the browser
  * asks for reduced motion and the path is shown by its highlighted links.
  * While a prediction is open the path is hidden, so it does not give the
- * answer away.
+ * answer away. Extra flows move at the same time as the main path, and a
+ * component may carry a short note above its label (T-645).
  */
 
 /** Grid unit in pixels, and how tall a request dot flies above the floor. */
@@ -154,8 +155,18 @@ function Block({ node }: { node: VisualComponent }) {
       <text className={styles.archLabel} x={lx} y={ly}>
         {node.label}
       </text>
+      {node.note && (
+        <text className={styles.archNote} x={lx} y={ly - 15}>
+          {node.note}
+        </text>
+      )}
     </g>
   );
+}
+
+interface RouteFlow {
+  path: number[];
+  drop: boolean;
 }
 
 export function Architecture({
@@ -163,19 +174,32 @@ export function Architecture({
   masked = false,
 }: {
   arch: VisualArch;
-  /** While a prediction is open, the path and the moving requests stay hidden. */
+  /** While a prediction is open, the paths and the moving requests stay hidden. */
   masked?: boolean;
 }) {
   const { nodes, links } = arch;
-  const path = masked ? [] : (arch.path ?? []);
+  // The main path and any extra flows (T-645) move at the same time.
+  const flows: RouteFlow[] = masked
+    ? []
+    : [
+        ...(arch.path && arch.path.length >= 2
+          ? [{ path: arch.path, drop: Boolean(arch.drop) }]
+          : []),
+        ...(arch.flows ?? [])
+          .filter((flow) => flow.path.length >= 2)
+          .map((flow) => ({ path: flow.path, drop: Boolean(flow.drop) })),
+      ];
   const onPath = new Set<string>();
-  for (let i = 0; i + 1 < path.length; i++) {
-    const a = path[i]!;
-    const b = path[i + 1]!;
-    onPath.add(`${Math.min(a, b)}-${Math.max(a, b)}`);
+  for (const flow of flows) {
+    for (let i = 0; i + 1 < flow.path.length; i++) {
+      const a = flow.path[i]!;
+      const b = flow.path[i + 1]!;
+      onPath.add(`${Math.min(a, b)}-${Math.max(a, b)}`);
+    }
   }
+  const hasNotes = nodes.some((node) => node.note);
 
-  // Bounds of every corner, top, and label, so the view fits the drawing.
+  // Bounds of every corner, top, label and note, so the view fits the drawing.
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -193,7 +217,7 @@ export function Architecture({
       minX = Math.min(minX, px - 40);
       maxX = Math.max(maxX, px + 40);
       maxY = Math.max(maxY, py);
-      minY = Math.min(minY, py - shape.height - 44);
+      minY = Math.min(minY, py - shape.height - (hasNotes ? 62 : 44));
     }
   }
   const width = maxX - minX + PAD * 2;
@@ -204,15 +228,22 @@ export function Architecture({
     .map((node, i) => ({ node, i }))
     .sort((p, q) => p.node.x + p.node.y - (q.node.x + q.node.y));
 
-  // The request goes along the path and back, or stops at the end if lost.
-  const stops = path.map((i) => iso(nodes[i]!.x, nodes[i]!.y, FLY));
-  const route = arch.drop ? stops : [...stops, ...stops.slice(0, -1).reverse()];
-  const legs = Math.max(1, route.length - 1);
-  const seconds = legs * SECONDS_PER_LINK;
-  const motion = route
-    .map(([a, b], i) => `${i === 0 ? "M" : "L"}${a.toFixed(1)} ${b.toFixed(1)}`)
-    .join(" ");
-  const animate = path.length >= 2 && !reducedMotion();
+  // Each request goes along its path and back, or stops at the end if lost.
+  const motions = flows.map((flow) => {
+    const stops = flow.path.map((i) => iso(nodes[i]!.x, nodes[i]!.y, FLY));
+    const route = flow.drop
+      ? stops
+      : [...stops, ...stops.slice(0, -1).reverse()];
+    const seconds = Math.max(1, route.length - 1) * SECONDS_PER_LINK;
+    const motion = route
+      .map(
+        ([a, b], i) => `${i === 0 ? "M" : "L"}${a.toFixed(1)} ${b.toFixed(1)}`,
+      )
+      .join(" ");
+    return { flow, seconds, motion };
+  });
+  const animate = flows.length > 0 && !reducedMotion();
+  const dots = flows.length > 1 ? 2 : DOTS;
 
   return (
     <svg
@@ -220,8 +251,10 @@ export function Architecture({
       viewBox={viewBox}
       role="img"
       aria-label={
-        path.length >= 2
-          ? path.map((i) => nodes[i]!.label).join(" → ")
+        flows.length > 0
+          ? flows
+              .map((flow) => flow.path.map((i) => nodes[i]!.label).join(" → "))
+              .join("; ")
           : nodes.map((node) => node.label).join(", ")
       }
     >
@@ -247,32 +280,43 @@ export function Architecture({
         <Block key={i} node={node} />
       ))}
       {animate &&
-        Array.from({ length: DOTS }, (_, k) => (
-          <circle
-            key={`${motion}-${k}`}
-            className={styles.archDot}
-            data-dot={k}
-            r={5.5}
-            fill={GOING}
-          >
-            <animateMotion
-              dur={`${seconds}s`}
-              begin={`${(-(seconds * k) / DOTS).toFixed(2)}s`}
-              repeatCount="indefinite"
-              path={motion}
-              calcMode="linear"
-            />
-            <animate
-              attributeName="fill"
-              dur={`${seconds}s`}
-              begin={`${(-(seconds * k) / DOTS).toFixed(2)}s`}
-              repeatCount="indefinite"
-              calcMode="discrete"
-              values={arch.drop ? `${GOING};${LOST}` : `${GOING};${ANSWERED}`}
-              keyTimes={arch.drop ? "0;0.85" : "0;0.5"}
-            />
-          </circle>
-        ))}
+        motions.flatMap(({ flow, seconds, motion }, f) =>
+          Array.from({ length: dots }, (_, k) => {
+            // Flows start at different moments so their dots do not overlap.
+            const begin = (-(seconds * (k + f / flows.length)) / dots).toFixed(
+              2,
+            );
+            return (
+              <circle
+                key={`${f}-${motion}-${k}`}
+                className={styles.archDot}
+                data-dot={`${f}-${k}`}
+                data-flow={f}
+                r={5.5}
+                fill={GOING}
+              >
+                <animateMotion
+                  dur={`${seconds}s`}
+                  begin={`${begin}s`}
+                  repeatCount="indefinite"
+                  path={motion}
+                  calcMode="linear"
+                />
+                <animate
+                  attributeName="fill"
+                  dur={`${seconds}s`}
+                  begin={`${begin}s`}
+                  repeatCount="indefinite"
+                  calcMode="discrete"
+                  values={
+                    flow.drop ? `${GOING};${LOST}` : `${GOING};${ANSWERED}`
+                  }
+                  keyTimes={flow.drop ? "0;0.85" : "0;0.5"}
+                />
+              </circle>
+            );
+          }),
+        )}
     </svg>
   );
 }

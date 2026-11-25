@@ -109,7 +109,11 @@ public record Visual(
    * path and back; with {@code drop} it is lost at the last component instead.
    */
   public record Architecture(
-      List<Component> nodes, List<List<Integer>> links, List<Integer> path, Boolean drop) {
+      List<Component> nodes,
+      List<List<Integer>> links,
+      List<Integer> path,
+      Boolean drop,
+      List<Flow> flows) {
 
     public boolean drops() {
       return Boolean.TRUE.equals(drop);
@@ -117,10 +121,29 @@ public record Visual(
   }
 
   /**
-   * One component: its kind (which shape is drawn), a short label, its place on the floor grid, and
-   * an optional state, {@code hot} for overloaded or {@code down} for failed.
+   * Another request moving at the same time as {@code path}, for example a second user racing for
+   * the same row, or a worker reading from a queue (T-645). With {@code drop} it is lost or refused
+   * at the last component of its path.
    */
-  public record Component(String kind, String label, int x, int y, String state) {}
+  public record Flow(List<Integer> path, Boolean drop) {
+
+    public boolean drops() {
+      return Boolean.TRUE.equals(drop);
+    }
+  }
+
+  /** The most extra flows a diagram may have. */
+  public static final int MAX_FLOWS = 4;
+
+  /** The longest note shown next to a component. */
+  public static final int MAX_COMPONENT_NOTE = 20;
+
+  /**
+   * One component: its kind (which shape is drawn), a short label, its place on the floor grid, and
+   * an optional state, {@code hot} for overloaded or {@code down} for failed, and an optional short
+   * note shown above it, such as "locked" or "lag 200 ms" (T-645).
+   */
+  public record Component(String kind, String label, int x, int y, String state, String note) {}
 
   /** The kinds of component an architecture diagram can draw. */
   public static final java.util.Set<String> COMPONENT_KINDS =

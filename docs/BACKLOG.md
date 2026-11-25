@@ -335,6 +335,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-640 | SD 3 (Level 30) Caching and CDNs in English: lesson with key terms and an optional extension, 7-step walkthrough with two predictions, quick check, intuition, three trade-off challenges; 15 glossary terms | FR-03, D-057, D-079, D-080, D-081 | P1 | Built 2026-11-25; review by ChatGPT, fact check by Gemini, translation, PO check pending |
 | T-641 | SD 3 review fixes: freshness promise accounts for slow reads (TTL counts from insertion), measured hit rate stated, empty-cache plan limits database reads, CDN challenge states measured latency and a delivery requirement, versioned file names and CDN revalidation taught, where to cache, better distractors, write-through and LRU wording | FR-03, D-057 | P1 | Done 2026-11-25: content check in CI; focused re-review pending |
 | T-642 | SD 3 review round 2 fixes: the 200 ms photo requirement applies to photos cached at the edge, first and expired requests may take longer, and both CDN options explain those requests; demand-driven revalidation wording | FR-03, D-057 | P2 | Done 2026-11-25: content check in CI; final check pending |
+| T-645 | Architecture diagrams: several requests at once (`flows`) and component notes (`note`), with content checks and translation rules | FR-03, D-082 | P1 | Done 2026-11-25: backend and frontend tests; preview screenshot |
 
 ## Maintenance
 
