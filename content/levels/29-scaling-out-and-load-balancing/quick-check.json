@@ -19,7 +19,7 @@
       "Choosing the server with the highest number"
     ],
     "answer": 0,
-    "explanation": "Round robin gives every server the same number of requests, not the same amount of work, so slow requests can pile up on one server. Least connections sends new work to the least busy server. When all requests take about the same time, round robin works just as well."
+    "explanation": "Round robin gives every server the same number of requests, not the same amount of work, so slow requests can pile up on one server. Least connections sends new work to the server with the fewest open requests, which works when an open connection means work in progress. With long-lived connections that sit idle, such as chat, the count can mislead. When all requests take about the same time, round robin works just as well."
   },
   {
     "question": "A health check only confirms that the server's process is running. Why is that not enough?",

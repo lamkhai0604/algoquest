@@ -79,7 +79,7 @@ In system design, "complexity" means **cost and limits**. Write these for every 
 - **Storage**: what data this step must keep, and for how long.
 - **First failure**: what breaks first when load doubles.
 
-Rough numbers that help with estimates (approximate, order of magnitude only). Each row is roughly a thousand times slower than the row above it:
+Rough numbers that help with estimates (approximate, order of magnitude only). Each row is slower than the one above it, by very different amounts:
 
 | Operation | About |
 | --- | --- |
@@ -88,7 +88,7 @@ Rough numbers that help with estimates (approximate, order of magnitude only). E
 | Round trip inside one data center | 0.5 ms (= 500 µs) |
 | Round trip across an ocean | 100–150 ms |
 
-The lesson of the table: a trip across an ocean takes about a million times longer than reading memory. Distance and waiting usually matter more than the speed of the code.
+Compare the rows: an SSD read is about 1,000 times slower than a memory read; a round trip inside a data center is about 5 times slower than an SSD read; and a round trip across an ocean is about 200 to 300 times slower than one inside a data center. From memory to an ocean round trip is about a million times. Distance and waiting usually matter more than the speed of the code.
 
 **Estimation shortcut.** A day has 24 × 60 × 60 = 86,400 seconds. We round it to 10⁵ (100,000) to make the division easy; the answer keeps the right size.
 
@@ -117,16 +117,18 @@ Peak traffic is often several times the average, so plan for the peak, not the a
 
 ## Worked example
 
-**Problem:** A product page takes 800 ms for a user in Ho Chi Minh City. The server is in Singapore. Explain the likely parts of the 800 ms, and say what to measure first.
+**Problem:** For a user in Ho Chi Minh City, the HTML of a product page arrives 800 ms after they press Enter. The server is in Singapore, and this is the user's first visit. Explain the likely parts of the 800 ms, and say what to measure first. (Images and scripts load after the HTML, so they are not part of these 800 ms.)
 
 **Estimate the parts (approximate):**
 
 1. **DNS lookup**: often 20–100 ms the first time, then cached, so later visits skip it.
 2. **Connection setup**: TCP needs one round trip, and TLS one more (TLS 1.3) or two (TLS 1.2), so two or three round trips before any page data. Singapore is close to Ho Chi Minh City, so each round trip is about 20–30 ms. Two to three trips × 20–30 ms = 40–90 ms.
-3. **The request and response**: one more round trip, about 30 ms.
-4. **Server work**: the application code and database queries. Steps 1 to 3 add up to at most about 100 + 90 + 30 = 220 ms, so the rest of the 800 ms, about 580 ms or more, is likely here.
-5. **Images and scripts**: separate requests, which can add up when they load one after another.
+3. **Sending the request**: one more round trip passes before the first byte of the answer can arrive, about 30 ms.
+4. **Server work**: the application code and database queries. Work it out from the other steps: steps 1, 2, 3 and 5 add up to at most about 100 + 90 + 30 + 60 = 280 ms, so the rest of the 800 ms, about 520 ms or more, is spent here.
+5. **Sending the page back**: a small page from a nearby server arrives in tens of milliseconds, say about 60 ms.
 
-**What to measure first:** the time spent on the server (step 4) and the number of separate requests (step 5). Network time is smaller here, and it can be reduced later with a data center closer to users or a CDN.
+After the HTML arrives, the images and scripts are separate requests. They make the whole page slower, so count them too, but they are not part of these 800 ms.
 
-**Answer:** Most of the 800 ms is likely server work and extra requests, not distance. Measure the server part before buying hardware.
+**What to measure first:** the time spent on the server (step 4), and then the number of separate requests for images and scripts. Network time is smaller here, and it can be reduced later with a data center closer to users or a CDN.
+
+**Answer:** Most of the 800 ms is likely server work, not distance. Measure the server part before buying hardware.

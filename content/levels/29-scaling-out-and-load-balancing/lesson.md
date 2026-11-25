@@ -33,7 +33,7 @@ Scaling is the plan for that growth. The question is not only "how big a machine
 
 Think of a supermarket on a busy Saturday. One cashier can serve only so many customers an hour. You can train that cashier to be faster (vertical scaling), but there is a limit to how fast one person can move. Or you can open more checkouts (horizontal scaling). A greeter at the door sends each customer to a checkout that is free, which is the job of a load balancer.
 
-Opening more checkouts works only if any cashier can serve any customer. Imagine a shop where you leave your basket at one cashier's desk and come back for it later. If the greeter sends you to a different cashier on your second visit, your basket is not there. That shop is stateful. If baskets are kept at one shared counter that every cashier can reach, any cashier can serve you. That shop is stateless.
+Opening more checkouts works best when any cashier can serve any customer. Imagine a shop where you leave your basket at one cashier's desk and come back for it later. If the greeter sends you to a different cashier on your second visit, your basket is not there. That shop is stateful. If baskets are kept at one shared counter that every cashier can reach, any cashier can serve you. That shop is stateless.
 
 ## When to use
 
@@ -82,7 +82,7 @@ Layer 4 and Layer 7 load balancers differ in what they read:
 
 - **Scaling out a stateful service without a plan for its data.** Two servers that each hold a different user session will log users out at random.
 - **Forgetting the shared database.** Adding servers in front of one database only moves the bottleneck.
-- **Trusting round robin with uneven work.** If some requests take ten times longer, one server can pile up slow requests while others sit idle. Least connections often spreads such work better; when all requests take about the same time, round robin is just as good and simpler.
+- **Trusting round robin with uneven work.** If some requests take ten times longer, one server can pile up slow requests while others sit idle. Least connections often spreads such work better, as long as an open connection means work in progress; when all requests take about the same time, round robin is just as good and simpler.
 - **A health check that always says OK.** A check that only confirms the process exists does not catch a server that cannot reach its database.
 - **One load balancer and no backup.** The part that spreads the load must not be the one part that fails.
 

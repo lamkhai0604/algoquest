@@ -38,7 +38,7 @@
         "label": "valid",
         "time": "A signature check plus one lookup per request",
         "space": "The token travels with each request; the list holds only logged-out tokens until they expire",
-        "why": "This meets both requirements: any server can check the token, and the shared list makes a logout take effect at once. It is more complex than a session store, so it is a good choice mainly when most requests can skip the store."
+        "why": "This meets both requirements: any server can check the token, and the shared list makes a logout take effect at once. Each request still needs one lookup, in a small list of logged-out tokens instead of the full session, and the team must run both token signing and the list. That extra complexity is why it is not the first choice here."
       },
       {
         "id": "token-only",
@@ -97,14 +97,14 @@
     "id": "P29-small-tool",
     "level": 29,
     "title": "An Internal Tool for 50 People",
-    "statement": "A company's meeting-room booking tool has 50 users and about 5 requests per second at its busiest. It runs on one small server that is busy about 10% of the time. A few minutes of downtime during a planned restart is acceptable, and a lower cost is better. Next year the company expects 80 users. How should the tool be scaled?",
+    "statement": "A company's meeting-room booking tool has 50 users and about 5 requests per second at its busiest. It runs on one small server that is busy about 10% of the time. If the tool is down, staff can book rooms by email, so an outage of up to an hour, planned or not, is acceptable. A lower cost is better. Next year the company expects 80 users. How should the tool be scaled?",
     "examples": [
       "Today: 5 requests per second, server busy 10% of the time",
       "Next year: about 80 ÷ 50 × 5 = 8 requests per second"
     ],
     "constraints": [
-      "Short planned downtime is acceptable",
-      "Lower cost is preferred, but not at the price of reliability"
+      "Downtime of up to an hour is acceptable, planned or unplanned",
+      "Lower cost is preferred"
     ],
     "approaches": [
       {
@@ -123,7 +123,7 @@
         "label": "valid",
         "time": "Each server even less busy",
         "space": "Two servers and a load balancer",
-        "why": "This works and also survives a server failing, but the team accepts short downtime, so it pays for protection it does not need."
+        "why": "This works and also survives a server failing, but an hour of downtime is acceptable here, so it pays for protection the tool does not need."
       },
       {
         "id": "many-regions",
