@@ -1,26 +1,524 @@
 [
   {
     "title": "One server is not enough",
-    "body": "A single server handles 300 requests per second. Peak traffic is 900. You can make the server bigger (vertical scaling), but a machine has a ceiling and one failure takes everything down. Adding more identical servers (horizontal scaling) removes the ceiling, if the rest of the system can keep up."
+    "body": "A single server reaches its limit at about 300 requests per second. Peak traffic is 900. You can make the server bigger (vertical scaling), but a machine has a ceiling and one failure takes everything down. Adding more identical servers (horizontal scaling) removes the ceiling, if the rest of the system can keep up.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 6,
+            "y": 3,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "peak",
+          "value": "900 requests/s"
+        },
+        {
+          "name": "one server",
+          "value": "max 300 requests/s"
+        }
+      ]
+    }
   },
   {
     "title": "Put a load balancer in front",
-    "body": "Users send requests to one address, the load balancer. It forwards each request to one of several servers. The users do not know how many servers exist, and a server can be added or removed without changing the address they use."
+    "body": "Users send requests to one address, the load balancer. It forwards each request to one of several servers. The users do not know how many servers exist, and a server can be added or removed without changing the address they use.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 7,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Server 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "users see",
+          "value": "one address"
+        },
+        {
+          "name": "servers",
+          "value": "3, can change"
+        }
+      ]
+    }
   },
   {
     "title": "Pick a server for each request",
-    "body": "**Round robin** sends requests to servers in turn. It is simple and works when requests take similar time. **Least connections** sends each request to the server with the fewest open connections. It works better when some requests are much slower than others."
+    "body": "**Round robin** sends requests to servers in turn. It is simple and works when requests take similar time. **Least connections** sends each request to the server with the fewest open connections. It works better when some requests are much slower than others.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 7,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Server 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "order",
+          "value": "S1 → S2 → S3 → S1 …"
+        },
+        {
+          "name": "each server",
+          "value": "≈300 of 900/s"
+        }
+      ]
+    }
   },
   {
     "title": "Keep servers stateless",
-    "body": "If a user's shopping cart lives only in Server 2's memory, a request sent to Server 1 finds no cart. Store the cart in a shared database or a shared session store that every server can read. Then any server can answer any request."
+    "body": "If a user's shopping cart lives only in Server 2's memory, a request sent to Server 1 finds no cart. Store the cart in a shared database or a shared session store that every server can read. Then any server can answer any request.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 7,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Server 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Sessions + DB",
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          4,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "server memory",
+          "value": "no user data"
+        },
+        {
+          "name": "shared store",
+          "value": "cart and session"
+        }
+      ]
+    }
   },
   {
     "title": "Remove a broken server",
-    "body": "The load balancer calls each server's health check every few seconds. A server that does not answer OK is taken out of rotation. A short interval finds failures faster but adds checking load; a long one sends more requests to a dead server first."
+    "body": "The load balancer calls each server's health check every few seconds. A server that does not answer OK is taken out of rotation. Requests sent to it before the check notices are lost, so clients should retry safely. A short interval finds failures faster but adds checking load; a long one sends more requests to a dead server first.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 7,
+            "y": 3,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Server 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "drop": true
+      },
+      "vars": [
+        {
+          "name": "health check",
+          "value": "S2 failed"
+        },
+        {
+          "name": "traffic",
+          "value": "S1 and S3 only"
+        }
+      ]
+    }
   },
   {
     "title": "Check the next bottleneck",
-    "body": "The servers now share the load, but every server still writes to one database. Scaling out moved the limit; it did not remove it. The next design step is to look at the database, which is the topic of Level 31."
+    "body": "The servers now share the load, but every server still writes to one database. Scaling out moved the limit; it did not remove it. The next design step is to look at the database, which is the topic of Level 31.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 7,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Server 3",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 1,
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "servers",
+          "value": "share the load"
+        },
+        {
+          "name": "database",
+          "value": "still one"
+        }
+      ]
+    }
   }
 ]

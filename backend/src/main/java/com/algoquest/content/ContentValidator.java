@@ -283,6 +283,7 @@ final class ContentValidator {
               || !java.util.Objects.equals(a.window(), b.window())
               || !java.util.Objects.equals(a.stack(), b.stack())
               || !java.util.Objects.equals(a.calls(), b.calls())
+              || !sameArchitecture(a.arch(), b.arch())
               || a.explores() != b.explores()
               || !java.util.Objects.equals(a.intervals(), b.intervals())
               || !java.util.Objects.equals(a.chosen(), b.chosen())
@@ -610,6 +611,116 @@ final class ContentValidator {
     }
   }
 
+  /** Translations may change component labels only. */
+  private static boolean sameArchitecture(Visual.Architecture a, Visual.Architecture b) {
+    if (a == null || b == null) {
+      return a == b;
+    }
+    if (a.nodes() == null || b.nodes() == null || a.nodes().size() != b.nodes().size()) {
+      return a.nodes() == b.nodes();
+    }
+    for (int i = 0; i < a.nodes().size(); i++) {
+      Visual.Component x = a.nodes().get(i);
+      Visual.Component y = b.nodes().get(i);
+      if (x == null
+          || y == null
+          || !java.util.Objects.equals(x.kind(), y.kind())
+          || x.x() != y.x()
+          || x.y() != y.y()
+          || !java.util.Objects.equals(x.state(), y.state())) {
+        return false;
+      }
+    }
+    return java.util.Objects.equals(a.links(), b.links())
+        && java.util.Objects.equals(a.path(), b.path())
+        && a.drops() == b.drops();
+  }
+
+  private static final Set<String> COMPONENT_STATES = Set.of("hot", "down");
+
+  private static void checkArchitecture(List<String> problems, String where, Visual visual) {
+    Visual.Architecture arch = visual.arch();
+    if (arch == null) {
+      return;
+    }
+    if (!visual.cells().isEmpty()
+        || visual.drawsGraph()
+        || visual.drawsTree()
+        || visual.next() != null
+        || visual.drawsIntervals()
+        || visual.drawsTable()) {
+      problems.add(where + ": an architecture diagram uses cells [] and no other drawing");
+    }
+    List<Visual.Component> nodes = arch.nodes() == null ? List.of() : arch.nodes();
+    if (nodes.isEmpty() || nodes.size() > Visual.MAX_COMPONENTS || nodes.contains(null)) {
+      problems.add(where + ": arch needs 1 to " + Visual.MAX_COMPONENTS + " components");
+      return;
+    }
+    Set<String> places = new HashSet<>();
+    for (Visual.Component node : nodes) {
+      if (!Visual.COMPONENT_KINDS.contains(node.kind())
+          || blank(node.label())
+          || node.label().length() > Visual.MAX_COMPONENT_LABEL
+          || (node.state() != null && !COMPONENT_STATES.contains(node.state()))) {
+        problems.add(
+            where
+                + ": each component needs a known kind, a label of at most "
+                + Visual.MAX_COMPONENT_LABEL
+                + " characters, and a state of hot, down or none");
+        return;
+      }
+      if (node.x() < 0
+          || node.x() >= Visual.ARCH_COLUMNS
+          || node.y() < 0
+          || node.y() >= Visual.ARCH_ROWS
+          || !places.add(node.x() + "," + node.y())) {
+        problems.add(
+            where
+                + ": component places are columns 0 to "
+                + (Visual.ARCH_COLUMNS - 1)
+                + " and rows 0 to "
+                + (Visual.ARCH_ROWS - 1)
+                + ", one component per place");
+        return;
+      }
+    }
+    int n = nodes.size();
+    Set<String> links = new HashSet<>();
+    for (List<Integer> link : arch.links() == null ? List.<List<Integer>>of() : arch.links()) {
+      boolean valid =
+          link != null
+              && link.size() == 2
+              && !link.contains(null)
+              && link.get(0) >= 0
+              && link.get(0) < n
+              && link.get(1) >= 0
+              && link.get(1) < n
+              && !link.get(0).equals(link.get(1))
+              && links.add(
+                  Math.min(link.get(0), link.get(1)) + "-" + Math.max(link.get(0), link.get(1)));
+      if (!valid) {
+        problems.add(
+            where
+                + ": each link needs the indices of two different components, and no link repeats");
+        return;
+      }
+    }
+    List<Integer> path = arch.path();
+    if (path != null) {
+      boolean valid = path.size() >= 2 && !path.contains(null);
+      for (int i = 0; valid && i + 1 < path.size(); i++) {
+        int a = path.get(i);
+        int b = path.get(i + 1);
+        valid = links.contains(Math.min(a, b) + "-" + Math.max(a, b));
+      }
+      if (!valid) {
+        problems.add(where + ": path needs two or more components, each step along a link");
+      }
+    } else if (arch.drops()) {
+      problems.add(where + ": drop needs a path");
+    }
+  }
+
   private static void checkVisual(List<String> problems, String where, Visual visual) {
     if (visual.cells() == null) {
       problems.add(where + ": visual needs cells (use [] for none)");
@@ -664,6 +775,7 @@ final class ContentValidator {
       problems.add(where + ": stack items must be text");
     }
     checkCalls(problems, where, visual.calls());
+    checkArchitecture(problems, where, visual);
     checkIntervals(problems, where, visual);
     checkTable(problems, where, visual);
     if (visual.weights() != null

@@ -1409,6 +1409,93 @@
   user-select: none;
 }
 
+/* System design diagram in 3D (D-079). */
+.arch {
+  display: block;
+  width: 100%;
+  max-width: 620px;
+  height: auto;
+  margin: 0 auto var(--space-3);
+}
+
+.archLink {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-dasharray: 4 5;
+  stroke-width: 2;
+}
+
+.archLinkActive {
+  stroke: var(--color-primary);
+  stroke-dasharray: none;
+  stroke-width: 3;
+}
+
+.archShadeLeft {
+  fill: rgb(0 0 0 / 18%);
+}
+
+.archShadeRight {
+  fill: rgb(0 0 0 / 34%);
+}
+
+.archDetail {
+  fill: none;
+  stroke: rgb(255 255 255 / 40%);
+  stroke-width: 1.5;
+}
+
+.archLabel {
+  paint-order: stroke;
+  fill: var(--color-text);
+  stroke: var(--color-surface);
+  stroke-width: 3px;
+  font: 600 12px var(--font-sans, system-ui, sans-serif);
+  text-anchor: middle;
+}
+
+.archMark {
+  fill: var(--color-warning);
+  font:
+    700 16px system-ui,
+    sans-serif;
+  text-anchor: middle;
+}
+
+.archDot {
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+.archHot {
+  animation: arch-shake 0.5s ease-in-out infinite;
+}
+
+.archDown {
+  opacity: 0.75;
+}
+
+@keyframes arch-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-1.5px);
+  }
+
+  75% {
+    transform: translateX(1.5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archHot {
+    animation: none;
+  }
+}
+
 /* Recursion staircase (D-078). */
 .calls {
   --call-step: 22px;

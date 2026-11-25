@@ -317,7 +317,9 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
 | T-618 | Phase 4 syllabus: levels 28 to 41, references for checking facts, lesson format, design prompts and rubric, authoring workflow, delivery plan | D-007, D-056 | P1 | Draft written 2026-11-24; PO review pending |
-| T-620 | Phase 4 content, levels 28 and 29: lessons, walkthroughs, quick checks, intuition questions and trade-off challenges (no XP, no design-prompt kind yet); listed in the existing Phase 4 section of the Learning Path | D-056, D-070 | P1 | Content built 2026-11-24 on `content/T-620-phase4-levels-28-29`; CI and PO review pending |
+| T-620 | Phase 4 content, levels 28 and 29: lessons, walkthroughs, quick checks, intuition questions and trade-off challenges (no XP, no design-prompt kind yet); listed in the existing Phase 4 section of the Learning Path | D-056, D-070 | P1 | Done 2026-11-24: content check in CI; merged to `dev`; PO review pending |
+| T-622 | 3D architecture diagram for walkthroughs (`visual.arch`): content check, drawing with moving requests, Levels 28 and 29 walkthroughs use it | FR-03, D-079 | P1 | Done 2026-11-24: backend and frontend tests; preview screenshots on desktop and phone widths; PO review pending |
+| T-623 | Clearer estimates in Levels 28 and 29: every step of each calculation written out (powers of ten, rounding of a day to 10⁵ seconds, rounding up server counts); the Level 29 worked example states 300 requests per second as the server's limit, which the calculation assumes | FR-03 | P2 | Done 2026-11-24: content check in CI |
 
 ## Maintenance
 

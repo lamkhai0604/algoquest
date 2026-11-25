@@ -19,7 +19,9 @@ import java.util.List;
  * and an optional table layout: the cells in {@code rows} rows with row and column labels and the
  * indexes of the cells a step reads (D-068), and optional edge weights, one label per edge (D-069),
  * and optional recursive calls drawn as a staircase, one box per call indented by its depth
- * (D-078). Everything except {@code cells} is optional.
+ * (D-078), and an optional architecture diagram drawn in 3D: components on a floor grid, links
+ * between them, and the path one request travels in this step (D-079). Everything except {@code
+ * cells} is optional.
  */
 public record Visual(
     List<String> cells,
@@ -47,7 +49,8 @@ public record Visual(
     List<String> columnLabels,
     List<Integer> reads,
     List<String> weights,
-    List<Call> calls) {
+    List<Call> calls,
+    Architecture arch) {
 
   /** The most cells a tree may have: five levels. */
   public static final int MAX_TREE_CELLS = 31;
@@ -99,6 +102,40 @@ public record Visual(
 
   /** Calls are indented at most this deep. */
   public static final int MAX_CALL_DEPTH = 6;
+
+  /**
+   * A system design diagram (D-079): components placed on a floor grid, the links between them, and
+   * the components one request passes through in this step, in order. The request travels along the
+   * path and back; with {@code drop} it is lost at the last component instead.
+   */
+  public record Architecture(
+      List<Component> nodes, List<List<Integer>> links, List<Integer> path, Boolean drop) {
+
+    public boolean drops() {
+      return Boolean.TRUE.equals(drop);
+    }
+  }
+
+  /**
+   * One component: its kind (which shape is drawn), a short label, its place on the floor grid, and
+   * an optional state, {@code hot} for overloaded or {@code down} for failed.
+   */
+  public record Component(String kind, String label, int x, int y, String state) {}
+
+  /** The kinds of component an architecture diagram can draw. */
+  public static final java.util.Set<String> COMPONENT_KINDS =
+      java.util.Set.of("client", "dns", "cdn", "lb", "server", "cache", "db", "queue");
+
+  /** The most components a diagram may have. */
+  public static final int MAX_COMPONENTS = 10;
+
+  /** Floor positions are columns 0 to 10 and rows 0 to 8. */
+  public static final int ARCH_COLUMNS = 11;
+
+  public static final int ARCH_ROWS = 9;
+
+  /** The longest component label. */
+  public static final int MAX_COMPONENT_LABEL = 16;
 
   /** A variable and its value after the step. */
   public record Variable(String name, String value) {}

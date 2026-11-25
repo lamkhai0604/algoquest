@@ -706,6 +706,56 @@ describe("lesson page", () => {
     expect(after.getAllByRole("listitem")[0]).toHaveTextContent("f(1)running");
   });
 
+  it("draws a system design diagram and moves the request along its path", async () => {
+    const nodes = [
+      { kind: "client", label: "Users", x: 0, y: 2 },
+      { kind: "lb", label: "Balancer", x: 3, y: 2 },
+      { kind: "server", label: "Server 2", x: 6, y: 2, state: "down" },
+      { kind: "server", label: "Server 1", x: 6, y: 0 },
+    ];
+    const links = [
+      [0, 1],
+      [1, 2],
+      [1, 3],
+    ];
+    const lesson = {
+      ...LESSON,
+      walkthrough: [
+        {
+          title: "Through the balancer",
+          body: "The balancer picks Server 1.",
+          visual: { cells: [], arch: { nodes, links, path: [0, 1, 3] } },
+        },
+        {
+          title: "A failed server",
+          body: "The request is lost.",
+          visual: {
+            cells: [],
+            arch: { nodes, links, path: [0, 1, 2], drop: true },
+          },
+        },
+      ],
+    };
+    open(lesson as unknown as Lesson, 2);
+
+    const diagram = await screen.findByRole("img", {
+      name: "Users → Balancer → Server 1",
+    });
+    expect(within(diagram).getByText("Server 2")).toBeInTheDocument();
+    const active = diagram.querySelectorAll('[data-active="true"]');
+    expect(active).toHaveLength(2);
+    expect(diagram.querySelectorAll("[data-dot]").length).toBeGreaterThan(0);
+    expect(diagram.querySelector('[data-state="down"]')).toHaveAttribute(
+      "data-component",
+      "server",
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Next step" }));
+    expect(
+      screen.getByRole("img", { name: "Users → Balancer → Server 2" }),
+    ).toBeInTheDocument();
+  });
+
   it("plays the steps by itself and pauses", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     try {
