@@ -666,7 +666,7 @@
             "label": "Workers",
             "x": 8,
             "y": 4,
-            "note": "wait 1, 2, 4, 8, 16 s"
+            "note": "waits 1,2,4,8,16 s"
           },
           {
             "kind": "server",
