@@ -325,7 +325,7 @@ export function SolvePage() {
           label={
             level === null
               ? t("profile.back")
-              : `${t("lesson.backToLevel")} ${level}`
+              : `${t("lesson.backToLevel")} ${levelLabel(level)}`
           }
         />
         <nav className={styles.crumbs} aria-label={t("level.breadcrumb")}>
