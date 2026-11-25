@@ -338,6 +338,14 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-645 | Architecture diagrams: several requests at once (`flows`) and component notes (`note`), with content checks and translation rules | FR-03, D-082 | P1 | Done 2026-11-25: backend and frontend tests; preview screenshot |
 | T-646 | SD 3 review round 3 fix: the CDN challenge's latency rule applies to later requests in a region, so origin-only options break a stated requirement | FR-03, D-057 | P2 | Done 2026-11-25: content check in CI |
 | T-647 | Open SD 1 (Level 28) to every account, as Level 1 is | FR-09, D-083 | P1 | Done 2026-11-25: backend unit test; CI |
+| T-648 | SD 4 (Level 31) Databases, Indexes and Concurrent Writes in English: lesson, 7-step walkthrough with two predictions and a race between two buyers, intuition; 23 glossary terms | FR-03, D-079, D-082 | P1 | Done 2026-11-25: content check in CI; facts F24–F31 confirmed (G-06); Vietnamese translation pending |
+| T-649 | SD 4 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude (one distractor reworded); content check in CI |
+| T-650 | Open every System Design level (Level 28 onward) to every account | FR-09, D-084 | P1 | Done 2026-11-25: backend unit test; CI |
+| T-651 | Show quick-check, prediction, intuition and pattern-challenge options in a random order; answers keep their content indices | FR-03, D-084 | P1 | Done 2026-11-25: frontend unit test; CI |
+| T-652 | SD 4 content review round 1 and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | In progress 2026-11-25: round 1 found 2 Major and 2 Minor issues, fixed in T-653; translation pending |
+| T-653 | SD 4 review round 1 fixes: full lock and version protocols in the walkthrough, load test instead of an unsupported capacity claim, scoped index-cost rule and isolation default, stronger distractors | FR-03, D-057 | P1 | Done 2026-11-25: content check in CI |
+| T-654 | SD 5 (Level 32) APIs and Service Boundaries in English: lesson, 8-step walkthrough with four predictions (status code, offset paging, polling load, parallel calls), intuition; 27 glossary terms | FR-03, D-079, D-082 | P1 | Done 2026-11-25: content check in CI; facts F32–F40 confirmed (G-07); review and Vietnamese translation pending |
+| T-655 | SD 5 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude (quick-check distractors reworded); content check in CI |
 
 ## Maintenance
 

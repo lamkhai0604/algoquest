@@ -1,0 +1,35 @@
+[
+  {
+    "question": "A users table has 10 million rows. Login looks up one user with WHERE email = ..., but email has no index. Why is this slow, and which change directly fixes the lookup?",
+    "options": [
+      "The server needs more copies of the application; the database query can stay unchanged.",
+      "The database scans the rows because no index helps; add an index on email.",
+      "The primary-key index on id already locates any email, so making that index larger fixes the lookup.",
+      "An index on display_name makes the email lookup fast because both columns are in the same table."
+    ],
+    "answer": 1,
+    "explanation": "Without a helpful email index, this query needs a full table scan over a table of 10 million rows. An index on email lets the database find the matching row through the index instead. More application servers do not change this query's access path."
+  },
+  {
+    "question": "In this lesson's simplified insert-cost model, a table has five indexes in total, including its primary-key index. About how many pieces of work does inserting one new row require?",
+    "options": [
+      "One: indexes are updated only when a query reads them.",
+      "Five: one entry in each index; the table row itself is no extra work.",
+      "Five: the table row plus four index entries, because the primary key is not an index.",
+      "Six: one table row plus one entry in each of the five indexes."
+    ],
+    "answer": 3,
+    "explanation": "The table row is one piece of work, and the primary key has its own index. Each of the five indexes needs an entry: 1 + 5 = 6. This counts logical pieces of work, not six equal-duration disk operations. Extra indexes also use storage."
+  },
+  {
+    "question": "Two buyers both read seats_left = 1, then each writes seats_left = 0 in a separate step. The app confirms a sale after each write. Which change prevents both buyers from claiming that last seat?",
+    "options": [
+      "Use UPDATE concerts SET seats_left = seats_left - 1 WHERE id = 42 AND seats_left > 0, and confirm a sale only if one row was updated.",
+      "Check seats_left twice in application code before writing 0.",
+      "Cache seats_left on each server so both checks are faster.",
+      "Put the separate read and the unconditional write inside one transaction at PostgreSQL's default isolation level."
+    ],
+    "answer": 0,
+    "explanation": "The condition is checked in the update itself. The first successful update changes 1 - 1 = 0 and updates one row. The competing update cannot satisfy seats_left > 0 and updates 0 rows, so it must not confirm a sale. Repeating an application check, caching the count, or wrapping both steps in a transaction at PostgreSQL's default isolation level (read committed) does not close the read-then-write gap: both transactions can still read 1 before either writes."
+  }
+]

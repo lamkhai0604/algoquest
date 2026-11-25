@@ -1,0 +1,490 @@
+[
+  {
+    "title": "Find one user among 10 million",
+    "body": "A login looks up a user by email: `SELECT * FROM users WHERE email = 'an@example.com'`. The `users` table has 10 million rows and no index on `email`, so the database must check every row: a **full table scan**. Even with the table in memory this takes hundreds of milliseconds; from disk it can take seconds.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4,
+            "state": "hot",
+            "note": "no index on email"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "query",
+          "value": "WHERE email = ?"
+        },
+        {
+          "name": "rows checked",
+          "value": "10,000,000"
+        },
+        {
+          "name": "time",
+          "value": "≈0.1–5 s"
+        }
+      ]
+    }
+  },
+  {
+    "title": "How many pages does the index read?",
+    "body": "The team adds an **index** on `email`: a B-tree whose nodes each hold hundreds of sorted keys. A lookup starts at the root and picks one branch per level. With about 300 keys per node, three levels already cover 300 × 300 × 300 = 27 million entries, so the lookup reads about 3 or 4 pages and then the one row. It takes about 1 ms instead of a second.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4,
+            "note": "index on email"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "index",
+          "value": "B-tree on email"
+        },
+        {
+          "name": "pages read",
+          "value": "about 3 or 4"
+        },
+        {
+          "name": "time",
+          "value": "≈0.1–5 ms"
+        }
+      ],
+      "predict": {
+        "question": "A B-tree index on email covers 10 million rows, and each index node holds about 300 keys. About how many index pages does one lookup read?",
+        "options": [
+          "About 10 million, one per row",
+          "About 23, like a binary search",
+          "About 3 or 4",
+          "Exactly 1, because indexes are hash maps"
+        ],
+        "answer": 2,
+        "explanation": "Each level of the tree chooses among about 300 branches: 300, then 90,000, then 27 million entries. Three or four levels cover 10 million rows. A binary search needs about 23 steps because it chooses between only two at each step; B-tree nodes are much wider.",
+        "hides": [
+          "pages read",
+          "time"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Every index costs something on writes",
+    "body": "Indexes are not free. When a new user signs up, the database writes the row and also adds an entry to every index on the table. With indexes on `id` (the primary key) and `email`, one insert does three pieces of work. Indexes also take storage. Add an index for queries that run often on a large table, not for every column.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4,
+            "note": "2 indexes"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "insert",
+          "value": "1 row + 2 index entries"
+        },
+        {
+          "name": "rule",
+          "value": "index what you search often"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A transaction: all or nothing",
+    "body": "Moving 50 dollars from account A to account B needs two updates. If the server crashes after the first, money vanishes. A **transaction** groups them: `BEGIN; UPDATE … A − 50; UPDATE … B + 50; COMMIT;`. Either both changes are saved or neither is (**atomicity**), and once committed they survive a crash (**durability**).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4,
+            "note": "BEGIN … COMMIT"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "step 1",
+          "value": "A − 50"
+        },
+        {
+          "name": "step 2",
+          "value": "B + 50"
+        },
+        {
+          "name": "saved",
+          "value": "both or neither"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Two buyers, one seat",
+    "body": "One seat is left. Buyer A's request reads `seats_left = 1`. Before it writes, Buyer B's request also reads `seats_left = 1`. Both then write `seats_left = 0` and both confirm a ticket. Each step looked correct on its own, but the check and the write were separate, so the second buyer slipped in between: a **race condition**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyer A",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "client",
+            "label": "Buyer B",
+            "x": 4,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4,
+            "note": "seats_left = 1"
+          }
+        ],
+        "links": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "A reads",
+          "value": "1"
+        },
+        {
+          "name": "B reads",
+          "value": "1"
+        },
+        {
+          "name": "tickets sold",
+          "value": "2 for 1 seat"
+        }
+      ],
+      "predict": {
+        "question": "Both requests read seats_left = 1, then both write seats_left = 0 and confirm a ticket. How many tickets were sold for the last seat?",
+        "options": [
+          "1, because the second write sees 0",
+          "2",
+          "0, because the writes cancel out",
+          "1, because the database queues the requests"
+        ],
+        "answer": 1,
+        "explanation": "Each request checked first and wrote later, in separate steps. Both checks saw 1 before either write happened, so both confirmed a ticket. Writing 0 twice gives the same row value, which hides the problem: two people paid for one seat.",
+        "hides": [
+          "tickets sold"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Put the check inside the write",
+    "body": "The fix is a **conditional update**: `UPDATE concerts SET seats_left = seats_left - 1 WHERE id = 42 AND seats_left > 0`. The database applies the two updates one after the other on the row, and the second one re-checks the condition on the new value. Buyer A's update changes 1 row; Buyer B's update finds `seats_left = 0` and changes 0 rows, so B is told the seat is gone. A **unique constraint** on the seat number gives the same protection when each sale is a new row.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyer A",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "client",
+            "label": "Buyer B",
+            "x": 4,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4,
+            "note": "seats_left > 0 ?"
+          }
+        ],
+        "links": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2,
+              3
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "A",
+          "value": "1 row updated: ticket"
+        },
+        {
+          "name": "B",
+          "value": "0 rows updated: sold out"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Lock first, or check a version",
+    "body": "When a change needs more than one statement, two general approaches exist. **Pessimistic**: inside one transaction, `BEGIN`, read the row with `SELECT … FOR UPDATE` (this locks it), check `seats_left > 0`, decrement it, then `COMMIT`. The lock is held until the commit, so Buyer B's locking read waits, then sees 0 and gets \"sold out\". A locking read on its own, outside a transaction, releases the lock at once and protects nothing. It suits rows that many users fight over. **Optimistic**: read the row without a lock, say with `version = 7`, check `seats_left > 0`, then write `SET seats_left = seats_left - 1, version = 8 WHERE id = 42 AND version = 7`. Changing the version in the same update is what stops a second buyer who also read 7. If 0 rows update, someone changed the row first: read it again and retry, or report a conflict. Every write to the row must change the version. It suits rows that are rarely changed at the same time. In both cases, confirm the sale only after the commit.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyer A",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "client",
+            "label": "Buyer B",
+            "x": 4,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4,
+            "note": "locked by A"
+          }
+        ],
+        "links": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "pessimistic",
+          "value": "B waits, then sees 0"
+        },
+        {
+          "name": "optimistic",
+          "value": "B's version 7 no longer matches"
+        }
+      ]
+    }
+  }
+]

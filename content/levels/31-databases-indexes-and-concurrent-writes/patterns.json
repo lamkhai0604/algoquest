@@ -1,0 +1,142 @@
+[
+  {
+    "id": "P31-store-choice",
+    "level": 31,
+    "title": "A Catalog with Different Fields",
+    "statement": "A small shop stores one record per product. A camera has lens_mount and sensor_size; a chair has material and seat_height. The page always loads one whole product by its id. The currently supported fields are known, but the shop adds new product-specific fields often. All provided fields must be saved and returned. There are no cross-product joins or multi-record rules in this exercise. The team prefers to add fields without changing a shared table schema. Which store design fits best?",
+    "examples": [
+      "A camera page loads id, name, lens_mount and sensor_size together.",
+      "A chair page loads id, name, material and seat_height together."
+    ],
+    "constraints": [
+      "Store and return every provided product field.",
+      "Load a complete product record by id.",
+      "Support new product-specific fields; changing a table schema is allowed but is extra work."
+    ],
+    "approaches": [
+      {
+        "id": "document-per-product",
+        "name": "Keep one document per product, looked up by its unique id",
+        "hint": "Keep a product's fields together",
+        "label": "best",
+        "time": "One product lookup; no cross-product join is needed",
+        "space": "One document per product, containing its own fields",
+        "why": "The document keeps all fields of a product together and allows different products to have different fields. It meets every fixed requirement and avoids changing one shared column list when a new field appears. This fits the access pattern; it is not a claim that every document store is faster."
+      },
+      {
+        "id": "relational-optional-columns",
+        "name": "Use a relational table with a primary key and optional columns; add columns when new fields appear",
+        "hint": "One shared list of columns",
+        "label": "valid",
+        "time": "One primary-key lookup; schema changes when new fields need columns",
+        "space": "Rows with some unused fields",
+        "why": "This also preserves every field and reads a complete product by id. New fields are supported by adding columns, which the requirements allow. It is valid, but maintaining the shared schema adds work as product types change."
+      },
+      {
+        "id": "fixed-common-fields",
+        "name": "Use one relational table with the currently known columns; drop new fields until a schema change is scheduled",
+        "hint": "Fix the columns now, extend later",
+        "label": "unsuitable",
+        "time": "One primary-key lookup",
+        "space": "Rows with the known columns only",
+        "why": "Reads are simple, but a new field such as a lens's weight is lost until the schema changes. It violates the requirement to store and return every provided product field. The relational option above stays valid because it adds the column when the field appears."
+      }
+    ]
+  },
+  {
+    "id": "P31-login-index",
+    "level": 31,
+    "title": "Login by Email",
+    "statement": "A users table has 10 million rows and six columns, including id and email. It already has one primary-key index on id. There are about 300 email logins per second and few inserts. Emails must be unique even if two signups happen together. In this exercise, measured email lookups take about 1,000 ms without an email index, about 500 ms on the available larger server without that index, and about 1 ms with an email index. The target is at most 20 ms per lookup under the measured load. The write budget allows at most three logical pieces of work per insert: one table row plus at most two index entries. How should email lookup be supported?",
+    "examples": [
+      "Login searches for one exact email address.",
+      "Two signups try to save the same email at the same time."
+    ],
+    "constraints": [
+      "Email lookup takes at most 20 ms under the stated measurements.",
+      "The database must reject duplicate emails, including concurrent signups.",
+      "At most two indexes in total, counting the existing primary-key index."
+    ],
+    "approaches": [
+      {
+        "id": "unique-email",
+        "name": "Keep the primary-key index and add a unique constraint on email",
+        "hint": "One lookup structure also enforces a rule",
+        "label": "best",
+        "time": "About 1 ms per lookup; 1 table row + 2 index entries = 3 pieces per insert",
+        "space": "Two indexes in total",
+        "why": "The unique constraint creates the email index and rejects duplicate emails inside the database. The measured 1 ms meets the 20 ms target. There are two indexes total, so each insert does 1 + 2 = 3 logical pieces of work, within the budget."
+      },
+      {
+        "id": "index-every-column",
+        "name": "Index all six columns, making the email index unique",
+        "hint": "Support lookups on every column",
+        "label": "unsuitable",
+        "time": "About 1 ms for email lookup; 1 + 6 = 7 pieces per insert",
+        "space": "Six indexes in total",
+        "why": "This enforces email uniqueness and makes the login lookup fast, but six indexes exceed the two-index limit. The simplified insert cost is 1 table row + 6 index entries = 7 pieces, above the budget of 3; the other columns have no stated lookup need."
+      },
+      {
+        "id": "larger-server",
+        "name": "Use the larger server with only the id index; check email uniqueness in application code",
+        "hint": "More capacity, unchanged email access path",
+        "label": "unsuitable",
+        "time": "About 500 ms for the measured email lookup",
+        "space": "Only the existing id index",
+        "why": "The measured 500 ms is still greater than the 20 ms target because there is no email index. Separate application checks also allow two signups to both see an email as free; they do not meet the database-enforced uniqueness requirement."
+      }
+    ]
+  },
+  {
+    "id": "P31-seat-claim",
+    "level": 31,
+    "title": "Two Buyers, One Remaining Seat",
+    "statement": "A concert sells unnumbered seats. Its database row has id, seats_left and version. About 2,000 purchase attempts per second arrive, many for the same concert. Each successful attempt claims exactly one seat. No attempt may succeed once seats_left is 0, and the app confirms success only after the database commits the claim. Waiting or retrying is allowed; an unsuccessful attempt may receive a clear sold-out or try-again message. Payment is outside this exercise. Which way of claiming a seat fits best?",
+    "examples": [
+      "With seats_left = 1, two buyers attempt to claim a seat at the same time."
+    ],
+    "constraints": [
+      "Never confirm more successful claims than the available seats; seats_left must not become negative.",
+      "Confirm success only after a committed database change.",
+      "Waiting and retries are allowed; report failure clearly instead of confirming an unsuccessful claim."
+    ],
+    "approaches": [
+      {
+        "id": "conditional-decrement",
+        "name": "Decrement seats_left in one conditional update where seats_left > 0",
+        "hint": "Check availability as part of the write",
+        "label": "best",
+        "time": "One conditional update; competing writes can wait for the same row",
+        "space": "The concert row",
+        "why": "The database changes the count only while seats_left > 0. Confirm only if one row was updated and the transaction commits; 0 updated rows means no sale. It meets all requirements without a separate application read or version-retry loop. It can still wait under contention; it is not lock-free."
+      },
+      {
+        "id": "lock-first",
+        "name": "Lock the concert row, read seats_left, decrement only if positive, then commit",
+        "hint": "Make competing buyers wait their turn",
+        "label": "valid",
+        "time": "Competing attempts wait while the transaction holds the row lock",
+        "space": "The concert row and lock tracking",
+        "why": "Holding the lock through the check, decrement and commit prevents another transaction from changing the row between them. Confirm only after commit; if the count is 0, return sold out. This meets every requirement, but long transactions create more waiting under heavy contention, so keep the lock-held work short."
+      },
+      {
+        "id": "application-check",
+        "name": "Read seats_left, then separately write the reduced value without a condition or lock",
+        "hint": "Check in the application before writing",
+        "label": "unsuitable",
+        "time": "One read and one separate unconditional write",
+        "space": "A copy of the count in each request",
+        "why": "Two attempts can both read 1 and each write 0. Both writes may commit and both buyers may be confirmed even though only one seat existed. It breaks the no-extra-sales requirement; fast reads do not close the gap."
+      },
+      {
+        "id": "version-check",
+        "name": "Read the count and version; condition the decrement on that version and a positive count, increment the version, and retry conflicts",
+        "hint": "Detect a change before committing",
+        "label": "valid",
+        "time": "Conflicts require a fresh read and retry; repeated conflicts may return try again",
+        "space": "A version value on the concert row",
+        "why": "The update succeeds only when the saved version still matches and seats_left > 0, and it increments the version so a competing attempt using the old version cannot also succeed. Confirm only after a successful commit. Retrying with a fresh read, or returning try again, is allowed by the requirements. Frequent conflicts can waste work compared with one conditional decrement."
+      }
+    ]
+  }
+]

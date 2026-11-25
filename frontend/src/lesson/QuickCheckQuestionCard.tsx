@@ -1,6 +1,7 @@
 import { cx } from "../components";
 import { useTranslation } from "../i18n";
 import styles from "./Lesson.module.css";
+import { useShuffledOrder } from "./shuffle";
 import type { QuickCheckQuestion } from "./types";
 
 export function QuickCheckQuestionCard({
@@ -18,12 +19,13 @@ export function QuickCheckQuestionCard({
 }) {
   const { t } = useTranslation();
   const correct = picked === question.answer;
+  const order = useShuffledOrder(question.options.length, question.question);
   return (
     <fieldset className={styles.question}>
       <legend>
         {number}. {question.question}
       </legend>
-      {question.options.map((option, index) => (
+      {order.map((index) => (
         <button
           key={index}
           type="button"
@@ -35,7 +37,7 @@ export function QuickCheckQuestionCard({
           )}
           onClick={() => onPick(index)}
         >
-          {option}
+          {question.options[index]}
         </button>
       ))}
       {picked !== null && (
