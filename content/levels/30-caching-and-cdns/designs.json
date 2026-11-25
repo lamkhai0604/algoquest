@@ -18,37 +18,36 @@
     "criteria": {
       "requirements": [
         "States the 30-second freshness requirement and the database limit",
-        "Notes that every reader sees the same page, so one cache key serves everyone"
+        "Notes that every reader sees the same page, so one cache entry serves everyone"
       ],
       "estimation": [
-        "Database budget: 2,000 × 2 ÷ 3 ≈ 1,333 reads per second",
-        "Allowed misses: 1,333 ÷ 20,000 ≈ 6.7%, so a hit rate of at least about 93%",
-        "Freshness: a cached copy can be up to 2 s old when stored, so the TTL is at most 30 − 2 = 28 s"
+        "Database budget: 2,000 × 2 ÷ 3 ≈ 1,333 reads per second; with cache-aside, misses may be at most 1,333 ÷ 20,000 ≈ 6.7%, so a hit rate of at least about 93.4%",
+        "Or, with a refresh job, database load is one build per refresh interval",
+        "Freshness budget for the chosen policy: if readers wait for a rebuild after expiry, a copy can be 2 s old when stored, so TTL ≤ 28 s; if the old copy is served while one server rebuilds, add the rebuild: 2 + TTL + 2 ≤ 30, so TTL ≤ 26 s; for a job every N seconds, N + 2 ≤ 30"
       ],
       "design": [
-        "Servers read the homepage from a cache (cache-aside or a refresh job) before the database"
+        "Servers read the homepage from a cache before the database, filled by cache-aside or by a refresh job"
       ],
       "data": [
-        "One cache key for the homepage with a TTL of at most 28 seconds, or a job that rebuilds it every few seconds",
-        "Explains why the hit rate stays high: one key read 20,000 times per second misses only when it expires"
+        "One cache key for the homepage with a TTL inside the freshness budget, or a job that rebuilds it on a fixed interval",
+        "Explains why the hit rate stays high or why database load stays low"
       ],
       "tradeoffs": [
-        "Names the thundering-herd risk at expiry with its condition: when the key expires, many servers miss at once and hit the database; one rebuild at a time, or a background refresh, prevents it",
-        "Or: a shorter TTL gives fresher news but more rebuilds"
+        "Names a risk with its condition, such as: when the key expires, many servers miss at once and hit the database (thundering herd), so only one server rebuilds; or if the refresh job stops, the page goes stale, so servers check the copy's age and alert after 30 s; or a shorter TTL gives fresher news but more rebuilds"
       ]
     },
     "fullMarkDesigns": [
-      "Cache-aside: servers read the homepage key from the cache; on a miss one server rebuilds it (others serve the old copy) and stores it with a TTL of 25 s. Hit rate is close to 100% because one key serves every reader. Risk: thundering herd at expiry, handled by letting only one server rebuild.",
-      "A background job rebuilds the homepage every 10 s and writes it to the cache; servers only read the cache and never call the database for the homepage. Database load is one build every 10 s. Freshness: at most 10 s between rebuilds + 2 s to build = 12 s, within 30 s. Trade-off: the job is a new part that must be watched; if it stops, the page goes stale."
+      "Design A, cache-aside: servers read the homepage key; on a miss only one server rebuilds it while the others serve the old copy, and the new copy gets a TTL of 20 s. Freshness: 2 + 20 + 2 = 24 s, within 30. Database load: one rebuild per expiry, far under 1,333 reads per second, so the hit rate is close to 100% (≥ 93.4% needed). Risk: thundering herd at expiry, prevented by the single rebuilder.",
+      "Design B, refresh job: a job rebuilds the homepage every 10 s and writes it to the cache; servers only read the cache. Freshness: 10 + 2 = 12 s. Database load: one build every 10 s. Trade-off: the job is a new part; if it stops, the copy ages, so servers alert when the copy is older than 30 s and fall back to rebuilding it themselves."
     ],
     "reference": {
       "assumptions": [
         "Every reader gets the same homepage",
         "The cache is in the same data center as the servers"
       ],
-      "design": "Servers read the homepage from the cache. On a miss, a single server rebuilds it from the database (at most 2 s) and stores it with a TTL of 25 s; other servers keep serving the previous copy until the new one is ready.\nDatabase budget: 2,000 × 2 ÷ 3 ≈ 1,333 reads per second, so at most about 6.7% of 20,000 reads may miss. With one key, misses happen only at expiry, so the hit rate is close to 100%.\nFreshness: a copy can be 2 s old when stored and lives 25 s, so news appears within about 27 s, inside 30 s.",
+      "design": "Servers read the homepage from the cache. On a miss, a single server rebuilds it from the database (at most 2 s) and stores it with a TTL of 20 s; other servers keep serving the previous copy until the new one is ready.\nDatabase budget: 2,000 × 2 ÷ 3 ≈ 1,333 reads per second, so at most about 6.7% of 20,000 reads may miss (a hit rate of at least about 93.4%). With one key, misses happen only at expiry, so the hit rate is close to 100%.\nFreshness: a copy can be 2 s old when stored, is served for 20 s, and may be served 2 s more while the next one is built: 24 s, inside 30 s.",
       "alternatives": [
-        "A CDN for the homepage HTML with a short TTL: removes even more load, with the same freshness limit",
+        "A refresh job every 10 seconds: freshness about 12 s and no misses, but one more part to watch",
         "Invalidating the key when an editor publishes: fresher, but every publish must reach the cache reliably"
       ]
     }
@@ -59,11 +58,12 @@
     "title": "Travel Blog Photos Worldwide",
     "prompt": "A travel blog stores its photos on one origin server in Singapore. Readers in Europe and the United States complain that photos load slowly. Design how photos are delivered.",
     "facts": [
-      "About 2 million photo requests per day, from Asia, Europe and the United States",
-      "A round trip from Europe or the United States to Singapore takes about 160–220 ms",
+      "About 2 million photo requests per day from Asia, Europe and the United States; peak is about 5 times the average",
+      "Photos average about 200 KB; the origin server can send about 300 photos per second",
+      "A round trip from Europe or the United States to Singapore takes about 160–220 ms; loading a photo from Singapore on a new connection takes about 3 round trips plus the transfer",
+      "A CDN has edge servers in Europe and the United States; from a nearby edge, a cached 200 KB photo loads in about 100 ms",
       "Photos never change after upload; an edited photo is uploaded under a new file name",
-      "Requirement: a photo that was already requested in a reader's region recently loads within 300 ms",
-      "The origin server can send about 300 photos per second"
+      "Requirement: a photo already requested in a reader's region within the last week loads within 300 ms"
     ],
     "scope": [
       "Photo delivery only",
@@ -74,34 +74,33 @@
         "States the 300 ms requirement and that it applies to photos already requested in the region, not the very first request"
       ],
       "estimation": [
-        "Average load: 2 × 10⁶ ÷ 10⁵ = 20 photos per second, within the origin's 300 even without a CDN, so the problem is distance, not load",
-        "Or: a request that must cross to Singapore needs at least one 160–220 ms round trip, often two with a new connection, so meeting 300 ms needs a nearby copy"
+        "Distance: 3 round trips × 160 ms = 480 ms or more before the transfer, over 300 ms, so meeting it needs a nearby copy; a cached copy at an edge takes about 100 ms",
+        "Or load: 2 × 10⁶ ÷ 10⁵ = 20 photos per second on average, about 100 at peak, under the origin's 300, so the problem is distance, not origin load"
       ],
       "design": [
         "Readers → CDN edge server in their region → origin in Singapore on a miss"
       ],
       "data": [
-        "Long TTL (days or longer) because photos never change, and new versions get new names (versioned file names)",
-        "Explains the first request in a region is a miss and goes to the origin"
+        "A TTL long enough that photos requested within a week stay at the edge, made safe by never changing a photo under the same name",
+        "Explains that the first request in a region is a miss and goes to the origin"
       ],
       "tradeoffs": [
-        "Names a trade-off with its condition, such as: the first request for a photo in each region is slow, which the requirement allows",
-        "Or: a deleted or wrong photo stays on edges until it expires, so the team needs a purge or short TTL for removals"
+        "Names a trade-off with its condition, such as: the first request for a photo in each region is slow, which the requirement allows; or a deleted photo stays on edges until it expires or is purged; or a shorter TTL with revalidation makes removals quick but sends more requests to Singapore"
       ]
     },
     "fullMarkDesigns": [
-      "Put a CDN in front of the origin. Photos are cached at edges near readers with a long TTL; edited photos get new file names, so no invalidation is needed. Load is only about 20 photos per second, so the origin is fine; the CDN fixes distance. First request per region goes to Singapore and may be slow.",
-      "Store photos in object storage behind a CDN, with versioned names and a one-year TTL. Edges in Europe and the US serve repeat requests in tens of milliseconds. Trade-off: removing a photo needs a CDN purge, because edges keep it until the TTL ends."
+      "Design A: a CDN in front of the origin with a one-year TTL; edited photos get new file names, so no invalidation is needed. Repeat requests in a region load from the edge in about 100 ms. Distance estimate: 3 × 160 = 480 ms from Singapore, too slow without the edge. Trade-off: removing a photo needs a CDN purge.",
+      "Design B: a CDN with a 7-day TTL, after which the edge revalidates with the origin; popular photos stay at the edge, and a removed photo disappears within a week even without a purge. Load estimate: about 100 photos per second at peak, under the origin's 300, so the revalidations are affordable. Trade-off: a photo not requested for a week may be fetched from Singapore again."
     ],
     "reference": {
       "assumptions": [
         "Most photos are read many times in each region",
-        "The CDN has edge servers in Europe and the United States"
+        "The CDN keeps photos at an edge for at least the TTL when they are requested"
       ],
-      "design": "Readers fetch photos from a CDN. The nearest edge server returns a cached copy; on a miss it fetches the photo from the origin in Singapore and keeps it.\nBecause photos never change and an edit gets a new file name, the TTL can be very long, so edges almost never go back to the origin.\nLoad is about 2 × 10⁶ ÷ 10⁵ = 20 photos per second, far below the origin's 300; the slowness comes from 160–220 ms round trips, which the edge removes for repeat requests.\nThe first request for a photo in a region still crosses to Singapore, which the requirement allows.",
+      "design": "Readers fetch photos from a CDN. The nearest edge server returns a cached copy in about 100 ms; on a miss it fetches the photo from the origin in Singapore and keeps it.\nBecause photos never change and an edit gets a new file name, the TTL can be very long, so edges almost never go back to the origin.\nDistance is the problem: 3 round trips × 160–220 ms is 480 ms or more from Singapore. Load is not: about 20 photos per second on average and 100 at peak, under the origin's 300.\nThe first request for a photo in a region still crosses to Singapore, which the requirement allows.",
       "alternatives": [
-        "A second origin server in Europe: fixes Europe only and must be kept in sync",
-        "Short TTLs: allow quick removal, but more requests go back to Singapore"
+        "A 7-day TTL with revalidation: removed photos disappear within a week, at the cost of some requests to Singapore",
+        "A second origin server in Europe: fixes Europe only and must be kept in sync"
       ]
     }
   }

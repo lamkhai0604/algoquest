@@ -5,9 +5,10 @@
     "title": "Restaurant Table Bookings",
     "prompt": "A booking app lets diners reserve restaurant tables for a time slot. During a promotion, many diners try to book the same popular tables at once. Design the tables, indexes and booking step.",
     "facts": [
-      "2,000 restaurants, about 20 tables each, 10 time slots a day",
+      "2,000 restaurants, about 20 tables each, 10 time slots a day; every table has its own id across all restaurants, and a slot is a date and a start time",
       "Bookings are kept for one year",
       "Peak: about 500 booking attempts per second, many for the same tables",
+      "A load test shows the database handles about 2,000 inserts per second with two indexes on the table",
       "Diners often open \"my bookings\", which lists their upcoming bookings",
       "A table must never be booked twice for the same slot"
     ],
@@ -22,34 +23,35 @@
         "Names the two main operations: book a table, list my bookings"
       ],
       "estimation": [
-        "Rows per year: 2,000 × 20 × 10 × 365 = 146 million possible bookings, so lookups need indexes",
-        "Or: 500 attempts per second is a write load to confirm with a load test on the real database"
+        "Size: at most 2,000 × 20 × 10 × 365 = 146 million bookings a year if every slot were booked, so lookups need indexes",
+        "Or load: 500 attempts per second against the measured 2,000 inserts per second"
       ],
       "design": [
-        "A bookings table with one row per booking, written by the booking step"
+        "A table of bookings (or of pre-created slots) written by the booking step"
       ],
       "data": [
-        "A unique constraint on (table_id, slot) so the database rejects a second booking for the same table and slot, or a conditional update on a slot row",
+        "A unique constraint on (table_id, slot) so the database rejects a second booking, or a conditional update on a pre-created slot row",
         "An index on (diner_id, slot) for \"my bookings\""
       ],
       "tradeoffs": [
         "Explains the race: checking that a table is free, then inserting in a separate step, lets two diners both succeed",
-        "Names a trade-off with its condition, such as: each index slows every insert; or a second booking attempt gets an error that the app must turn into \"table taken\""
+        "Names a trade-off with its condition, such as: each index adds work to every insert; or pre-creating slot rows means 400,000 new rows a day; or a rejected booking must become a clear \"table taken\" message"
       ]
     },
     "fullMarkDesigns": [
-      "Table bookings(table_id, slot, diner_id) with a unique constraint on (table_id, slot): a booking is a plain insert, and the database rejects a duplicate. An index on (diner_id, slot) serves \"my bookings\". 146 million rows a year makes the indexes necessary. Trade-off: two indexes add work to each insert; the rejected insert becomes a \"table taken\" message.",
-      "A slots table with one row per table and slot, created ahead of time, booked with UPDATE ... SET diner_id = ? WHERE table_id = ? AND slot = ? AND diner_id IS NULL; 1 row updated means booked, 0 means taken. An index on (diner_id, slot) serves \"my bookings\". Trade-off: rows must be created in advance for every slot."
+      "Design A: table bookings(table_id, slot, diner_id) with a unique constraint on (table_id, slot); a booking is a plain insert, and the database rejects a duplicate. An index on (diner_id, slot) serves \"my bookings\". Up to 146 million rows a year makes both indexes necessary; 500 inserts per second is under the measured 2,000. Trade-off: two indexes add work to each insert; a rejected insert becomes a \"table taken\" message.",
+      "Design B: table slots(table_id, slot, diner_id) with one row per table and slot created in advance, 2,000 × 20 × 10 = 400,000 rows a day; booking is UPDATE slots SET diner_id = ? WHERE table_id = ? AND slot = ? AND diner_id IS NULL, where 1 row updated means booked and 0 means taken. An index on (diner_id, slot) serves \"my bookings\". Trade-off: rows must be created ahead for every slot, even ones never booked."
     ],
     "reference": {
       "assumptions": [
         "Slots are fixed times, so a booking is one table and one slot",
-        "One database server handles 500 writes per second, confirmed by a load test"
+        "The load test reflects the promotion's pattern of many diners on the same tables"
       ],
-      "design": "Table bookings(table_id, slot, diner_id, created_at). A unique constraint on (table_id, slot) means the database itself refuses a second booking for the same table and slot, so there is no gap between checking and writing: the insert either succeeds or fails.\nAn index on (diner_id, slot) lets \"my bookings\" read only that diner's upcoming rows, instead of scanning up to 146 million rows a year (2,000 × 20 × 10 × 365).\nEach booking writes the row plus two index entries (the unique constraint's index and the diner index).",
+      "design": "Table bookings(table_id, slot, diner_id, created_at). A unique constraint on (table_id, slot) means the database itself refuses a second booking for the same table and slot, so there is no gap between checking and writing: the insert either succeeds or fails.\nAn index on (diner_id, slot) lets \"my bookings\" read only that diner's upcoming rows, instead of scanning a table that can reach 146 million rows a year (2,000 × 20 × 10 × 365 if every slot were booked).\nLoad: 500 attempts per second, under the 2,000 inserts per second measured with both indexes.",
       "alternatives": [
-        "Check in the application, then insert: simple, but two diners can both pass the check",
-        "Lock the table row first: works, but diners wait on each other during the promotion"
+        "Pre-created slot rows with a conditional update: also safe, at the cost of creating 400,000 rows a day",
+        "Lock the table's row first: works, but diners wait on each other during the promotion",
+        "Rejected: check in the application, then insert, because two diners can both pass the check"
       ]
     }
   },
@@ -61,9 +63,9 @@
     "facts": [
       "5 million users; each account has an id, email, password hash and display name, plus optional profile fields that differ between users",
       "Peak: about 2,000 logins per second and 50 sign-ups per second",
-      "A login looks up one user by email",
-      "Email must be unique, even when two sign-ups with the same email arrive at the same moment",
-      "Measured on this database: a lookup through an index takes about 1 ms; a full scan of the users table takes about 300 ms"
+      "Target: a login's email lookup takes at most 20 ms",
+      "A login looks up one user by email; email must be unique, even when two sign-ups with the same email arrive at the same moment",
+      "Load tests on this database: without an index on email, a lookup takes about 300 ms and the database manages about 3 lookups per second; with an index, a lookup takes about 1 ms and the database manages about 10,000 lookups per second"
     ],
     "scope": [
       "Accounts, sign-up and login lookups",
@@ -71,12 +73,10 @@
     ],
     "criteria": {
       "requirements": [
-        "States the uniqueness rule for email and that it must hold for simultaneous sign-ups",
-        "States a login time target, such as tens of milliseconds"
+        "States the uniqueness rule for email, including simultaneous sign-ups, and the 20 ms lookup target"
       ],
       "estimation": [
-        "Without an index, 2,000 logins per second × 300 ms = 600 seconds of scanning work every second, far beyond one database",
-        "With an index, 2,000 × 1 ms = 2 seconds of lookup work per second, spread over the database's connections"
+        "Without an index: about 3 lookups per second against 2,000 needed, and 300 ms each, over the 20 ms target; with an index: 2,000 against 10,000, at about 1 ms"
       ],
       "design": [
         "Accounts in a relational table with a primary key on id"
@@ -87,22 +87,22 @@
       ],
       "tradeoffs": [
         "Explains why checking \"is this email free?\" in application code fails when two sign-ups arrive together",
-        "Names a trade-off with its condition, such as: the email index adds work to each of the 50 sign-ups per second, which is small"
+        "Names a trade-off with its condition, such as: the email index adds work to each of the 50 sign-ups per second, which is small; or a separate profile store means two stores to run"
       ]
     },
     "fullMarkDesigns": [
-      "Users table with id as primary key and a unique constraint on email. Login looks up by email through the unique index (about 1 ms); a duplicate sign-up fails the constraint and gets \"email already used\". Optional fields go in a JSON column because they vary. 2,000 × 300 ms of scanning would be impossible; 2,000 × 1 ms is fine.",
-      "Accounts in a relational table with a unique email constraint for login and uniqueness, and the varied profile fields in a document store keyed by user id. Login never touches the profile store. Trade-off: two stores to run, in exchange for flexible profiles."
+      "Design A: users table with id as primary key and a unique constraint on email; optional profile fields in a JSON column because they vary. Login uses the unique index: about 1 ms, and 2,000 lookups per second against 10,000. A duplicate sign-up fails the constraint and gets \"email already used\". Without the index the database would manage about 3 lookups per second.",
+      "Design B: accounts in a relational table with a unique email constraint (same 1 ms lookups, 2,000 of 10,000 per second), and the varied profile fields in a document store keyed by user id, which login never touches. Trade-off: two stores to run and back up, in exchange for profiles that change shape freely."
     ],
     "reference": {
       "assumptions": [
         "Emails are stored in one consistent form, such as lower case",
         "Each login reads one account row"
       ],
-      "design": "Table users(id primary key, email, password_hash, display_name, profile). A unique constraint on email gives the login its index and makes the database reject a second account with the same email, even when two sign-ups arrive together.\nLoad: without the index, each of 2,000 logins per second would scan the table for about 300 ms, 600 seconds of work every second; with it, each lookup takes about 1 ms.\nOptional profile fields that differ between users go in a JSON column, so adding a field needs no schema change.",
+      "design": "Table users(id primary key, email, password_hash, display_name, profile). A unique constraint on email gives the login its index and makes the database reject a second account with the same email, even when two sign-ups arrive together.\nLoad: without the index, the database manages about 3 lookups per second at 300 ms each, far from 2,000 per second and the 20 ms target; with it, about 10,000 per second at about 1 ms.\nOptional profile fields that differ between users go in a JSON column, so adding a field needs no schema change.",
       "alternatives": [
-        "Check for an existing email in code before inserting: two sign-ups can both pass",
-        "Put everything in a document store: flexible, but the unique-email rule must still be enforced by a unique index there"
+        "A separate document store for profiles: flexible, but two stores to run",
+        "Rejected: checking for an existing email in code before inserting, because two sign-ups can both pass"
       ]
     }
   }

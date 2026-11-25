@@ -352,6 +352,8 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-659 | Home page Continue card stays on the furthest algorithm level when System Design levels are open (fixes the smoke test broken by T-647) | FR-09, D-084 | P1 | Done 2026-11-25: frontend test; smoke |
 | T-661 | SD 6 (Level 33) Replication, Backup and Recovery in English: lesson, 8-step walkthrough with three predictions (replica count, replication lag, writes lost in a failover), intuition, two design prompts; 17 glossary terms | FR-03, D-079, D-085 | P1 | Done 2026-11-25: content check in CI; facts F41–F49 confirmed (G-08); review and Vietnamese translation pending |
 | T-662 | SD 6 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude, no changes; content check in CI |
+| T-660 | Review of the ten design prompts and the grading prompt, by ChatGPT | FR-05, D-085 | P1 | Done 2026-11-25: round 1 found 6 Major and 2 Minor issues, fixed in T-663 |
+| T-663 | Design prompt review fixes: visible targets for every prompt, measured capacities and delivery times, guarantees beyond the level given as facts, two different full-mark designs each with an estimate and a trade-off, stable note paging, corrected freshness budget, grading prompt version 2 (concise answers, no heading penalty, feedback in the learner's language), Vietnamese UI wording; SD 6 prompts aligned | FR-05, D-085 | P1 | Done 2026-11-25: content check in CI |
 
 ## Maintenance
 
