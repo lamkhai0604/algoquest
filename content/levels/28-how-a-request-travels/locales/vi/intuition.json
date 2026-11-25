@@ -1,0 +1,11 @@
+{
+  "question": "Một trang mất 3 seconds. Thông tin nào giúp bạn biết nên kiểm tra ở đâu trước?",
+  "options": [
+    "Cửa hàng có bao nhiêu servers",
+    "Thời gian từng bước: DNS, kết nối, xử lý trên server và database",
+    "Tháng trước trung bình có bao nhiêu khách truy cập",
+    "Người dùng sử dụng browser nào"
+  ],
+  "answer": 1,
+  "explanation": "Latency (độ trễ) là tổng thời gian các bước của một request. Bạn cần biết thời gian từng bước trước khi chọn cách sửa có hiệu quả. Số server và lượng khách trung bình tháng trước không cho biết bước nào đang chậm."
+}
