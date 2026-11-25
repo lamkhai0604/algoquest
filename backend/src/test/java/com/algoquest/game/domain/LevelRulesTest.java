@@ -23,6 +23,12 @@ class LevelRulesTest {
   }
 
   @Test
+  void theFirstSystemDesignLevelIsAlwaysOpen() {
+    assertThat(LevelRules.state(28, OptionalInt.empty())).isEqualTo(LevelState.OPEN);
+    assertThat(LevelRules.state(29, OptionalInt.empty())).isEqualTo(LevelState.LOCKED);
+  }
+
+  @Test
   void aLevelWithNoPreviousTestIsLocked() {
     assertThat(LevelRules.state(2, OptionalInt.empty())).isEqualTo(LevelState.LOCKED);
   }

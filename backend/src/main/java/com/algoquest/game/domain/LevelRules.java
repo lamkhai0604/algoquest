@@ -12,15 +12,27 @@ public final class LevelRules {
   private LevelRules() {}
 
   /**
-   * The state of a level from the best test score of the level before it. Level 1 is always open.
-   * Best scores only go up, so a level that opened never closes again.
+   * The first System Design level (SD 1). It starts a new subject, so it is open to every player
+   * like Level 1, without a test of the level before it (D-083).
+   */
+  public static final int FIRST_SYSTEM_DESIGN_LEVEL = 28;
+
+  /** Whether a level is open to every player from the start: Level 1 and SD 1 (D-083). */
+  public static boolean alwaysOpen(int level) {
+    return level == 1 || level == FIRST_SYSTEM_DESIGN_LEVEL;
+  }
+
+  /**
+   * The state of a level from the best test score of the level before it. Level 1 and the first
+   * System Design level are always open. Best scores only go up, so a level that opened never
+   * closes again.
    */
   public static LevelState state(int level, OptionalInt bestPreviousTestScore) {
     return state(GameRules.DEFAULTS, level, bestPreviousTestScore);
   }
 
   public static LevelState state(GameRules rules, int level, OptionalInt bestPreviousTestScore) {
-    if (level == 1) {
+    if (alwaysOpen(level)) {
       return LevelState.OPEN;
     }
     if (bestPreviousTestScore.isEmpty() || bestPreviousTestScore.getAsInt() < rules.passScore()) {
