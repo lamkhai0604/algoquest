@@ -1,0 +1,111 @@
+[
+  {
+    "id": "D28-recipe-page",
+    "level": 28,
+    "title": "A Recipe Page for Vietnam",
+    "prompt": "Design how a recipe website delivers one recipe page to home cooks in Vietnam. The team has one server and one database in Singapore and wants the page's HTML to arrive quickly, even on a reader's first visit.",
+    "facts": [
+      "About 200,000 readers, each opening about 5 recipe pages a day",
+      "Peak traffic is about 5 times the average",
+      "A round trip between Vietnam and Singapore takes about 30 ms",
+      "A first DNS lookup takes 20–100 ms; later visits use the cached answer",
+      "The server needs about 50 ms of work and one 20 ms database query per page",
+      "The connection uses TCP and TLS 1.3: two round trips before the request is sent"
+    ],
+    "scope": [
+      "The HTML of one recipe page, first visit",
+      "Images, scripts and search are out of scope",
+      "Readers in Vietnam only"
+    ],
+    "criteria": {
+      "requirements": [
+        "States that the HTML must arrive within a target, such as 500 ms, on a first visit from Vietnam",
+        "Separates what is in scope (HTML of one page) from what is not (images, search)"
+      ],
+      "estimation": [
+        "Adds up the first-visit time: DNS up to 100 ms + 2 round trips for TCP and TLS (60 ms) + 1 round trip for the request (30 ms) + 50 ms server + 20 ms database ≈ 260 ms",
+        "Or works out the load: 200,000 × 5 = 10⁶ pages a day ÷ 10⁵ s ≈ 10 per second on average, about 50 at peak, which one server handles"
+      ],
+      "design": [
+        "Follows one request: DNS lookup, connection, server, database, and back",
+        "Treats DNS as a lookup the browser makes, not a stop the request passes through"
+      ],
+      "data": [
+        "Recipes live in the one database; the server reads one recipe per page",
+        "Says which step to measure first if the page is slow, from the time per step"
+      ],
+      "tradeoffs": [
+        "Names one risk with its condition, such as: the one server is a single point of failure, acceptable for a small site but not if downtime costs money",
+        "Or: moving the server far away (an ocean round trip of 100–150 ms) would add about 3 × 150 ms and break the target"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Browser looks up DNS, opens one TCP + TLS connection to a single server in Singapore, which reads the recipe from one database. First visit ≈ 260 ms, within 500 ms. Load is about 50 pages per second at peak, small for one server. Risk: one server is a single point of failure, accepted at this size with a plan to restart it.",
+      "Same single server and database, explained through the load estimate (10 per second average, 50 at peak) and a measurement plan: time DNS, connection, server and database separately and fix the largest. Trade-off: keeping the server in Singapore keeps round trips short; a server in the US would push the first visit past 500 ms."
+    ],
+    "reference": {
+      "assumptions": [
+        "Readers are spread over the day, with a peak of 5 times the average",
+        "The database query time stays about 20 ms at this load"
+      ],
+      "design": "The browser looks up the site's name with DNS (up to 100 ms the first time, then cached), opens a TCP and TLS 1.3 connection to the server in Singapore (2 round trips, about 60 ms), and sends the request (1 round trip, about 30 ms). The server spends about 50 ms and reads the recipe with one 20 ms query. The first visit takes about 100 + 60 + 30 + 50 + 20 = 260 ms, inside a 500 ms target; later visits skip DNS and reuse the connection.\nLoad: 200,000 × 5 = 10⁶ pages a day, about 10 per second on average and 50 at peak, so one server and one database are enough.",
+      "alternatives": [
+        "A server closer to readers in other countries: not needed while readers are only in Vietnam",
+        "A second server for redundancy: removes the single point of failure, at the cost of a load balancer and a shared database (SD 2)"
+      ]
+    }
+  },
+  {
+    "id": "D28-timetable",
+    "level": 28,
+    "title": "The 7 a.m. Timetable Rush",
+    "prompt": "A school puts its daily timetable online. Almost every student checks it in the 15 minutes before classes start. Design the site so that the morning rush does not make it slow.",
+    "facts": [
+      "2,000 students, each opening the timetable about 3 times between 6:45 and 7:00",
+      "A load test shows one server handles about 200 requests per second before it slows down",
+      "Each page needs about 100 ms of server work",
+      "The timetable changes once a day, at night"
+    ],
+    "scope": [
+      "Reading the day's timetable only",
+      "Editing the timetable is out of scope",
+      "One school, one server room"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the target, such as the page loading within 1 second during the rush",
+        "Identifies that the rush, not the daily average, is the load to plan for"
+      ],
+      "estimation": [
+        "Requests in the window: 2,000 × 3 = 6,000 in 15 minutes = 900 s, about 7 per second on average",
+        "Checks a worse case: even if all 6,000 arrive in one minute, that is 100 per second, half of the 200 a server handles"
+      ],
+      "design": [
+        "Browser, DNS lookup, one server and its data, with the request flow"
+      ],
+      "data": [
+        "The timetable is small and changes once a day, so the server can read it once and keep it in memory, or read it from the database each time at this load",
+        "Concludes from the estimate that one server is enough"
+      ],
+      "tradeoffs": [
+        "Names a failure with its condition, such as: if the one server fails at 6:50, no one can see the timetable; a posted copy or a quick restart plan covers it",
+        "Or: if the school grows tenfold, the worst case reaches 1,000 per second and one server is no longer enough"
+      ]
+    },
+    "fullMarkDesigns": [
+      "One server reads the timetable from the database, serves about 7 requests per second on average and at most about 100 per second in a one-minute burst, both under its 200 limit. Failure: the single server; the school posts a copy on the notice board as a fallback.",
+      "One server keeps the day's timetable in memory after the nightly update, so each request needs no database read. Estimate shows a worst case of 100 per second against a limit of 200. Trade-off: a stale copy in memory if the nightly update fails, so the page shows the timetable's date."
+    ],
+    "reference": {
+      "assumptions": [
+        "Requests are spread across the 15 minutes, with bursts",
+        "The server and its database are in the school's own network or nearby"
+      ],
+      "design": "Students' browsers look up the site with DNS and send each request to one server, which reads the day's timetable from its database (or from memory, since it changes only once a night) and returns the page in about 100 ms.\nLoad: 2,000 × 3 = 6,000 requests in 900 seconds, about 7 per second; even a burst of all 6,000 in one minute is 100 per second, under the measured 200. One server is enough.",
+      "alternatives": [
+        "A second server and a load balancer: not needed for the load, but would remove the single point of failure",
+        "A static file of the timetable generated each night: even less work per request, but needs a step to publish it"
+      ]
+    }
+  }
+]
