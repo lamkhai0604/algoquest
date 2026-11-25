@@ -280,7 +280,7 @@ describe("lesson page", () => {
     const summary = await screen.findByText("Key terms (2)");
     const section = summary.closest("details")!;
     expect(section).not.toHaveAttribute("open");
-    expect(within(section).getByText("Pass", { selector: "dt" })).toBeTruthy();
+    expect(within(section).getByText("Pass").closest("dt")).toBeTruthy();
     expect(
       within(section).getByText("The best value seen so far."),
     ).toBeTruthy();
