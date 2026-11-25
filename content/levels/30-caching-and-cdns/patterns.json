@@ -98,14 +98,14 @@
     "id": "P30-images",
     "level": 30,
     "title": "Product Images Around the World",
-    "statement": "A shop with its servers in Virginia, USA, sells worldwide. Product photos are 200 to 500 KB each, the same for every user, and change only when a seller uploads a new photo. Measurements for users in Asia: the round trip to Virginia is about 230 ms, the origin server answers a photo request in about 50 ms and is only 20% busy, and CDN edge servers in Asian cities are about 20–50 ms away. Requirements: each photo must start arriving within 200 ms of the browser asking for it, and after a seller uploads a new photo, product pages loaded more than an hour later must show it. Product pages are built by the servers for each request and are never cached on the CDN. How should the photos be served?",
+    "statement": "A shop with its servers in Virginia, USA, sells worldwide. Product photos are 200 to 500 KB each, the same for every user, and change only when a seller uploads a new photo. Measurements for users in Asia: the round trip to Virginia is about 230 ms, the origin server answers a photo request in about 50 ms and is only 20% busy, and CDN edge servers in Asian cities are about 20–50 ms away and answer a photo they already hold in under 10 ms. Requirements: a photo that is already cached at the user's edge must start arriving within 200 ms; the first request for a photo at an edge, or the first request after its copy expired, may take longer, because the edge must ask Virginia. After a seller uploads a new photo, product pages loaded more than an hour later must show it. Product pages are built by the servers for each request and are never cached on the CDN. How should the photos be served?",
     "examples": [
       "A user in Hanoi opens a product page with 8 photos"
     ],
     "constraints": [
-      "Each photo starts arriving within 200 ms for users in Asia",
-      "Pages loaded more than an hour after an upload show the new photo",
-      "Photos are the same for every user"
+      "A photo cached at the user's edge starts arriving within 200 ms",
+      "A first or expired request at an edge may take longer",
+      "Pages loaded more than an hour after an upload show the new photo"
     ],
     "approaches": [
       {
@@ -115,16 +115,16 @@
         "label": "unsuitable",
         "time": "Each photo still crosses the ocean",
         "space": "No change",
-        "why": "The origin is only 20% busy, so a faster server saves little. Every photo request still needs at least one 230 ms round trip to Virginia, which already breaks the 200 ms requirement."
+        "why": "There is no edge cache, so every photo request travels to Virginia. The origin is only 20% busy, so a faster server saves little, and every request still needs at least one 230 ms round trip, which breaks the 200 ms requirement for photos users load again and again."
       },
       {
         "id": "cdn-short-ttl",
         "name": "Serve photos through a CDN with a TTL of one hour",
-        "hint": "Edge copies, refreshed hourly",
+        "hint": "Recheck on the next request after expiry",
         "label": "valid",
-        "time": "Nearby edge when it has a copy",
+        "time": "Cached photo: 20–50 ms + under 10 ms; after expiry, the next request waits for a check with Virginia",
         "space": "Copies at edge servers",
-        "why": "This meets all requirements: photos come from an edge 20–50 ms away, and after an hour an edge's copy has expired, so the next request for that photo asks the origin and gets the new one. Unchanged photos may only need to be confirmed, but every hour each edge still asks the origin about every popular photo."
+        "why": "This meets all requirements. A photo cached at the edge arrives in about 30–60 ms. One hour after a copy was stored it expires; the next request for that photo asks Virginia (230 ms round trip plus about 50 ms), which is allowed, and gets the new photo if there is one. Popular photos therefore cause a check with the origin about once an hour per edge, even when they have not changed; photos nobody requests cause no checks."
       },
       {
         "id": "cdn-versioned",
@@ -133,7 +133,7 @@
         "label": "best",
         "time": "Nearby edge for almost every photo",
         "space": "Copies at edge servers",
-        "why": "Photos come from a nearby edge. A new upload gets a new file name, for example photo-42-v2.jpg, which is a new key at the CDN, and the product page, built fresh for each request, links to it at once, so the one-hour rule holds easily. Edges rarely need to ask the origin about unchanged photos."
+        "why": "Photos come from a nearby edge in about 30–60 ms once cached. A new upload gets a new file name, for example photo-42-v2.jpg, which is a new key at the CDN, and the product page, built fresh for each request, links to it at once, so the one-hour rule holds. The first request for photo-42-v2.jpg at each edge is a miss and takes longer (about 230 + 50 ms plus the trip to the edge), which the requirements allow; after that it is a cached hit. Unchanged photos keep their long TTL and rarely need a check with the origin."
       },
       {
         "id": "server-memory",
@@ -142,7 +142,7 @@
         "label": "unsuitable",
         "time": "Fast server, same distance",
         "space": "Server memory",
-        "why": "This removes disk reads in Virginia, but each request still needs at least one 230 ms round trip, so the 200 ms requirement is still broken for users in Asia."
+        "why": "This removes disk reads in Virginia, but there is still no copy near users: every request needs at least one 230 ms round trip, so the 200 ms requirement is broken."
       }
     ]
   }
