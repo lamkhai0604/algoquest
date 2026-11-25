@@ -419,7 +419,7 @@
           "Reusing an open connection"
         ],
         "answer": 2,
-        "explanation": "Work out each saving. Closer data center: 4 trips × (30 − 10) ms = 80 ms. Faster DNS: 50 − 20 = 30 ms. Index: 600 − 200 = 400 ms. Reusing the connection: 60 ms. The index saves the most because it shrinks the biggest step. Improve the biggest part first.",
+        "explanation": "Work out each saving. Closer data center: 4 trips × (30 − 10) ms = 80 ms. (The response row is about 60 ms because it is one round trip plus the time to send the page data; only the round-trip part gets shorter.) Faster DNS: 50 − 20 = 30 ms. Index: 600 − 200 = 400 ms. Reusing the connection: 60 ms. The index saves the most because it shrinks the biggest step. Improve the biggest part first.",
         "hides": [
           "server"
         ]
