@@ -326,6 +326,8 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-627 | Two more trade-off challenges per level for Levels 28 and 29; every `valid` approach meets all fixed requirements of its challenge, and the session challenge on Level 29 is relabelled accordingly | FR-03, D-057 | P2 | Done 2026-11-24: content check in CI; PO review pending |
 | T-629 | Review round 2 fixes for Levels 28 and 29: prediction steps no longer give the answer away through titles or visible variables; the latency table states the real gaps between rows; the worked example and the step 6 prediction give every number the answer depends on; launch capacity states its assumptions; the session and small-tool challenges state their requirements exactly; claims about scaling and least connections carry their conditions | FR-03, D-057, D-079 | P1 | Done 2026-11-25: content check in CI; PO review pending |
 | T-630 | Review round 3 fixes for Levels 28 and 29: the launch-capacity challenge states its planning rule (twice the first hour's average), the small-tool challenge states how long a restore takes, and the step 6 prediction explains the response time | FR-03, D-057 | P2 | Done 2026-11-25: content check in CI; PO review pending |
+| T-631 | Glossary of English terms with fixed Vietnamese explanations (`content/glossary/vi.json`), and translated walkthrough variable values (names and order unchanged) | FR-03, D-080 | P1 | Done 2026-11-25: backend test; content check in CI |
+| T-632 | Translations for trade-off challenges (`patterns.json`): model, content check, and API language selection, as for lessons and problems | FR-03, D-057, D-080 | P3 | Proposed; after more Phase 4 levels |
 
 ## Maintenance
 

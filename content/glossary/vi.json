@@ -1,0 +1,307 @@
+{
+  "language": "vi",
+  "decision": "D-080",
+  "rule": "Technical terms stay in English. At the first use of a term in each Vietnamese lesson, add the explanation from this file in brackets, for example \"load balancer (bộ cân bằng tải)\". Later uses keep only the English term.",
+  "groups": [
+    {
+      "group": "Requests and the network",
+      "terms": [
+        {
+          "term": "client",
+          "vi": "máy khách (chương trình gửi yêu cầu)",
+          "firstLevel": 28
+        },
+        {
+          "term": "server",
+          "vi": "máy chủ",
+          "firstLevel": 28
+        },
+        {
+          "term": "IP address",
+          "vi": "địa chỉ IP (số định danh máy tính trên mạng)",
+          "firstLevel": 28
+        },
+        {
+          "term": "DNS",
+          "vi": "hệ thống phân giải tên miền",
+          "firstLevel": 28
+        },
+        {
+          "term": "DNS resolver",
+          "vi": "máy chủ phân giải tên miền",
+          "firstLevel": 28
+        },
+        {
+          "term": "round trip",
+          "vi": "một lượt đi và về",
+          "firstLevel": 28
+        },
+        {
+          "term": "round-trip time (RTT)",
+          "vi": "thời gian một lượt đi và về",
+          "firstLevel": 28
+        },
+        {
+          "term": "TCP connection",
+          "vi": "kết nối TCP",
+          "firstLevel": 28
+        },
+        {
+          "term": "TLS",
+          "vi": "lớp mã hóa của https",
+          "firstLevel": 28
+        },
+        {
+          "term": "HTTP request",
+          "vi": "yêu cầu HTTP",
+          "firstLevel": 28
+        },
+        {
+          "term": "header",
+          "vi": "phần thông tin đi kèm",
+          "firstLevel": 28
+        },
+        {
+          "term": "cookie",
+          "vi": "dữ liệu nhỏ trình duyệt lưu và gửi lại",
+          "firstLevel": 28
+        },
+        {
+          "term": "port",
+          "vi": "cổng",
+          "firstLevel": 29
+        },
+        {
+          "term": "data center",
+          "vi": "trung tâm dữ liệu",
+          "firstLevel": 28
+        }
+      ]
+    },
+    {
+      "group": "Performance",
+      "terms": [
+        {
+          "term": "latency",
+          "vi": "độ trễ",
+          "firstLevel": 28
+        },
+        {
+          "term": "throughput",
+          "vi": "thông lượng",
+          "firstLevel": 28
+        },
+        {
+          "term": "bottleneck",
+          "vi": "nút thắt cổ chai",
+          "firstLevel": 28
+        },
+        {
+          "term": "peak",
+          "vi": "lúc cao điểm",
+          "firstLevel": 28
+        },
+        {
+          "term": "average load",
+          "vi": "tải trung bình",
+          "firstLevel": 28
+        },
+        {
+          "term": "requests per second",
+          "vi": "số yêu cầu mỗi giây",
+          "firstLevel": 29
+        },
+        {
+          "term": "limit",
+          "vi": "giới hạn",
+          "firstLevel": 29
+        },
+        {
+          "term": "target load",
+          "vi": "tải mục tiêu",
+          "firstLevel": 29
+        },
+        {
+          "term": "utilization",
+          "vi": "mức sử dụng",
+          "firstLevel": 29
+        },
+        {
+          "term": "headroom",
+          "vi": "khoảng dự phòng",
+          "firstLevel": 29
+        },
+        {
+          "term": "timeout",
+          "vi": "hết thời gian chờ",
+          "firstLevel": 28
+        },
+        {
+          "term": "retry",
+          "vi": "thử lại",
+          "firstLevel": 28
+        }
+      ]
+    },
+    {
+      "group": "Storage",
+      "terms": [
+        {
+          "term": "database",
+          "vi": "cơ sở dữ liệu",
+          "firstLevel": 28
+        },
+        {
+          "term": "query",
+          "vi": "truy vấn",
+          "firstLevel": 28
+        },
+        {
+          "term": "index",
+          "vi": "chỉ mục",
+          "firstLevel": 28
+        },
+        {
+          "term": "cache",
+          "vi": "bộ nhớ đệm",
+          "firstLevel": 28
+        },
+        {
+          "term": "cache hit / cache miss",
+          "vi": "tìm thấy / không tìm thấy trong bộ nhớ đệm",
+          "firstLevel": 28
+        },
+        {
+          "term": "CDN",
+          "vi": "mạng phân phối nội dung",
+          "firstLevel": 28
+        },
+        {
+          "term": "edge server",
+          "vi": "máy chủ biên (máy chủ CDN gần người dùng)",
+          "firstLevel": 28
+        },
+        {
+          "term": "backup",
+          "vi": "bản sao lưu",
+          "firstLevel": 29
+        }
+      ]
+    },
+    {
+      "group": "Scaling and availability",
+      "terms": [
+        {
+          "term": "CPU",
+          "vi": "bộ xử lý",
+          "firstLevel": 29
+        },
+        {
+          "term": "vertical scaling (scale up)",
+          "vi": "mở rộng theo chiều dọc (thay máy mạnh hơn)",
+          "firstLevel": 29
+        },
+        {
+          "term": "horizontal scaling (scale out)",
+          "vi": "mở rộng theo chiều ngang (thêm máy)",
+          "firstLevel": 29
+        },
+        {
+          "term": "session",
+          "vi": "phiên đăng nhập",
+          "firstLevel": 29
+        },
+        {
+          "term": "stateful",
+          "vi": "có lưu trạng thái",
+          "firstLevel": 29
+        },
+        {
+          "term": "stateless",
+          "vi": "không lưu trạng thái",
+          "firstLevel": 29
+        },
+        {
+          "term": "load balancer",
+          "vi": "bộ cân bằng tải",
+          "firstLevel": 29
+        },
+        {
+          "term": "round robin",
+          "vi": "chia lần lượt",
+          "firstLevel": 29
+        },
+        {
+          "term": "least connections",
+          "vi": "ưu tiên máy ít kết nối nhất",
+          "firstLevel": 29
+        },
+        {
+          "term": "Layer 4 / Layer 7",
+          "vi": "tầng 4 (tầng vận chuyển) / tầng 7 (tầng ứng dụng)",
+          "firstLevel": 29
+        },
+        {
+          "term": "health check",
+          "vi": "kiểm tra tình trạng máy chủ",
+          "firstLevel": 29
+        },
+        {
+          "term": "in rotation",
+          "vi": "đang nhận yêu cầu",
+          "firstLevel": 29
+        },
+        {
+          "term": "sticky session",
+          "vi": "phiên gắn cố định với một máy chủ",
+          "firstLevel": 29
+        },
+        {
+          "term": "token",
+          "vi": "mã thông báo",
+          "firstLevel": 29
+        },
+        {
+          "term": "single point of failure",
+          "vi": "điểm lỗi duy nhất",
+          "firstLevel": 29
+        },
+        {
+          "term": "redundant",
+          "vi": "có bản dự phòng",
+          "firstLevel": 29
+        },
+        {
+          "term": "fault tolerance",
+          "vi": "khả năng chịu lỗi",
+          "firstLevel": 29
+        },
+        {
+          "term": "downtime",
+          "vi": "thời gian ngừng hoạt động",
+          "firstLevel": 29
+        }
+      ]
+    },
+    {
+      "group": "Design vocabulary",
+      "terms": [
+        {
+          "term": "trade-off",
+          "vi": "sự đánh đổi",
+          "firstLevel": 28
+        },
+        {
+          "term": "requirement",
+          "vi": "yêu cầu",
+          "firstLevel": 28
+        },
+        {
+          "term": "constraint",
+          "vi": "ràng buộc",
+          "firstLevel": 28
+        }
+      ]
+    }
+  ]
+}
