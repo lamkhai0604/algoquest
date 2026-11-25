@@ -1,0 +1,804 @@
+[
+  {
+    "title": "One database does everything",
+    "body": "The shop's app server sends every query to one database server: 8,000 reads and 800 writes per second at a sale. The server handles about 3,000 queries per second, and the team keeps it at no more than 70% of that, 2,100. The load is almost four times too high, and a faster server would only buy a few months.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shoppers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "8,800 queries/s",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "reads per second",
+          "value": "8,000"
+        },
+        {
+          "name": "writes per second",
+          "value": "800"
+        },
+        {
+          "name": "safe limit per server",
+          "value": "2,100"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Copies that answer reads",
+    "body": "With **leader-follower replication**, the **leader** takes every write and sends each change to the **followers**, which apply the same changes in the same order. Followers that also answer reads are **read replicas**. Writes still go only to the leader; reads can go to any replica.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shoppers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "writes"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          },
+          {
+            "path": [
+              2,
+              4
+            ]
+          },
+          {
+            "path": [
+              1,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "writes go to",
+          "value": "the leader"
+        },
+        {
+          "name": "reads go to",
+          "value": "replicas"
+        },
+        {
+          "name": "changes flow",
+          "value": "leader → followers"
+        }
+      ]
+    }
+  },
+  {
+    "title": "How many replicas?",
+    "body": "About 5% of reads must be fresh and go to the leader (step 5), so 8,000 − 400 = 7,600 reads per second go to replicas. Each replica must also apply all 800 writes per second it receives from the leader, so at the safe limit of 2,100 queries per second it has 2,100 − 800 = 1,300 left for reads. 7,600 ÷ 1,300 ≈ 5.8, so **6 replicas**. Replicas add read capacity only: if writes reached 2,100 per second, a replica would have no room left for reads.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shoppers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "reads to replicas",
+          "value": "7,600/s"
+        },
+        {
+          "name": "writes applied by each",
+          "value": "800/s"
+        },
+        {
+          "name": "read room per replica",
+          "value": "1,300/s"
+        },
+        {
+          "name": "replicas needed",
+          "value": "6"
+        }
+      ],
+      "predict": {
+        "question": "Reads to the replicas total 7,600 per second. Each replica's safe limit is 2,100 queries per second, and each must also apply the leader's 800 writes per second. How many replicas are needed?",
+        "options": [
+          "4",
+          "6",
+          "3",
+          "10"
+        ],
+        "answer": 1,
+        "explanation": "Every replica applies every write, so each has 2,100 − 800 = 1,300 queries per second left for reads. 7,600 ÷ 1,300 ≈ 5.8, rounded up to 6. Forgetting the writes gives 7,600 ÷ 2,100 ≈ 3.6, so 4, which would overload every replica.",
+        "hides": [
+          "read room per replica",
+          "replicas needed"
+        ]
+      }
+    }
+  },
+  {
+    "title": "A change that seems to vanish",
+    "body": "A customer changes their delivery address. The write goes to the leader at time 0. Replication is **asynchronous** and the replica is 2 seconds behind: its **replication lag**. Half a second later the customer reloads the page, the read goes to the replica, and the page shows the **old address**. The change is not lost, it has just not reached the replica yet, but to the customer it looks lost.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shoppers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "new address"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0,
+            "note": "lag: 2 s"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "write to leader",
+          "value": "t = 0 s"
+        },
+        {
+          "name": "replica lag",
+          "value": "2 s"
+        },
+        {
+          "name": "reload from replica",
+          "value": "t = 0.5 s"
+        },
+        {
+          "name": "page shows",
+          "value": "the old address"
+        }
+      ],
+      "predict": {
+        "question": "The new address is written to the leader at t = 0. The replica is 2 seconds behind. At t = 0.5 s the customer reloads, and the read goes to the replica. Which address does the page show?",
+        "options": [
+          "The new address, because the write was confirmed",
+          "The old address",
+          "An error, because the replica is out of date",
+          "Both addresses"
+        ],
+        "answer": 1,
+        "explanation": "At t = 0.5 s the replica has applied only the changes up to about 2 seconds earlier, so it still holds the old address. The leader confirmed the write, but a confirmation from the leader says nothing about the replicas when replication is asynchronous.",
+        "hides": [
+          "page shows"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Read your own writes",
+    "body": "The fix is **read-your-writes**: after a customer changes something, their own reads of that data go to the **leader** for a short time, here 30 seconds, longer than the lag the team allows before it takes a slow replica out of service. Everyone else keeps reading from replicas. Another way is to remember the change's position in the log and only use a replica that has caught up to it.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shoppers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "own reads, 30 s"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "own data after a change",
+          "value": "leader, 30 s"
+        },
+        {
+          "name": "everything else",
+          "value": "replicas"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Wait for a copy, or not",
+    "body": "With **synchronous** replication the leader confirms a write only after a follower has received it. A confirmed write then always exists on two servers, but each write waits one more round trip: about 0.5 ms in the same data center, 100 ms or more across an ocean, and if that follower stops answering, writes wait too. **Asynchronous** replication confirms at once and sends the change afterwards: faster, but the newest writes exist only on the leader for a moment. Many teams use one synchronous follower nearby and the rest asynchronous.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shoppers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0,
+            "note": "synchronous"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5,
+            "note": "asynchronous"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "synchronous",
+          "value": "no loss, +1 round trip"
+        },
+        {
+          "name": "asynchronous",
+          "value": "fast, may lose the newest"
+        }
+      ]
+    }
+  },
+  {
+    "title": "The leader fails",
+    "body": "The leader's server dies. In a **failover**, a follower is **promoted** to be the new leader, and the app server sends writes to it. With asynchronous replication, writes that reached the old leader but not yet the follower are gone: late in the evening, with a lag of 3 seconds at 200 writes per second, up to **600** writes that customers were told had succeeded. A synchronous follower would have every confirmed write.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shoppers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "state": "down"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0,
+            "note": "promoted"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "lag at the failure",
+          "value": "3 s"
+        },
+        {
+          "name": "writes per second",
+          "value": "200"
+        },
+        {
+          "name": "writes at risk",
+          "value": "up to 600"
+        }
+      ],
+      "predict": {
+        "question": "Replication is asynchronous. The leader fails late in the evening, when the follower is 3 seconds behind and the shop writes about 200 times per second. About how many confirmed writes can be lost when the follower is promoted?",
+        "options": [
+          "None, because every write was confirmed",
+          "About 200",
+          "About 600",
+          "About 3"
+        ],
+        "answer": 2,
+        "explanation": "The follower is missing the last 3 seconds of writes: 3 × 200 = 600. Those writes were confirmed to customers by the old leader, which is exactly the risk of asynchronous replication.",
+        "hides": [
+          "writes at risk"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Replication is not a backup",
+    "body": "An engineer deletes a day of orders by mistake. The leader applies the delete, and every replica copies it within a second. Only a **backup** kept separately can help: restore last night's full backup, then replay the archived log up to one minute before the delete (**point-in-time recovery**). The **RPO** says how much data may be lost and sets how often the log is archived; the **RTO** says how long recovery may take and must be checked by a real restore: 400 GB at 200 MB/s is about 33 minutes before the log replay.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Shoppers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "orders deleted"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0,
+            "note": "deleted too"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5,
+            "note": "deleted too"
+          },
+          {
+            "kind": "db",
+            "label": "Backups",
+            "x": 6,
+            "y": 8,
+            "note": "last night + log"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ]
+        ],
+        "path": [
+          2,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          },
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "replicas",
+          "value": "copy the delete"
+        },
+        {
+          "name": "restore",
+          "value": "backup + log to 1 min before"
+        },
+        {
+          "name": "restore of 400 GB",
+          "value": "≈33 min + replay"
+        }
+      ]
+    }
+  }
+]
