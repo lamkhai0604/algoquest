@@ -660,6 +660,116 @@
           "term": "fencing",
           "vi": "chặn leader cũ ghi dữ liệu",
           "firstLevel": 33
+        },
+        {
+          "term": "asynchronous work",
+          "vi": "công việc làm sau khi đã trả lời request",
+          "firstLevel": 34
+        },
+        {
+          "term": "message broker",
+          "vi": "máy chủ lưu và chuyển message",
+          "firstLevel": 34
+        },
+        {
+          "term": "message",
+          "vi": "thông điệp",
+          "firstLevel": 34
+        },
+        {
+          "term": "producer",
+          "vi": "bên gửi message",
+          "firstLevel": 34
+        },
+        {
+          "term": "consumer",
+          "vi": "bên nhận và xử lý message",
+          "firstLevel": 34
+        },
+        {
+          "term": "worker",
+          "vi": "tiến trình xử lý công việc từ hàng đợi",
+          "firstLevel": 34
+        },
+        {
+          "term": "queue",
+          "vi": "hàng đợi",
+          "firstLevel": 34
+        },
+        {
+          "term": "acknowledgment (ack)",
+          "vi": "xác nhận đã xử lý xong",
+          "firstLevel": 34
+        },
+        {
+          "term": "visibility timeout",
+          "vi": "thời gian message bị ẩn khi đang xử lý",
+          "firstLevel": 34
+        },
+        {
+          "term": "at-least-once delivery",
+          "vi": "giao ít nhất một lần",
+          "firstLevel": 34
+        },
+        {
+          "term": "idempotency key",
+          "vi": "khoá để lặp lại thao tác mà không đổi kết quả",
+          "firstLevel": 34
+        },
+        {
+          "term": "backlog",
+          "vi": "lượng việc đang chờ",
+          "firstLevel": 34
+        },
+        {
+          "term": "exponential backoff",
+          "vi": "chờ lâu gấp đôi sau mỗi lần thử lại",
+          "firstLevel": 34
+        },
+        {
+          "term": "jitter",
+          "vi": "độ lệch ngẫu nhiên thêm vào thời gian chờ",
+          "firstLevel": 34
+        },
+        {
+          "term": "dead-letter queue",
+          "vi": "hàng đợi cho message lỗi nhiều lần",
+          "firstLevel": 34
+        },
+        {
+          "term": "poison message",
+          "vi": "message làm worker lỗi mỗi lần xử lý",
+          "firstLevel": 34
+        },
+        {
+          "term": "publish-subscribe (pub/sub)",
+          "vi": "xuất bản và đăng ký nhận",
+          "firstLevel": 34
+        },
+        {
+          "term": "subscriber",
+          "vi": "bên đăng ký nhận",
+          "firstLevel": 34
+        },
+        {
+          "term": "event log",
+          "vi": "nhật ký sự kiện",
+          "firstLevel": 34
+        },
+        {
+          "term": "back-pressure",
+          "vi": "giảm hoặc từ chối việc mới khi bị quá tải",
+          "firstLevel": 34
+        },
+        {
+          "term": "batch processing",
+          "vi": "xử lý theo lô",
+          "firstLevel": 34
+        },
+        {
+          "term": "stream processing",
+          "vi": "xử lý theo luồng",
+          "firstLevel": 34
         }
       ]
     },

@@ -229,5 +229,12 @@
     "title": "Replication, Backup and Recovery",
     "summary": "Copy a database to serve more reads and survive a failed server, keep users seeing their own changes, and plan backups that survive mistakes.",
     "phase": 4
+  },
+  {
+    "number": 34,
+    "slug": "queues-and-asynchronous-work",
+    "title": "Queues and Asynchronous Work",
+    "summary": "Move slow work out of the request with queues and workers, keep up with the load, and make repeated and failed work safe.",
+    "phase": 4
   }
 ]
