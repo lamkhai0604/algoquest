@@ -8,6 +8,8 @@ import type { VisualArch, VisualComponent } from "./types";
  * of this step moves along its path and back as a few dots. The drawing is
  * plain SVG; the motion uses SVG animation, so nothing moves when the browser
  * asks for reduced motion and the path is shown by its highlighted links.
+ * While a prediction is open the path is hidden, so it does not give the
+ * answer away.
  */
 
 /** Grid unit in pixels, and how tall a request dot flies above the floor. */
@@ -156,9 +158,16 @@ function Block({ node }: { node: VisualComponent }) {
   );
 }
 
-export function Architecture({ arch }: { arch: VisualArch }) {
+export function Architecture({
+  arch,
+  masked = false,
+}: {
+  arch: VisualArch;
+  /** While a prediction is open, the path and the moving requests stay hidden. */
+  masked?: boolean;
+}) {
   const { nodes, links } = arch;
-  const path = arch.path ?? [];
+  const path = masked ? [] : (arch.path ?? []);
   const onPath = new Set<string>();
   for (let i = 0; i + 1 < path.length; i++) {
     const a = path[i]!;

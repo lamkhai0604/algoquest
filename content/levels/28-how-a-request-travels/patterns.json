@@ -17,7 +17,7 @@
         "name": "Serve images and static files from a CDN with edge servers near readers",
         "hint": "Copies close to the reader",
         "label": "best",
-        "time": "About 20–50 ms to a nearby edge (approximate)",
+        "time": "About 20–50 ms to a nearby edge when it already has a copy (cache hit; approximate)",
         "space": "Copies at edge locations",
         "why": "Most bytes are identical for every reader, so edge copies remove the long trip for most requests. Article text still comes from Frankfurt when the edge has no copy, so the content must be cached correctly."
       },
@@ -38,6 +38,110 @@
         "time": "No change to the trip across the world",
         "space": "Same data",
         "why": "The database is not the slow part of this problem. The distance between the reader and the server is."
+      }
+    ]
+  },
+  {
+    "id": "P28-slow-at-peak",
+    "level": 28,
+    "title": "Slow Only at the Evening Peak",
+    "statement": "A food-ordering API answers in about 80 ms at night but takes about 2 seconds at the 7 p.m. peak. At peak, the server's CPU is at 98%. The measured network round trip stays at 30 ms all day, and DNS answers are cached. Where should the team look first?",
+    "examples": [
+      "Night: 80 ms per request, CPU 15%",
+      "7 p.m.: 2,000 ms per request, CPU 98%, round trip still 30 ms"
+    ],
+    "constraints": [
+      "Only the peak is slow",
+      "The team can investigate one area first"
+    ],
+    "approaches": [
+      {
+        "id": "network",
+        "name": "The network between users and the server",
+        "hint": "The distance to users",
+        "label": "unsuitable",
+        "time": "Round trip unchanged at 30 ms",
+        "space": "No change",
+        "why": "The measured round trip is the same at night and at peak, so the network does not explain the extra 1.9 seconds."
+      },
+      {
+        "id": "server-queue",
+        "name": "The server: requests wait in a queue because its CPU is full",
+        "hint": "What is busy only at peak?",
+        "label": "best",
+        "time": "Most of the extra time is waiting for the CPU",
+        "space": "Fix with more servers or cheaper requests",
+        "why": "The CPU is at 98% only when it is slow. A full CPU makes requests wait their turn, so latency grows even though each request needs the same work."
+      },
+      {
+        "id": "database",
+        "name": "The database, because every request reads from it",
+        "hint": "The shared store behind the server",
+        "label": "valid",
+        "time": "Could add time at peak if it is also busy",
+        "space": "Check its load and slow queries",
+        "why": "A busy database is a common cause and worth checking next, but the 98% CPU already points at the server, so starting here is slower."
+      },
+      {
+        "id": "dns",
+        "name": "DNS lookups",
+        "hint": "Finding the server's address",
+        "label": "unsuitable",
+        "time": "Near zero: answers are cached",
+        "space": "No change",
+        "why": "DNS answers are cached, so DNS adds almost nothing, at night or at peak."
+      }
+    ]
+  },
+  {
+    "id": "P28-launch-capacity",
+    "level": 28,
+    "title": "Capacity for Launch Day",
+    "statement": "A concert ticket site expects 1.2 million visitors on launch day. Each visitor loads about 10 pages, and 80% of all visits happen in the first hour after sales open. How many requests per second should the team plan for?",
+    "examples": [
+      "1.2 million visitors × 10 pages = 12 million requests in the day",
+      "One hour = 3,600 seconds; one day ≈ 10⁵ seconds"
+    ],
+    "constraints": [
+      "The site must stay fast during the first hour",
+      "Requests per second is the planning number"
+    ],
+    "approaches": [
+      {
+        "id": "peak-hour",
+        "name": "Plan for the first-hour peak: 80% of 12 million is 9.6 million requests in 3,600 seconds, about 2,700 per second",
+        "hint": "When do most requests arrive?",
+        "label": "best",
+        "time": "9.6 × 10⁶ ÷ 3,600 ≈ 2,700 requests per second",
+        "space": "Enough servers for about 2,700 per second",
+        "why": "The site must survive its busiest hour. Spreading the requests over the whole day hides the peak."
+      },
+      {
+        "id": "peak-double",
+        "name": "Plan for the peak and then double it, to about 5,400 per second",
+        "hint": "Peak plus a big margin",
+        "label": "valid",
+        "time": "2 × 2,700 ≈ 5,400 requests per second",
+        "space": "About twice the servers really needed",
+        "why": "This also survives the peak, with extra room for a surprise, but costs about twice as much. It is a reasonable choice if the guess of 1.2 million visitors is very uncertain."
+      },
+      {
+        "id": "daily-average",
+        "name": "Plan for the daily average: 12 million ÷ 10⁵ seconds, about 120 per second",
+        "hint": "Spread over the day",
+        "label": "unsuitable",
+        "time": "1.2 × 10⁷ ÷ 10⁵ = 120 requests per second",
+        "space": "Far too few servers",
+        "why": "120 per second is more than 20 times below the real first-hour rate of about 2,700, so the site would fail exactly when sales open."
+      },
+      {
+        "id": "average-x10",
+        "name": "Plan for ten times the daily average, about 1,200 per second",
+        "hint": "A big safety factor",
+        "label": "unsuitable",
+        "time": "10 × 120 = 1,200 requests per second",
+        "space": "Still too few servers",
+        "why": "Even ten times the average is less than half of the first-hour peak. A safety factor cannot replace knowing when the traffic arrives."
       }
     ]
   }
