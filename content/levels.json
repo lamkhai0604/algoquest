@@ -222,5 +222,12 @@
     "title": "APIs and Service Boundaries",
     "summary": "Design REST APIs with the right methods and status codes, page through long lists, push live updates, and split one service into several.",
     "phase": 4
+  },
+  {
+    "number": 33,
+    "slug": "replication-backup-and-recovery",
+    "title": "Replication, Backup and Recovery",
+    "summary": "Copy a database to serve more reads and survive a failed server, keep users seeing their own changes, and plan backups that survive mistakes.",
+    "phase": 4
   }
 ]
