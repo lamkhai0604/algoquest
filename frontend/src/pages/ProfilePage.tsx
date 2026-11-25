@@ -15,7 +15,7 @@ import game from "./Game.module.css";
 import { translate, useTranslation } from "../i18n";
 import type { Locale } from "../i18n";
 import styles from "./Pages.module.css";
-import { levelLabel, levelShort } from "../game/levelLabel";
+import { levelLabel } from "../game/levelLabel";
 
 /** Phase names, as on the Learning Path (D-048). */
 const PHASE_TITLES: Record<number, string> = {
@@ -76,7 +76,7 @@ function Hero({ profile }: { profile: Profile }) {
         <h1 className={styles.title}>{profile.displayName}</h1>
         {current && (
           <p className={game.note}>
-            {t("profileMore.nowOn")} {levelShort(current.number)} ·{" "}
+            {t("profileMore.nowOn")} {levelLabel(current.number)} ·{" "}
             {current.title}
           </p>
         )}

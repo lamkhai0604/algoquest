@@ -913,3 +913,28 @@ describe("lesson page", () => {
     expect(quickCheckPosts(fetchFn)).toHaveLength(0);
   });
 });
+
+describe("level back-button labels (T-644)", () => {
+  it.each([
+    ["en", 28, "Back to SD 1"],
+    ["en", 7, "Back to Level 7"],
+    ["vi", 28, "Quay lại SD 1"],
+    ["vi", 7, "Quay lại Level 7"],
+  ] as const)(
+    "renders %s level %i naturally",
+    async (locale, number, label) => {
+      setLocale(locale);
+      fakeApi({
+        "GET /api/v1/me": () => json(200, ME),
+        "GET /api/v1/levels": () => json(200, LEVELS),
+        [`GET /api/v1/levels/${number}/lesson`]: () =>
+          json(200, { ...LESSON, level: number }),
+      });
+      renderSignedInAt(`/levels/${number}/lesson`);
+      expect(await screen.findByRole("link", { name: label })).toHaveAttribute(
+        "href",
+        `/levels/${number}`,
+      );
+    },
+  );
+});
