@@ -13,7 +13,7 @@
 - **Client và server.** Client — máy khách (chương trình gửi yêu cầu) — là browser hoặc ứng dụng điện thoại gửi yêu cầu. Server (máy chủ) là máy tính trả lời. Hai bên trao đổi dữ liệu qua mạng.
 - **IP address — địa chỉ IP (số định danh máy tính trên mạng).** Dãy số giúp xác định một máy tính trên internet, giống địa chỉ nhà, ví dụ 142.250.72.14.
 - **DNS (hệ thống tên miền).** Tên đầy đủ là Domain Name System. Giống danh bạ của internet: DNS đổi tên như shop.example thành IP address của server. **DNS resolver (máy chủ phân giải DNS)** giúp tra cứu địa chỉ, thường do nhà cung cấp internet vận hành. DNS là bước tra cứu trước request, không phải trạm mà request đi xuyên qua.
-- **Round trip (lượt đi và về).** Một thông điệp đi đến phía bên kia rồi nhận câu trả lời trở lại. Thời gian đó gọi là round-trip time (RTT) — thời gian khứ hồi —, phụ thuộc nhiều vào khoảng cách.
+- **Round trip (lượt đi và về).** Một thông điệp đi đến phía bên kia rồi nhận câu trả lời trở lại. Thời gian đó gọi là round-trip time (RTT) (thời gian khứ hồi) và phụ thuộc nhiều vào khoảng cách.
 - **TCP connection (kết nối TCP).** Kết nối giúp client và server trao đổi dữ liệu đáng tin cậy, đúng thứ tự và không thiếu phần. Mở kết nối tốn một round trip.
 - **TLS (lớp mã hóa của https).** Cơ chế bảo vệ kết nối đứng sau https:// và biểu tượng ổ khóa trên browser. Thiết lập TLS cần thêm một round trip với TLS 1.3 hoặc hai round trips với TLS 1.2 cũ hơn.
 - **HTTP request (yêu cầu HTTP).** Thông điệp browser gửi đi, gồm method (phương thức, như GET để đọc hoặc POST để gửi dữ liệu), path (đường dẫn, như /products/42) và headers (phần thông tin đi kèm, chẳng hạn ngôn ngữ người dùng muốn xem).
@@ -112,7 +112,7 @@ Peak — lúc cao điểm (peak traffic: lưu lượng cao điểm) — thườn
 
 - **Một bước quá chậm chi phối toàn bộ.** Nếu database mất 2 seconds còn mỗi bước khác chỉ mất 20 ms, tăng tốc network gần như không thay đổi kết quả.
 - **Cached responses (phản hồi từ cache).** Nếu cache gần người dùng đã có dữ liệu, request bỏ qua phần lớn các bước. Vì vậy cùng một request có thể có thời gian rất khác nhau.
-- **Timeout (hết thời gian chờ).** Nếu request chờ quá lâu ở một bước nên dừng và báo lỗi, thay vì treo đến khi người dùng bỏ cuộc.
+- **Timeout (hết thời gian chờ).** Nếu request chờ quá lâu ở một bước, hệ thống nên dừng và báo lỗi, thay vì treo đến khi người dùng bỏ cuộc.
 - **Retry (thử lại).** Thử lại tạo thêm tải đúng lúc hệ thống đang gặp khó khăn. Hãy giới hạn số lần thử và chờ một khoảng giữa các lần.
 
 ## [worked-example] Ví dụ giải chi tiết
