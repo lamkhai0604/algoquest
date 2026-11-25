@@ -1,0 +1,26 @@
+[
+  {
+    "title": "One server is not enough",
+    "body": "A single server handles 300 requests per second. Peak traffic is 900. You can make the server bigger (vertical scaling), but a machine has a ceiling and one failure takes everything down. Adding more identical servers (horizontal scaling) removes the ceiling, if the rest of the system can keep up."
+  },
+  {
+    "title": "Put a load balancer in front",
+    "body": "Users send requests to one address, the load balancer. It forwards each request to one of several servers. The users do not know how many servers exist, and a server can be added or removed without changing the address they use."
+  },
+  {
+    "title": "Pick a server for each request",
+    "body": "**Round robin** sends requests to servers in turn. It is simple and works when requests take similar time. **Least connections** sends each request to the server with the fewest open connections. It works better when some requests are much slower than others."
+  },
+  {
+    "title": "Keep servers stateless",
+    "body": "If a user's shopping cart lives only in Server 2's memory, a request sent to Server 1 finds no cart. Store the cart in a shared database or a shared session store that every server can read. Then any server can answer any request."
+  },
+  {
+    "title": "Remove a broken server",
+    "body": "The load balancer calls each server's health check every few seconds. A server that does not answer OK is taken out of rotation. A short interval finds failures faster but adds checking load; a long one sends more requests to a dead server first."
+  },
+  {
+    "title": "Check the next bottleneck",
+    "body": "The servers now share the load, but every server still writes to one database. Scaling out moved the limit; it did not remove it. The next design step is to look at the database, which is the topic of Level 31."
+  }
+]

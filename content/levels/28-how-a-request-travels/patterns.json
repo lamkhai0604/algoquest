@@ -1,0 +1,44 @@
+[
+  {
+    "id": "P28-far-reader-page",
+    "level": 28,
+    "title": "Slow News Page Abroad",
+    "statement": "A news site runs its server in Frankfurt. Readers in Vietnam see page loads of about 1.2 seconds. Most of each page is the same article text and the same images for every reader. Which change helps most? Assume the team can run a content delivery network (CDN) with edge servers in Asia.",
+    "examples": [
+      "Reader in Hanoi, server in Frankfurt: each request crosses the world and back"
+    ],
+    "constraints": [
+      "Traffic is mostly reads of the same articles",
+      "Team budget allows one main change this quarter"
+    ],
+    "approaches": [
+      {
+        "id": "cdn",
+        "name": "Serve images and static files from a CDN with edge servers near readers",
+        "hint": "Copies close to the reader",
+        "label": "best",
+        "time": "About 20–50 ms to a nearby edge (approximate)",
+        "space": "Copies at edge locations",
+        "why": "Most bytes are identical for every reader, so edge copies remove the long trip for most requests. Article text still comes from Frankfurt when the edge has no copy, so the content must be cached correctly."
+      },
+      {
+        "id": "move",
+        "name": "Move the whole server to Vietnam",
+        "hint": "Shorten every trip",
+        "label": "valid",
+        "time": "About 20–50 ms for every request (approximate)",
+        "space": "One new server region",
+        "why": "This shortens every request, not only the static ones, so it works. It costs more to run and makes readers in Europe slower, so it is not the first step when most content is static."
+      },
+      {
+        "id": "faster-db",
+        "name": "Buy a faster database",
+        "hint": "More power at the back",
+        "label": "unsuitable",
+        "time": "No change to the trip across the world",
+        "space": "Same data",
+        "why": "The database is not the slow part of this problem. The distance between the reader and the server is."
+      }
+    ]
+  }
+]

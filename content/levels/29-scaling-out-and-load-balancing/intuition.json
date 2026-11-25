@@ -1,0 +1,11 @@
+{
+  "question": "Why does opening more checkouts at a supermarket only help if any cashier can serve any customer?",
+  "options": [
+    "A customer who must return to the same cashier cannot be sent to a free checkout",
+    "Cashiers need the same colour uniform",
+    "More checkouts always cost less than faster cashiers",
+    "Customers never change lanes"
+  ],
+  "answer": 0,
+  "explanation": "This is stateless scaling. If each server must keep the user's data in its own memory, the balancer cannot send the user anywhere else, and extra servers do not help that user."
+}

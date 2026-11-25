@@ -187,5 +187,19 @@
     "title": "Interview Practice",
     "summary": "Timed challenges, trade-offs, edge cases, and explaining your solution out loud.",
     "phase": 3
+  },
+  {
+    "number": 28,
+    "slug": "how-a-request-travels",
+    "title": "How a Request Travels",
+    "summary": "Trace one web request from the browser to the server, and find where its time goes.",
+    "phase": 4
+  },
+  {
+    "number": 29,
+    "slug": "scaling-out-and-load-balancing",
+    "title": "Scaling Out and Load Balancing",
+    "summary": "Add servers in front of a load balancer, and keep them stateless so any server can answer any request.",
+    "phase": 4
   }
 ]
