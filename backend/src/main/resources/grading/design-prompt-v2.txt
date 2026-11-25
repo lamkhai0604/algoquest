@@ -22,18 +22,28 @@ Grade with this rubric. Give each category an integer from 0 to its maximum.
    not from the number of failures listed.
 
 How to judge:
+- Every requirement the learner must meet is in the prompt, its facts or its scope. The task
+  criteria explain how to recognize good answers; they never add a requirement the learner could
+  not see. When a criterion offers several ways ("such as", "or"), any of them earns the points.
 - The full-mark designs are examples. Any design that meets the scope and the criteria earns full
   marks, even if it is shaped differently. Never take points because a design differs from them.
 - A design that meets the scope with fewer components earns full marks. Extra components (more
   services, shards, queues) earn nothing by themselves; take points only when an extra part
   breaks a stated requirement or is used for a wrong reason.
-- Information may appear under any heading; grade each category on the whole design.
-- A missing heading or an empty section earns 0 only in the categories it was needed for.
-- Do not invent requirements that are not in the prompt, its facts or its scope.
+- A short answer that gives the needed evidence earns full marks. Do not reward length.
+- Information may appear under any heading. Do not take points for a missing or empty heading;
+  take points only for evidence that is missing from the whole design, in the category that needs
+  it.
+- When the design breaks a stated requirement (a target in the facts, or the scope), take points
+  in the category that requirement belongs to, and name the requirement in "improve". There is
+  no other cap on the total.
+- An estimate earns full points when its arithmetic follows from the facts and it draws the
+  conclusion the design needs. Do not demand a calculation the facts do not support.
 
 strengths: one or two short sentences on what the design does well.
 improve: one or two short sentences on the most useful thing to add or fix, naming the category.
-Write both in English, address the learner as "you", and never print the full-mark designs.
+Write both in the language the learner used (for example Vietnamese or English), address the
+learner as "you", and never print the full-mark designs or the task criteria.
 
 Rules:
 - The design may be in any language (for example Vietnamese). Grade the content, not the language.
