@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Draft version 3 for PO review |
+| Status | Draft version 3.1 for PO review |
 | Updated | 2026-11-25 |
 | Levels | 28 to 53, appended after Level 27 (level numbers are fixed, D-056). Levels 28 and 29 are built |
 | Owner | PO |
 | Authoring | Claude drafts; ChatGPT reviews and translates; Gemini checks facts; the PO approves |
 | Scoring | No XP and no level gate in Phase 4 until the PO decides (PO, 2026-11-24) |
 
-Version 3 applies the review of version 2: prerequisites are complete, local concurrency, service boundaries, recovery, autoscaling and tail latency have a home, heavy levels separate core from extension material, each case study has an assessed deep dive, and interview readiness has a pass standard for a junior and a mid-level track.
+Version 3 applies the review of version 2, and version 3.1 the focused review of version 3: prerequisites are complete (the junior track now includes 35, 36 and 41C, which its case studies need), local concurrency, service boundaries, recovery, autoscaling and tail latency have a home, heavy levels separate core from extension material, each case study has an assessed deep dive, and interview readiness has a pass standard for a junior and a mid-level track.
 
 ## 1. Purpose
 
@@ -49,6 +49,9 @@ Lessons are written from general knowledge of the field and checked against publ
 | Cloudflare Learning Center | Free online | DNS, CDNs, TLS, rate limiting, DDoS |
 | MDN Web Docs (HTTP); IETF RFC 9110 (HTTP semantics), RFC 8446 (TLS 1.3) | Free online | HTTP methods and their idempotency, status codes, caching headers, WebSocket, TLS |
 | PostgreSQL documentation, Concurrency Control | Free online | Isolation levels, locking, conflicting concurrent writes |
+| AWS Well-Architected Reliability Pillar, disaster recovery | Free online | Backups, RPO and RTO, restore strategies |
+| Google *Site Reliability Engineering*, chapter Service Level Objectives | Free online | Latency percentiles (p95, p99) vs averages, SLOs |
+| Amazon EC2 Auto Scaling User Guide | Free online | Scaling triggers, warm-up delay, minimum and maximum capacity |
 | Martin Kleppmann, *Designing Data-Intensive Applications* (O'Reilly) | Paid | Replication, partitioning, consistency, transactions, streams |
 | *The System Design Primer* (donnemartin, GitHub, CC BY 4.0) | Free online | Topic coverage check |
 
@@ -82,7 +85,7 @@ Case studies (43 to 51) and Levels 52 and 53 all build on Level 42; this is not 
 | 28 | How a Request Travels (built) | Client and server, DNS, TCP and TLS, HTTP, latency vs throughput, latency numbers, estimation with powers of ten | — | 1 |
 | 29 | Scaling Out and Load Balancing (built) | Vertical vs horizontal scaling, stateless services, sessions, L4 vs L7, round robin and least connections, health checks, capacity planning | — | 28 |
 | 30 | Caching and CDNs | A minimal database model (a store that reads and writes rows, slower than memory; taught in full in 31), where to cache, cache-aside, TTL, hit and miss, stale data, one invalidation example, CDN basics | Write-through and write-back, LRU eviction, hot keys, thundering herd | 3, 28, 29 |
-| 31 | Databases, Indexes and Concurrent Writes | Tables and documents, SQL vs NoSQL by access pattern, data modeling, primary keys, indexes (B-tree intuition), query cost, transactions and ACID at an intuitive level, two clients claiming the last seat at the same time, fixed with a conditional update or a unique constraint | Isolation levels, optimistic vs pessimistic locking in detail | 8, 28, 30 |
+| 31 | Databases, Indexes and Concurrent Writes | Tables and documents, SQL vs NoSQL by access pattern, data modeling, primary keys, indexes (B-tree intuition), query cost, transactions and ACID at an intuitive level, two clients claiming the last seat at the same time, fixed with a conditional update or a unique constraint, and the two ways to prevent such conflicts at an intuitive level: lock first (pessimistic) or check a version when writing (optimistic) | Isolation levels and their anomalies, locking in detail | 8, 28, 30 |
 | 32 | APIs and Service Boundaries | REST resources, methods and status codes, pagination, versioning, which HTTP methods are idempotent (method meaning only; idempotency keys for application operations are Level 34), gRPC, polling, long polling, WebSocket and server-sent events, one service vs several services, a call chain between services | API gateways, backward-compatible changes | 28, 31 |
 
 ### Stage 2 — Data at scale (Levels 33 to 37)
@@ -93,7 +96,7 @@ Case studies (43 to 51) and Levels 52 and 53 all build on Level 42; this is not 
 | 34 | Queues and Asynchronous Work | New material: what a message broker stores, acknowledgments, consumer progress. Queues vs pub/sub, event logs, at-least-once delivery, idempotency keys, retries with backoff, dead-letter queues, back-pressure | Ordering per key, batch vs stream processing | 6, 32 |
 | 35 | Partitioning and Consistent Hashing | Range vs hash partitioning, shard keys, hot partitions, resharding, consistent hashing with virtual nodes | Secondary indexes on shards | 3, 31, 33 |
 | 36 | Consistency and Availability | What a network partition is, strong vs eventual consistency with concrete examples, the availability trade-off during a partition (CAP), choosing per feature | PACELC, quorum arithmetic, conflict resolution | 33, 35 |
-| 37 | Transactions Across Services | Isolation and optimistic vs pessimistic concurrency (recap of 31), why one database transaction is easier, a workflow that fails halfway, sagas with compensating steps, the outbox pattern | Two-phase commit and its costs, exactly-once as an effect | 31, 32, 34, 36 |
+| 37 | Transactions Across Services | Recap of the 31 seat claim and of locking first vs checking a version, why one database transaction is easier, a workflow that fails halfway, sagas with compensating steps, the outbox pattern | Two-phase commit and its costs, exactly-once as an effect | 31, 32, 34, 36 |
 
 ### Stage 3 — Production concerns (Levels 38 to 41)
 
@@ -108,7 +111,7 @@ Case studies (43 to 51) and Levels 52 and 53 all build on Level 42; this is not 
 
 | Level | Title | Core | Builds on |
 | --- | --- | --- | --- |
-| 42 | The Design Interview Method | The full routine: clarify requirements, estimate (requests, storage, bandwidth, latency budget, rough cost), API, data model, high-level design, one or two deep dives, failures with conditions, summary. Thinking aloud and managing time | Junior track core levels (section 5); 35 to 41 recommended |
+| 42 | The Design Interview Method | The full routine: clarify requirements, estimate (requests, storage, bandwidth, latency budget, rough cost), API, data model, high-level design, one or two deep dives, failures with conditions, summary. Thinking aloud and managing time | 28–34, 38; 35 to 41 recommended |
 
 ### Stage 5 — Case studies (Levels 43 to 51)
 
@@ -117,7 +120,7 @@ Each case study applies the Level 42 routine and ends with one full design promp
 | Level | Title | Assessed deep dive | Builds on |
 | --- | --- | --- | --- |
 | 43 | URL Shortener | Short-code collisions and how to detect them; redirect status codes and what they mean for caching | 30, 31, 41C |
-| 44 | Rate Limiter Service | Atomic counters in a shared store; per-node vs global limits; fail-open or fail-closed when the store is down, with the reason | 13, 31, 36, 38 |
+| 44 | Rate Limiter Service | Taught first in this level: token bucket and sliding window at an intuitive level, and choosing one for a stated burst or window requirement. Assessed: atomic counters in a shared store; per-node vs global limits; fail-open or fail-closed when the store is down, with the reason | 13, 31, 36, 38 |
 | 45 | Notification System | Provider quotas, deduplication, and user preferences enforced across channel retries | 34, 38 |
 | 46 | News Feed | Hybrid fan-out with a numeric follower threshold for large accounts | 30, 34, 35 |
 | 47 | Chat Service | Ordering within one conversation, reconnect and catch-up, delivery and read receipts | 32, 33, 34 |
@@ -137,9 +140,12 @@ Each case study applies the Level 42 routine and ends with one full design promp
 
 ### Tracks
 
+Each track lists every level its case studies and mocks require: following the core material of the listed levels in order reaches every required case study and the track's mocks without an unlisted prerequisite. Algorithm levels 1 to 27 are assumed for both tracks.
+
+
 | Track | Core levels | Case studies | Mock prompts |
 | --- | --- | --- | --- |
-| Junior | 28–34, 38, 42 | 43–47 | Scoped to one service with a cache, a database and a queue |
+| Junior | 28–36, 38, 41C, 42 (core material only) | 43–47 | Scoped to one service with a cache, a database and a queue |
 | Mid-level | All of 28–42 | 43–51 | Several services, consistency, failure and cost trade-offs |
 | Advanced (optional) | Mid-level track and 52 | — | Distributed storage deep dives |
 
