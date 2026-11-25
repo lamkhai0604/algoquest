@@ -3,7 +3,7 @@
 ## [objectives] Mục tiêu bài học
 
 - So sánh vertical scaling (scale up) — mở rộng theo chiều dọc (thay máy mạnh hơn) — với horizontal scaling (scale out) — mở rộng theo chiều ngang (thêm máy).
-- Giải thích vì sao stateless (không lưu trạng thái) service dễ mở rộng hơn: từng server (máy chủ) không giữ dữ liệu người dùng trong bộ nhớ riêng.
+- Giải thích vì sao stateless service (dịch vụ không lưu trạng thái) dễ mở rộng hơn: từng server (máy chủ) không giữ dữ liệu người dùng trong bộ nhớ riêng.
 - Mô tả load balancer (bộ cân bằng tải) làm gì và nằm ở đâu trên đường đi của request.
 - So sánh Layer 4 — tầng 4 (tầng vận chuyển) — với Layer 7 — tầng 7 (tầng ứng dụng) — của load balancer; đồng thời so sánh round robin (chia lần lượt) với least connections (ưu tiên máy ít kết nối nhất).
 - Giải thích cách health check (kiểm tra tình trạng hoạt động) loại server bị lỗi khỏi danh sách nhận request.
