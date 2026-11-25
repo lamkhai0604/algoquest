@@ -1,0 +1,35 @@
+[
+  {
+    "question": "The response is lost after the server handles a request. Assume no other client changes the resource, and the API follows the method meanings taught here. Which request can be retried unchanged without creating an extra order?",
+    "options": [
+      "POST /orders with the same order details, because a missing response means the first order was not created.",
+      "PATCH /orders/42 that adds another item, because PATCH changes only part of a resource.",
+      "PUT /orders/42/delivery-note replacing the whole note with the same text, because repeating the replacement leaves the same final state.",
+      "POST /orders with the same order details, because sending identical JSON makes every HTTP method idempotent."
+    ],
+    "answer": 2,
+    "explanation": "PUT replaces this whole resource. Setting the delivery note to the same text again leaves the same final state as setting it once. A lost response does not tell the client whether the server already did the work. POST /orders may create a second order; identical request bodies do not make POST idempotent. PATCH is not guaranteed idempotent, and adding another item can repeat the change."
+  },
+  {
+    "question": "A customer's login is valid. Their request names an existing order owned by another customer, which they cannot view. This API reports permission failures directly rather than hiding the order's existence. Which status code fits?",
+    "options": [
+      "403 Forbidden: the customer is authenticated but not allowed to view this order.",
+      "401 Unauthorized: the order belongs to a different user, even though the login is valid.",
+      "404 Not Found: an existing order becomes missing whenever its owner differs from the caller.",
+      "400 Bad Request: the request's format is invalid whenever the caller lacks permission."
+    ],
+    "answer": 0,
+    "explanation": "The request is well formed, the login is valid, and the order exists, but permission is missing: 403. Here 401 would describe a missing or invalid login, 404 a missing resource, and 400 an invalid request. The stated API policy rules out concealing this permission failure with 404."
+  },
+  {
+    "question": "A newest-first history has unique, fixed creation times. After page 1 returns its first 20 items, a new item arrives at the top. Why can OFFSET 20 repeat an item on page 2, and which change fixes that shift?",
+    "options": [
+      "The index duplicates a stored row during insertion; rebuild the index after every new item.",
+      "OFFSET 20 starts again at the first item; increase the page size to keep all pages aligned.",
+      "A new item resets the page number; use a longer cache TTL to hold the current offset.",
+      "The insertion shifts row positions, so the former last item of page 1 moves past the offset; use a cursor for items older than the last item shown."
+    ],
+    "answer": 3,
+    "explanation": "Page 1 originally ends at position 20. Inserting one new item at the top moves that item to position 21. OFFSET 20 skips positions 1 through 20 and returns it again. A cursor uses the last shown item's fixed creation time, so the next page continues with older items instead of recounting positions. An index on customer_id and created_at supports that lookup."
+  }
+]
