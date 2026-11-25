@@ -1,0 +1,11 @@
+{
+  "question": "Thực đơn nhà hàng liệt kê món bạn được đặt. Vì sao bếp thay bếp nấu mà không cần báo khách?",
+  "options": [
+    "Khách chỉ phụ thuộc cam kết trên thực đơn, không phải cách bếp hoạt động",
+    "Khách chỉ để ý giá nên mọi thứ khác có thể đổi",
+    "Thực đơn in từ danh sách thiết bị bếp nên tự cập nhật",
+    "Bếp in thực đơn mới mỗi lần thay đổi"
+  ],
+  "answer": 0,
+  "explanation": "Thực đơn là contract, như API. Miễn món trên đó không đổi, mọi thứ phía sau có thể thay đổi. Khách nhận thấy khi món bị bỏ hoặc đổi, không chỉ giá; vì vậy thay đổi phá vỡ API cần version mới. Thực đơn mô tả món được đặt, không phải thiết bị."
+}

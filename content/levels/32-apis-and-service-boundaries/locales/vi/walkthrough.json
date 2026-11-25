@@ -1,0 +1,672 @@
+[
+  {
+    "title": "Request chỉ rõ resource",
+    "body": "Ứng dụng hỏi một đơn: `GET /orders/123`. Trong **REST**, URL xác định **resource**, ở đây là đơn 123, và **HTTP method** nói làm gì: `GET` đọc. API server đọc row từ database và trả status **200 OK** cùng đơn dạng **JSON**. Đây là chuyến đi như SD 1: DNS, kết nối, công việc server và database.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Ứng dụng",
+            "x": 1,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "API server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "request",
+          "value": "GET /orders/123"
+        },
+        {
+          "name": "status",
+          "value": "200 OK"
+        },
+        {
+          "name": "body",
+          "value": "đơn 123 dạng JSON"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Đơn không có địa chỉ",
+    "body": "Ứng dụng gửi `POST /orders` để đặt đơn nhưng thiếu địa chỉ giao. Server kiểm tra đầu vào, từ chối trước khi chạm database, trả **400 Bad Request** cùng thông báo trường thiếu. Mã 400 này nói rằng với request không hợp lệ này, phải thêm địa chỉ trước khi gửi lại; gửi y nguyên vẫn thất bại. Không phải mọi 4xx đều yêu cầu sửa request: sau 429, cùng request có thể thành công khi rate limit đặt lại. 5xx nói server thất bại, không đúng ở đây.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Ứng dụng",
+            "x": 1,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "API server",
+            "x": 5,
+            "y": 4,
+            "note": "kiểm tra đầu vào"
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1
+        ]
+      },
+      "vars": [
+        {
+          "name": "request",
+          "value": "POST /orders"
+        },
+        {
+          "name": "problem",
+          "value": "không có địa chỉ giao"
+        },
+        {
+          "name": "status",
+          "value": "400 Bad Request"
+        }
+      ],
+      "predict": {
+        "question": "Ứng dụng gửi POST /orders không có địa chỉ giao. Server nên trả status code nào?",
+        "options": [
+          "200 OK, kèm thông báo lỗi trong body",
+          "400 Bad Request",
+          "404 Not Found",
+          "500 Internal Server Error"
+        ],
+        "answer": 1,
+        "explanation": "Bên gọi gửi request không hợp lệ nên trả mã 4xx: 400 Bad Request. 200 báo với client, cache và monitoring rằng thành công. 404 nghĩa resource không tồn tại nhưng /orders có tồn tại. 500 nghĩa server thất bại, khiến kỹ sư tìm lỗi chương trình không có ở đây.",
+        "hides": [
+          "status"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Cuộn xuống lịch sử",
+    "body": "Lịch sử theo trang 20 đơn bằng **offset**: trang 2 là `OFFSET 20 LIMIT 20`, bỏ 20 đơn đầu. Trong lúc khách đọc trang 1, ba đơn mới vào đầu danh sách. Mọi đơn cũ xuống ba vị trí, nên trang 2 bắt đầu bằng ba đơn cuối của trang 1 cũ: khách thấy hai lần. Xóa đơn thay vào đó khiến trang sau bỏ sót một đơn. Trang sâu cũng chậm vì database đi qua mọi row bị bỏ.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Ứng dụng",
+            "x": 1,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "API server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "note": "3 đơn mới"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "page 1",
+          "value": "đơn 1–20"
+        },
+        {
+          "name": "new orders",
+          "value": "3 đơn ở đầu"
+        },
+        {
+          "name": "page 2 asks",
+          "value": "OFFSET 20 LIMIT 20"
+        },
+        {
+          "name": "page 2 starts with",
+          "value": "3 đơn từng hiện"
+        }
+      ],
+      "predict": {
+        "question": "Khách đã xem 20 đơn mới nhất ở trang 1. Ba đơn mới đến. Ứng dụng hỏi trang 2 bằng OFFSET 20 LIMIT 20. Trang 2 bắt đầu bằng gì?",
+        "options": [
+          "3 đơn đã hiện ở trang 1",
+          "3 đơn mới",
+          "Đơn ngay sau đơn cuối đã hiện",
+          "Bỏ sót 3 đơn"
+        ],
+        "answer": 0,
+        "explanation": "Offset đếm vị trí, không phải đơn. 3 đơn mới đẩy mọi đơn xuống 3 vị trí, nên vị trí 21–23 giờ chứa 3 đơn cuối của trang 1 cũ và chúng hiện lại. Không có đơn bị bỏ; xóa đơn mới gây bỏ sót.",
+        "hides": [
+          "page 2 starts with"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Phân trang bằng cursor",
+    "body": "**Cursor** chỉ nơi trang trước kết thúc thay vì đếm vị trí: `?after=<cursor>`, chứa time và id của đơn cuối. Server hỏi đơn cũ hơn nó: `WHERE customer_id = 7 AND (created_at, id) < (<last time>, <last id>) ORDER BY created_at DESC, id DESC LIMIT 20`. Id phân định các time bằng nhau. Đơn mới ở đầu không đổi thứ tự so với đơn cuối đã thấy nên không lặp; chúng hiện khi refresh. Với index `(customer_id, created_at, id)` từ SD 4, mỗi trang đọc vài trang index và 20 row dù khách cuộn sâu đến đâu.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Ứng dụng",
+            "x": 1,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "API server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "note": "index cust+time+id"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "request",
+          "value": "?limit=20&after=<cursor>"
+        },
+        {
+          "name": "rows read",
+          "value": "20 + vài trang"
+        },
+        {
+          "name": "repeats",
+          "value": "không lặp"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Hỏi đi hỏi lại",
+    "body": "Màn hình trực tiếp dùng **polling**: mỗi ứng dụng hỏi `GET /orders/123` mỗi 5 giây. Với 100,000 khách chờ vào giờ ăn tối, đó là 100,000 ÷ 5 = **20,000 request mỗi giây**. Giao hàng khoảng 30 phút nên mỗi ứng dụng hỏi 360 lần nhưng trạng thái chỉ đổi khoảng 6 lần. Khoảng 98% câu trả lời nói \"không đổi\".",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Điện thoại A",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "kind": "client",
+            "label": "Điện thoại B",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Điện thoại C",
+            "x": 4,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "API server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 10,
+            "y": 3
+          }
+        ],
+        "links": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              4
+            ]
+          },
+          {
+            "path": [
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "watching",
+          "value": "100,000 điện thoại"
+        },
+        {
+          "name": "asks every",
+          "value": "5 s"
+        },
+        {
+          "name": "requests per second",
+          "value": "20,000"
+        },
+        {
+          "name": "answers with no change",
+          "value": "khoảng 98%"
+        }
+      ],
+      "predict": {
+        "question": "100,000 điện thoại mỗi chiếc hỏi \"có tin mới không?\" mỗi 5 giây. Bao nhiêu request mỗi giây đến server?",
+        "options": [
+          "5,000",
+          "20,000",
+          "100,000",
+          "500,000"
+        ],
+        "answer": 1,
+        "explanation": "Mỗi điện thoại gửi một request mỗi 5 giây, nên 100,000 điện thoại gửi 100,000 ÷ 5 = 20,000 request mỗi giây. 500,000 là 100,000 × 5, nhân với khoảng thời gian thay vì chia.",
+        "hides": [
+          "requests per second",
+          "answers with no change"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Server gửi tin",
+    "body": "Với **server-sent events (SSE)**, mỗi ứng dụng mở một kết nối và giữ mở; server chỉ gửi sự kiện khi trạng thái đổi. 100,000 khách giờ tốn 100,000 kết nối mở và khoảng 100,000 × 6 ÷ 1,800 s ≈ **333 sự kiện mỗi giây**, thay vì 20,000 request. SSE phù hợp vì khách chỉ nghe. **WebSocket** giữ kết nối hai chiều, phù hợp chat với tài xế. **Long polling** ở giữa: server giữ request đến khi có thay đổi.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Điện thoại A",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "kind": "client",
+            "label": "Điện thoại B",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Điện thoại C",
+            "x": 4,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "API server",
+            "x": 6,
+            "y": 3,
+            "note": "100k kết nối mở"
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 10,
+            "y": 3
+          }
+        ],
+        "links": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          3,
+          0
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              1
+            ]
+          },
+          {
+            "path": [
+              3,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "method",
+          "value": "server-sent events"
+        },
+        {
+          "name": "open connections",
+          "value": "100,000"
+        },
+        {
+          "name": "events per second",
+          "value": "≈333"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Hai lời gọi trang đơn cần",
+    "body": "Nhóm tách chương trình thành **service**. Ứng dụng gọi **API gateway**, định tuyến `/orders` đến Orders service. Để dựng trang, Orders cần nhà hàng (40 ms) và tài xế (30 ms). Gọi lần lượt mất 40 + 30 = 70 ms. Chúng không phụ thuộc nhau nên Orders gửi cùng lúc và chờ bên chậm hơn: khoảng **40 ms**. Mỗi lời gọi giữa service là một chuyến mạng nữa có thể chậm hoặc lỗi.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Ứng dụng",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "lb",
+            "label": "API gateway",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Orders",
+            "x": 5,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Restaurants",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Drivers",
+            "x": 10,
+            "y": 6
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "Restaurants",
+          "value": "40 ms"
+        },
+        {
+          "name": "Drivers",
+          "value": "30 ms"
+        },
+        {
+          "name": "one after the other",
+          "value": "70 ms"
+        },
+        {
+          "name": "at the same time",
+          "value": "≈40 ms"
+        }
+      ],
+      "predict": {
+        "question": "Orders cần nhà hàng (40 ms) và tài xế (30 ms), hai lời gọi không cần câu trả lời của nhau. Nếu gọi cùng lúc, khoảng bao lâu đến khi có cả hai?",
+        "options": [
+          "70 ms",
+          "40 ms",
+          "30 ms",
+          "10 ms"
+        ],
+        "answer": 1,
+        "explanation": "Lời gọi cùng lúc xong khi bên chậm hơn xong: 40 ms. 70 ms là thời gian khi chạy lần lượt. 30 ms chỉ là bên nhanh hơn; Orders vẫn chờ nhà hàng.",
+        "hides": [
+          "at the same time"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Khi một service chậm",
+    "body": "Drivers chậm và trả sau 2 giây. Không có **timeout**, mỗi trang chờ 2 giây; request dồn ở Orders và gateway. Với timeout 200 ms, Orders dừng chờ và hiện đơn cùng nhà hàng với \"không có vị trí tài xế\". Chuỗi còn nhân sự cố: nếu request cần 5 service nối tiếp, mỗi bên khả dụng 99.9% thời gian, nó chỉ hoạt động khoảng 0.999⁵ ≈ **99.5%** thời gian.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Ứng dụng",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "lb",
+            "label": "API gateway",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Orders",
+            "x": 5,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Restaurants",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Drivers",
+            "x": 10,
+            "y": 6,
+            "state": "hot",
+            "note": "chậm: 2 s"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "Drivers",
+          "value": "chậm: 2 s"
+        },
+        {
+          "name": "timeout",
+          "value": "200 ms"
+        },
+        {
+          "name": "page shows",
+          "value": "đơn + nhà hàng"
+        },
+        {
+          "name": "5 services at 99.9%",
+          "value": "≈99.5% cùng nhau"
+        }
+      ]
+    }
+  }
+]
