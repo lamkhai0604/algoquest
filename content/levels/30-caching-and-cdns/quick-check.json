@@ -1,0 +1,35 @@
+[
+  {
+    "question": "A service gets 2,000 reads per second and its cache has a 75% hit rate. About how many reads per second reach the database?",
+    "options": [
+      "1,500",
+      "2,000",
+      "750",
+      "500"
+    ],
+    "answer": 3,
+    "explanation": "Misses reach the database: 25% of 2,000 = 2,000 × 0.25 = 500 per second. 1,500 is the number of hits."
+  },
+  {
+    "question": "With cache-aside, what does the server do on a cache miss?",
+    "options": [
+      "Read the database, store the result in the cache with a TTL, then answer",
+      "Return an error, because the data is not cached",
+      "Wait until another server fills the cache",
+      "Write the value to the database again"
+    ],
+    "answer": 0,
+    "explanation": "On a miss the server loads the value from the database, caches it for later reads, and answers. The next read of the same key is a hit."
+  },
+  {
+    "question": "Every price change already deletes the product's cache entry. Why still give each entry a TTL?",
+    "options": [
+      "Because a cache cannot store anything without a TTL",
+      "Because a TTL makes each cache read faster",
+      "So a stale entry still disappears if a delete is ever lost",
+      "So the database accepts the next write"
+    ],
+    "answer": 2,
+    "explanation": "A delete can be lost, for example when the server crashes after writing the database. The TTL guarantees the old value expires within a known time anyway."
+  }
+]
