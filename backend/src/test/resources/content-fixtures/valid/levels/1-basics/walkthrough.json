@@ -242,5 +242,50 @@
         }
       ]
     }
+  },
+  {
+    "title": "A request through the system",
+    "body": "The request goes from the user to the server and the database, then back.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 4,
+            "y": 2,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 2
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      }
+    }
   }
 ]

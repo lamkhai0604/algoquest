@@ -78,7 +78,11 @@ class ContentLoaderTest {
     assertThat(levels).hasSize(2);
     assertThat(levels.get(1).available()).isTrue();
     assertThat(levels.get(1).problems()).hasSize(6);
-    assertThat(levels.get(1).lesson().walkthrough()).hasSize(6);
+    assertThat(levels.get(1).lesson().walkthrough()).hasSize(7);
+    assertThat(levels.get(1).lesson().walkthrough().get(6).visual().arch().path())
+        .containsExactly(0, 1, 2);
+    assertThat(levels.get(1).lesson().walkthrough().get(6).visual().arch().nodes().get(1).state())
+        .isEqualTo("hot");
     assertThat(levels.get(1).info().phase()).isEqualTo(1);
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().predict().hides())
         .containsExactly("best");
@@ -355,6 +359,39 @@ class ContentLoaderTest {
     assertThat(problems)
         .anyMatch(p -> p.contains("step 3") && p.contains("lines needs"))
         .anyMatch(p -> p.contains("step 1") && p.contains("each call needs"));
+  }
+
+  @Test
+  void architectureRulesAreChecked() throws IOException {
+    Path walkthrough = level.resolve("walkthrough.json");
+    replace(walkthrough, "\"kind\": \"db\"", "\"kind\": \"mainframe\"");
+
+    List<String> problems = problemsAfterLoad();
+
+    assertThat(problems)
+        .anyMatch(p -> p.contains("step 7") && p.contains("known kind"))
+        .noneMatch(p -> p.contains("step 6"));
+  }
+
+  @Test
+  void architecturePathFollowsLinks() throws IOException {
+    replace(
+        level.resolve("walkthrough.json"),
+        "\"path\": [\n          0,\n          1,\n          2",
+        "\"path\": [\n          0,\n          2");
+
+    assertThat(problemsAfterLoad())
+        .anyMatch(p -> p.contains("step 7") && p.contains("each step along a link"));
+  }
+
+  @Test
+  void architectureNeedsEmptyCells() throws IOException {
+    replace(
+        level.resolve("walkthrough.json"),
+        "\"cells\": [],\n      \"arch\"",
+        "\"cells\": [\n        \"x\"\n      ],\n      \"arch\"");
+
+    assertThat(problemsAfterLoad()).anyMatch(p -> p.contains("step 7") && p.contains("cells []"));
   }
 
   @Test
