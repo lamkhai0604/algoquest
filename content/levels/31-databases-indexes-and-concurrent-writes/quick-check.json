@@ -27,9 +27,9 @@
       "Use UPDATE concerts SET seats_left = seats_left - 1 WHERE id = 42 AND seats_left > 0, and confirm a sale only if one row was updated.",
       "Check seats_left twice in application code before writing 0.",
       "Cache seats_left on each server so both checks are faster.",
-      "Put the separate read and unconditional write in a transaction, assuming all transactions automatically run one after another."
+      "Put the separate read and the unconditional write inside one transaction at the default isolation level."
     ],
     "answer": 0,
-    "explanation": "The condition is checked in the update itself. The first successful update changes 1 - 1 = 0 and updates one row. The competing update cannot satisfy seats_left > 0 and updates 0 rows, so it must not confirm a sale. Repeating an application check, caching the count, or using a transaction without a suitable condition or concurrency control does not close the read-then-write gap."
+    "explanation": "The condition is checked in the update itself. The first successful update changes 1 - 1 = 0 and updates one row. The competing update cannot satisfy seats_left > 0 and updates 0 rows, so it must not confirm a sale. Repeating an application check, caching the count, or wrapping both steps in a transaction at the default isolation level (read committed) does not close the read-then-write gap: both transactions can still read 1 before either writes."
   }
 ]
