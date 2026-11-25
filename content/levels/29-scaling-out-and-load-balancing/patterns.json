@@ -97,10 +97,11 @@
     "id": "P29-small-tool",
     "level": 29,
     "title": "An Internal Tool for 50 People",
-    "statement": "A company's meeting-room booking tool has 50 users and about 5 requests per second at its busiest. It runs on one small server that is busy about 10% of the time. If the tool is down, staff can book rooms by email, so an outage of up to an hour, planned or not, is acceptable. A lower cost is better. Next year the company expects 80 users. How should the tool be scaled?",
+    "statement": "A company's meeting-room booking tool has 50 users and about 5 requests per second at its busiest. It runs on one small server that is busy about 10% of the time. If the tool is down, staff can book rooms by email, so an outage of up to an hour, planned or not, is acceptable. The data is backed up every night, and the team has tested that a new server can be started from the backup in about 20 minutes. A lower cost is better. Next year the company expects 80 users. How should the tool be scaled?",
     "examples": [
       "Today: 5 requests per second, server busy 10% of the time",
-      "Next year: about 80 ÷ 50 × 5 = 8 requests per second"
+      "Next year: about 80 ÷ 50 × 5 = 8 requests per second",
+      "If the server fails: restore from backup in about 20 minutes"
     ],
     "constraints": [
       "Downtime of up to an hour is acceptable, planned or unplanned",
@@ -114,7 +115,7 @@
         "label": "best",
         "time": "About 8 requests per second next year, about 16% busy",
         "space": "One server",
-        "why": "Growing from 50 to 80 users raises the load by 80 ÷ 50 = 1.6 times, so the server goes from about 10% to about 16% busy. One server meets every requirement at the lowest cost."
+        "why": "Growing from 50 to 80 users raises the load by 80 ÷ 50 = 1.6 times, so the server goes from about 10% to about 16% busy. If it fails, restoring from the backup takes about 20 minutes, within the one hour allowed. One server meets every requirement at the lowest cost."
       },
       {
         "id": "two-servers",
