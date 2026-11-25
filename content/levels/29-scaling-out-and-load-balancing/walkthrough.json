@@ -237,7 +237,21 @@
           "name": "each server",
           "value": "≈300 of 900/s"
         }
-      ]
+      ],
+      "predict": {
+        "question": "Round robin sends requests in turn: request 1 to Server 1, request 2 to Server 2, request 3 to Server 3, request 4 to Server 1, and so on. Which server gets request 5?",
+        "options": [
+          "Server 1",
+          "Server 3",
+          "Server 2",
+          "Whichever server has the fewest open requests"
+        ],
+        "answer": 2,
+        "explanation": "After Server 3 the order starts again: request 4 goes to Server 1, so request 5 goes to Server 2. Round robin does not look at how busy a server is; choosing the server with the fewest open requests is a different method, least connections.",
+        "hides": [
+          "order"
+        ]
+      }
     }
   },
   {
@@ -334,8 +348,8 @@
     }
   },
   {
-    "title": "Remove a broken server",
-    "body": "The load balancer calls each server's health check every few seconds. A server that does not answer OK is taken out of rotation. Requests sent to it before the check notices are lost, so clients should retry safely. A short interval finds failures faster but adds checking load; a long one sends more requests to a dead server first.",
+    "title": "A server stops answering",
+    "body": "The load balancer calls each server's health check every few seconds. A server that does not answer OK is taken out of rotation. Between the moment a server breaks and the next check, requests sent to it may fail or time out. Some balancers and clients retry them on another server, but only requests that are safe to repeat should be retried. A short check interval finds failures faster but adds checking load; a long one sends more requests to a broken server first.",
     "visual": {
       "cells": [],
       "arch": {
@@ -417,14 +431,32 @@
       },
       "vars": [
         {
-          "name": "health check",
-          "value": "S2 failed"
+          "name": "Server 2",
+          "value": "stopped answering"
         },
         {
-          "name": "traffic",
-          "value": "S1 and S3 only"
+          "name": "next health check",
+          "value": "in a few seconds"
+        },
+        {
+          "name": "after the check",
+          "value": "traffic to S1 and S3 only"
         }
-      ]
+      ],
+      "predict": {
+        "question": "Server 2 has just stopped answering, and the next health check is a few seconds away. The balancer sends a request to Server 2 now. What happens to that request?",
+        "options": [
+          "It waits until Server 2 restarts, then completes",
+          "The balancer moves it to Server 1 at once, in every setup",
+          "The health check runs early and saves it",
+          "It may fail or time out, unless a retry sends it to another server"
+        ],
+        "answer": 3,
+        "explanation": "The balancer still thinks Server 2 is healthy, so it sends the request there, and the request may fail or time out. Whether it is retried depends on the setup: some balancers or clients retry on another server, others do not. Requests do not wait for a restart, and health checks run on their own schedule.",
+        "hides": [
+          "after the check"
+        ]
+      }
     }
   },
   {

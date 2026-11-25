@@ -1,11 +1,11 @@
 {
-  "question": "A page takes 3 seconds. Which measurement tells you the most about where to start?",
+  "question": "A page takes 3 seconds. Which information tells you the most about where to start?",
   "options": [
-    "Time spent in each hop: DNS, connection, server, and database",
-    "The number of servers you own",
-    "The colour of the page",
-    "The average load for the whole year"
+    "How many servers the shop owns",
+    "The time spent in each step: DNS, connection, server work, and database",
+    "How many visitors came last month on average",
+    "Which browser the user has"
   ],
-  "answer": 0,
-  "explanation": "Latency is the sum of the hops on the path. You need the time of each hop before you can choose a fix that helps."
+  "answer": 1,
+  "explanation": "Latency is the sum of the steps of one request. You need the time of each step before you can choose a fix that helps. The number of servers and last month's average do not tell you which step is slow."
 }

@@ -3,15 +3,25 @@
     "id": "P29-login-session",
     "level": 29,
     "title": "Keep Users Logged In Across Servers",
-    "statement": "A ticket site runs four identical servers behind a load balancer. Users must stay logged in when a request lands on a different server. The security team also wants a logout to take effect immediately on every server. Which design fits best?",
+    "statement": "A ticket site runs four identical servers behind a load balancer. Two requirements are fixed: a user must stay logged in when their next request lands on a different server, and when a user logs out, the logout must take effect on every server at once. Which design meets both requirements best?",
     "examples": [
-      "User logs in on Server 1, then clicks Buy on Server 3"
+      "User logs in on Server 1, then clicks Buy and the request lands on Server 3",
+      "User logs out; a request a second later on Server 2 must be refused"
     ],
     "constraints": [
       "Four servers now, possibly more at peak",
-      "Logout must take effect at once"
+      "Both requirements must hold, also when a server fails"
     ],
     "approaches": [
+      {
+        "id": "sticky",
+        "name": "Sticky sessions: the load balancer always sends a user to the same server, which keeps the session in memory",
+        "hint": "Same server every time",
+        "label": "unsuitable",
+        "time": "No extra lookup",
+        "space": "Session lives in one server's memory",
+        "why": "This avoids the problem instead of meeting it: requests never land on another server. When that server fails, its users lose their sessions and are logged out, which breaks the first requirement."
+      },
       {
         "id": "shared-store",
         "name": "Store sessions in a shared session store that every server reads",
@@ -19,34 +29,111 @@
         "label": "best",
         "time": "About 1 ms to read a session from a nearby store (approximate)",
         "space": "One session record per logged-in user",
-        "why": "Any server can read the session, and deleting it logs the user out everywhere at once. The store is an extra part to run and keep available."
+        "why": "Any server can read the session, and deleting it logs the user out everywhere at once. The cost is one more component to run and keep available."
       },
       {
-        "id": "sticky",
-        "name": "Sticky sessions: the load balancer always sends a user to the same server",
-        "hint": "Same server every time",
+        "id": "token-revocation",
+        "name": "A signed token that carries the session, plus a check on every request against a shared list of logged-out tokens",
+        "hint": "Token, but with a way to cancel it",
         "label": "valid",
-        "time": "No extra lookup",
-        "space": "Session stays in one server's memory",
-        "why": "This keeps users logged in, so it works. Load becomes uneven, and if that server fails the users lose their sessions. Logout also has to reach the right server."
+        "time": "A signature check plus one lookup per request",
+        "space": "The token travels with each request; the list holds only logged-out tokens until they expire",
+        "why": "This meets both requirements: any server can check the token, and the shared list makes a logout take effect at once. Each request still needs one lookup, in a small list of logged-out tokens instead of the full session, and the team must run both token signing and the list. That extra complexity is why it is not the first choice here."
       },
       {
-        "id": "signed-token",
-        "name": "Give each user a signed token that holds the session and nothing is stored on the server",
+        "id": "token-only",
+        "name": "A signed token that carries the session, and nothing stored on the servers",
         "hint": "Carry the data with the user",
-        "label": "valid",
+        "label": "unsuitable",
         "time": "No lookup; check a signature",
         "space": "The token travels with each request",
-        "why": "This scales well and needs no shared store. A token that is already issued stays valid until it expires, so an immediate logout is hard without extra checks."
+        "why": "Any server can read the token, but a token that was already issued stays valid until it expires, so a logout cannot take effect at once."
+      }
+    ]
+  },
+  {
+    "id": "P29-mixed-requests",
+    "level": 29,
+    "title": "Fast and Slow Requests on One Service",
+    "statement": "A photo service runs four identical servers. Most requests return a small thumbnail in about 20 ms, but about 1 in 20 requests converts a large image and takes about 3 seconds. Users complain that some pages are slow even when the servers are not busy on average. The team wants the simplest change that keeps waiting times even. How should the load balancer choose a server?",
+    "examples": [
+      "Server 2 receives three conversions in a row and has a queue, while Server 4 is idle"
+    ],
+    "constraints": [
+      "Four identical servers",
+      "Prefer a change to the load balancer setting only"
+    ],
+    "approaches": [
+      {
+        "id": "round-robin",
+        "name": "Round robin: each server in turn",
+        "hint": "Equal number of requests",
+        "label": "unsuitable",
+        "time": "Same count per server, very different work",
+        "space": "No change",
+        "why": "Round robin gives each server the same number of requests, not the same amount of work. It is what the service does now, and slow conversions can still pile up on one server."
       },
       {
-        "id": "local-only",
-        "name": "Keep sessions in each server's memory and hope users stay on one server",
-        "hint": "Hope is not a design",
+        "id": "least-connections",
+        "name": "Least connections: send each request to the server with the fewest open requests",
+        "hint": "Who is least busy right now?",
+        "label": "best",
+        "time": "New requests avoid servers that are stuck on conversions",
+        "space": "One setting on the load balancer",
+        "why": "A server busy with a 3-second conversion keeps that connection open, so it receives fewer new requests. It is a single setting, which matches the team's goal."
+      },
+      {
+        "id": "separate-pools",
+        "name": "Send conversions to their own group of servers by path (Layer 7), and thumbnails to another group",
+        "hint": "Split the two kinds of work",
+        "label": "valid",
+        "time": "Thumbnails never wait behind conversions",
+        "space": "Two server groups and routing rules to keep up to date",
+        "why": "This keeps thumbnails fast even when conversions spike, so it works well. It needs more setup and capacity planning for two groups, so it is not the simplest change asked for."
+      }
+    ]
+  },
+  {
+    "id": "P29-small-tool",
+    "level": 29,
+    "title": "An Internal Tool for 50 People",
+    "statement": "A company's meeting-room booking tool has 50 users and about 5 requests per second at its busiest. It runs on one small server that is busy about 10% of the time. If the tool is down, staff can book rooms by email, so an outage of up to an hour, planned or not, is acceptable. The data is backed up every night, and the team has tested that a new server can be started from the backup in about 20 minutes. A lower cost is better. Next year the company expects 80 users. How should the tool be scaled?",
+    "examples": [
+      "Today: 5 requests per second, server busy 10% of the time",
+      "Next year: about 80 ÷ 50 × 5 = 8 requests per second",
+      "If the server fails: restore from backup in about 20 minutes"
+    ],
+    "constraints": [
+      "Downtime of up to an hour is acceptable, planned or unplanned",
+      "Lower cost is preferred"
+    ],
+    "approaches": [
+      {
+        "id": "keep-one",
+        "name": "Keep one server; move to a bigger machine (scale up) only if it gets busy",
+        "hint": "Is there a problem to solve yet?",
+        "label": "best",
+        "time": "About 8 requests per second next year, about 16% busy",
+        "space": "One server",
+        "why": "Growing from 50 to 80 users raises the load by 80 ÷ 50 = 1.6 times, so the server goes from about 10% to about 16% busy. If it fails, restoring from the backup takes about 20 minutes, within the one hour allowed. One server meets every requirement at the lowest cost."
+      },
+      {
+        "id": "two-servers",
+        "name": "Run two servers behind a load balancer",
+        "hint": "Survive one failure",
+        "label": "valid",
+        "time": "Each server even less busy",
+        "space": "Two servers and a load balancer",
+        "why": "This works and also survives a server failing, but an hour of downtime is acceptable here, so it pays for protection the tool does not need."
+      },
+      {
+        "id": "many-regions",
+        "name": "Run ten servers in three regions with automatic scaling",
+        "hint": "Plan for millions",
         "label": "unsuitable",
-        "time": "Fast on one server only",
-        "space": "Lost when a server restarts",
-        "why": "Users are sent to different servers by the balancer, so they will be logged out at random."
+        "time": "No real gain at 8 requests per second",
+        "space": "Ten servers, balancers and scaling rules",
+        "why": "The tool needs a small fraction of one server. This costs many times more and adds parts that can fail, with no benefit at 8 requests per second."
       }
     ]
   }

@@ -732,6 +732,12 @@ describe("lesson page", () => {
           visual: {
             cells: [],
             arch: { nodes, links, path: [0, 1, 2], drop: true },
+            predict: {
+              question: "What happens to the request?",
+              options: ["It fails", "It waits"],
+              answer: 0,
+              explanation: "Server 2 is down.",
+            },
           },
         },
       ],
@@ -751,6 +757,13 @@ describe("lesson page", () => {
     );
 
     await userEvent.click(screen.getByRole("button", { name: "Next step" }));
+    // While the prediction is open the path and the requests stay hidden.
+    const hidden = screen.getByRole("img", {
+      name: "Users, Balancer, Server 2, Server 1",
+    });
+    expect(hidden.querySelectorAll('[data-active="true"]')).toHaveLength(0);
+    expect(hidden.querySelectorAll("[data-dot]")).toHaveLength(0);
+    await userEvent.click(screen.getByRole("button", { name: "It fails" }));
     expect(
       screen.getByRole("img", { name: "Users → Balancer → Server 2" }),
     ).toBeInTheDocument();

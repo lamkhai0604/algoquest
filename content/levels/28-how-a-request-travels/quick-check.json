@@ -2,24 +2,24 @@
   {
     "question": "Why can a far-away server feel slow even if its code is fast?",
     "options": [
-      "Each round trip for connection setup waits for the signal to travel the distance",
-      "Far servers cannot use HTTP",
-      "The browser refuses to wait more than 50 ms",
-      "Distance changes the content of the page"
+      "The server has to send a bigger page when it is far away",
+      "Each round trip, including those needed to open the connection, takes longer when the signal travels farther",
+      "A far-away server always has a slower CPU",
+      "DNS has to be looked up again for every image on the page"
     ],
-    "answer": 0,
-    "explanation": "Setup needs several round trips before any page data moves, and each trip takes at least the time the signal needs to cross the distance."
+    "answer": 1,
+    "explanation": "Opening a connection needs one to three round trips before any page data moves, and every round trip takes at least the time the signal needs to cross the distance. The page size and the CPU do not depend on where the server is, and DNS answers are cached."
   },
   {
     "question": "A page takes 2 seconds. The network round trip is 40 ms, and the database query takes 1.6 seconds. What is the best first step?",
     "options": [
-      "Buy a faster network connection",
+      "Move the server closer to the users",
+      "Add a second web server",
       "Make the database query faster, for example with an index or a cache",
-      "Move the server to another continent",
-      "Add more browser tabs"
+      "Switch from TLS 1.2 to TLS 1.3"
     ],
-    "answer": 1,
-    "explanation": "The query is the biggest part of the time, so improving it helps most. The network is only 40 ms."
+    "answer": 2,
+    "explanation": "The query is 1.6 of the 2 seconds, so improving it helps most. Moving the server or using TLS 1.3 saves at most a few round trips of 40 ms. A second web server does not make one query faster."
   },
   {
     "question": "Estimate: 2 million users each make 15 requests a day. About how many requests per second on average? (Use 1 day ≈ 10⁵ seconds.)",
