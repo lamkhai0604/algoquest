@@ -347,6 +347,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-654 | SD 5 (Level 32) APIs and Service Boundaries in English: lesson, 8-step walkthrough with four predictions (status code, offset paging, polling load, parallel calls), intuition; 27 glossary terms | FR-03, D-079, D-082 | P1 | Done 2026-11-25: content check in CI; facts F32–F40 confirmed (G-07); review and Vietnamese translation pending |
 | T-655 | SD 5 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude (quick-check distractors reworded); content check in CI |
 | T-656 | SD 5 content review round 1 and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | In progress 2026-11-25: round 1 found 2 Major and 2 Minor issues, fixed in T-658; translation pending |
+| T-657 | Design prompt problem kind (D-085): content format and checks, rubric grader with a Gemini prompt and a fake grader, API with a daily limit, stored answers and Owner review endpoint, design page with the four-section scaffold, rubric result and reference design; two prompts for each of Levels 28–32 | FR-05, D-085 | P1 | Done 2026-11-25: backend and frontend tests; CI; review of the prompts and a check with the real grader pending |
 | T-658 | SD 5 review round 1 fixes: cursor ordered by time then id with a matching index, idempotency question asks for the same final state, 400 retry advice scoped, stronger distractors | FR-03, D-057 | P1 | Done 2026-11-25: content check in CI |
 
 ## Maintenance

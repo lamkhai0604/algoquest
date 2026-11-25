@@ -4,6 +4,8 @@ import com.algoquest.access.AccessService;
 import com.algoquest.access.AuditLog;
 import com.algoquest.access.AuthenticatedUser;
 import com.algoquest.access.UserNotFoundException;
+import com.algoquest.design.DesignStore;
+import com.algoquest.design.DesignStore.StoredDesign;
 import com.algoquest.game.AdminGameService;
 import com.algoquest.game.AdminGameService.LevelProgress;
 import com.algoquest.game.AdminGameService.LoggedAttempt;
@@ -34,12 +36,18 @@ public class AdminGameController {
 
   private final AdminGameService game;
   private final PatternStore patterns;
+  private final DesignStore designs;
   private final AccessService access;
   private final AuditLog auditLog;
 
   public AdminGameController(
-      AdminGameService game, AccessService access, AuditLog auditLog, PatternStore patterns) {
+      AdminGameService game,
+      AccessService access,
+      AuditLog auditLog,
+      PatternStore patterns,
+      DesignStore designs) {
     this.patterns = patterns;
+    this.designs = designs;
     this.game = game;
     this.access = access;
     this.auditLog = auditLog;
@@ -58,6 +66,13 @@ public class AdminGameController {
   @PreAuthorize("hasPermission(null, 'admin.gradingLog.view')")
   public List<StoredAnswer> patternAnswers(@RequestParam(defaultValue = "100") int limit) {
     return patterns.recent(Math.min(Math.max(limit, 1), 500));
+  }
+
+  /** Design prompt answers for the Owner's review of the AI grading (D-085). */
+  @GetMapping("/design-answers")
+  @PreAuthorize("hasPermission(null, 'admin.gradingLog.view')")
+  public List<StoredDesign> designAnswers(@RequestParam(defaultValue = "100") int limit) {
+    return designs.recent(Math.min(Math.max(limit, 1), 500));
   }
 
   @PostMapping("/users/{id}/progress-reset")

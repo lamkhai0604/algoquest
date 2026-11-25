@@ -39,4 +39,16 @@ public class GradingConfig {
     }
     return new GeminiPatternGrader(baseUrl, apiKey, model);
   }
+
+  @Bean
+  DesignGrader designGrader(
+      @Value("${algoquest.grading.provider:gemini}") String provider,
+      @Value("${algoquest.grading.gemini.base-url}") String baseUrl,
+      @Value("${algoquest.grading.gemini.api-key:}") String apiKey,
+      @Value("${algoquest.grading.gemini.model}") String model) {
+    if ("fake".equals(provider)) {
+      return new FakeDesignGrader();
+    }
+    return new GeminiDesignGrader(baseUrl, apiKey, model);
+  }
 }

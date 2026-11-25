@@ -1,5 +1,6 @@
 package com.algoquest.content;
 
+import com.algoquest.content.model.DesignPrompt;
 import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.LevelInfo;
@@ -131,7 +132,7 @@ final class ContentLoader {
   private LevelContent loadLevel(LevelInfo info, Map<String, Resource> files) {
     String folder = folder(info);
     if (files.keySet().stream().noneMatch(p -> p.startsWith(folder))) {
-      return new LevelContent(info, null, List.of(), List.of());
+      return new LevelContent(info, null, List.of(), List.of(), List.of());
     }
     String markdown = readText(folder + "lesson.md");
     List<WalkthroughStep> walkthrough =
@@ -162,7 +163,16 @@ final class ContentLoader {
         patterns = List.copyOf(read);
       }
     }
-    return new LevelContent(info, lesson, List.copyOf(levelProblems), patterns);
+    List<DesignPrompt> designs = List.of();
+    if (files.containsKey(folder + "designs.json")) {
+      List<DesignPrompt> read =
+          read(folder + "designs.json", new TypeReference<List<DesignPrompt>>() {});
+      if (read != null) {
+        problems.addAll(ContentValidator.checkDesigns(folder, info.number(), read));
+        designs = List.copyOf(read);
+      }
+    }
+    return new LevelContent(info, lesson, List.copyOf(levelProblems), patterns, designs);
   }
 
   static String folder(LevelInfo info) {

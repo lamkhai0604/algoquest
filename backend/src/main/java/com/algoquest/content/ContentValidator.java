@@ -1,6 +1,7 @@
 package com.algoquest.content;
 
 import com.algoquest.content.model.AnswerKey;
+import com.algoquest.content.model.DesignPrompt;
 import com.algoquest.content.model.Example;
 import com.algoquest.content.model.Figure;
 import com.algoquest.content.model.Lesson;
@@ -956,6 +957,64 @@ final class ContentValidator {
       }
     }
     return problems;
+  }
+
+  private static final Pattern DESIGN_ID = Pattern.compile("D(\\d+)-[a-z0-9]+(-[a-z0-9]+)*");
+
+  /**
+   * Design prompts (D-085): every rubric category has task-specific criteria, at least two
+   * different designs earn full marks, and the reference design states assumptions and
+   * alternatives.
+   */
+  static List<String> checkDesigns(String folder, int level, List<DesignPrompt> designs) {
+    List<String> problems = new ArrayList<>();
+    Set<String> ids = new HashSet<>();
+    for (int i = 0; i < designs.size(); i++) {
+      DesignPrompt d = designs.get(i);
+      String where = folder + "designs.json, prompt " + (i + 1);
+      var id = d.id() == null ? null : DESIGN_ID.matcher(d.id());
+      if (id == null || !id.matches() || Integer.parseInt(id.group(1)) != level) {
+        problems.add(where + ": id must look like D" + level + "-some-name");
+      } else if (!ids.add(d.id())) {
+        problems.add(where + ": id " + d.id() + " is used twice");
+      }
+      if (d.level() != level) {
+        problems.add(where + ": level must be " + level);
+      }
+      if (blank(d.title()) || blank(d.prompt())) {
+        problems.add(where + ": title and prompt required");
+      }
+      if (!filled(d.facts()) || !filled(d.scope())) {
+        problems.add(where + ": at least one fact and one scope line required");
+      }
+      DesignPrompt.Criteria c = d.criteria();
+      if (c == null
+          || !filled(c.requirements())
+          || !filled(c.estimation())
+          || !filled(c.design())
+          || !filled(c.data())
+          || !filled(c.tradeoffs())) {
+        problems.add(
+            where
+                + ": criteria need at least one point for requirements, estimation, design,"
+                + " data and tradeoffs");
+      }
+      if (d.fullMarkDesigns() == null
+          || d.fullMarkDesigns().size() < 2
+          || !filled(d.fullMarkDesigns())) {
+        problems.add(where + ": at least two different full-mark designs required");
+      }
+      DesignPrompt.Reference r = d.reference();
+      if (r == null || !filled(r.assumptions()) || blank(r.design()) || !filled(r.alternatives())) {
+        problems.add(where + ": reference needs assumptions, a design and alternatives");
+      }
+    }
+    return problems;
+  }
+
+  /** A non-empty list with no blank entries. */
+  private static boolean filled(List<String> values) {
+    return values != null && !values.isEmpty() && values.stream().noneMatch(v -> blank(v));
   }
 
   static List<String> checkProblem(String path, int level, Problem p) {

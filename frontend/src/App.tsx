@@ -22,6 +22,7 @@ import { LevelTestPage } from "./leveltest/LevelTestPage";
 import { HomePage } from "./pages/HomePage";
 import { LevelPage } from "./pages/LevelPage";
 import { PatternPage } from "./pattern/PatternPage";
+import { DesignPage } from "./design/DesignPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { NoteEditorPage } from "./notes/NoteEditorPage";
 import { NotesPage } from "./notes/NotesPage";
@@ -137,6 +138,14 @@ export function AppRoutes() {
             element={
               <RequireAuth>
                 <PatternPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/designs/:id"
+            element={
+              <RequireAuth>
+                <DesignPage />
               </RequireAuth>
             }
           />

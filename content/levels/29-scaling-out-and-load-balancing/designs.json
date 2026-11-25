@@ -1,0 +1,109 @@
+[
+  {
+    "id": "D29-festival-gates",
+    "level": 29,
+    "title": "Festival Gate Scanners",
+    "prompt": "At a music festival, staff scan tickets at the gates with phones. Every scan asks the server whether the ticket is valid and marks it as used. When the gates open, scans arrive faster than one server can handle. Design the server side.",
+    "facts": [
+      "Peak: about 1,200 scans per second in the first 20 minutes",
+      "A load test shows one server reaches its limit at about 250 scans per second",
+      "At peak, each server must stay at or below 70% of its limit, even with one server down",
+      "Ticket records are kept in one database that handles at least 3,000 writes per second",
+      "A ticket must never be accepted twice"
+    ],
+    "scope": [
+      "The scan request only",
+      "Selling tickets is out of scope",
+      "One data center"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the peak load, the 70% limit and the one-server-down requirement",
+        "States that a scan must be checked against shared data so a ticket is never accepted twice"
+      ],
+      "estimation": [
+        "Per-server target: 250 × 0.7 = 175 scans per second",
+        "Working servers needed: 1,200 ÷ 175 ≈ 6.9, so 7; with one server down, run 8"
+      ],
+      "design": [
+        "Scanners → load balancer (made redundant) → identical stateless servers → one shared database",
+        "Health checks remove a failed server from the load balancer"
+      ],
+      "data": [
+        "The servers keep no ticket state; the shared database decides whether a ticket is used, so any server can take any scan",
+        "Notes the database's 3,000 writes per second covers 1,200 scans per second"
+      ],
+      "tradeoffs": [
+        "Names a health-check trade-off with its condition, such as: checking every 5 s with 2 failed checks means up to about 10 s of scans sent to a dead server; the scanner app retries",
+        "Or: the load balancer itself must be redundant, or it becomes the single point of failure"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Two load balancers (active and standby) send scans to 8 stateless servers; each server checks and marks the ticket in one shared database. 1,200 ÷ 175 ≈ 7 servers needed, 8 run so one can fail. Health checks every few seconds remove a dead server; the scanner retries a failed scan.",
+      "A managed, redundant load balancer and 8 servers chosen from 1,200 ÷ (250 × 0.7) ≈ 6.9 → 7, plus 1 for failure. Servers hold no state, so a scan can go to any of them, and the database marks each ticket used. Trade-off: shorter health-check intervals detect failures sooner but add checking load."
+    ],
+    "reference": {
+      "assumptions": [
+        "Scans are spread evenly by the load balancer",
+        "The database stays fast at 1,200 writes per second"
+      ],
+      "design": "Scanner phones send each scan to a redundant pair of load balancers, which spread scans across identical stateless servers. Each server checks the ticket in the shared database and marks it used.\nServer count: at 70% of 250, one server takes 175 scans per second; 1,200 ÷ 175 ≈ 6.9, so 7 servers are needed. Running 8 keeps the 70% limit when one is down: 1,200 ÷ 7 ≈ 171 per server.\nHealth checks remove a failed server within seconds; scans sent to it in that time fail and the scanner retries.",
+      "alternatives": [
+        "One very large server (vertical scaling): simpler, but a single point of failure at the gates",
+        "Sticky routing of each scanner to one server: not needed, because the servers keep no state"
+      ]
+    }
+  },
+  {
+    "id": "D29-homework-sessions",
+    "level": 29,
+    "title": "Logged Out at Random",
+    "prompt": "A homework portal keeps each student's login session in the memory of the server that handled the login. The team added a second server behind a round-robin load balancer, and students now get logged out at random. Design how sessions should work.",
+    "facts": [
+      "30,000 students; each session holds about 1 KB and lasts up to 7 days",
+      "Peak traffic: about 400 requests per second across 2 servers",
+      "A student must stay logged in when either server is restarted for an update",
+      "More servers may be added before exams"
+    ],
+    "scope": [
+      "Keeping students logged in across servers",
+      "How students first log in is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "Explains why students are logged out: the next request may go to the server that does not hold the session",
+        "States the requirement that sessions survive a restart of any one server and adding servers"
+      ],
+      "estimation": [
+        "Session storage: 30,000 × 1 KB = 30 MB, small enough for one shared store",
+        "Or: 400 requests per second, each reading a session, is a light load for a shared in-memory store"
+      ],
+      "design": [
+        "Stateless servers behind the load balancer, with sessions in one shared store (an in-memory store or the database), or a signed session token kept by the browser",
+        "Any server can serve any request"
+      ],
+      "data": [
+        "Says where the session lives and how a server finds it (session id in a cookie, then a lookup), or what the signed token contains"
+      ],
+      "tradeoffs": [
+        "Explains why sticky sessions alone break the requirement: a restarted server loses its students' sessions",
+        "Names one trade-off of the chosen design with its condition, such as: the shared store becomes a single point of failure unless it is replicated; a signed token cannot be cancelled before it expires"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Sessions move to one shared in-memory store with a copy (replica); the browser's cookie holds only the session id. Both servers look up the session there, so restarts and new servers log no one out. 30,000 × 1 KB = 30 MB fits easily. Trade-off: the store must be redundant, or one failure logs everyone out.",
+      "The server signs a session token (student id and expiry) and the browser sends it with each request; any server checks the signature, so no session store is needed. Trade-off: a token cannot be cancelled before it expires, so logout and stolen-token handling need a short expiry or a small block list."
+    ],
+    "reference": {
+      "assumptions": [
+        "The load balancer stays round robin",
+        "The shared store is in the same data center as the servers"
+      ],
+      "design": "The servers become stateless. At login, the server stores the session (about 1 KB) in a shared in-memory store and sets a cookie with only the session id. Every request, on either server, reads the session from the store. Total size: 30,000 × 1 KB = 30 MB.\nRestarting one server or adding more servers logs no one out, because no server keeps sessions in its own memory.\nThe store keeps a replica so that one failure does not log everyone out.",
+      "alternatives": [
+        "Sticky sessions: quick fix for the random logouts, but a restart still logs out that server's students and load becomes uneven",
+        "Signed tokens: no store at all, but cancelling a session early is harder"
+      ]
+    }
+  }
+]
