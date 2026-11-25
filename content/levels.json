@@ -215,5 +215,12 @@
     "title": "Databases, Indexes and Concurrent Writes",
     "summary": "Store data in tables or documents, find rows fast with indexes, and keep two users from buying the same seat.",
     "phase": 4
+  },
+  {
+    "number": 32,
+    "slug": "apis-and-service-boundaries",
+    "title": "APIs and Service Boundaries",
+    "summary": "Design REST APIs with the right methods and status codes, page through long lists, push live updates, and split one service into several.",
+    "phase": 4
   }
 ]

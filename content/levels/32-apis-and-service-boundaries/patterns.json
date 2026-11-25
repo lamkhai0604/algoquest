@@ -1,0 +1,148 @@
+[
+  {
+    "id": "P32-live-status",
+    "level": 32,
+    "title": "Delivery Updates at Dinner Time",
+    "statement": "100,000 customers watch delivery status for 30 minutes. Each delivery changes status about 6 times, and the screen only receives updates. An update must appear within 2 seconds. The exercise assumes stable, already connected clients after startup: both SSE and WebSocket can hold 120,000 connections and deliver each event within 1 second; measured aggregate event traffic stays below 500 events per second. The servers allow at most 1,000 incoming update-check requests per second averaged over any 30-second window. The proposed long-poll implementation ends each unchanged request after 30 seconds and immediately opens another. Connection setup and recovery after a network failure are outside this steady-state exercise. Which transport fits best?",
+    "examples": [
+      "A delivery changes from cooking to ready; the customer only needs to receive that change."
+    ],
+    "constraints": [
+      "Deliver each status change within 2 seconds during the stated steady state.",
+      "Support all 100,000 connected customers.",
+      "Keep incoming update-check requests at or below 1,000 per second over each 30-second window."
+    ],
+    "approaches": [
+      {
+        "id": "sse",
+        "name": "Use server-sent events for each customer's status stream",
+        "hint": "Keep a server-to-client event connection",
+        "label": "best",
+        "time": "One open connection per customer; delivery within the assumed 1 second",
+        "space": "100,000 open connections",
+        "why": "The assumed capacity is 120,000 connections, greater than 100,000, and 1 second is below the 2-second delay limit. The server sends events as changes happen instead of receiving repeated update checks. For comparison, 30 minutes = 1,800 seconds, so 100,000 × 6 ÷ 1,800 ≈ 333 events per second on average; the stated peak stays below 500. SSE fits the one-way flow without adding unused two-way messaging."
+      },
+      {
+        "id": "websocket",
+        "name": "Use one WebSocket connection per customer",
+        "hint": "Keep a connection that supports both directions",
+        "label": "valid",
+        "time": "Event delivery within the assumed 1 second",
+        "space": "100,000 open connections",
+        "why": "Under the supplied capacity and delivery assumptions this meets every requirement, with no repeated update-check requests. Its two-way messaging is unnecessary for a screen that only listens, so SSE is the simpler fit here; WebSocket is not inherently unsuitable."
+      },
+      {
+        "id": "long-poll",
+        "name": "Use long polling with a 30-second unchanged-response timeout and immediate reconnect",
+        "hint": "Hold each check until an event or timeout",
+        "label": "unsuitable",
+        "time": "Even an unchanged 30-second window renews about 100,000 requests",
+        "space": "Up to 100,000 held requests",
+        "why": "In a quiet window the checks still time out and reopen: 100,000 ÷ 30 ≈ 3,333 incoming checks per second, exceeding the 1,000 budget. Reopening after events can add more checks. Long polling can deliver changes promptly, but this specific implementation fails the request budget."
+      },
+      {
+        "id": "poll-five",
+        "name": "Poll once every 5 seconds",
+        "hint": "Use a fixed timer for each customer",
+        "label": "unsuitable",
+        "time": "100,000 ÷ 5 = 20,000 checks per second; up to 5 seconds before the next check",
+        "space": "No long-lived event stream",
+        "why": "20,000 checks per second exceeds the 1,000 budget. A change just after a poll can wait almost 5 seconds for the next check, exceeding 2 seconds. During 30 minutes one app sends 30 × 60 ÷ 5 = 360 checks for about 6 changes."
+      }
+    ]
+  },
+  {
+    "id": "P32-history-paging",
+    "level": 32,
+    "title": "Scroll an Order History While New Orders Arrive",
+    "statement": "A customer has hundreds of orders and scrolls newest first, 20 per page. New orders may arrive at the top while scrolling. For this exercise created_at is unique per customer, never changes, and new orders always have later creation times; existing orders are not deleted or edited during the scroll. Every order present when scrolling began must appear exactly once if the customer continues to the end; new arrivals are shown on refresh. A response may contain at most 20 orders. Each deep page must seek to its start and read at most the next 20 matching rows, rather than walking through all earlier pages. An index on (customer_id, created_at) is available. Which paging method fits best?",
+    "examples": [
+      "Page 1 shows the newest 20 orders. One new order is inserted before the customer asks for page 2."
+    ],
+    "constraints": [
+      "Show each order present at the start exactly once across a complete scroll under the stated insert-only assumptions.",
+      "Return at most 20 orders per response.",
+      "Seek to each page's starting point using the index; do not scan an increasing number of preceding rows."
+    ],
+    "approaches": [
+      {
+        "id": "cursor",
+        "name": "Use the last shown creation time as a cursor and read the next 20 older orders through the index",
+        "hint": "Continue from a fixed boundary",
+        "label": "best",
+        "time": "A few index pages plus up to 20 matching rows per page",
+        "space": "One cursor value per scrolling client",
+        "why": "The unique, fixed creation time identifies the last shown boundary. Newer inserts do not shift that boundary, and continuing to strictly older times includes every initial order once. The index seeks to the boundary without stepping through previous pages. Each response has at most 20 orders."
+      },
+      {
+        "id": "offset",
+        "name": "Use OFFSET 20, then OFFSET 40, increasing the offset after each page",
+        "hint": "Count how many rows to skip",
+        "label": "unsuitable",
+        "time": "Later pages step through more preceding rows",
+        "space": "One offset per client",
+        "why": "An insertion at the top shifts the old page boundary: the former item at position 20 moves to 21, so skipping 20 rows can repeat it. This breaks the exactly-once scroll requirement. Deep offsets also step through increasing numbers of earlier rows, breaking the index-seek requirement."
+      },
+      {
+        "id": "whole-list",
+        "name": "Return all of the customer's orders and let the browser split them into pages",
+        "hint": "Load the list once before scrolling",
+        "label": "unsuitable",
+        "time": "One initial response reads and transfers hundreds of orders",
+        "space": "The whole history in the browser",
+        "why": "Even if the browser can avoid repeats for the downloaded list, returning hundreds of orders in one response exceeds the fixed maximum of 20. Moving pagination into the browser does not meet the response-size requirement."
+      }
+    ]
+  },
+  {
+    "id": "P32-service-split",
+    "level": 32,
+    "title": "Scale Images Without Slowing the Order Page",
+    "statement": "Four engineers maintain one program whose deployments work well. Image processing has large load spikes and must be deployable and scalable without adding copies of the order-handling program. The order page must finish within 120 ms. Exercise timing assumptions for the stated load: the existing page takes 60 ms total; moving image processing to a separate endpoint adds no order-page call because that page does not need image processing. A proposed wider split adds three calls to the page, taking 40 ms, 30 ms and 50 ms, including their network time; these three results do not depend on each other. Other page work remains 60 ms, and no additional overhead is included in this simplified budget. The team prefers the fewest separately deployed programs that meet the fixed requirements. What should it split?",
+    "examples": [
+      "Image-processing demand rises while order traffic stays steady."
+    ],
+    "constraints": [
+      "Deploy and scale image processing without deploying or scaling the order-handling program.",
+      "Keep the order page within 120 ms under the supplied timing assumptions."
+    ],
+    "approaches": [
+      {
+        "id": "extract-images",
+        "name": "Keep order handling together and extract only image processing into its own service",
+        "hint": "Split the part with a different load",
+        "label": "best",
+        "time": "Order page stays at the assumed 60 ms",
+        "space": "Two separately deployed programs",
+        "why": "The image service scales and deploys independently, and the order page makes no extra call to it. Its assumed 60 ms remains below 120 ms. This meets both hard requirements with fewer deployed programs than a wider split, matching the small team's preference."
+      },
+      {
+        "id": "split-sequential",
+        "name": "Split image processing and the three page dependencies into services; call the page dependencies sequentially",
+        "hint": "Wait for each result before starting the next call",
+        "label": "unsuitable",
+        "time": "60 + 40 + 30 + 50 = 180 ms",
+        "space": "Several deployed programs",
+        "why": "Image processing is independent, but the page's serial call chain adds 40 + 30 + 50 = 120 ms to the original 60 ms. Total latency is 180 ms, exceeding the 120 ms target. Team size alone is not the reason this option fails."
+      },
+      {
+        "id": "keep-monolith",
+        "name": "Keep image processing and order handling in one program; add copies of that whole program at peak",
+        "hint": "Scale the existing deployment as one unit",
+        "label": "unsuitable",
+        "time": "Order page remains within the assumed 60 ms budget",
+        "space": "Extra copies include both image and order code",
+        "why": "This keeps the page fast, but image processing still deploys and scales with the order-handling program. Adding copies of the whole program violates the explicit independent-scaling and deployment requirement."
+      },
+      {
+        "id": "split-parallel",
+        "name": "Split image processing and the three page dependencies; make the independent page calls in parallel",
+        "hint": "Start independent calls together",
+        "label": "valid",
+        "time": "60 + max(40, 30, 50) = 60 + 50 = 110 ms",
+        "space": "Several deployed programs",
+        "why": "Image processing scales independently. The parallel calls wait for the slowest result, 50 ms, so the assumed total is 60 + 50 = 110 ms, within 120 ms. This meets all fixed requirements, but the additional programs add deployment and network-failure work for four engineers; extracting images alone better matches their simplicity preference."
+      }
+    ]
+  }
+]
