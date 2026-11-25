@@ -3,24 +3,24 @@
 ## [objectives] Mục tiêu bài học
 
 - Theo dõi từng bước khi browser (trình duyệt) gửi request (yêu cầu) đến server (máy chủ) để tải trang web rồi nhận kết quả trở lại.
-- Xác định thời gian nằm ở đâu: tìm server, mở kết nối, truyền dữ liệu qua mạng, xử lý trên server và truy vấn database.
-- Phân biệt latency (độ trễ của một request) với throughput (số request hệ thống xử lý được mỗi giây).
+- Xác định thời gian nằm ở đâu: tìm server, mở kết nối, truyền dữ liệu qua mạng, xử lý trên server và truy vấn database (cơ sở dữ liệu).
+- Phân biệt latency (độ trễ) với throughput (thông lượng).
 - Ước lượng tải bằng các con số gần đúng và chỉ ra đâu là giả định.
 - Biết nên kiểm tra bước nào trước khi một trang web chạy chậm.
 
 ### Thuật ngữ chính (Key terms)
 
-- **Client và server.** Client (máy khách) là chương trình gửi yêu cầu, như browser hoặc ứng dụng điện thoại. Server (máy chủ) là máy tính trả lời. Hai bên trao đổi dữ liệu qua mạng.
-- **IP address (địa chỉ IP).** Dãy số xác định một máy tính trên internet, giống địa chỉ nhà, ví dụ 142.250.72.14.
-- **DNS (Domain Name System, hệ thống tên miền).** Giống danh bạ của internet: DNS đổi tên như shop.example thành IP address của server. **DNS resolver (máy chủ phân giải DNS)** giúp tra cứu địa chỉ, thường do nhà cung cấp internet vận hành. DNS là bước tra cứu trước request, không phải trạm mà request đi xuyên qua.
-- **Round trip (lượt đi và về).** Một thông điệp đi đến phía bên kia rồi nhận câu trả lời trở lại. Thời gian đó gọi là round-trip time (RTT, thời gian khứ hồi), phụ thuộc nhiều vào khoảng cách.
+- **Client và server.** Client — máy khách (chương trình gửi yêu cầu) — là browser hoặc ứng dụng điện thoại gửi yêu cầu. Server (máy chủ) là máy tính trả lời. Hai bên trao đổi dữ liệu qua mạng.
+- **IP address — địa chỉ IP (số định danh máy tính trên mạng).** Dãy số giúp xác định một máy tính trên internet, giống địa chỉ nhà, ví dụ 142.250.72.14.
+- **DNS (hệ thống tên miền).** Tên đầy đủ là Domain Name System. Giống danh bạ của internet: DNS đổi tên như shop.example thành IP address của server. **DNS resolver (máy chủ phân giải DNS)** giúp tra cứu địa chỉ, thường do nhà cung cấp internet vận hành. DNS là bước tra cứu trước request, không phải trạm mà request đi xuyên qua.
+- **Round trip (lượt đi và về).** Một thông điệp đi đến phía bên kia rồi nhận câu trả lời trở lại. Thời gian đó gọi là round-trip time (RTT) — thời gian khứ hồi —, phụ thuộc nhiều vào khoảng cách.
 - **TCP connection (kết nối TCP).** Kết nối giúp client và server trao đổi dữ liệu đáng tin cậy, đúng thứ tự và không thiếu phần. Mở kết nối tốn một round trip.
-- **TLS.** Cơ chế mã hóa đứng sau https:// và biểu tượng ổ khóa trên browser. Thiết lập TLS cần thêm một round trip với TLS 1.3 hoặc hai round trips với TLS 1.2 cũ hơn.
-- **HTTP request (yêu cầu HTTP).** Thông điệp browser gửi đi, gồm method (phương thức, như GET để đọc hoặc POST để gửi dữ liệu), path (đường dẫn, như /products/42) và headers (các dòng thông tin bổ sung, chẳng hạn ngôn ngữ người dùng muốn xem).
-- **Cookie.** Một phần dữ liệu nhỏ mà server yêu cầu browser lưu lại và gửi kèm trong headers của những request sau, ví dụ để ghi nhớ người dùng đã đăng nhập.
+- **TLS (lớp mã hóa của https).** Cơ chế bảo vệ kết nối đứng sau https:// và biểu tượng ổ khóa trên browser. Thiết lập TLS cần thêm một round trip với TLS 1.3 hoặc hai round trips với TLS 1.2 cũ hơn.
+- **HTTP request (yêu cầu HTTP).** Thông điệp browser gửi đi, gồm method (phương thức, như GET để đọc hoặc POST để gửi dữ liệu), path (đường dẫn, như /products/42) và headers (phần thông tin đi kèm, chẳng hạn ngôn ngữ người dùng muốn xem).
+- **Cookie (dữ liệu nhỏ trình duyệt lưu và gửi lại).** Server có thể yêu cầu browser lưu cookie rồi gửi kèm trong headers của những request sau, ví dụ để ghi nhớ người dùng đã đăng nhập.
 - **Database (cơ sở dữ liệu).** Chương trình lưu dữ liệu trên ổ đĩa và trả lời truy vấn, chẳng hạn tìm sản phẩm có id 42.
 - **Cache (bộ nhớ đệm).** Bản sao dữ liệu được giữ ở nơi truy cập nhanh, để không phải lấy lại từ nguồn gốc chậm hơn.
-- **CDN (content delivery network, mạng phân phối nội dung).** Nhiều server ở các thành phố trên thế giới giữ bản sao tệp như hình ảnh. Người dùng tải tệp từ một thành phố gần mình. Mỗi server đó gọi là **edge server (máy chủ biên)**.
+- **CDN (mạng phân phối nội dung).** Tên đầy đủ là content delivery network. Nhiều server ở các thành phố trên thế giới giữ bản sao tệp như hình ảnh. Người dùng tải tệp từ một thành phố gần mình. Mỗi server đó gọi là **edge server** — máy chủ biên (máy chủ CDN gần người dùng).
 - **Bottleneck (điểm nghẽn).** Bước chậm nhất hoặc bận nhất, giới hạn tốc độ của cả hệ thống, giống cổ chai hẹp.
 - **Index (chỉ mục).** Cấu trúc giúp database tìm dòng dữ liệu nhanh hơn, giống mục tra cứu ở cuối sách. Truy vấn trên cột không có index có thể phải đọc mọi dòng. Level 31 sẽ học kỹ hơn.
 - **Latency (độ trễ).** Tổng thời gian một request cần để hoàn thành, kể cả lúc chờ trong hàng đợi.
@@ -54,20 +54,20 @@ Hãy áp dụng cách suy nghĩ này khi người dùng nói “trang chạy ch�
 Level này không có code. Hãy dùng **design template (mẫu thiết kế)** sau cho một request bất kỳ. Đây là hình dung đơn giản: hệ thống thực tế có thể bỏ qua một số bước, thêm bước khác hoặc gửi câu trả lời về bằng đường khác.
 
 ```text
-Setup (before the request, often reused later):
-  DNS lookup: name -> IP address
-  Open a connection: TCP, then TLS for https
+Thiết lập (trước request, thường dùng lại cho các request sau):
+  Tra cứu DNS: tên miền -> IP address
+  Mở kết nối: TCP, rồi TLS nếu dùng https
 
-Request and response:
+Yêu cầu và phản hồi:
   Client -> (load balancer) -> server -> (cache) -> (database)
-  The answer comes back to the client.
-  Steps in brackets appear only when the design has them.
+  Phản hồi quay lại client.
+  Các bước trong ngoặc đơn chỉ có khi thiết kế sử dụng chúng.
 
-For each step, write:
-  1. What happens here?
-  2. Rough time it adds (latency).
-  3. What is the limit (requests per second, connections, memory)?
-  4. What fails first when load grows?
+Với mỗi bước, hãy ghi:
+  1. Điều gì xảy ra ở đây?
+  2. Bước này thêm khoảng bao nhiêu thời gian (latency)?
+  3. Giới hạn là gì (requests mỗi giây, kết nối, memory)?
+  4. Điều gì hỏng trước khi tải tăng?
 ```
 
 ## [complexity] Chi phí và giới hạn
@@ -98,7 +98,7 @@ Ví dụ: 10 million (10 triệu) người dùng, mỗi người gửi 10 reques
 2. Requests mỗi ngày: 10⁷ × 10 = 10⁸.
 3. Requests mỗi giây: 10⁸ ÷ 10⁵. Khi chia hai lũy thừa của 10, ta trừ số mũ: 8 − 5 = 3. Kết quả là 10³, tức trung bình khoảng 1,000 requests mỗi giây.
 
-Peak traffic (lưu lượng cao điểm) thường lớn hơn mức trung bình nhiều lần. Vì vậy, hãy chuẩn bị cho giờ cao điểm, không chỉ mức trung bình.
+Peak — lúc cao điểm (peak traffic: lưu lượng cao điểm) — thường lớn hơn mức trung bình nhiều lần. Vì vậy, hãy chuẩn bị cho giờ cao điểm, không chỉ mức trung bình.
 
 ## [common-mistakes] Lỗi thường gặp
 
@@ -112,8 +112,8 @@ Peak traffic (lưu lượng cao điểm) thường lớn hơn mức trung bình 
 
 - **Một bước quá chậm chi phối toàn bộ.** Nếu database mất 2 seconds còn mỗi bước khác chỉ mất 20 ms, tăng tốc network gần như không thay đổi kết quả.
 - **Cached responses (phản hồi từ cache).** Nếu cache gần người dùng đã có dữ liệu, request bỏ qua phần lớn các bước. Vì vậy cùng một request có thể có thời gian rất khác nhau.
-- **Timeouts (giới hạn thời gian chờ).** Request chờ quá lâu ở một bước nên dừng và báo lỗi, thay vì treo đến khi người dùng bỏ cuộc.
-- **Retries (thử lại).** Retry tạo thêm tải đúng lúc hệ thống đang gặp khó khăn. Hãy giới hạn số lần thử và chờ một khoảng giữa các lần.
+- **Timeout (hết thời gian chờ).** Nếu request chờ quá lâu ở một bước nên dừng và báo lỗi, thay vì treo đến khi người dùng bỏ cuộc.
+- **Retry (thử lại).** Thử lại tạo thêm tải đúng lúc hệ thống đang gặp khó khăn. Hãy giới hạn số lần thử và chờ một khoảng giữa các lần.
 
 ## [worked-example] Ví dụ giải chi tiết
 
