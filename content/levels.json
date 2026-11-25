@@ -208,5 +208,12 @@
     "title": "Caching and CDNs",
     "summary": "Keep fast copies of hot data in a cache and files on a CDN, and decide how fresh each copy must be.",
     "phase": 4
+  },
+  {
+    "number": 31,
+    "slug": "databases-indexes-and-concurrent-writes",
+    "title": "Databases, Indexes and Concurrent Writes",
+    "summary": "Store data in tables or documents, find rows fast with indexes, and keep two users from buying the same seat.",
+    "phase": 4
   }
 ]
