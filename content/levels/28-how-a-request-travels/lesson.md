@@ -61,7 +61,7 @@ Rough numbers that help with estimates (approximate, order of magnitude only):
 | Round trip inside one data centre | 0.5 ms |
 | Round trip across an ocean | 100–150 ms |
 
-Estimation shortcut: a day has about 10⁵ seconds (86,400). If 10 million users each make 10 requests a day, that is 10⁸ requests a day, which is about 1,000 requests per second on average. Peak traffic is often several times the average, so plan for the peak, not the average.
+Estimation shortcut: a day has 86,400 seconds, which we round to 10⁵ (100,000) to make the division easy. Example: 10 million users (10⁷) each make 10 requests a day, so 10⁷ × 10 = 10⁸ requests a day. Divide by the seconds in a day: 10⁸ ÷ 10⁵ = 10³, which is about 1,000 requests per second on average. Writing large numbers as powers of ten turns the division into subtracting exponents (8 − 5 = 3). Peak traffic is often several times the average, so plan for the peak, not the average.
 
 ## Common mistakes
 

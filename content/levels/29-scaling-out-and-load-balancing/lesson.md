@@ -80,13 +80,13 @@ Layer 4 and Layer 7 load balancers differ in what they read:
 
 ## Worked example
 
-**Problem:** One server handles 300 requests per second at 80% CPU. Peak traffic is 900 requests per second. How many servers do you need, and how do you choose the count?
+**Problem:** A load test shows that one server reaches its limit (CPU close to 100%) at about 300 requests per second. Peak traffic is 900 requests per second. How many servers do you need, and how do you choose the count?
 
 **Solution:**
 
-1. Each server handles 300 requests per second at 80% CPU. Running at 80% leaves no room for spikes, so plan for about 60–70% at peak (an approximate rule of thumb).
-2. At 65% target use, one server handles about 300 × 0.65 ≈ 195 requests per second.
-3. Peak needs 900 requests per second, so 900 ÷ 195 ≈ 4.6, which rounds up to 5 servers.
-4. Add one spare server for a failure, so 6 in total. If one fails, the other 5 each take 900 ÷ 5 = 180 requests per second: about 92% of the 195 target, and about 60% of the 300 limit.
+1. A server running at its limit has no room for a sudden spike and becomes slow, so plan to use only about 60–70% of the limit at peak (an approximate rule of thumb). Here we pick 65%.
+2. At 65% of the limit, one server should take about 300 × 0.65 = 195 requests per second. This is the target load per server.
+3. Peak needs 900 requests per second, so 900 ÷ 195 ≈ 4.6 servers. You cannot run part of a server, so round up to 5 (rounding down to 4 would put each server at 225, above the target).
+4. Add one spare server in case one fails, so 6 in total. Check the failure case: if one fails, the other 5 each take 900 ÷ 5 = 180 requests per second. That is below the 195 target (180 ÷ 195 ≈ 92%) and 60% of the 300 limit (180 ÷ 300), so the service still has headroom.
 
 **Answer:** Run 5 servers for the peak and 6 to survive one failure. Confirm with a load test, because these numbers are estimates.

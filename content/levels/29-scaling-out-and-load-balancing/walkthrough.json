@@ -1,7 +1,7 @@
 [
   {
     "title": "One server is not enough",
-    "body": "A single server handles 300 requests per second. Peak traffic is 900. You can make the server bigger (vertical scaling), but a machine has a ceiling and one failure takes everything down. Adding more identical servers (horizontal scaling) removes the ceiling, if the rest of the system can keep up.",
+    "body": "A single server reaches its limit at about 300 requests per second. Peak traffic is 900. You can make the server bigger (vertical scaling), but a machine has a ceiling and one failure takes everything down. Adding more identical servers (horizontal scaling) removes the ceiling, if the rest of the system can keep up.",
     "visual": {
       "cells": [],
       "arch": {
@@ -49,7 +49,7 @@
         },
         {
           "name": "one server",
-          "value": "300 requests/s"
+          "value": "max 300 requests/s"
         }
       ]
     }
