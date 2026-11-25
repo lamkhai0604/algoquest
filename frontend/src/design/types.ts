@@ -1,16 +1,9 @@
 /** Design prompts (D-085). Criteria never reach the client; the reference arrives with a grade. */
 export type DesignSection =
-  | "requirements"
-  | "estimate"
-  | "components"
-  | "failure";
+  "requirements" | "estimate" | "components" | "failure";
 
 export type RubricCategory =
-  | "requirements"
-  | "estimation"
-  | "design"
-  | "data"
-  | "tradeoffs";
+  "requirements" | "estimation" | "design" | "data" | "tradeoffs";
 
 export interface PromptSummary {
   id: string;
