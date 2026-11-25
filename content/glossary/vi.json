@@ -23,22 +23,22 @@
         },
         {
           "term": "DNS",
-          "vi": "hệ thống phân giải tên miền",
+          "vi": "hệ thống tên miền",
           "firstLevel": 28
         },
         {
           "term": "DNS resolver",
-          "vi": "máy chủ phân giải tên miền",
+          "vi": "máy chủ phân giải DNS",
           "firstLevel": 28
         },
         {
           "term": "round trip",
-          "vi": "một lượt đi và về",
+          "vi": "lượt đi và về",
           "firstLevel": 28
         },
         {
           "term": "round-trip time (RTT)",
-          "vi": "thời gian một lượt đi và về",
+          "vi": "thời gian khứ hồi",
           "firstLevel": 28
         },
         {
@@ -93,12 +93,12 @@
         },
         {
           "term": "bottleneck",
-          "vi": "nút thắt cổ chai",
+          "vi": "điểm nghẽn",
           "firstLevel": 28
         },
         {
           "term": "peak",
-          "vi": "lúc cao điểm",
+          "vi": "lúc cao điểm (peak traffic: lưu lượng cao điểm)",
           "firstLevel": 28
         },
         {
@@ -128,7 +128,7 @@
         },
         {
           "term": "headroom",
-          "vi": "khoảng dự phòng",
+          "vi": "công suất dự phòng",
           "firstLevel": 29
         },
         {
@@ -243,12 +243,12 @@
         },
         {
           "term": "health check",
-          "vi": "kiểm tra tình trạng máy chủ",
+          "vi": "kiểm tra tình trạng hoạt động",
           "firstLevel": 29
         },
         {
           "term": "in rotation",
-          "vi": "đang nhận yêu cầu",
+          "vi": "đang trong danh sách phân phối",
           "firstLevel": 29
         },
         {
