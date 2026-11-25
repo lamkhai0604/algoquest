@@ -337,12 +337,12 @@
         "question": "The database now says 90, but the cache entry (TTL 60 s) was stored 20 s ago with the old price 100. Nothing deletes it. What do users see right now?",
         "options": [
           "90 at once, because the database changed",
-          "100, for up to 40 more seconds, then 90",
-          "An error until the server restarts",
-          "90 for half of the users"
+          "100 for up to 40 more seconds, then 90",
+          "100 until 60 seconds after the price change",
+          "100 for 60 more seconds, because the change restarts the TTL"
         ],
         "answer": 1,
-        "explanation": "Reads are hits, and the cache still holds 100. The entry expires 60 − 20 = 40 seconds from now; the next read after that is a miss and loads 90. Deleting the entry when the price changes avoids the wait.",
+        "explanation": "Reads are hits, and the cache still holds 100. A TTL counts from when the entry was stored, not from the price change, and a database change does not touch the cache. The entry was stored 20 seconds ago, so it expires 60 − 20 = 40 seconds from now; the next read after that is a miss and loads 90. Deleting the entry when the price changes avoids the wait.",
         "hides": [
           "users see"
         ]
@@ -351,7 +351,7 @@
   },
   {
     "title": "Delete on write",
-    "body": "To fix this, the server that changes the price first writes the database, then **deletes** `product:42` from the cache. The next read is a miss, loads 90 from the database and caches it. The TTL stays as a safety net: if a delete is ever lost, the stale value still disappears within 60 seconds.",
+    "body": "To fix this, the server that changes the price first writes the database, then **deletes** `product:42` from the cache. The next read is a miss, loads 90 from the database and caches it, so users usually see the new price at once. The TTL stays as a safety net: if a delete is lost, or a slow read stores the old price just after the delete, the old value still disappears when its TTL ends.",
     "visual": {
       "cells": [],
       "arch": {
@@ -417,7 +417,7 @@
   },
   {
     "title": "A CDN for images",
-    "body": "Product images are the same for every user and rarely change, but they are large and users are spread around the world. A **CDN** keeps copies on edge servers near users. A user's browser downloads the image from the nearest edge; only when the edge has no copy does it ask the **origin server**. Personal pages, such as a user's orders, are not cached on a CDN.",
+    "body": "Product images are the same for every user and rarely change, but they are large and users are spread around the world. A **CDN** keeps copies on edge servers near users. A user's browser downloads the image from the nearest edge. When the edge has no copy, or its copy has expired, it asks the **origin server**; an unchanged image may only need to be confirmed, not sent again. Personal pages, such as a user's orders, are not cached on a CDN.",
     "visual": {
       "cells": [],
       "arch": {
@@ -487,7 +487,7 @@
         },
         {
           "name": "origin",
-          "value": "asked only when the edge has no copy"
+          "value": "asked when the edge has no fresh copy"
         }
       ]
     }
