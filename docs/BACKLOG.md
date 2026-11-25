@@ -324,6 +324,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-625 | Beginner pass, prediction steps: two prediction questions in each of the Level 28 and 29 walkthroughs; the architecture diagram hides the request path while a prediction is open | FR-03, D-079 | P1 | Done 2026-11-24: frontend test; content check in CI; PO review pending |
 | T-626 | Beginner pass, answer options: wrong options in the quick checks and intuition questions of Levels 28 and 29 are common misunderstandings; correct answers are in varied positions; Level 28 links system design to Big-O (Level 1) | FR-03 | P2 | Done 2026-11-24: content check in CI; PO review pending |
 | T-627 | Two more trade-off challenges per level for Levels 28 and 29; every `valid` approach meets all fixed requirements of its challenge, and the session challenge on Level 29 is relabelled accordingly | FR-03, D-057 | P2 | Done 2026-11-24: content check in CI; PO review pending |
+| T-629 | Review round 2 fixes for Levels 28 and 29: prediction steps no longer give the answer away through titles or visible variables; the latency table states the real gaps between rows; the worked example and the step 6 prediction give every number the answer depends on; launch capacity states its assumptions; the session and small-tool challenges state their requirements exactly; claims about scaling and least connections carry their conditions | FR-03, D-057, D-079 | P1 | Done 2026-11-25: content check in CI; PO review pending |
 
 ## Maintenance
 

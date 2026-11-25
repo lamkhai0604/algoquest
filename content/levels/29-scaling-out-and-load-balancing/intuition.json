@@ -1,11 +1,11 @@
 {
-  "question": "Why does opening more checkouts help only if any cashier can serve any customer?",
+  "question": "Why does opening more checkouts help most when any cashier can serve any customer?",
   "options": [
     "Because more checkouts always cost less than a faster cashier",
-    "Because a customer who must return to one particular cashier cannot be sent to a free checkout",
+    "Because a customer who must return to one particular cashier cannot be sent to whichever checkout is free",
     "Because customers prefer the same cashier every time",
     "Because cashiers share one till"
   ],
   "answer": 1,
-  "explanation": "This is stateless scaling. If a server must keep the user's data in its own memory, the balancer cannot send that user anywhere else, so extra servers do not help them. Cost is a separate question."
+  "explanation": "This is stateless scaling. If a server must keep the user's data in its own memory, the balancer has to send that user back to the same server, so a free server cannot help them. Sticky sessions can make this work, but less flexibly. Cost is a separate question."
 }

@@ -189,7 +189,7 @@
     }
   },
   {
-    "title": "The server does the work",
+    "title": "Where does the rest of the time go?",
     "body": "The request reaches an application server. The server checks who the user is, reads the product from a **database**, and builds the page. A slow query or a missing index shows up here, not in the network. In this example the server work takes about 600 ms, most of the 800 ms.",
     "visual": {
       "cells": [],
@@ -259,8 +259,9 @@
           "Opening another TCP connection"
         ],
         "answer": 1,
-        "explanation": "Sending the page back takes tens of milliseconds (about 60 ms in this example), far less than 660 ms. The DNS answer is already cached and the connection is already open, so neither repeats. That leaves the work on the server and in the database.",
+        "explanation": "Sending a small page back takes tens of milliseconds (about 60 ms in this example), far less than 660 ms. The DNS answer is already cached and the connection is already open, so neither repeats. That leaves the work on the server and in the database.",
         "hides": [
+          "step",
           "time so far"
         ]
       }
@@ -331,8 +332,8 @@
     }
   },
   {
-    "title": "Count the steps, then fix the biggest one",
-    "body": "Write each step and its time. The network steps add up to about 200 ms (DNS 50, setup 60, request 30, response 60), and the server takes about 600 ms. Even a network that took no time at all would leave a 600 ms page. Fix the server work first, then look at the number of separate requests, and only then think about moving the server closer to users.",
+    "title": "Count the steps",
+    "body": "Write each step and its time. The network steps add up to about 200 ms (DNS 50, setup 60, request 30, response 60), and the server takes about 600 ms. Even a network that took no time at all would leave a 600 ms page. Fix the biggest step first, then look at the number of separate requests, and only then think about moving the server closer to users.",
     "visual": {
       "cells": [],
       "arch": {
@@ -410,15 +411,15 @@
         }
       ],
       "predict": {
-        "question": "The network steps take about 200 ms in total and the server work takes about 600 ms. Which single change cuts the most time?",
+        "question": "The network steps take about 200 ms and the server work about 600 ms. Which single change cuts the most time? Assume: a closer data center cuts each round trip from about 30 ms to 10 ms (the page needs 4 trips: 2 for setup, 1 for the request, 1 for the response); a faster DNS provider cuts the lookup from 50 ms to 20 ms; a database index cuts the server work from 600 ms to 200 ms; reusing an open connection skips the 60 ms setup.",
         "options": [
-          "Move the server to a data center closer to the user",
-          "Use a faster DNS provider",
-          "Make the server work faster, for example with a database index or a cache",
-          "Open the TCP connection earlier"
+          "The closer data center",
+          "The faster DNS provider",
+          "The database index",
+          "Reusing an open connection"
         ],
         "answer": 2,
-        "explanation": "All network steps together are about 200 ms, so even removing them completely saves at most 200 ms. Halving the server work alone saves 300 ms. Improve the biggest part first.",
+        "explanation": "Work out each saving. Closer data center: 4 trips × (30 − 10) ms = 80 ms. Faster DNS: 50 − 20 = 30 ms. Index: 600 − 200 = 400 ms. Reusing the connection: 60 ms. The index saves the most because it shrinks the biggest step. Improve the biggest part first.",
         "hides": [
           "server"
         ]

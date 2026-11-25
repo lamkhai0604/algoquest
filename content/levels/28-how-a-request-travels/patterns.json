@@ -97,24 +97,25 @@
     "id": "P28-launch-capacity",
     "level": 28,
     "title": "Capacity for Launch Day",
-    "statement": "A concert ticket site expects 1.2 million visitors on launch day. Each visitor loads about 10 pages, and 80% of all visits happen in the first hour after sales open. How many requests per second should the team plan for?",
+    "statement": "A concert ticket site expects 1.2 million visitors on launch day. Each visitor loads about 10 pages, and 80% of all visits happen in the first hour after sales open. Assume each page view is one request to the servers (images come from a CDN) and that visits are spread evenly across that first hour. How many requests per second should the team plan for?",
     "examples": [
       "1.2 million visitors × 10 pages = 12 million requests in the day",
       "One hour = 3,600 seconds; one day ≈ 10⁵ seconds"
     ],
     "constraints": [
       "The site must stay fast during the first hour",
-      "Requests per second is the planning number"
+      "Requests per second is the planning number",
+      "Real traffic is not perfectly even, so minute-by-minute peaks can be higher than the hour's average"
     ],
     "approaches": [
       {
         "id": "peak-hour",
-        "name": "Plan for the first-hour peak: 80% of 12 million is 9.6 million requests in 3,600 seconds, about 2,700 per second",
+        "name": "Plan for the first hour: 80% of 12 million is 9.6 million requests in 3,600 seconds, about 2,700 per second",
         "hint": "When do most requests arrive?",
         "label": "best",
         "time": "9.6 × 10⁶ ÷ 3,600 ≈ 2,700 requests per second",
         "space": "Enough servers for about 2,700 per second",
-        "why": "The site must survive its busiest hour. Spreading the requests over the whole day hides the peak."
+        "why": "The site must survive its busiest hour. Spreading the requests over the whole day hides it. 2,700 per second is the average of that hour, so the servers also need some room above it for busier minutes."
       },
       {
         "id": "peak-double",
@@ -123,7 +124,7 @@
         "label": "valid",
         "time": "2 × 2,700 ≈ 5,400 requests per second",
         "space": "About twice the servers really needed",
-        "why": "This also survives the peak, with extra room for a surprise, but costs about twice as much. It is a reasonable choice if the guess of 1.2 million visitors is very uncertain."
+        "why": "This also covers the first hour, with extra room for busier minutes and a wrong visitor estimate, but costs about twice as much. It is a reasonable choice when the guess of 1.2 million visitors is very uncertain."
       },
       {
         "id": "daily-average",
