@@ -1,0 +1,11 @@
+{
+  "question": "A restaurant's menu lists the dishes you can order. Why can the kitchen replace its stoves without telling any customer?",
+  "options": [
+    "Customers depend only on what the menu promises, not on how the kitchen works",
+    "Customers never notice anything the kitchen does",
+    "New stoves always cook the same food faster",
+    "The kitchen prints a new menu every time it changes"
+  ],
+  "answer": 0,
+  "explanation": "The menu is the contract, like an API. As long as the dishes on it stay the same, everything behind it can change. Customers do notice when a dish is removed or changed, which is why breaking changes to an API need a new version."
+}

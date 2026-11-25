@@ -75,6 +75,111 @@
           "term": "data center",
           "vi": "trung tâm dữ liệu",
           "firstLevel": 28
+        },
+        {
+          "term": "API",
+          "vi": "giao diện lập trình ứng dụng",
+          "firstLevel": 32
+        },
+        {
+          "term": "contract",
+          "vi": "hợp đồng giao tiếp giữa hai bên",
+          "firstLevel": 32
+        },
+        {
+          "term": "endpoint",
+          "vi": "điểm cuối nhận request",
+          "firstLevel": 32
+        },
+        {
+          "term": "REST",
+          "vi": "phong cách thiết kế API theo tài nguyên",
+          "firstLevel": 32
+        },
+        {
+          "term": "resource",
+          "vi": "tài nguyên",
+          "firstLevel": 32
+        },
+        {
+          "term": "HTTP method",
+          "vi": "phương thức HTTP",
+          "firstLevel": 32
+        },
+        {
+          "term": "status code",
+          "vi": "mã trạng thái",
+          "firstLevel": 32
+        },
+        {
+          "term": "safe method",
+          "vi": "phương thức an toàn, chỉ đọc",
+          "firstLevel": 32
+        },
+        {
+          "term": "idempotent",
+          "vi": "gửi lại nhiều lần vẫn cho cùng kết quả",
+          "firstLevel": 32
+        },
+        {
+          "term": "JSON",
+          "vi": "định dạng dữ liệu dạng văn bản",
+          "firstLevel": 32
+        },
+        {
+          "term": "pagination",
+          "vi": "phân trang",
+          "firstLevel": 32
+        },
+        {
+          "term": "offset",
+          "vi": "số mục bỏ qua",
+          "firstLevel": 32
+        },
+        {
+          "term": "cursor",
+          "vi": "con trỏ đánh dấu vị trí trang trước",
+          "firstLevel": 32
+        },
+        {
+          "term": "API version",
+          "vi": "phiên bản API",
+          "firstLevel": 32
+        },
+        {
+          "term": "backward-compatible",
+          "vi": "tương thích ngược",
+          "firstLevel": 32
+        },
+        {
+          "term": "gRPC",
+          "vi": "cách gọi giữa các service bằng thông điệp có kiểu",
+          "firstLevel": 32
+        },
+        {
+          "term": "Protocol Buffers",
+          "vi": "định dạng nhị phân gọn cho thông điệp",
+          "firstLevel": 32
+        },
+        {
+          "term": "polling",
+          "vi": "hỏi lại định kỳ",
+          "firstLevel": 32
+        },
+        {
+          "term": "long polling",
+          "vi": "hỏi và chờ đến khi có thay đổi",
+          "firstLevel": 32
+        },
+        {
+          "term": "server-sent events (SSE)",
+          "vi": "server đẩy sự kiện qua một kết nối mở",
+          "firstLevel": 32
+        },
+        {
+          "term": "WebSocket",
+          "vi": "kết nối mở hai chiều",
+          "firstLevel": 32
         }
       ]
     },
@@ -490,6 +595,36 @@
           "term": "constraint",
           "vi": "ràng buộc",
           "firstLevel": 28
+        },
+        {
+          "term": "monolith",
+          "vi": "ứng dụng nguyên khối",
+          "firstLevel": 32
+        },
+        {
+          "term": "service",
+          "vi": "dịch vụ",
+          "firstLevel": 32
+        },
+        {
+          "term": "microservice",
+          "vi": "dịch vụ nhỏ",
+          "firstLevel": 32
+        },
+        {
+          "term": "API gateway",
+          "vi": "cổng API",
+          "firstLevel": 32
+        },
+        {
+          "term": "call chain",
+          "vi": "chuỗi lời gọi giữa các service",
+          "firstLevel": 32
+        },
+        {
+          "term": "fallback",
+          "vi": "phương án dự phòng",
+          "firstLevel": 32
         }
       ]
     }
