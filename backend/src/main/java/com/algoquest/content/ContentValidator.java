@@ -202,7 +202,8 @@ final class ContentValidator {
 
   /**
    * Localized prose may change, but section identities and grading-critical answer indices, counts,
-   * code, and visual structure must agree with canonical English.
+   * code, and visual structure must agree with canonical English. Variable values and architecture
+   * labels may be translated (D-079, D-080).
    */
   static List<String> checkLocalizedLesson(String folder, Lesson english, Lesson localized) {
     List<String> issues = new ArrayList<>();
@@ -269,7 +270,7 @@ final class ContentValidator {
         } else if (a != null) {
           if (!java.util.Objects.equals(a.cells(), b.cells())
               || !java.util.Objects.equals(a.markers(), b.markers())
-              || !java.util.Objects.equals(a.vars(), b.vars())
+              || !sameVariableNames(a.vars(), b.vars())
               || !java.util.Objects.equals(a.swap(), b.swap())
               || !java.util.Objects.equals(a.next(), b.next())
               || a.drawsTree() != b.drawsTree()
@@ -609,6 +610,30 @@ final class ContentValidator {
     if (active > 1) {
       problems.add(where + ": at most one call can be active");
     }
+  }
+
+  /**
+   * Translations keep every variable, in the same order and with the same name (predictions hide
+   * variables by name), but may translate the values (D-080).
+   */
+  private static boolean sameVariableNames(List<Visual.Variable> a, List<Visual.Variable> b) {
+    if (a == null || b == null) {
+      return a == b;
+    }
+    if (a.size() != b.size()) {
+      return false;
+    }
+    for (int i = 0; i < a.size(); i++) {
+      Visual.Variable x = a.get(i);
+      Visual.Variable y = b.get(i);
+      if (x == null
+          || y == null
+          || !java.util.Objects.equals(x.name(), y.name())
+          || blank(y.value())) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /** Translations may change component labels only. */
