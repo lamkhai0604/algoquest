@@ -1,0 +1,11 @@
+{
+  "question": "A library has a million books. Why does its catalog, sorted by title, make finding one book fast?",
+  "options": [
+    "It lets you skip straight to the right drawer and card instead of walking every shelf",
+    "It makes the shelves themselves shorter",
+    "It keeps a copy of every book in the drawers",
+    "It sorts the books on the shelves every night"
+  ],
+  "answer": 0,
+  "explanation": "The catalog is an index: a small sorted structure that points to where each book is. Each label narrows the search, so a few steps replace a walk past a million books. It does not move or copy the books, and it must be updated when a book arrives."
+}
