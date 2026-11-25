@@ -416,7 +416,7 @@
   },
   {
     "title": "Lock first, or check a version",
-    "body": "When a change needs more than one statement, two general approaches exist. **Pessimistic**: read the row with `SELECT … FOR UPDATE`, which locks it; Buyer B waits until A finishes. It suits rows that many users fight over. **Optimistic**: read without a lock, then write with `WHERE version = 7`; if someone changed the row first, 0 rows update and the request retries. It suits rows that are rarely changed at the same time.",
+    "body": "When a change needs more than one statement, two general approaches exist. **Pessimistic**: inside one transaction, `BEGIN`, read the row with `SELECT … FOR UPDATE` (this locks it), check `seats_left > 0`, decrement it, then `COMMIT`. The lock is held until the commit, so Buyer B's locking read waits, then sees 0 and gets \"sold out\". A locking read on its own, outside a transaction, releases the lock at once and protects nothing. It suits rows that many users fight over. **Optimistic**: read the row without a lock, say with `version = 7`, check `seats_left > 0`, then write `SET seats_left = seats_left - 1, version = 8 WHERE id = 42 AND version = 7`. Changing the version in the same update is what stops a second buyer who also read 7. If 0 rows update, someone changed the row first: read it again and retry, or report a conflict. Every write to the row must change the version. It suits rows that are rarely changed at the same time. In both cases, confirm the sale only after the commit.",
     "visual": {
       "cells": [],
       "arch": {
@@ -478,11 +478,11 @@
       "vars": [
         {
           "name": "pessimistic",
-          "value": "B waits for A's lock"
+          "value": "B waits, then sees 0"
         },
         {
           "name": "optimistic",
-          "value": "B retries if the version changed"
+          "value": "B's version 7 no longer matches"
         }
       ]
     }
