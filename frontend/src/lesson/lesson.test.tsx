@@ -801,7 +801,7 @@ describe("lesson page", () => {
         },
       ],
     };
-    open(lesson as unknown as Lesson, 1);
+    open(lesson as unknown as Lesson, 2);
 
     const diagram = await screen.findByRole("img", {
       name: "Buyer A → Database; Buyer B → Database",
