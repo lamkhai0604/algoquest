@@ -88,7 +88,7 @@ Layer 4 and Layer 7 load balancers differ in what they read:
 
 ## Edge cases
 
-- **A server dies in the middle of a request.** The request may fail or time out. A retry, by the client or the load balancer, can send it to another server, but only if repeating it is safe: doing it twice must have the same effect as doing it once. Setting a profile name twice is safe; charging a card twice is not. Level 34 covers this in depth.
+- **A server dies in the middle of a request.** The request may fail or time out. A retry, by the client or the load balancer, can send it to another server, but only if repeating it is safe: doing it twice must have the same effect as doing it once. Setting a profile name twice is safe; charging a card twice is not. SD 7 covers this in depth.
 - **All servers are unhealthy.** The load balancer should return a clear error, not send traffic to servers it knows are down.
 - **A sudden spike.** New servers take time to start. Scaling rules should add capacity before the spike arrives, or the first users pay the cost.
 - **Uneven user groups.** A few very busy users can overload one server if the balancer chooses by user ID.

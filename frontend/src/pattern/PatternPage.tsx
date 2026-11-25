@@ -18,6 +18,7 @@ import styles from "./Pattern.module.css";
 import { LABEL_TONE } from "./types";
 import { useTranslation } from "../i18n";
 import type { AnswerResult, ChallengeView, Choice } from "./types";
+import { levelLabel } from "../game/levelLabel";
 
 const MIN_REASON = 10;
 
@@ -267,7 +268,7 @@ export function PatternPage() {
           <nav className={game.crumbs} aria-label={t("level.breadcrumb")}>
             <Link to="/">{t("nav.map")}</Link> /{" "}
             <Link to={`/levels/${challenge.level}`}>
-              Level {challenge.level}
+              {levelLabel(challenge.level)}
             </Link>{" "}
             / <span>{t("pattern.challenge")}</span>
           </nav>

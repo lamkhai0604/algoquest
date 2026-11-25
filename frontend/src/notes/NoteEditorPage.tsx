@@ -18,6 +18,7 @@ import {
   updateNote,
 } from "./notesApi";
 import type { Note, NoteInput } from "./notesApi";
+import { levelShort } from "../game/levelLabel";
 
 /** How long the editor waits after the last change before it saves. */
 export const SAVE_DELAY_MS = 1000;
@@ -352,7 +353,7 @@ export function NoteEditor({
                 <option value="">{t("notes.noLevel")}</option>
                 {levelOptions.map((option) => (
                   <option key={option.number} value={option.number}>
-                    {option.number} · {option.title}
+                    {levelShort(option.number)} · {option.title}
                   </option>
                 ))}
                 {level !== null &&

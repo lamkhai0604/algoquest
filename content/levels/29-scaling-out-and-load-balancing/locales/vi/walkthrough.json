@@ -49,7 +49,7 @@
         },
         {
           "name": "one server",
-          "value": "max 300 requests/s"
+          "value": "tối đa 300 requests/s"
         }
       ]
     }
@@ -138,11 +138,11 @@
       "vars": [
         {
           "name": "users see",
-          "value": "one address"
+          "value": "một địa chỉ"
         },
         {
           "name": "servers",
-          "value": "3, can change"
+          "value": "3, có thể thay đổi"
         }
       ]
     }
@@ -235,7 +235,7 @@
         },
         {
           "name": "each server",
-          "value": "≈300 of 900/s"
+          "value": "≈300 trong tổng 900/s"
         }
       ],
       "predict": {
@@ -338,11 +338,11 @@
       "vars": [
         {
           "name": "server memory",
-          "value": "no user data"
+          "value": "không lưu dữ liệu người dùng"
         },
         {
           "name": "shared store",
-          "value": "cart and session"
+          "value": "giỏ hàng và phiên đăng nhập"
         }
       ]
     }
@@ -432,15 +432,15 @@
       "vars": [
         {
           "name": "Server 2",
-          "value": "stopped answering"
+          "value": "ngừng phản hồi"
         },
         {
           "name": "next health check",
-          "value": "in a few seconds"
+          "value": "sau vài giây"
         },
         {
           "name": "after the check",
-          "value": "traffic to S1 and S3 only"
+          "value": "chỉ gửi lưu lượng đến S1 và S3"
         }
       ],
       "predict": {
@@ -461,7 +461,7 @@
   },
   {
     "title": "Kiểm tra bottleneck tiếp theo",
-    "body": "Các server đã chia nhau xử lý tải, nhưng tất cả vẫn ghi dữ liệu vào một database (cơ sở dữ liệu) duy nhất. Scaling out chỉ chuyển giới hạn sang chỗ khác, không xóa bỏ giới hạn. Bước thiết kế tiếp theo là kiểm tra database, nội dung của Level 31.",
+    "body": "Các server đã chia nhau xử lý tải, nhưng tất cả vẫn ghi dữ liệu vào một database (cơ sở dữ liệu) duy nhất. Scaling out chỉ chuyển giới hạn sang chỗ khác, không xóa bỏ giới hạn. Bước thiết kế tiếp theo là kiểm tra database, nội dung của SD 4.",
     "visual": {
       "cells": [],
       "arch": {
@@ -544,11 +544,11 @@
       "vars": [
         {
           "name": "servers",
-          "value": "share the load"
+          "value": "chia sẻ tải"
         },
         {
           "name": "database",
-          "value": "still one"
+          "value": "vẫn chỉ có một"
         }
       ]
     }

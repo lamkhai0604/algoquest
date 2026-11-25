@@ -26,6 +26,7 @@ import { ScoringGuide } from "./ScoringGuide";
 import styles from "./Solve.module.css";
 import type { AttemptMode, AttemptResult, ProblemDetail } from "./types";
 import { drafts, useActiveTime } from "./useTimer";
+import { levelLabel } from "../game/levelLabel";
 
 function ProblemText({ problem }: { problem: ProblemDetail }) {
   const { t } = useTranslation();
@@ -332,7 +333,7 @@ export function SolvePage() {
           {level !== null && (
             <>
               {" / "}
-              <Link to={`/levels/${level}`}>Level {level}</Link>
+              <Link to={`/levels/${level}`}>{levelLabel(level)}</Link>
             </>
           )}
         </nav>
