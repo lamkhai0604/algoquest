@@ -89,7 +89,7 @@
       ]
     },
     "fullMarkDesigns": [
-      "Design A, server-sent events: each phone keeps one connection; when a score is entered, the server sends it to every connection within about 1 s. Load: 3,000 connections on one server (limit about 5,000) and about 25 messages per second on average. A phone that reconnects starts listening first, then loads the current scores, so no change falls in a gap. Trade-off: one server is a single point of failure for the day.",
+      "Design A, server-sent events: each phone keeps one connection; when a score is entered, the server sends it to every connection within about 1 s. Load: 3,000 connections on one server (limit about 5,000) and about 25 messages per second on average. A phone that reconnects starts listening first, then loads the current scores; each score carries the time it was entered, and the phone keeps the newest one per event, so neither a gap nor an older snapshot can hide a change. Trade-off: one server is a single point of failure for the day.",
       "Design B, polling: phones ask every 4 s for the current scores, which a cache holds; a change waits at most 4 + 0.5 = 4.5 s. Load: 3,000 ÷ 4 = 750 requests per second, so 4 servers behind a load balancer at 75% of their limit (5 for room if one fails). Trade-off: about 3,600 polls per phone over the day for about 120 changes, almost all answering \"no change\", affordable at this size."
     ],
     "reference": {

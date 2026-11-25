@@ -47,8 +47,8 @@
       ],
       "design": "Scanner phones send each scan to a redundant pair of load balancers, which spread scans across identical stateless servers. Each server calls the database's \"mark used if unused\" operation, which accepts a ticket once.\nServer count: at 70% of 250, one server takes 175 scans per second; 1,200 ÷ 175 ≈ 6.9, so 7 servers are needed. Running 8 keeps the 70% limit when one is down: 1,200 ÷ 7 ≈ 171 per server.\nHealth checks remove a failed server within seconds; scans sent to it in that time get no answer, and scanners repeat them safely.",
       "alternatives": [
-        "One very large server (vertical scaling): simpler, but a single point of failure at the gates",
-        "Sticky routing of each scanner to one server: not needed, because the servers keep no state"
+        "Sticky routing of each scanner to one server: not needed, because the servers keep no state",
+        "Rejected: one very large server, because the gates must keep working with one server down"
       ]
     }
   },
@@ -100,8 +100,8 @@
       ],
       "design": "The servers become stateless. At login, the server stores the session (about 1 KB) in the shared in-memory store and sets a cookie with only the session id. Every request, on either server, reads the session from the store.\nSize and load: 30,000 × 1 KB = 30 MB, and 400 lookups per second against the store's 50,000.\nRestarting one server or adding servers logs no one out, because no server keeps sessions in its own memory. The store keeps its replica so that one failure does not log everyone out.",
       "alternatives": [
-        "Sticky sessions: quick fix for the random logouts, but a restart still logs out that server's students and load becomes uneven",
-        "Signed tokens: no store, but cancelling a session early needs shared revocation data"
+        "Signed tokens: no store, but cancelling a session early needs shared revocation data",
+        "Rejected: sticky sessions, because a restarted server still logs out its students"
       ]
     }
   }

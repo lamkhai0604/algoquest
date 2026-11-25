@@ -14,7 +14,7 @@
 - **Replication.** Keeping copies of the same database on several servers, updated as the data changes.
 - **Leader and follower.** The **leader** (also called the primary) accepts every write and sends each change to the **followers** (also called replicas or secondaries), which apply the same changes in the same order.
 - **Read replica.** A follower that also answers read queries, so reads are spread over several servers.
-- **Synchronous replication.** The leader confirms a write to the application only after at least one follower has received it. A confirmed write is never lost when the leader fails, but every write waits longer.
+- **Synchronous replication.** The leader confirms a write to the application only after at least one chosen follower has saved it durably (on disk, so it survives a crash). If the leader alone fails and that follower is promoted, no confirmed write is lost; every write waits longer.
 - **Asynchronous replication.** The leader confirms a write as soon as it has saved it, and sends it to the followers afterwards. Writes are faster, but the newest writes can be lost if the leader fails.
 - **Replication lag.** How far a follower is behind the leader, usually measured in time. Often under a second, but it can grow to minutes when the leader is busy or the network is slow.
 - **Read-your-writes.** The promise that after you change something, you see your change, even if other users see it a moment later.
@@ -87,8 +87,8 @@ There is no code in this level. Use this **design template** for copies of your 
 | Protection | Survives a failed server | Survives a mistaken delete | Typical data loss | Typical time to recover |
 | --- | --- | --- | --- | --- |
 | Asynchronous replica | Yes, by failover | No, the delete is copied | Writes within the lag | Seconds to minutes |
-| Synchronous replica | Yes, by failover | No, the delete is copied | None for confirmed writes | Seconds to minutes |
-| Backup with log archiving | Yes, by restoring | Yes, by restoring to before it | Up to the log archive interval | Minutes to hours |
+| Synchronous replica | Yes, by failover to that replica | No, the delete is copied | None for confirmed writes, if the synchronous replica is the one promoted | Seconds to minutes |
+| Backup with log archiving | Yes, by restoring | Yes, by restoring to before it | After losing the server: up to the log archive interval. After a mistake: every change made after the chosen point, valid ones included | Minutes to hours |
 
 ## Common mistakes
 
@@ -102,7 +102,8 @@ There is no code in this level. Use this **design template** for copies of your 
 
 - **Lag grows under load.** During a sale the leader is busy and lag can reach seconds or minutes. Monitor lag, and stop sending reads to a replica that falls too far behind.
 - **The leader comes back after a failover.** If the old leader still accepts writes after a follower was promoted, two servers accept writes and the data splits (see the extension).
-- **A failover loses writes the user was told succeeded.** With asynchronous replication, a confirmed order can disappear. For data that must never be lost, use synchronous replication to at least one follower.
+- **A failover loses writes the user was told succeeded.** With asynchronous replication, a confirmed order can disappear. For data that must never be lost, use synchronous replication to at least one follower, and promote that follower: only it is sure to hold every confirmed write. If it stops answering, the leader should stop confirming writes rather than quietly switch to asynchronous.
+- **Restoring to before a mistake also undoes later valid changes.** If a delete is found three hours later, restoring to just before it also removes the three hours of good orders that came after. The team must copy those back from the damaged database or re-enter them; point-in-time recovery alone does not merge the two.
 - **A mistake is noticed late.** If a bad change is found after three days but backups are kept for only two, there is no clean copy left. Keep backups for longer than mistakes usually take to notice.
 
 ### Extension (optional): split brain and fencing
@@ -119,9 +120,9 @@ There is no code in this level. Use this **design template** for copies of your 
 
 1. **Fresh reads go to the leader.** 5% of 8,000 is 400 reads per second. The leader handles 800 writes + 400 reads = 1,200 queries per second, under its safe limit of 2,100.
 2. **Other reads go to replicas.** 8,000 − 400 = 7,600 reads per second. Each replica applies all 800 writes, leaving 2,100 − 800 = 1,300 queries per second for reads (simplified model). 7,600 ÷ 1,300 ≈ 5.8, so 6 replicas; a 7th keeps the limit when one replica fails.
-3. **Read-your-writes.** After a customer changes their cart or places an order, their own cart and order reads go to the leader for the next 30 seconds, longer than the lag the team allows before taking a replica out of service.
+3. **Read-your-writes.** The team takes any replica more than 10 seconds behind out of service, so replicas are never more than 10 seconds old. After a customer changes their cart or places an order, their own cart and order reads go to the leader for the next 30 seconds, longer than that limit.
 4. **Failover.** One replica in the same data center is synchronous, so a confirmed order is never lost when the leader fails; it costs about 0.5 ms per write. If the leader fails, that replica is promoted within a minute and the old leader is fenced off.
-5. **Backups.** A full backup every night and the database log archived every 30 seconds, both kept in another region with separate access. RPO: at most about 30 seconds of orders, within 1 minute.
-6. **Restore time.** 400,000 MB ÷ 200 MB/s = 2,000 s ≈ 33 minutes, plus replaying up to a day of log, measured at about 15 minutes: about 48 minutes, within the 1-hour RTO. A restore test each month checks that this stays true as the data grows.
+5. **Backups.** A full backup every night and the database log archived every 30 seconds, both kept in another region with separate access. RPO after losing the database or the data center: at most about 30 seconds of orders, within 1 minute. After a mistaken delete, the shop restores to just before it and copies later valid orders back from the damaged database.
+6. **Restore time.** 400,000 MB ÷ 200 MB/s = 2,000 s ≈ 33 minutes, plus replaying up to a day of log, measured at about 15 minutes: about 48 minutes. That leaves about 12 minutes of the 1-hour RTO for starting the server, checks and reopening, which is tight. A restore test each month measures the whole recovery, and if it passes 1 hour the team takes full backups more often to shorten the replay.
 
 **Answer:** One leader for writes and fresh reads, 6 read replicas (7 with a spare), one of them synchronous for failover, and nightly backups with log archiving every 30 seconds in another region. The replicas handle load and server failures; only the backups could have brought back the deleted orders.
