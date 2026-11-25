@@ -78,6 +78,15 @@ export interface VisualArch {
   path?: number[] | null;
   /** The request is lost at the last component of the path. */
   drop?: boolean | null;
+  /** Other requests moving at the same time (T-645). */
+  flows?: VisualFlow[] | null;
+}
+
+/** Another request moving at the same time as the main path (T-645). */
+export interface VisualFlow {
+  path: number[];
+  /** The request is lost or refused at the last component of its path. */
+  drop?: boolean | null;
 }
 
 /** One component of a system design diagram (D-079). */
@@ -89,6 +98,8 @@ export interface VisualComponent {
   y: number;
   /** Overloaded or failed. */
   state?: "hot" | "down" | null;
+  /** A short note shown above the label, such as "locked" (T-645). */
+  note?: string | null;
 }
 
 /** One recursive call in the staircase (D-078). */
