@@ -338,6 +338,8 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-645 | Architecture diagrams: several requests at once (`flows`) and component notes (`note`), with content checks and translation rules | FR-03, D-082 | P1 | Done 2026-11-25: backend and frontend tests; preview screenshot |
 | T-646 | SD 3 review round 3 fix: the CDN challenge's latency rule applies to later requests in a region, so origin-only options break a stated requirement | FR-03, D-057 | P2 | Done 2026-11-25: content check in CI |
 | T-647 | Open SD 1 (Level 28) to every account, as Level 1 is | FR-09, D-083 | P1 | Done 2026-11-25: backend unit test; CI |
+| T-650 | Open every System Design level (Level 28 onward) to every account | FR-09, D-084 | P1 | Done 2026-11-25: backend unit test; CI |
+| T-651 | Show quick-check, prediction, intuition and pattern-challenge options in a random order; answers keep their content indices | FR-03, D-084 | P1 | Done 2026-11-25: frontend unit test; CI |
 
 ## Maintenance
 

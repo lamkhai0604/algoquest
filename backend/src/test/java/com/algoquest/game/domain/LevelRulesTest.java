@@ -23,9 +23,11 @@ class LevelRulesTest {
   }
 
   @Test
-  void theFirstSystemDesignLevelIsAlwaysOpen() {
+  void everySystemDesignLevelIsAlwaysOpen() {
     assertThat(LevelRules.state(28, OptionalInt.empty())).isEqualTo(LevelState.OPEN);
-    assertThat(LevelRules.state(29, OptionalInt.empty())).isEqualTo(LevelState.LOCKED);
+    assertThat(LevelRules.state(29, OptionalInt.empty())).isEqualTo(LevelState.OPEN);
+    assertThat(LevelRules.state(31, OptionalInt.empty())).isEqualTo(LevelState.OPEN);
+    assertThat(LevelRules.state(27, OptionalInt.empty())).isEqualTo(LevelState.LOCKED);
   }
 
   @Test
