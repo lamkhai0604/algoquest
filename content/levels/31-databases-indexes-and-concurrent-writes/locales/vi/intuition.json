@@ -1,0 +1,11 @@
+{
+  "question": "Thư viện có một triệu sách. Vì sao danh mục xếp theo tên giúp tìm một cuốn nhanh?",
+  "options": [
+    "Nó cho bạn đến thẳng ngăn và thẻ phù hợp thay vì đi qua mọi kệ",
+    "Thẻ nhỏ hơn sách nên đọc mọi thẻ nhanh hơn đi qua mọi kệ",
+    "Nó giữ sách trên kệ theo tên",
+    "Nó giữ mọi chi tiết của từng cuốn nên không bao giờ cần đến kệ"
+  ],
+  "answer": 0,
+  "explanation": "Danh mục là index: cấu trúc nhỏ, có thứ tự chỉ đến nơi đặt sách. Mỗi nhãn thu hẹp tìm kiếm, nên vài bước thay việc đi qua một triệu sách. Đọc mọi thẻ vẫn cần một triệu bước; danh mục không chuyển sách hay thay thế sách. Nó phải cập nhật khi sách đến."
+}
