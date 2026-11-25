@@ -1,26 +1,396 @@
 [
   {
     "title": "The user types a web address",
-    "body": "The browser needs a server address. The name `shop.example` must be turned into an IP address. First the browser checks its own cache; if it has no answer, it asks a DNS resolver. This step is often 20–100 ms the first time and almost zero after that."
+    "body": "The browser needs a server address. The name `shop.example` must be turned into an IP address. First the browser checks its own cache; if it has no answer, it asks a DNS resolver. This step is often 20–100 ms the first time and almost zero after that.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Browser",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "DNS lookup"
+        },
+        {
+          "name": "time so far",
+          "value": "≈50 ms"
+        }
+      ]
+    }
   },
   {
     "title": "Open a connection",
-    "body": "The browser opens a TCP connection, which takes one round trip. For HTTPS it then sets up encryption (TLS), which takes another round trip or so. Both trips are pure waiting: no page data moves yet. This is why a far-away server feels slow even when its code is fast."
+    "body": "The browser opens a TCP connection, which takes one round trip. For HTTPS it then sets up encryption (TLS), which takes another round trip or so. Both trips are pure waiting: no page data moves yet. This is why a far-away server feels slow even when its code is fast.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Browser",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "2 round trips, no data yet"
+        },
+        {
+          "name": "time so far",
+          "value": "≈110 ms"
+        }
+      ]
+    }
   },
   {
     "title": "Send the request",
-    "body": "The browser sends an HTTP request, for example `GET /products/42`. It carries the method, the path, headers such as cookies, and sometimes a body. One more round trip passes before the answer starts to arrive."
+    "body": "The browser sends an HTTP request, for example `GET /products/42`. It carries the method, the path, headers such as cookies, and sometimes a body. One more round trip passes before the answer starts to arrive.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Browser",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "1 more round trip"
+        },
+        {
+          "name": "time so far",
+          "value": "≈140 ms"
+        }
+      ]
+    }
   },
   {
     "title": "The server does the work",
-    "body": "The request reaches an application server. The server checks the user, reads the product from a **database**, and builds the page. A slow query or a missing index shows up here, not in the network. In many slow pages, most of the time is spent in this step."
+    "body": "The request reaches an application server. The server checks the user, reads the product from a **database**, and builds the page. A slow query or a missing index shows up here, not in the network. In many slow pages, most of the time is spent in this step.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Browser",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "server work and queries"
+        },
+        {
+          "name": "time so far",
+          "value": "≈740 ms"
+        }
+      ]
+    }
   },
   {
     "title": "The response travels back",
-    "body": "The server sends the response over the same connection. Large files such as images are separate requests, and each one repeats the path. Reusing an open connection avoids paying the setup cost again."
+    "body": "The server sends the response over the same connection. Large files such as images are separate requests, and each one repeats the path. Reusing an open connection avoids paying the setup cost again.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Browser",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "step",
+          "value": "response comes back"
+        },
+        {
+          "name": "time so far",
+          "value": "≈800 ms"
+        }
+      ]
+    }
   },
   {
     "title": "Count the hops, then fix the biggest one",
-    "body": "Write each hop and its time. If the server takes 600 ms and the network takes 100 ms, a faster network does not fix the page. Fix the server first, then look at the number of separate requests, and only then think about moving the server closer to users."
+    "body": "Write each hop and its time. If the server takes 600 ms and the network takes 100 ms, a faster network does not fix the page. Fix the server first, then look at the number of separate requests, and only then think about moving the server closer to users.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Browser",
+            "x": 3,
+            "y": 6
+          },
+          {
+            "kind": "dns",
+            "label": "DNS",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 1
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "DNS",
+          "value": "≈50 ms"
+        },
+        {
+          "name": "setup",
+          "value": "≈60 ms"
+        },
+        {
+          "name": "request",
+          "value": "≈30 ms"
+        },
+        {
+          "name": "server",
+          "value": "≈600 ms"
+        },
+        {
+          "name": "note",
+          "value": "rough example numbers"
+        }
+      ]
+    }
   }
 ]

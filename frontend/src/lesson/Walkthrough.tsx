@@ -2,6 +2,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "../i18n";
 import { Button, Card, cx } from "../components";
 import styles from "./Lesson.module.css";
+import { Architecture } from "./Architecture";
 import { CodeBlock, InlineText } from "./Markdown";
 import { Predict } from "./Predict";
 import type { Answer } from "./Predict";
@@ -1396,7 +1397,9 @@ type Speed = keyof typeof SPEEDS;
 export function StillVisual({ visual }: { visual: Visual }) {
   return (
     <>
-      {visual.intervals ? (
+      {visual.arch ? (
+        <Architecture arch={visual.arch} />
+      ) : visual.intervals ? (
         <Timeline visual={visual} previous={null} masked={false} />
       ) : visual.edges ? (
         <Graph visual={visual} previous={null} masked={false} />
@@ -1571,7 +1574,9 @@ export function Walkthrough({ steps }: { steps: WalkthroughStep[] }) {
           style={stageHeight ? { minHeight: stageHeight } : undefined}
         >
           {visual &&
-            (visual.edges && visual.explore ? (
+            (visual.arch ? (
+              <Architecture arch={visual.arch} />
+            ) : visual.edges && visual.explore ? (
               <Explorer key={index} visual={visual} />
             ) : visual.intervals ? (
               <Timeline

@@ -65,6 +65,30 @@ export interface Visual {
   reads?: number[] | null;
   /** Recursive calls drawn as a staircase, one box per call (D-078). */
   calls?: VisualCall[] | null;
+  /** A system design diagram drawn in 3D (D-079); `cells` is then empty. */
+  arch?: VisualArch | null;
+}
+
+/** A system design diagram (D-079). */
+export interface VisualArch {
+  nodes: VisualComponent[];
+  /** Pairs of component indexes joined by a line. */
+  links: number[][];
+  /** The components one request passes through in this step, in order. */
+  path?: number[] | null;
+  /** The request is lost at the last component of the path. */
+  drop?: boolean | null;
+}
+
+/** One component of a system design diagram (D-079). */
+export interface VisualComponent {
+  kind: "client" | "dns" | "cdn" | "lb" | "server" | "cache" | "db" | "queue";
+  label: string;
+  /** Column 0 to 10 and row 0 to 8 on the floor grid. */
+  x: number;
+  y: number;
+  /** Overloaded or failed. */
+  state?: "hot" | "down" | null;
 }
 
 /** One recursive call in the staircase (D-078). */
