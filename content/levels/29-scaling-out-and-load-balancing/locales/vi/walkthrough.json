@@ -461,7 +461,7 @@
   },
   {
     "title": "Kiểm tra bottleneck tiếp theo",
-    "body": "Các server đã chia nhau xử lý tải, nhưng tất cả vẫn ghi dữ liệu vào một database (cơ sở dữ liệu) duy nhất. Scaling out chỉ chuyển giới hạn sang chỗ khác, không xóa bỏ giới hạn. Bước thiết kế tiếp theo là kiểm tra database, nội dung của Level 31.",
+    "body": "Các server đã chia nhau xử lý tải, nhưng tất cả vẫn ghi dữ liệu vào một database (cơ sở dữ liệu) duy nhất. Scaling out chỉ chuyển giới hạn sang chỗ khác, không xóa bỏ giới hạn. Bước thiết kế tiếp theo là kiểm tra database, nội dung của SD 4.",
     "visual": {
       "cells": [],
       "arch": {

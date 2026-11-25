@@ -330,6 +330,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-632 | Translations for trade-off challenges (`patterns.json`): model, content check, and API language selection, as for lessons and problems | FR-03, D-057, D-080 | P3 | Proposed; after more Phase 4 levels |
 | T-633 | Phase 4 syllabus version 2: zero-to-interview path of 26 levels (28 to 53) in six stages, official and public references, beginner rules for every level, interview readiness map, reference designs after grading | D-056, D-057, D-070, D-079, D-080 | P1 | Draft 2026-11-25; review by ChatGPT and Gemini, then PO approval |
 | T-636 | Phase 4 syllabus version 3: complete prerequisites, core and extension material per level, homes for concurrency control, service boundaries, recovery, autoscaling and tail latency, an assessed deep dive per case study, junior and mid-level tracks with a pass standard, rubric guidance and an early-prompt scaffold, case study references | D-056, D-057, D-070, D-079, D-080 | P1 | Draft 2026-11-25; focused re-review by ChatGPT, source check by Gemini, then PO approval |
+| T-637 | Show System Design levels as SD 1 to SD 26 on the Learning Path, level, lesson, solve, pattern, profile and notes pages; internal numbers unchanged; cross-references in Levels 28 and 29 use SD numbers | FR-03, D-081 | P1 | Done 2026-11-25: frontend unit test; CI |
 
 ## Maintenance
 

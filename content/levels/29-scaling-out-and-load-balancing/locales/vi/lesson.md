@@ -90,7 +90,7 @@ Load balancer Layer 4 và Layer 7 khác nhau ở thông tin chúng đọc:
 
 ## [edge-cases] Trường hợp biên
 
-- **Server hỏng giữa lúc xử lý request.** Request có thể lỗi hoặc timeout (hết thời gian chờ). Client — máy khách (chương trình gửi yêu cầu) — hoặc load balancer có thể retry (thử lại) trên server khác, nhưng chỉ khi thao tác an toàn để lặp lại: làm hai lần phải có tác dụng như làm một lần. Đặt tên hồ sơ hai lần là an toàn; tính tiền thẻ hai lần thì không. Level 34 sẽ học sâu hơn.
+- **Server hỏng giữa lúc xử lý request.** Request có thể lỗi hoặc timeout (hết thời gian chờ). Client — máy khách (chương trình gửi yêu cầu) — hoặc load balancer có thể retry (thử lại) trên server khác, nhưng chỉ khi thao tác an toàn để lặp lại: làm hai lần phải có tác dụng như làm một lần. Đặt tên hồ sơ hai lần là an toàn; tính tiền thẻ hai lần thì không. SD 7 sẽ học sâu hơn.
 - **Mọi server đều unhealthy (không còn khả năng phục vụ).** Load balancer nên trả lỗi rõ ràng, không gửi traffic đến server mà nó biết đã hỏng.
 - **Lưu lượng tăng đột ngột.** Server mới cần thời gian khởi động. Quy tắc mở rộng nên thêm công suất trước khi đợt tăng đến, nếu không người dùng đầu tiên phải chịu thời gian chờ.
 - **Nhóm người dùng không đồng đều.** Một vài người dùng quá bận có thể làm một server quá tải nếu load balancer chọn server theo user ID.

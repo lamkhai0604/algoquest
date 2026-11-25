@@ -18,6 +18,7 @@ import game from "./Game.module.css";
 import { LevelNotes } from "../notes/LevelNotes";
 import { useCanKeepNotes } from "../notes/useCanKeepNotes";
 import styles from "./Pages.module.css";
+import { levelLabel } from "../game/levelLabel";
 
 function ProblemStatus({ problem }: { problem: ProblemItem }) {
   const { t } = useTranslation();
@@ -125,7 +126,9 @@ export function LevelPage() {
     levels.status === "ready"
       ? levels.data.find((l) => l.number === number)
       : undefined;
-  const title = level ? `Level ${level.number} · ${level.title}` : "Level";
+  const title = level
+    ? `${levelLabel(level.number)} · ${level.title}`
+    : "Level";
 
   return (
     <div className={styles.page}>
