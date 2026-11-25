@@ -1,4 +1,4 @@
-# Cache và CDN
+# Cache và CDN (mạng phân phối nội dung)
 
 ## [objectives] Mục tiêu học tập
 

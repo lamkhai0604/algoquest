@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Table users có 10 triệu row. Đăng nhập tra người dùng bằng WHERE email = ..., nhưng email không có index. Vì sao chậm và thay đổi nào trực tiếp sửa việc tra cứu?",
+    "options": [
+      "Server cần thêm bản sao ứng dụng; database query có thể giữ nguyên.",
+      "Database quét các row vì không có index hữu ích; thêm index trên email.",
+      "Primary-key index trên id đã tìm được mọi email, nên làm index đó lớn hơn sẽ sửa việc tra cứu.",
+      "Index trên display_name làm tra email nhanh vì hai column cùng table."
+    ],
+    "answer": 1,
+    "explanation": "Không có email index hữu ích, query phải full table scan trên 10 triệu row. Index trên email giúp database tìm row qua index thay vì vậy. Thêm application server không đổi đường truy cập của query."
+  },
+  {
+    "question": "Trong mô hình chi phí chèn đơn giản của bài, table có tổng cộng năm index, gồm primary-key index. Chèn một row mới cần khoảng bao nhiêu phần việc?",
+    "options": [
+      "Một: index chỉ cập nhật khi query đọc nó.",
+      "Năm: một mục trong mỗi index; bản thân table row không thêm việc.",
+      "Năm: table row cộng bốn index entry, vì primary key không phải index.",
+      "Sáu: một table row cộng một mục trong mỗi index của năm index."
+    ],
+    "answer": 3,
+    "explanation": "Table row là một phần việc và primary key có index riêng. Mỗi index trong năm index cần một mục: 1 + 5 = 6. Đây là số phần việc logic, không phải sáu thao tác đĩa mất thời gian bằng nhau. Index thêm còn tốn lưu trữ."
+  },
+  {
+    "question": "Hai người mua đều đọc seats_left = 1, rồi mỗi người ghi seats_left = 0 bằng bước riêng. Ứng dụng xác nhận bán sau mỗi lần ghi. Thay đổi nào ngăn cả hai lấy ghế cuối?",
+    "options": [
+      "Dùng UPDATE concerts SET seats_left = seats_left - 1 WHERE id = 42 AND seats_left > 0, chỉ xác nhận bán nếu một row được cập nhật.",
+      "Kiểm tra seats_left hai lần trong mã ứng dụng trước khi ghi 0.",
+      "Cache seats_left trên mỗi server để cả hai kiểm tra nhanh hơn.",
+      "Đặt lần đọc riêng và lần ghi không điều kiện trong một transaction ở isolation level mặc định của PostgreSQL."
+    ],
+    "answer": 0,
+    "explanation": "Điều kiện được kiểm tra trong chính update. Update thành công đầu đổi 1 - 1 = 0 và cập nhật một row. Update cạnh tranh không thỏa seats_left > 0 và cập nhật 0 row, nên không được xác nhận bán. Kiểm tra lại trong ứng dụng, cache số đếm, hoặc bọc hai bước trong transaction ở isolation level mặc định của PostgreSQL (read committed) không đóng khoảng hở đọc-rồi-ghi: cả hai transaction vẫn có thể đọc 1 trước khi bên nào ghi."
+  }
+]
