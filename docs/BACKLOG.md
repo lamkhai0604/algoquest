@@ -317,7 +317,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | ID | Title | Req | Priority | Status |
 | --- | --- | --- | --- | --- |
 | T-618 | Phase 4 syllabus: levels 28 to 41, references for checking facts, lesson format, design prompts and rubric, authoring workflow, delivery plan | D-007, D-056 | P1 | Draft written 2026-11-24; PO review pending |
-| T-620 | Phase 4 content, levels 28 and 29: lessons, walkthroughs, quick checks, intuition questions and trade-off challenges (no XP, no design-prompt kind yet); not yet shown on the Learning Path until the Phase 4 section and its labels are added | D-056, D-070 | P1 | Content built 2026-11-24 on `content/T-620-phase4-levels-28-29`; CI and PO review pending |
+| T-620 | Phase 4 content, levels 28 and 29: lessons, walkthroughs, quick checks, intuition questions and trade-off challenges (no XP, no design-prompt kind yet); listed in the existing Phase 4 section of the Learning Path | D-056, D-070 | P1 | Content built 2026-11-24 on `content/T-620-phase4-levels-28-29`; CI and PO review pending |
 
 ## Maintenance
 
