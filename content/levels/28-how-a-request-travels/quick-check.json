@@ -30,6 +30,6 @@
       "About 300,000 requests per second"
     ],
     "answer": 0,
-    "explanation": "2 × 10⁶ users × 15 requests = 3 × 10⁷ requests a day. Divided by 10⁵ seconds, that is about 300 requests per second on average. Peak traffic can be several times higher."
+    "explanation": "Step 1, requests per day: 2 million users is 2 × 10⁶, and 2 × 10⁶ × 15 = 30 × 10⁶ = 3 × 10⁷ requests a day. Step 2, per second: one day is 86,400 seconds, rounded to 10⁵, so 3 × 10⁷ ÷ 10⁵ = 3 × 10² = about 300 requests per second. (With the exact 86,400 seconds it is about 347; the rounding keeps the right size.) Peak traffic can be several times the average."
   }
 ]
