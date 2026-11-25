@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Draft version 3.1 for PO review |
+| Status | Approved — PO, 2026-11-25 (version 3.1, after reviews by ChatGPT and Gemini) |
 | Updated | 2026-11-25 |
 | Levels | 28 to 53, appended after Level 27 (level numbers are fixed, D-056). Levels 28 and 29 are built |
 | Owner | PO |
@@ -218,13 +218,15 @@ Each track lists every level its case studies and mocks require: following the c
 
 Estimate, with its assumptions: 24 levels remain (30 to 53). At about two levels per sprint, content alone takes about 12 sprints; the design prompt kind adds about one sprint. Stages 1 to 4 (13 remaining levels) take about 7 sprints of content plus the prompt kind. Review, translation and PO checks run alongside authoring and are included in the two-levels-per-sprint pace; the pace is reviewed after each stage.
 
-## 9. Decisions to confirm
+## 9. Decisions
 
-| Question | Recommendation |
+Approved — PO, 2026-11-25.
+
+| Question | Decision |
 | --- | --- |
-| Level list: 26 levels (28 to 53) | Approve |
-| Core and extension material in one level | Approve |
-| Junior and mid-level tracks with the Level 53 pass standard | Approve |
+| Level list | 26 levels (28 to 53), shown as SD 1 to SD 26 (D-081) |
+| Core and extension material in one level | Approved |
+| Junior and mid-level tracks with the Level 53 pass standard | Approved |
 | After grading a design prompt | Rubric feedback, then an optional reference design |
 | Design Patterns elective | Stays a separate elective with no gate (D-070) |
 | XP and gates | Deferred by the PO |
