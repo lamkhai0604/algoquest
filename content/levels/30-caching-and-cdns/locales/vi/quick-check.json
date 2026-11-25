@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Một dịch vụ nhận 2,000 lần đọc mỗi giây và cache có hit rate 75%. Khoảng bao nhiêu lần đọc mỗi giây đến database?",
+    "options": [
+      "1,500",
+      "2,000",
+      "750",
+      "500"
+    ],
+    "answer": 3,
+    "explanation": "Miss đến database: 25% của 2,000 = 2,000 × 0.25 = 500 mỗi giây. 1,500 là số hit."
+  },
+  {
+    "question": "Với cache-aside, server làm gì khi cache miss?",
+    "options": [
+      "Đọc database, lưu kết quả vào cache với TTL rồi trả lời",
+      "Trả về lỗi vì dữ liệu chưa được lưu cache",
+      "Chờ server khác đưa dữ liệu vào cache",
+      "Ghi lại giá trị vào database"
+    ],
+    "answer": 0,
+    "explanation": "Khi miss, server lấy giá trị từ database, lưu vào cache cho các lần đọc sau rồi trả lời. Lần đọc tiếp theo của cùng khóa là hit."
+  },
+  {
+    "question": "Mỗi thay đổi giá đã xóa mục cache của sản phẩm. Vì sao vẫn đặt TTL cho mỗi mục?",
+    "options": [
+      "Vì cache không thể lưu gì nếu không có TTL",
+      "Vì TTL giúp mỗi lần đọc cache nhanh hơn",
+      "Để mục cũ vẫn biến mất nếu lệnh xóa bị mất",
+      "Để database chấp nhận lần ghi tiếp theo"
+    ],
+    "answer": 2,
+    "explanation": "Lệnh xóa có thể bị mất, chẳng hạn khi server gặp sự cố sau khi ghi database. TTL vẫn bảo đảm giá trị cũ hết hạn trong một khoảng thời gian xác định."
+  }
+]

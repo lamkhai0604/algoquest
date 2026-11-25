@@ -243,7 +243,7 @@
         },
         {
           "term": "LRU (least recently used)",
-          "vi": "loại bỏ mục lâu nhất chưa được đọc",
+          "vi": "loại bỏ mục lâu nhất chưa được truy cập",
           "firstLevel": 30
         },
         {
