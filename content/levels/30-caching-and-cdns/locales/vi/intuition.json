@@ -1,0 +1,11 @@
+{
+  "question": "Vì sao nhà bếp giữ các nguyên liệu dùng nhiều nhất trên quầy cạnh bếp nấu?",
+  "options": [
+    "Vì quầy giúp kho phát được nhiều nguyên liệu hơn cùng lúc",
+    "Vì phần lớn đơn dùng cùng vài nguyên liệu, nên bản sao gần đó tiết kiệm nhiều chuyến đi đến kho",
+    "Vì thức ăn trên quầy không bao giờ cần kiểm tra",
+    "Vì mỗi đơn cần nguyên liệu khác nhau"
+  ],
+  "answer": 1,
+  "explanation": "Đây là caching: bản sao nhỏ, nhanh của dữ liệu mà phần lớn yêu cầu cần. Nó không làm kho nhanh hơn; nó giảm số chuyến đi đến kho. Cách này hiệu quả vì các đơn lặp lại, và cần quy tắc về độ mới vì bản sao có thể bị cũ."
+}

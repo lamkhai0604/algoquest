@@ -85,6 +85,11 @@ class ContentLoaderTest {
         .containsExactly(0, 1, 2);
     assertThat(levels.get(1).lesson().walkthrough().get(6).visual().arch().nodes().get(1).state())
         .isEqualTo("hot");
+    assertThat(levels.get(1).lesson().walkthrough().get(6).visual().arch().nodes().get(1).note())
+        .isEqualTo("busy");
+    assertThat(levels.get(1).lesson().walkthrough().get(6).visual().arch().flows())
+        .singleElement()
+        .satisfies(flow -> assertThat(flow.drops()).isTrue());
     assertThat(levels.get(1).info().phase()).isEqualTo(1);
     assertThat(levels.get(1).lesson().walkthrough().get(1).visual().predict().hides())
         .containsExactly("best");
@@ -457,6 +462,34 @@ class ContentLoaderTest {
 
     assertThat(problemsAfterLoad())
         .anyMatch(p -> p.contains("step 7") && p.contains("each step along a link"));
+  }
+
+  @Test
+  void architectureFlowsFollowLinks() throws IOException {
+    Path walkthrough = level.resolve("walkthrough.json");
+    String text = Files.readString(walkthrough);
+    int at = text.indexOf("\"flows\"");
+    int open = text.indexOf("\"path\": [", at);
+    int close = text.indexOf("]", open);
+    Files.writeString(
+        walkthrough,
+        text.substring(0, open)
+            + "\"path\": [\n            0,\n            2\n          "
+            + text.substring(close));
+
+    assertThat(problemsAfterLoad())
+        .anyMatch(p -> p.contains("step 7") && p.contains("each flow path"));
+  }
+
+  @Test
+  void componentNotesAreShort() throws IOException {
+    replace(
+        level.resolve("walkthrough.json"),
+        "\"note\": \"busy\"",
+        "\"note\": \"a note that is much too long\"");
+
+    assertThat(problemsAfterLoad())
+        .anyMatch(p -> p.contains("step 7") && p.contains("component note"));
   }
 
   @Test

@@ -285,7 +285,7 @@ public class GameService {
 
   /** The player's state for a level, from the best test score of the level before it. */
   LevelState state(UUID userId, int level) {
-    if (level == 1 || allLevels(userId)) {
+    if (LevelRules.alwaysOpen(level) || allLevels(userId)) {
       return LevelState.OPEN;
     }
     return LevelRules.state(

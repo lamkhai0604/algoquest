@@ -1,0 +1,495 @@
+[
+  {
+    "title": "Every read goes to the database",
+    "body": "Without a cache, each of the 5,000 reads per second goes from the server to the database. The database can answer about 1,000 reads per second, so the rest wait in a queue and the page slows down. Most of these reads ask for the same popular products, and the answers have not changed since the last read.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4,
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "reads",
+          "value": "5,000 per second"
+        },
+        {
+          "name": "database limit",
+          "value": "about 1,000 per second"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A miss: read the database, then keep a copy",
+    "body": "With **cache-aside**, the server first looks up the key `product:42` in the cache. The first time, the key is not there: a **miss**. The server reads the database, stores the result in the cache with a TTL, and answers. A miss is a little slower than no cache at all, because it adds the cache lookup.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "cache",
+            "label": "Cache",
+            "x": 6,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          1,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "result",
+          "value": "miss"
+        },
+        {
+          "name": "time",
+          "value": "≈1 ms cache + ≈20 ms database"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A hit: answer from memory",
+    "body": "The next read of `product:42` finds the key in the cache: a **hit**. The server answers without touching the database. A hit costs about one round trip to the cache server, around 1 ms, instead of about 20 ms for the database (approximate numbers).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "cache",
+            "label": "Cache",
+            "x": 6,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "result",
+          "value": "hit"
+        },
+        {
+          "name": "time",
+          "value": "≈1 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "What does the hit rate change?",
+    "body": "With a 90% **hit rate**, 9 of every 10 reads are hits. Only the misses reach the database: 5,000 × (1 − 0.9) = 5,000 × 0.1 = 500 reads per second, half of what it can serve. The average read time is 0.9 × 1 + 0.1 × (1 + 20) = 0.9 + 2.1 = 3.0 ms.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "cache",
+            "label": "Cache",
+            "x": 6,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "hit rate",
+          "value": "90%"
+        },
+        {
+          "name": "database reads",
+          "value": "500 per second"
+        },
+        {
+          "name": "average read",
+          "value": "≈3 ms"
+        }
+      ],
+      "predict": {
+        "question": "5,000 reads per second arrive and 90% of them are cache hits. How many reads per second reach the database?",
+        "options": [
+          "4,500",
+          "50",
+          "500",
+          "5,000, because the cache only makes each read faster"
+        ],
+        "answer": 2,
+        "explanation": "Only misses reach the database. 10% of reads are misses: 5,000 × 0.1 = 500 per second. 4,500 is the number of hits, which never reach the database.",
+        "hides": [
+          "database reads",
+          "average read"
+        ]
+      }
+    }
+  },
+  {
+    "title": "The price changes",
+    "body": "An admin changes the price of product 42 from 100 to 90 in the database. The cache entry was stored 20 seconds ago with a TTL of 60 seconds, and nothing has deleted it. So the cache still returns 100: this is **stale data**. Without anything else, users see 100 until the entry expires 40 seconds from now.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "cache",
+            "label": "Cache",
+            "x": 6,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "database price",
+          "value": "90"
+        },
+        {
+          "name": "cached",
+          "value": "20 s ago, TTL 60 s"
+        },
+        {
+          "name": "users see",
+          "value": "100 for up to 40 s more"
+        }
+      ],
+      "predict": {
+        "question": "The database now says 90, but the cache entry (TTL 60 s) was stored 20 s ago with the old price 100. Nothing deletes it. What do users see right now?",
+        "options": [
+          "90 at once, because the database changed",
+          "100 for up to 40 more seconds, then 90",
+          "100 until 60 seconds after the price change",
+          "100 for 60 more seconds, because the change restarts the TTL"
+        ],
+        "answer": 1,
+        "explanation": "Reads are hits, and the cache still holds 100. A TTL counts from when the entry was stored, not from the price change, and a database change does not touch the cache. The entry was stored 20 seconds ago, so it expires 60 − 20 = 40 seconds from now; the next read after that is a miss and loads 90. Deleting the entry when the price changes avoids the wait.",
+        "hides": [
+          "users see"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Delete on write",
+    "body": "To fix this, the server that changes the price first writes the database, then **deletes** `product:42` from the cache. The next read is a miss, loads 90 from the database and caches it, so users usually see the new price at once. The TTL stays as a safety net: if a delete is lost, or a slow read stores the old price just after the delete, the old value still disappears when its TTL ends.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "cache",
+            "label": "Cache",
+            "x": 6,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "order",
+          "value": "write database, then delete cache key"
+        },
+        {
+          "name": "next read",
+          "value": "miss, loads 90"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A CDN for images",
+    "body": "Product images are the same for every user and rarely change, but they are large and users are spread around the world. A **CDN** keeps copies on edge servers near users. A user's browser downloads the image from the nearest edge. When the edge has no copy, or its copy has expired, it asks the **origin server**; an unchanged image may only need to be confirmed, not sent again. Personal pages, such as a user's orders, are not cached on a CDN.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN edge",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Server",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "cache",
+            "label": "Cache",
+            "x": 6,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 9,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1
+        ]
+      },
+      "vars": [
+        {
+          "name": "image",
+          "value": "served by the nearest edge"
+        },
+        {
+          "name": "origin",
+          "value": "asked when the edge has no fresh copy"
+        }
+      ]
+    }
+  }
+]

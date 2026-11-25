@@ -1454,6 +1454,15 @@
   text-anchor: middle;
 }
 
+.archNote {
+  paint-order: stroke;
+  fill: var(--color-primary);
+  stroke: var(--color-surface);
+  stroke-width: 3px;
+  font: 600 11px var(--font-sans, system-ui, sans-serif);
+  text-anchor: middle;
+}
+
 .archMark {
   fill: var(--color-warning);
   font:

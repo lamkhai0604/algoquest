@@ -201,5 +201,12 @@
     "title": "Scaling Out and Load Balancing",
     "summary": "Add servers in front of a load balancer, and keep them stateless so any server can answer any request.",
     "phase": 4
+  },
+  {
+    "number": 30,
+    "slug": "caching-and-cdns",
+    "title": "Caching and CDNs",
+    "summary": "Keep fast copies of hot data in a cache and files on a CDN, and decide how fresh each copy must be.",
+    "phase": 4
   }
 ]

@@ -1,0 +1,11 @@
+{
+  "question": "Why does a kitchen keep the most-used ingredients on a counter next to the stove?",
+  "options": [
+    "Because a counter lets the storeroom hand out more ingredients at once",
+    "Because most orders use the same few items, so a nearby copy saves many trips to the storeroom",
+    "Because food on the counter never needs checking",
+    "Because every order needs different ingredients"
+  ],
+  "answer": 1,
+  "explanation": "This is caching: a small, fast copy of the data that most requests need. It does not make the storeroom itself faster; it means fewer trips to it. It works because orders repeat, and it needs freshness rules, because the copy can go stale."
+}

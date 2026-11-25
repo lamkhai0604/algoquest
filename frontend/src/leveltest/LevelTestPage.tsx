@@ -12,6 +12,7 @@ import {
   ErrorState,
   LoadingState,
 } from "../components";
+import { levelLabel } from "../game/levelLabel";
 import { useGame } from "../game/gameContext";
 import { InlineText } from "../lesson/Markdown";
 import pages from "../pages/Pages.module.css";
@@ -251,7 +252,7 @@ export function LevelTestPage() {
           to={test ? `/levels/${test.level}` : "/"}
           label={
             test
-              ? `${t("lesson.backToLevel")} ${test.level}`
+              ? `${t("lesson.backToLevel")} ${levelLabel(test.level)}`
               : t("profile.back")
           }
         />

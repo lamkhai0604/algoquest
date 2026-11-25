@@ -29,7 +29,7 @@ import type { Block } from "./parseMarkdown";
 import { QuickCheck } from "./QuickCheck";
 import type { Lesson } from "./types";
 import { Walkthrough } from "./Walkthrough";
-import { levelLabel, levelShort } from "../game/levelLabel";
+import { levelLabel } from "../game/levelLabel";
 
 /** The five learner steps; the lesson text's sections are shared among them. */
 const STEPS = [
@@ -332,7 +332,7 @@ export function LessonPage() {
       <div className={pages.topBar}>
         <BackButton
           to={`/levels/${number}`}
-          label={`${t("lesson.backToLevel")} ${levelShort(number)}`}
+          label={`${t("lesson.backToLevel")} ${levelLabel(number)}`}
         />
         <nav className={styles.crumbs} aria-label={t("level.breadcrumb")}>
           <Link to="/">{t("nav.map")}</Link> /{" "}

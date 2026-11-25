@@ -185,6 +185,81 @@
           "term": "backup",
           "vi": "bản sao lưu",
           "firstLevel": 29
+        },
+        {
+          "term": "in-memory store",
+          "vi": "kho dữ liệu trong bộ nhớ (RAM)",
+          "firstLevel": 30
+        },
+        {
+          "term": "cache key",
+          "vi": "khóa của bộ nhớ đệm",
+          "firstLevel": 30
+        },
+        {
+          "term": "hit rate",
+          "vi": "tỉ lệ tìm thấy trong bộ nhớ đệm",
+          "firstLevel": 30
+        },
+        {
+          "term": "cache-aside",
+          "vi": "đọc bộ nhớ đệm trước, thiếu thì lấy từ cơ sở dữ liệu",
+          "firstLevel": 30
+        },
+        {
+          "term": "TTL (time to live)",
+          "vi": "thời gian sống của dữ liệu trong bộ nhớ đệm",
+          "firstLevel": 30
+        },
+        {
+          "term": "stale data",
+          "vi": "dữ liệu cũ",
+          "firstLevel": 30
+        },
+        {
+          "term": "invalidation",
+          "vi": "xóa hoặc làm mới dữ liệu đệm",
+          "firstLevel": 30
+        },
+        {
+          "term": "origin server",
+          "vi": "máy chủ gốc",
+          "firstLevel": 30
+        },
+        {
+          "term": "write-through",
+          "vi": "ghi đồng thời vào bộ nhớ đệm và cơ sở dữ liệu",
+          "firstLevel": 30
+        },
+        {
+          "term": "write-back",
+          "vi": "ghi vào bộ nhớ đệm trước, cơ sở dữ liệu sau",
+          "firstLevel": 30
+        },
+        {
+          "term": "eviction",
+          "vi": "loại bỏ dữ liệu khỏi bộ nhớ đệm",
+          "firstLevel": 30
+        },
+        {
+          "term": "LRU (least recently used)",
+          "vi": "loại bỏ mục lâu nhất chưa được truy cập",
+          "firstLevel": 30
+        },
+        {
+          "term": "hot key",
+          "vi": "khóa được truy cập rất nhiều",
+          "firstLevel": 30
+        },
+        {
+          "term": "thundering herd",
+          "vi": "nhiều yêu cầu cùng dồn về một lúc",
+          "firstLevel": 30
+        },
+        {
+          "term": "versioned file name",
+          "vi": "tên tệp có phiên bản",
+          "firstLevel": 30
         }
       ]
     },
