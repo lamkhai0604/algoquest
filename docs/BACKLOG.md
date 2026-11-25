@@ -349,6 +349,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-656 | SD 5 content review round 1 and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | In progress 2026-11-25: round 1 found 2 Major and 2 Minor issues, fixed in T-658; translation pending |
 | T-657 | Design prompt problem kind (D-085): content format and checks, rubric grader with a Gemini prompt and a fake grader, API with a daily limit, stored answers and Owner review endpoint, design page with the four-section scaffold, rubric result and reference design; two prompts for each of Levels 28–32 | FR-05, D-085 | P1 | Done 2026-11-25: backend and frontend tests; CI; review of the prompts and a check with the real grader pending |
 | T-658 | SD 5 review round 1 fixes: cursor ordered by time then id with a matching index, idempotency question asks for the same final state, 400 retry advice scoped, stronger distractors | FR-03, D-057 | P1 | Done 2026-11-25: content check in CI |
+| T-659 | Home page Continue card stays on the furthest algorithm level when System Design levels are open (fixes the smoke test broken by T-647) | FR-09, D-084 | P1 | Done 2026-11-25: frontend test; smoke |
 
 ## Maintenance
 
