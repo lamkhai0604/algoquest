@@ -98,7 +98,7 @@ There is no code in this level. Use this **design template** for an API:
 
 With server-sent events, the same 100,000 customers keep 100,000 connections open, and the server sends only the 6 changes: 100,000 × 6 ÷ 1,800 s ≈ 333 events per second instead of 20,000 requests. The cost moves from requests to open connections, which the servers must be able to hold.
 
-**What pagination costs.** `OFFSET 10000 LIMIT 20` makes the database step past 10,000 rows to return 20, so later pages get slower. A cursor such as "orders older than the last one shown" becomes `WHERE customer_id = 7 AND created_at < <last> ORDER BY created_at DESC LIMIT 20`. With an index on `(customer_id, created_at)` from SD 4, every page reads a few index pages and 20 rows, however deep the user scrolls.
+**What pagination costs.** `OFFSET 10000 LIMIT 20` makes the database step past 10,000 rows to return 20, so later pages get slower. A cursor such as "orders older than the last one shown" holds the time and id of that order and becomes `WHERE customer_id = 7 AND (created_at, id) < (<last time>, <last id>) ORDER BY created_at DESC, id DESC LIMIT 20`. The id breaks ties: two orders placed in the same millisecond are ordered by id, so neither is skipped. With an index on `(customer_id, created_at, id)` from SD 4, every page reads a few index pages and 20 rows, however deep the user scrolls.
 
 **What a chain of calls costs.**
 
@@ -118,7 +118,7 @@ With server-sent events, the same 100,000 customers keep 100,000 connections ope
 
 - **The response is lost, not the request.** The client cannot tell whether the server did the work. For idempotent methods, sending the request again is harmless; for `POST`, it may not be.
 - **`DELETE` sent twice.** The second time, the order is already gone, so it may return 404 instead of 204. The method is still idempotent: the server's state after two deletes is the same as after one.
-- **A list changes during paging.** With offsets, a new item at the top pushes every item down one place, so the next page repeats one; a deleted item makes it skip one. A cursor names the last item seen, so it stays correct.
+- **A list changes during paging.** With offsets, a new item at the top pushes every item down one place, so the next page repeats one; a deleted item makes it skip one. A cursor names the last item seen, so new items do not shift later pages; they appear on refresh. A cursor does not freeze the list, though: an order edited so that it moves past the cursor can still be missed.
 - **A long-lived connection drops.** Phones change networks and lose signal. Clients of SSE and WebSocket must reconnect and catch up on the events they missed. Browsers reconnect SSE automatically.
 - **One service in a chain is slow.** With a timeout and a fallback, the page can still show what it has, such as the order without the driver's location, instead of failing completely.
 
@@ -139,7 +139,7 @@ A change is **backward-compatible** when every old client still works: adding an
    - `POST /orders`: place an order; returns `201 Created` with the new order's address.
    - `GET /orders/{id}`: one order.
    - `PATCH /orders/{id}`: change the delivery note while the order is still being cooked; returns `409 Conflict` if the order has already left the restaurant.
-2. **Order history.** Use a cursor: `GET /customers/7/orders?limit=20&after=<cursor>`, where the cursor holds the time and id of the last order shown. New orders arriving at the top do not shift later pages, and each page reads 20 rows through the index on `(customer_id, created_at)`.
+2. **Order history.** Use a cursor: `GET /customers/7/orders?limit=20&after=<cursor>`, where the cursor holds the time and id of the last order shown. Orders are sorted by time, then by id, so orders with the same time are neither repeated nor skipped. New orders arriving at the top do not shift later pages and appear when the customer refreshes, and each page reads 20 rows through the index on `(customer_id, created_at, id)`.
 3. **Live status.** Polling every 5 seconds would cost 100,000 ÷ 5 = 20,000 requests per second, about 98% of them answering "no change". The customer only listens and never sends, so use server-sent events: about 333 events per second and 100,000 open connections. WebSocket would also work, but nothing needs to go from the phone to the server on this screen.
 4. **The order page across services.** The gateway sends `GET /orders/{id}` to the Orders service, which needs the restaurant (40 ms) and the driver (30 ms). The two calls do not depend on each other, so they run in parallel: about 40 ms instead of 70 ms. Each call has a timeout. If Drivers does not answer in time, the page shows the order and the restaurant with "driver location unavailable" instead of an error.
 5. **Future changes.** The app adds fields such as an estimated arrival time without a new version. Renaming `status` would break apps already installed, so it would go into `/v2/`.

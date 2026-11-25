@@ -1,14 +1,14 @@
 [
   {
-    "question": "The response is lost after the server handles a request. Assume no other client changes the resource, and the API follows the method meanings taught here. Which request can be retried unchanged without creating an extra order?",
+    "question": "The response is lost after the server handles a request. Assume no other client changes the resource, and the API follows the method meanings taught here. Which request can be sent again unchanged and leave the same final state as sending it once?",
     "options": [
       "POST /orders with the same order details, because a missing response means the first order was not created.",
       "PATCH /orders/42 that adds another item, because PATCH changes only part of a resource.",
       "PUT /orders/42/delivery-note replacing the whole note with the same text, because repeating the replacement leaves the same final state.",
-      "Any request, because a server always recognizes a request it has already handled and ignores the copy."
+      "POST /orders with the same details over the same connection, because HTTP drops a request it has already delivered once."
     ],
     "answer": 2,
-    "explanation": "PUT replaces this whole resource. Setting the delivery note to the same text again leaves the same final state as setting it once. A lost response does not tell the client whether the server already did the work. POST /orders may create a second order; identical request bodies do not make POST idempotent. PATCH is not guaranteed idempotent, and adding another item can repeat the change. A server does not recognize repeated requests by itself; making a POST safe to retry needs an idempotency key (SD 7)."
+    "explanation": "PUT replaces this whole resource. Setting the delivery note to the same text again leaves the same final state as setting it once. A lost response does not tell the client whether the server already did the work. Sending POST /orders again may create a second order, and sending the PATCH again may add a second item: both change the state twice. HTTP does not detect repeated requests by itself, on the same connection or not; making a POST safe to retry needs an idempotency key (SD 7)."
   },
   {
     "question": "A customer's login is valid. Their request names an existing order owned by another customer, which they cannot view. This API reports permission failures directly rather than hiding the order's existence. Which status code fits?",
