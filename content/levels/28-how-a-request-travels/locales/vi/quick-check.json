@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Vì sao server ở xa có thể khiến trang tải chậm dù code trên server chạy nhanh?",
+    "options": [
+      "Server phải gửi trang lớn hơn khi ở xa",
+      "Mỗi round trip (lượt đi và về), kể cả lúc mở kết nối, lâu hơn khi tín hiệu phải đi xa hơn",
+      "Server ở xa luôn có CPU chậm hơn",
+      "DNS phải tra cứu lại cho từng hình ảnh trên trang"
+    ],
+    "answer": 1,
+    "explanation": "Trước khi truyền dữ liệu trang, mở kết nối cần một đến ba round trips. Mỗi lượt phải mất ít nhất thời gian tín hiệu vượt qua khoảng cách. Kích thước trang và CPU không phụ thuộc vị trí server; câu trả lời DNS được cache (lưu tạm)."
+  },
+  {
+    "question": "Trang tải mất 2 seconds. Network round trip là 40 ms, database query (truy vấn cơ sở dữ liệu) mất 1.6 seconds. Nên làm gì trước?",
+    "options": [
+      "Chuyển server đến gần người dùng hơn",
+      "Thêm web server thứ hai",
+      "Tăng tốc database query, chẳng hạn bằng index (chỉ mục) hoặc cache (bộ nhớ đệm)",
+      "Chuyển từ TLS 1.2 sang TLS 1.3"
+    ],
+    "answer": 2,
+    "explanation": "Truy vấn chiếm 1.6 trong tổng 2 seconds, nên cải thiện nó giúp nhiều nhất. Di chuyển server hoặc dùng TLS 1.3 chỉ tiết kiệm tối đa vài round trips 40 ms. Thêm web server thứ hai không giúp một truy vấn chạy nhanh hơn."
+  },
+  {
+    "question": "Ước lượng: 2 million (2 triệu) người dùng, mỗi người gửi 15 requests mỗi ngày. Trung bình có khoảng bao nhiêu requests mỗi giây? (Dùng 1 day ≈ 10⁵ seconds.)",
+    "options": [
+      "Khoảng 300 requests mỗi giây",
+      "Khoảng 3,000 requests mỗi giây",
+      "Khoảng 30 requests mỗi giây",
+      "Khoảng 300,000 requests mỗi giây"
+    ],
+    "answer": 0,
+    "explanation": "Bước 1, số requests mỗi ngày: 2 million = 2 × 10⁶, và 2 × 10⁶ × 15 = 30 × 10⁶ = 3 × 10⁷ requests mỗi ngày. Bước 2, số requests mỗi giây: một ngày có 86,400 seconds, làm tròn thành 10⁵, nên 3 × 10⁷ ÷ 10⁵ = 3 × 10² = khoảng 300 requests mỗi giây. (Dùng chính xác 86,400 seconds thì khoảng 347; làm tròn vẫn giữ độ lớn phù hợp.) Peak traffic có thể cao hơn trung bình nhiều lần."
+  }
+]
