@@ -350,8 +350,8 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-657 | Design prompt problem kind (D-085): content format and checks, rubric grader with a Gemini prompt and a fake grader, API with a daily limit, stored answers and Owner review endpoint, design page with the four-section scaffold, rubric result and reference design; two prompts for each of Levels 28–32 | FR-05, D-085 | P1 | Done 2026-11-25: backend and frontend tests; CI; review of the prompts and a check with the real grader pending |
 | T-658 | SD 5 review round 1 fixes: cursor ordered by time then id with a matching index, idempotency question asks for the same final state, 400 retry advice scoped, stronger distractors | FR-03, D-057 | P1 | Done 2026-11-25: content check in CI |
 | T-659 | Home page Continue card stays on the furthest algorithm level when System Design levels are open (fixes the smoke test broken by T-647) | FR-09, D-084 | P1 | Done 2026-11-25: frontend test; smoke |
-| T-661 | SD 6 (Level 33) Replication, Backup and Recovery in English: lesson, 8-step walkthrough with three predictions (replica count, replication lag, writes lost in a failover), intuition, two design prompts; 17 glossary terms | FR-03, D-079, D-085 | P1 | In progress 2026-11-25: quick check and challenges assigned (T-662); fact check assigned (G-08) |
-| T-662 | SD 6 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Assigned 2026-11-25 |
+| T-661 | SD 6 (Level 33) Replication, Backup and Recovery in English: lesson, 8-step walkthrough with three predictions (replica count, replication lag, writes lost in a failover), intuition, two design prompts; 17 glossary terms | FR-03, D-079, D-085 | P1 | Done 2026-11-25: content check in CI; facts F41–F49 confirmed (G-08); review and Vietnamese translation pending |
+| T-662 | SD 6 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude, no changes; content check in CI |
 
 ## Maintenance
 
