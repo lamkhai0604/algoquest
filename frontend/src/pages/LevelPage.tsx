@@ -13,6 +13,7 @@ import {
 import { useGame } from "../game/gameContext";
 import type { Level, ProblemItem } from "../game/types";
 import { TestStartCard } from "../leveltest/TestStartCard";
+import { DesignPrompts } from "../design/DesignPrompts";
 import { PatternChallenges } from "../pattern/PatternChallenges";
 import game from "./Game.module.css";
 import { LevelNotes } from "../notes/LevelNotes";
@@ -185,6 +186,7 @@ export function LevelPage() {
         )}
       </section>
       {level?.available && <PatternChallenges level={number} />}
+      {level?.available && <DesignPrompts level={number} />}
     </div>
   );
 }
