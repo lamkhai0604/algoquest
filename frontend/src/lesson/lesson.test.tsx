@@ -261,6 +261,38 @@ describe("lesson page", () => {
     expect(tab("Step 4: Check")).toHaveAttribute("aria-selected", "true");
   });
 
+  it("shows key terms under When to use as a closed section of term cards", async () => {
+    open({
+      ...LESSON,
+      markdown: LESSON.markdown.replace(
+        "- Spot when one pass is enough",
+        [
+          "- Spot when one pass is enough",
+          "",
+          "### Key terms",
+          "",
+          "- **Pass.** One walk over the list.",
+          "- **Running best.** The best value seen so far.",
+        ].join("\n"),
+      ),
+    });
+
+    const summary = await screen.findByText("Key terms (2)");
+    const section = summary.closest("details")!;
+    expect(section).not.toHaveAttribute("open");
+    expect(within(section).getByText("Pass", { selector: "dt" })).toBeTruthy();
+    expect(
+      within(section).getByText("The best value seen so far."),
+    ).toBeTruthy();
+    const side = screen
+      .getByText("Spot when one pass is enough")
+      .closest("section, div")!;
+    expect(within(side as HTMLElement).queryByText("Running best")).toBeNull();
+
+    await userEvent.click(summary);
+    expect(section).toHaveAttribute("open");
+  });
+
   it("asks an ungraded intuition question on the Understand step", async () => {
     const fetchFn = open();
 

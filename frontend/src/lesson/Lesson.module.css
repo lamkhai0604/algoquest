@@ -694,6 +694,43 @@
   padding: 0 var(--space-4) var(--space-4);
 }
 
+/* Key terms under When to use: full width, closed at first, cards in a grid. */
+.full {
+  grid-column: 1 / -1;
+}
+
+.termGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.termCard {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+}
+
+.termCard dt {
+  margin-bottom: var(--space-1);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.termCard dd {
+  margin: 0;
+  color: var(--color-text-2);
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .termGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Graph animation and rings (D-061). */
 .graphEdgeActive {
   stroke: var(--color-xp);
