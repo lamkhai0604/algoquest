@@ -19,6 +19,7 @@ import { LABEL_TONE } from "./types";
 import { useTranslation } from "../i18n";
 import type { AnswerResult, ChallengeView, Choice } from "./types";
 import { levelLabel } from "../game/levelLabel";
+import { useShuffledOrder } from "../lesson/shuffle";
 
 const MIN_REASON = 10;
 
@@ -132,6 +133,7 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnswerResult | null>(null);
   const [left, setLeft] = useState(challenge.answersLeftToday);
+  const order = useShuffledOrder(challenge.approaches.length, challenge.id);
 
   const ready =
     choice !== null && reason.trim().length >= MIN_REASON && left > 0;
@@ -183,25 +185,27 @@ function Challenge({ challenge }: { challenge: ChallengeView }) {
           >
             <legend>{t("pattern.whichApproach")}</legend>
             <div className={styles.options}>
-              {challenge.approaches.map((a) => (
-                <label
-                  key={a.id}
-                  className={cx(
-                    styles.option,
-                    choice === a.id && styles.chosen,
-                  )}
-                >
-                  <input
-                    type="radio"
-                    name="approach"
-                    value={a.id}
-                    checked={choice === a.id}
-                    onChange={() => setChoice(a.id)}
-                  />
-                  <span className={styles.optionName}>{a.name}</span>
-                  <span className={styles.optionHint}>{a.hint}</span>
-                </label>
-              ))}
+              {order
+                .map((index) => challenge.approaches[index]!)
+                .map((a) => (
+                  <label
+                    key={a.id}
+                    className={cx(
+                      styles.option,
+                      choice === a.id && styles.chosen,
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="approach"
+                      value={a.id}
+                      checked={choice === a.id}
+                      onChange={() => setChoice(a.id)}
+                    />
+                    <span className={styles.optionName}>{a.name}</span>
+                    <span className={styles.optionHint}>{a.hint}</span>
+                  </label>
+                ))}
             </div>
           </fieldset>
           <label className={styles.label} htmlFor="pattern-reason">

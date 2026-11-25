@@ -2,6 +2,7 @@ import { cx } from "../components";
 import { useTranslation } from "../i18n";
 import styles from "./Lesson.module.css";
 import { InlineText } from "./Markdown";
+import { useShuffledOrder } from "./shuffle";
 import type { Prediction } from "./types";
 
 /** A prediction is answered with an option index, or skipped with "shown". */
@@ -21,6 +22,7 @@ export function Predict({
 }) {
   const { t } = useTranslation();
   const done = answer !== undefined;
+  const order = useShuffledOrder(predict.options.length, predict.question);
   return (
     <fieldset className={styles.predict}>
       <legend>{legend ?? t("lessonMore.predictBefore")}</legend>
@@ -28,7 +30,7 @@ export function Predict({
         <InlineText text={predict.question} />
       </p>
       <div className={styles.predictOptions}>
-        {predict.options.map((option, index) => (
+        {order.map((index) => (
           <button
             key={index}
             type="button"
@@ -41,7 +43,7 @@ export function Predict({
             disabled={done}
             onClick={() => onAnswer(index)}
           >
-            {option}
+            {predict.options[index]}
           </button>
         ))}
       </div>
