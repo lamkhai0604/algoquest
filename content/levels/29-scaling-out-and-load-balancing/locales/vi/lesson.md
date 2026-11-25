@@ -2,25 +2,25 @@
 
 ## [objectives] Mục tiêu bài học
 
-- So sánh vertical scaling (nâng cấp một máy mạnh hơn) với horizontal scaling (thêm nhiều máy).
-- Giải thích vì sao stateless service (dịch vụ không lưu trạng thái người dùng trong từng server) dễ mở rộng hơn dịch vụ giữ dữ liệu trong bộ nhớ riêng.
+- So sánh vertical scaling (scale up) — mở rộng theo chiều dọc (thay máy mạnh hơn) — với horizontal scaling (scale out) — mở rộng theo chiều ngang (thêm máy).
+- Giải thích vì sao stateless (không lưu trạng thái) service dễ mở rộng hơn: từng server (máy chủ) không giữ dữ liệu người dùng trong bộ nhớ riêng.
 - Mô tả load balancer (bộ cân bằng tải) làm gì và nằm ở đâu trên đường đi của request.
-- So sánh load balancer Layer 4 và Layer 7, cũng như round robin với least connections.
+- So sánh Layer 4 — tầng 4 (tầng vận chuyển) — với Layer 7 — tầng 7 (tầng ứng dụng) — của load balancer; đồng thời so sánh round robin (chia lần lượt) với least connections (ưu tiên máy ít kết nối nhất).
 - Giải thích cách health check (kiểm tra tình trạng hoạt động) loại server bị lỗi khỏi danh sách nhận request.
 
 ### Thuật ngữ chính (Key terms)
 
-- **CPU (bộ xử lý trung tâm).** Bộ phận máy tính thực thi code. Khi CPU bận 100% thời gian, request mới phải chờ đến lượt.
-- **Requests per second (số request mỗi giây).** Số request một server hoàn thành mỗi giây. **Limit (giới hạn)** là mức mà server đã bận hết công suất.
-- **Vertical scaling (scaling up, mở rộng theo chiều dọc).** Thay máy hiện tại bằng máy mạnh hơn, có nhiều CPU hoặc memory (bộ nhớ) hơn.
-- **Horizontal scaling (scaling out, mở rộng theo chiều ngang).** Thêm các máy cùng chạy một chương trình và chia nhau xử lý công việc.
-- **Session (phiên đăng nhập).** Thông tin server cần nhớ giữa các request của người dùng đã đăng nhập, như danh tính và giỏ hàng. Browser (trình duyệt) thường mang cookie (mẩu dữ liệu nhỏ) chứa session id (mã phiên).
-- **Stateful và stateless.** Stateful server (server có trạng thái) giữ session trong memory riêng, nên chỉ server đó biết cách phục vụ đúng người dùng. Stateless server (server không giữ trạng thái người dùng giữa các request) lấy dữ liệu cần thiết từ shared store (kho dữ liệu dùng chung), nên server nào cũng có thể trả lời.
+- **CPU (bộ xử lý).** Bộ phận máy tính thực thi code. Khi CPU bận 100% thời gian, request mới phải chờ đến lượt.
+- **Requests per second (số yêu cầu mỗi giây).** Số request một server hoàn thành mỗi giây. **Limit (giới hạn)** là mức mà server đã bận hết công suất.
+- **Vertical scaling (scale up — mở rộng theo chiều dọc (thay máy mạnh hơn)).** Thay máy hiện tại bằng máy mạnh hơn, có nhiều CPU hoặc memory (bộ nhớ) hơn.
+- **Horizontal scaling (scale out — mở rộng theo chiều ngang (thêm máy)).** Thêm các máy cùng chạy một chương trình và chia nhau xử lý công việc.
+- **Session (phiên đăng nhập).** Thông tin server cần nhớ giữa các request của người dùng đã đăng nhập, như danh tính và giỏ hàng. Browser (trình duyệt) thường mang cookie (dữ liệu nhỏ trình duyệt lưu và gửi lại) chứa session id (mã phiên).
+- **Stateful (có lưu trạng thái) và stateless (không lưu trạng thái).** Stateful server giữ session trong memory riêng, nên chỉ server đó biết cách phục vụ đúng người dùng. Stateless server (server không giữ trạng thái người dùng giữa các request) lấy dữ liệu cần thiết từ shared store (kho dữ liệu dùng chung), nên server nào cũng có thể trả lời.
 - **Load balancer (bộ cân bằng tải).** Chương trình hoặc máy có một địa chỉ để người dùng kết nối. Nó chuyển từng request đến một trong nhiều server.
-- **Layer 4 và Layer 7.** Thông điệp mạng có nhiều lớp, như phong bì nằm trong phong bì. Layer 4 balancer chỉ đọc lớp bên ngoài: IP address (địa chỉ IP) và port (cổng, số chỉ chương trình nhận dữ liệu, chẳng hạn 443 cho https). Layer 7 balancer đọc cả HTTP request (yêu cầu HTTP): path (đường dẫn), headers (thông tin bổ sung) và cookies.
-- **Health check (kiểm tra tình trạng).** Một request nhỏ mà load balancer gửi đến từng server sau mỗi vài giây để hỏi: “Bạn còn phục vụ được không?”
+- **Layer 4 và Layer 7.** Thông điệp mạng có nhiều lớp, như phong bì nằm trong phong bì. Layer 4 balancer chỉ đọc lớp bên ngoài: IP address — địa chỉ IP (số định danh máy tính trên mạng) — và port (cổng), tức số chỉ chương trình nhận dữ liệu (chẳng hạn 443 cho https). Layer 7 balancer đọc cả HTTP request (yêu cầu HTTP): path (đường dẫn), headers (phần thông tin đi kèm) và cookies.
+- **Health check (kiểm tra tình trạng hoạt động).** Một request nhỏ mà load balancer gửi đến từng server sau mỗi vài giây để hỏi: “Bạn còn phục vụ được không?”
 - **In rotation (đang trong danh sách phân phối).** Tập hợp server mà load balancer hiện có thể gửi request đến.
-- **Single point of failure (điểm lỗi duy nhất).** Một thành phần mà nếu hỏng sẽ khiến toàn bộ dịch vụ ngừng hoạt động. Có bản dự phòng (**redundant**, dự phòng trùng lặp) giúp giảm rủi ro đó.
+- **Single point of failure (điểm lỗi duy nhất).** Một thành phần mà nếu hỏng sẽ khiến toàn bộ dịch vụ ngừng hoạt động. Có bản dự phòng (**redundant**, có bản dự phòng) giúp giảm rủi ro đó.
 - **Bottleneck (điểm nghẽn).** Thành phần bận nhất, giới hạn tốc độ của toàn hệ thống.
 
 ## [problem-hook] Tình huống mở đầu
@@ -49,17 +49,19 @@ Với dịch vụ nhỏ, scaling up có thể là bước đầu hợp lý vì k
 
 Level này không có code. Hãy dùng **design template (mẫu thiết kế)** sau cho dịch vụ đã mở rộng:
 
+Trong sơ đồ, shared database (cơ sở dữ liệu dùng chung) lưu dữ liệu cho mọi server; cache (bộ nhớ đệm) giữ bản sao để truy cập nhanh.
+
 ```text
 Users -> Load balancer -> Server 1
                        -> Server 2
                        -> Server 3
 Servers -> shared database (and shared cache or session store, if needed)
 
-Checklist:
-  1. Is each server stateless? (no user data kept only in its memory)
-  2. Which algorithm picks a server? (round robin, least connections)
-  3. What does a health check test? (a page that returns OK only when the server can serve)
-  4. What happens to requests still in progress when a server is removed?
+Danh sách kiểm tra:
+  1. Mỗi server có stateless không? (không giữ dữ liệu người dùng chỉ trong memory riêng)
+  2. Thuật toán nào chọn server? (round robin, least connections)
+  3. Health check kiểm tra điều gì? (chỉ trả OK khi server thực sự có thể phục vụ)
+  4. Request đang xử lý sẽ ra sao khi một server bị loại khỏi danh sách?
 ```
 
 ## [complexity] Chi phí và giới hạn
@@ -88,22 +90,22 @@ Load balancer Layer 4 và Layer 7 khác nhau ở thông tin chúng đọc:
 
 ## [edge-cases] Trường hợp biên
 
-- **Server hỏng giữa lúc xử lý request.** Request có thể lỗi hoặc timeout (hết thời gian chờ). Client hoặc load balancer có thể retry (thử lại) trên server khác, nhưng chỉ khi thao tác an toàn để lặp lại: làm hai lần phải có tác dụng như làm một lần. Đặt tên hồ sơ hai lần là an toàn; tính tiền thẻ hai lần thì không. Level 34 sẽ học sâu hơn.
+- **Server hỏng giữa lúc xử lý request.** Request có thể lỗi hoặc timeout (hết thời gian chờ). Client — máy khách (chương trình gửi yêu cầu) — hoặc load balancer có thể retry (thử lại) trên server khác, nhưng chỉ khi thao tác an toàn để lặp lại: làm hai lần phải có tác dụng như làm một lần. Đặt tên hồ sơ hai lần là an toàn; tính tiền thẻ hai lần thì không. Level 34 sẽ học sâu hơn.
 - **Mọi server đều unhealthy (không còn khả năng phục vụ).** Load balancer nên trả lỗi rõ ràng, không gửi traffic đến server mà nó biết đã hỏng.
 - **Lưu lượng tăng đột ngột.** Server mới cần thời gian khởi động. Quy tắc mở rộng nên thêm công suất trước khi đợt tăng đến, nếu không người dùng đầu tiên phải chịu thời gian chờ.
 - **Nhóm người dùng không đồng đều.** Một vài người dùng quá bận có thể làm một server quá tải nếu load balancer chọn server theo user ID.
 
 ## [worked-example] Ví dụ giải chi tiết
 
-**Bài toán:** Load test (kiểm thử tải) cho thấy một server chạm giới hạn (CPU gần 100%) ở khoảng 300 requests mỗi giây. Peak traffic (lưu lượng cao điểm) là 900 requests mỗi giây. Cần bao nhiêu server và tính thế nào?
+**Bài toán:** Load test (kiểm thử tải) cho thấy một server chạm giới hạn (CPU gần 100%) ở khoảng 300 requests mỗi giây. Peak — lúc cao điểm (peak traffic: lưu lượng cao điểm) — có 900 requests mỗi giây. Cần bao nhiêu server và tính thế nào?
 
 **Cách giải:**
 
 1. Server chạy ở giới hạn không còn chỗ cho lưu lượng tăng bất ngờ và sẽ chậm đi. Vì vậy, hãy đặt mục tiêu chỉ dùng khoảng 60–70% giới hạn vào giờ cao điểm. Đây là rule of thumb (quy tắc ước lượng) cho lưu lượng tăng đều; nếu traffic tăng đột ngột hoặc server cần nhiều phút để khởi động, nhóm kỹ thuật thường chừa nhiều khoảng trống hơn (40–50%). Ở đây chọn 65%.
-2. Ở 65% giới hạn, mỗi server nên nhận khoảng 300 × 0.65 = 195 requests mỗi giây. Đây là target load (mức tải mục tiêu) cho một server.
+2. Ở 65% giới hạn, mỗi server nên nhận khoảng 300 × 0.65 = 195 requests mỗi giây. Đây là target load (tải mục tiêu) cho một server.
 3. Giờ cao điểm cần 900 requests mỗi giây, nên 900 ÷ 195 ≈ 4.6 servers. Không thể dùng một phần server, nên làm tròn lên thành 5 (làm tròn xuống 4 khiến mỗi server phải nhận 225, cao hơn mục tiêu).
 4. Thêm một server dự phòng khi một máy hỏng, thành tổng cộng 6. Khi cả 6 hoạt động, mỗi máy nhận 900 ÷ 6 = 150 requests mỗi giây.
-5. Kiểm tra trường hợp một server hỏng. Năm máy còn lại nhận 900 ÷ 5 = 180 requests mỗi giây. Con số này dưới **target** 195 (180 ÷ 195 ≈ 92% of the target), nên kế hoạch vẫn đáp ứng.
-6. So sánh cùng con số với **limit** 300. Mỗi server bận 180 ÷ 300 = 60% thời gian: đó là **utilization (mức sử dụng)**. **Headroom (công suất dự phòng)**, phần còn lại trước khi chạm giới hạn, là 300 − 180 = 120 requests mỗi giây, tức 40% of the limit.
+5. Kiểm tra trường hợp một server hỏng. Năm máy còn lại nhận 900 ÷ 5 = 180 requests mỗi giây. Con số này dưới **target** 195 (180 ÷ 195 ≈ 92% mức tải mục tiêu), nên kế hoạch vẫn đáp ứng.
+6. So sánh cùng con số với **limit** 300. Mỗi server bận 180 ÷ 300 = 60% thời gian: đó là **utilization (mức sử dụng)**. **Headroom (công suất dự phòng)**, phần còn lại trước khi chạm giới hạn, là 300 − 180 = 120 requests mỗi giây, tức 40% giới hạn tối đa.
 
 **Đáp án:** Dùng 5 servers cho giờ cao điểm và 6 để chịu được một lỗi server. Cần xác nhận bằng load test vì đây là các con số ước lượng.
