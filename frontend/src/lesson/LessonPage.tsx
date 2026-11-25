@@ -21,7 +21,7 @@ import {
   saveLanguage,
   savedLanguage,
 } from "./codeLanguage";
-import { MarkdownBlocks } from "./Markdown";
+import { InlineText, MarkdownBlocks } from "./Markdown";
 import { parseMarkdown } from "./parseMarkdown";
 import { Predict } from "./Predict";
 import type { Answer } from "./Predict";
@@ -69,6 +69,8 @@ function readableHeading(block: Block): Block {
 
 interface Sections {
   objectives: Block[];
+  /** The first "###" part of the objectives (Key terms), shown under When to use. */
+  keyTerms: { title: string; blocks: Block[] } | null;
   understand: Block[];
   learn: Block[];
   intuitionCut: number | null;
@@ -78,6 +80,7 @@ interface Sections {
 function splitSections(markdown: string): Sections {
   const sections: Sections = {
     objectives: [],
+    keyTerms: null,
     understand: [],
     learn: [],
     intuitionCut: null,
@@ -85,6 +88,16 @@ function splitSections(markdown: string): Sections {
   let target: Block[] = sections.understand;
   for (const block of parseMarkdown(markdown)) {
     if (block.type === "heading" && block.level === 1) continue;
+    if (
+      block.type === "heading" &&
+      block.level === 3 &&
+      target === sections.objectives &&
+      sections.keyTerms === null
+    ) {
+      sections.keyTerms = { title: block.text, blocks: [] };
+      target = sections.keyTerms.blocks;
+      continue;
+    }
     if (block.type === "heading" && block.level === 2) {
       const id = sectionId(block.text);
       if (id === OBJECTIVES) {
@@ -98,6 +111,60 @@ function splitSections(markdown: string): Sections {
     target.push(readableHeading(block));
   }
   return sections;
+}
+
+/** A key term written as "**Term.** Definition": the term and the rest. */
+function splitTerm(item: string): { term: string; definition: string } | null {
+  const match = /^\*\*(.+?)\*\*\s*(.*)$/.exec(item);
+  if (!match) return null;
+  return {
+    term: (match[1] ?? "").replace(/[.:]$/, ""),
+    definition: match[2] ?? "",
+  };
+}
+
+/**
+ * Key terms as a full-width section under When to use, closed at first, with
+ * the terms in a grid of cards.
+ */
+function KeyTerms({ title, blocks }: { title: string; blocks: Block[] }) {
+  const items = blocks.flatMap((block) =>
+    block.type === "list" ? block.items : [],
+  );
+  const rest = blocks.filter((block) => block.type !== "list");
+  return (
+    <details className={cx(styles.learnSection, styles.keyTerms)}>
+      <summary>
+        {title} ({items.length})
+      </summary>
+      <div className={styles.learnBody}>
+        {rest.length > 0 && <MarkdownBlocks blocks={rest} />}
+        <dl className={styles.termGrid}>
+          {items.map((item, index) => {
+            const parts = splitTerm(item);
+            return (
+              <div key={index} className={styles.termCard}>
+                {parts ? (
+                  <>
+                    <dt>
+                      <InlineText text={parts.term} />
+                    </dt>
+                    <dd>
+                      <InlineText text={parts.definition} />
+                    </dd>
+                  </>
+                ) : (
+                  <dd>
+                    <InlineText text={item} />
+                  </dd>
+                )}
+              </div>
+            );
+          })}
+        </dl>
+      </div>
+    </details>
+  );
 }
 
 /** The Learn step as one collapsible section per "##" heading; the first starts open. */
@@ -282,6 +349,14 @@ function LessonBody({ lesson }: { lesson: Lesson }) {
               >
                 <MarkdownBlocks blocks={sections.objectives} />
               </Card>
+            )}
+            {sections.keyTerms && (
+              <div className={styles.full}>
+                <KeyTerms
+                  title={sections.keyTerms.title}
+                  blocks={sections.keyTerms.blocks}
+                />
+              </div>
             )}
           </div>
         )}
