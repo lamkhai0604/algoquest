@@ -1,0 +1,35 @@
+[
+  {
+    "question": "A service stores each user's login session in the memory of the server that handled the login. What breaks when you add a second server behind a load balancer?",
+    "options": [
+      "Users sent to the other server are logged out, because it has no session",
+      "The load balancer stops working",
+      "The database becomes faster",
+      "Nothing; memory is shared automatically"
+    ],
+    "answer": 0,
+    "explanation": "Session data is stateful. The fix is a shared session store, so any server can read the session."
+  },
+  {
+    "question": "Some requests take 2 seconds and others take 20 ms. Which algorithm usually spreads the load more evenly?",
+    "options": [
+      "Round robin, because it is the simplest",
+      "Least connections, because a busy server with slow requests has more open connections",
+      "Random placement, because it never fails",
+      "Send everything to the largest server"
+    ],
+    "answer": 1,
+    "explanation": "Least connections sends new work to the server that is least busy, so slow requests do not pile up on one server."
+  },
+  {
+    "question": "A health check only confirms that the server process is running. Why is that not enough?",
+    "options": [
+      "It does not show whether the server can serve requests, for example when it cannot reach its database",
+      "Health checks must always be disabled",
+      "Process checks use too much memory",
+      "It is enough; no other check is needed"
+    ],
+    "answer": 0,
+    "explanation": "A server can be running but unable to do useful work. A useful health check tests the things the server needs to answer a request."
+  }
+]

@@ -1,0 +1,53 @@
+[
+  {
+    "id": "P29-login-session",
+    "level": 29,
+    "title": "Keep Users Logged In Across Servers",
+    "statement": "A ticket site runs four identical servers behind a load balancer. Users must stay logged in when a request lands on a different server. The security team also wants a logout to take effect immediately on every server. Which design fits best?",
+    "examples": [
+      "User logs in on Server 1, then clicks Buy on Server 3"
+    ],
+    "constraints": [
+      "Four servers now, possibly more at peak",
+      "Logout must take effect at once"
+    ],
+    "approaches": [
+      {
+        "id": "shared-store",
+        "name": "Store sessions in a shared session store that every server reads",
+        "hint": "One place for all servers",
+        "label": "best",
+        "time": "About 1 ms to read a session from a nearby store (approximate)",
+        "space": "One session record per logged-in user",
+        "why": "Any server can read the session, and deleting it logs the user out everywhere at once. The store is an extra part to run and keep available."
+      },
+      {
+        "id": "sticky",
+        "name": "Sticky sessions: the load balancer always sends a user to the same server",
+        "hint": "Same server every time",
+        "label": "valid",
+        "time": "No extra lookup",
+        "space": "Session stays in one server's memory",
+        "why": "This keeps users logged in, so it works. Load becomes uneven, and if that server fails the users lose their sessions. Logout also has to reach the right server."
+      },
+      {
+        "id": "signed-token",
+        "name": "Give each user a signed token that holds the session and nothing is stored on the server",
+        "hint": "Carry the data with the user",
+        "label": "valid",
+        "time": "No lookup; check a signature",
+        "space": "The token travels with each request",
+        "why": "This scales well and needs no shared store. A token that is already issued stays valid until it expires, so an immediate logout is hard without extra checks."
+      },
+      {
+        "id": "local-only",
+        "name": "Keep sessions in each server's memory and hope users stay on one server",
+        "hint": "Hope is not a design",
+        "label": "unsuitable",
+        "time": "Fast on one server only",
+        "space": "Lost when a server restarts",
+        "why": "Users are sent to different servers by the balancer, so they will be logged out at random."
+      }
+    ]
+  }
+]
