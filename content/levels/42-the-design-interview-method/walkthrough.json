@@ -313,7 +313,7 @@
   },
   {
     "title": "High-level design",
-    "body": "Walk one request through the boxes. A new score goes phone → load balancer → app server, which updates `best_scores` **only if the score is higher**, then updates the sorted set. \"Top 100\" is cached for 1 second in front of the servers, so 5,000 reads per second hit the cache, not the store. \"My rank\" reads the sorted set. Every box answers a requirement: if a box serves none, it is not needed.",
+    "body": "Walk one request through the boxes. A new score goes phone → load balancer → app server, which updates `best_scores` **only if the score is higher** and, in the same transaction, writes an outbox row (SD 10); a relay copies it to the sorted set, again only if higher, so a crash loses nothing and a late lower score cannot win. \"Top 100\" is cached for 1 second in front of the servers, so 5,000 reads per second hit the cache, not the store. \"My rank\" reads the sorted set. Every box answers a requirement: if a box serves none, it is not needed.",
     "visual": {
       "cells": [],
       "arch": {
@@ -417,7 +417,7 @@
   },
   {
     "title": "Deep dive: the ranking",
-    "body": "The hardest requirements are N2 and N3 at 10,000 writes per second, so the deep dive goes there. A sorted set keeps its members in score order, like a balanced search tree (Level 8), so finding a player's rank takes about **log₂(50 million) ≈ 26 steps**, not a scan of 50 million rows. One in-memory store handles 10,000 updates per second and 5 GB, with a replica for failover. The update happens in the same request, so a new best shows well within 5 seconds.",
+    "body": "The hardest requirements are N2 and N3 at 10,000 writes per second, so the deep dive goes there. A sorted set keeps its members in score order, like a balanced search tree (Level 8), so finding a player's rank takes about **log₂(50 million) ≈ 26 steps**, not a scan of 50 million rows. Assume one store node handles 100,000 updates per second and 25 GB: 10,000 updates and 5 GB fit easily, with a replica for failover. The relay copies each new best within about a second, so it shows well within 5 seconds.",
     "visual": {
       "cells": [],
       "arch": {
@@ -538,7 +538,7 @@
   },
   {
     "title": "Failures, with conditions",
-    "body": "State each failure with its condition and what players see. **If the store's main copy fails**, the replica takes over within seconds; scores written in the gap are still in `best_scores` and are written again. **If both copies are lost**, the set is rebuilt from `best_scores`, 50 million rows, in minutes; meanwhile the cached top 100 stays visible and \"my rank\" shows \"updating\". **If the database is slow**, writes wait and N2 may be missed for that time.",
+    "body": "State each failure with its condition and what players see. **If the store's main copy fails**, the replica takes over within seconds, and outbox rows not yet confirmed are copied again; \"only if higher\" makes repeats harmless. **If both copies are lost**, the set is rebuilt from `best_scores`, 50 million rows, in minutes; meanwhile the last saved top 100 stays visible and \"my rank\" shows \"updating\". **If the relay stops**, new bests wait in the outbox and N2 is missed until it restarts.",
     "visual": {
       "cells": [],
       "arch": {
@@ -649,7 +649,7 @@
   },
   {
     "title": "Summary and time",
-    "body": "Close by checking each requirement: F1 to F3 by the API; N1 by one sorted set at 10,000 writes per second; N2 by updating in the same request; N3 by a 5 ms lookup inside a 200 ms budget; N4 by \"only if higher\". Say what you would do next, such as friends' boards. Over 45 minutes: about 5 clarify, 5 estimate, 7 API and data, 8 design, 10 deep dive, 5 failures, 3 summary, a few for questions. Think aloud the whole time.",
+    "body": "Close by checking each requirement: F1 to F3 by the API; N1 by one sorted set at 10,000 writes per second; N2 by the outbox relay; N3 by a 5 ms lookup inside a 200 ms budget; N4 by \"only if higher\". Say what you would do next, such as friends' boards. Over 45 minutes: about 5 clarify, 5 estimate, 7 API and data, 8 design, 10 deep dive, 5 failures, 3 summary, a few for questions. Think aloud the whole time.",
     "visual": {
       "cells": [],
       "arch": {
@@ -751,7 +751,7 @@
         },
         {
           "name": "N1, N2",
-          "value": "sorted set, same request"
+          "value": "sorted set, outbox relay"
         },
         {
           "name": "N3",

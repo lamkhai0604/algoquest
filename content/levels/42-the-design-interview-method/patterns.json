@@ -24,7 +24,7 @@
       },
       {
         "id": "state-assumptions",
-        "name": "State reasonable assumptions out loud, such as 1 million reminders a day by SMS and email, write them as requirements, and continue",
+        "name": "State reasonable assumptions out loud, such as 1 million reminders a day by SMS and email, write them as numbered requirements, say what is out of scope, and continue",
         "hint": "Decide quickly and move on",
         "label": "valid",
         "time": "About 2 minutes",
