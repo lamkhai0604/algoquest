@@ -367,6 +367,8 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-674 | SD 9 (Level 36) Consistency and Availability in English: lesson, 8-step walkthrough with three predictions (stale counter read, double sale during a partition, cross-region write time), intuition, two design prompts; 13 glossary terms | FR-03, D-079, D-085 | P1 | Done 2026-11-25: content check in CI; facts F69–F78 confirmed (G-11); review and Vietnamese translation pending |
 | T-675 | SD 9 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude, no changes; content check in CI |
 | T-676 | SD 9 content review, including its two design prompts, and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | Assigned 2026-11-25 |
+| T-677 | SD 10 (Level 37) Transactions Across Services in English, from Gemini fact sheet G-12: lesson, 8-step walkthrough with three predictions (partial failure, compensation order, a crash without an outbox), intuition, two design prompts; 14 glossary terms | FR-03, D-079, D-085 | P1 | In progress 2026-11-25: quick check and challenges assigned (T-678); fact check assigned (G-13) |
+| T-678 | SD 10 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Assigned 2026-11-25 |
 
 ## Maintenance
 
