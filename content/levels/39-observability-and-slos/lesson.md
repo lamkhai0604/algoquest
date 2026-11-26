@@ -100,7 +100,7 @@ A good service dashboard answers "is it healthy, and if not, where?" in a few se
 
 ## Worked example
 
-**Problem:** Checkout in the shop takes about 40 requests per second on average over a month, and up to 100 at peak. It calls six services. Users abandon a checkout that takes more than 2 seconds. Last month, 99.95% of checkouts succeeded and 99.8% finished within 2 seconds. Customers say checkout is "sometimes really slow", but the average is 194 ms. Choose an SLI and an SLO, work out the error budget, choose when to page, and find the slow service.
+**Problem:** Checkout in the shop takes about 40 requests per second on average over a month, and up to 100 at peak. It calls six services. Users abandon a checkout that takes more than 2 seconds. Last month, 99.95% of checkouts succeeded, and 99.8% both succeeded and finished within 2 seconds. Customers say checkout is "sometimes really slow", but the average is 194 ms. Choose an SLI and an SLO, work out the error budget, choose when to page, and find the slow service.
 
 **Solution:**
 
