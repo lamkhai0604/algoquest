@@ -1,0 +1,870 @@
+[
+  {
+    "title": "Hai region, hai bản sao",
+    "body": "Ứng dụng bán vé chạy ở hai **region**, Mỹ và châu Âu, nên mỗi người dùng liên lạc với server gần mình. Mỗi region giữ bản đầy đủ dữ liệu, gửi mọi thay đổi sang region kia, thường trong một phần giây. Round trip giữa region mất khoảng 90 ms.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server US",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu US",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu EU",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Server EU",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Người dùng EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              4,
+              3,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "regions",
+          "value": "US và EU"
+        },
+        {
+          "name": "copies",
+          "value": "mỗi nơi một bản đầy đủ"
+        },
+        {
+          "name": "round trip between them",
+          "value": "khoảng 90 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Một lượt thích vượt đại dương",
+    "body": "Người dùng châu Âu nhấn “quan tâm”. Bản EU đếm ngay và gửi sang US sau đó một chút, tổng khoảng 200 ms. Người dùng US tải trang sau lượt nhấn 50 ms vẫn thấy **số cũ**, 1,203 thay vì 1,204. Một phần giây sau, hai bản giống nhau. Đó là **eventual consistency**: các bản có thể khác một lúc nhưng giống lại khi ngừng ghi; với bộ đếm, điều đó không hại.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server US",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu US",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu EU",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Server EU",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Người dùng EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          5,
+          4,
+          3,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "click in EU",
+          "value": "t = 0 ms"
+        },
+        {
+          "name": "reaches the US copy",
+          "value": "khoảng t = 200 ms"
+        },
+        {
+          "name": "US read at t = 50 ms",
+          "value": "1,203 (cũ)"
+        }
+      ],
+      "predict": {
+        "question": "Bản EU đếm lượt nhấn tại t = 0 rồi gửi sang US, bản US nhận khoảng 200 ms sau. Người dùng US đọc bộ đếm từ bản US tại t = 50 ms. Họ thấy gì?",
+        "options": [
+          "Số mới vì lượt nhấn đã lưu",
+          "Số cũ, thấp hơn một",
+          "Lỗi vì hai bản không giống nhau",
+          "Không thấy gì, phải chờ hai bản giống nhau"
+        ],
+        "answer": 1,
+        "explanation": "Tại t = 50 ms, lượt nhấn chưa đến bản US, nên nó vẫn giữ số cũ. Hệ thống vẫn trả lời với dữ liệu mình có: đó là eventual consistency. Các bản sẽ giống nhau khoảng 150 ms sau.",
+        "hides": [
+          "US read at t = 50 ms"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Kết nối bị đứt",
+    "body": "Cáp biển giữa region hỏng 20 phút. Đó là **network partition**: cả hai region vẫn chạy và phục vụ người dùng riêng, nhưng không đến được bên kia. Không phải crash. Người dùng US vẫn mua vé tại US, người dùng EU tại châu Âu; mỗi thay đổi ở lại bên đó đến khi kết nối lại.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server US",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu US",
+            "x": 4,
+            "y": 0,
+            "note": "đang chạy"
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu EU",
+            "x": 9,
+            "y": 1,
+            "note": "đang chạy"
+          },
+          {
+            "kind": "server",
+            "label": "Server EU",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Người dùng EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          2,
+          3
+        ],
+        "drop": true,
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              5,
+              4,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "US region",
+          "value": "đang chạy"
+        },
+        {
+          "name": "EU region",
+          "value": "đang chạy"
+        },
+        {
+          "name": "link between them",
+          "value": "đứt trong 20 min"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Mua vé trong lúc mất kết nối",
+    "body": "Buổi hòa nhạc còn một ghế. Nếu cả hai region vẫn nhận mua lúc chia cắt, người mua ở New York và Berlin đều có thể mua từ bản riêng: mỗi bản kiểm tra dữ liệu của nó, thấy một ghế rồi bán. Khi kết nối lại, dữ liệu có **hai lượt bán cho một ghế**, một **conflict** cần hoàn tiền và xin lỗi. Duy trì availability cho ghế là chấp nhận nguy cơ này.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server US",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu US",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu EU",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Server EU",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Người dùng EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              4,
+              3
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "seats left before",
+          "value": "1"
+        },
+        {
+          "name": "US buyer",
+          "value": "muốn ghế cuối"
+        },
+        {
+          "name": "EU buyer",
+          "value": "muốn ghế cuối"
+        },
+        {
+          "name": "after the link returns",
+          "value": "hai người mua, một ghế"
+        }
+      ],
+      "predict": {
+        "question": "Trong partition, cả hai region nhận mua từ bản riêng. Người mua US và EU cùng lúc thử mua ghế cuối. Khi kết nối trở lại, ứng dụng phát hiện gì?",
+        "options": [
+          "Lượt bán thứ hai tự hủy trước khi ai trả tiền",
+          "Hai người đã trả tiền cho cùng ghế",
+          "Chỉ lượt bán đầu được lưu vì hai bản đồng bộ",
+          "Không có gì vì mỗi bản bán ghế riêng"
+        ],
+        "answer": 1,
+        "explanation": "Mỗi bản chỉ kiểm tra dữ liệu riêng, thấy một ghế rồi bán; không bên nào hỏi được bên kia. Cả hai lượt bán được xác nhận, nên conflict chỉ lộ khi so dữ liệu sau partition. Muốn tránh, một bên phải từ chối khi kết nối đứt.",
+        "hides": [
+          "after the link returns"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Chọn consistency cho ghế",
+    "body": "Để không bán ghế hai lần, một nơi phải quyết định. Mỗi sự kiện có **home region**: sự kiện này có home ở US, nên chỉ bản US bán ghế. Khi chia cắt, request của người mua Berlin không đến được home và bị từ chối: “chưa thể xác nhận, vui lòng thử lại sau”. Đây là chọn **consistency** thay vì **availability**: một số người nhận lỗi, nhưng không ghế nào bán trùng. Đó là lựa chọn **CAP** mô tả: khi mạng chia cắt, hệ thống không thể vừa trả lời mọi người vừa giữ một sự thật nhất quán.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server US",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu US",
+            "x": 4,
+            "y": 0,
+            "note": "home sự kiện"
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu EU",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Server EU",
+            "x": 10,
+            "y": 5,
+            "note": "từ chối bán"
+          },
+          {
+            "kind": "client",
+            "label": "Người dùng EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              4,
+              3,
+              2
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "decides the seat",
+          "value": "home region (US)"
+        },
+        {
+          "name": "Berlin buyer",
+          "value": "từ chối khi chia cắt"
+        },
+        {
+          "name": "seats sold twice",
+          "value": "0"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Chọn availability cho bộ đếm",
+    "body": "Bộ đếm “quan tâm” chọn ngược lại. Mỗi region tiếp tục đếm khi chia cắt: US thêm 300, EU thêm 200. Khi kết nối lại, mỗi region gửi lượt mình đếm, cả hai hiện 1,204 + 300 + 200 = 1,704. Không ai nhận lỗi; chi phí chỉ là bộ đếm hơi thấp mỗi bên trong 20 phút. Các phần đếm cộng được luôn có thể gộp.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server US",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu US",
+            "x": 4,
+            "y": 0,
+            "note": "+300"
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu EU",
+            "x": 9,
+            "y": 1,
+            "note": "+200"
+          },
+          {
+            "kind": "server",
+            "label": "Server EU",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Người dùng EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              2
+            ]
+          },
+          {
+            "path": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              5,
+              4,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "before",
+          "value": "1,204"
+        },
+        {
+          "name": "counted in the US",
+          "value": "+300"
+        },
+        {
+          "name": "counted in the EU",
+          "value": "+200"
+        },
+        {
+          "name": "after merging",
+          "value": "1,704"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Consistency tốn thời gian hằng ngày",
+    "body": "Partition hiếm nhưng strong consistency vẫn tốn thời gian khi mạng tốt. Người Berlin mua ghế sự kiện US phải đến home region: khoảng 5 ms xử lý cục bộ + một round trip 90 ms = khoảng **95 ms**; nhấn bộ đếm được bản EU xác nhận khoảng 5 ms. Chọn consistency là trả round trip cho mọi lần ghi qua region; home region gần đa số người mua giữ phần lớn lệnh ghi cục bộ.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server US",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu US",
+            "x": 4,
+            "y": 0,
+            "note": "home sự kiện"
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu EU",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Server EU",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Người dùng EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          5,
+          4,
+          3,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "local work",
+          "value": "5 ms"
+        },
+        {
+          "name": "round trip to the US",
+          "value": "90 ms"
+        },
+        {
+          "name": "purchase from Berlin",
+          "value": "khoảng 95 ms"
+        },
+        {
+          "name": "click on the counter",
+          "value": "khoảng 5 ms"
+        }
+      ],
+      "predict": {
+        "question": "Người Berlin mua ghế cho sự kiện có home region ở US. Xử lý cục bộ mất 5 ms, round trip giữa region mất 90 ms. Lượt mua mất khoảng bao lâu?",
+        "options": [
+          "Khoảng 5 ms",
+          "Khoảng 95 ms",
+          "Khoảng 185 ms",
+          "Khoảng 900 ms"
+        ],
+        "answer": 1,
+        "explanation": "Lượt mua cần xử lý cục bộ và một round trip đến home region: 5 + 90 = 95 ms. Nhấn bộ đếm không cần round trip nên khoảng 5 ms. 185 ms là tính round trip hai lần.",
+        "hides": [
+          "purchase from Berlin"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Chọn riêng cho mỗi tính năng",
+    "body": "Cùng trang dùng cả hai lựa chọn. Ghế, thanh toán và username chọn **consistency** vì câu trả lời sai tốn tiền hoặc niềm tin; bộ đếm, đánh giá và bảng tin chọn **availability** vì giá trị hơi cũ không hại. Vé của chính người mua đọc từ home region của sự kiện, nên khi đến được region đó họ thấy lượt mua vừa thực hiện; khi chia cắt, người ở bên kia được yêu cầu thử lại. Quyết định từng tính năng bằng hậu quả của câu trả lời cũ hoặc xung đột.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Server US",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu US",
+            "x": 4,
+            "y": 0,
+            "note": "ghế: home region"
+          },
+          {
+            "kind": "db",
+            "label": "Dữ liệu EU",
+            "x": 9,
+            "y": 1,
+            "note": "đếm: cả hai"
+          },
+          {
+            "kind": "server",
+            "label": "Server EU",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Người dùng EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              4,
+              3
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "seats, payments",
+          "value": "consistency"
+        },
+        {
+          "name": "counters, reviews",
+          "value": "availability"
+        },
+        {
+          "name": "own tickets",
+          "value": "home region, nếu đến được"
+        }
+      ]
+    }
+  }
+]
