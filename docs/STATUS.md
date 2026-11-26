@@ -10,4 +10,4 @@
 | Outstanding changes | Pull request from `dev` to `main` open (#73) |
 | Verification | GitHub Actions on 2026-11-25: backend, frontend, docs and smoke passed on `dev` |
 | Blockers | None. The live Java check stays paused (D-054) |
-| Next action | ChatGPT: SD 9 Vietnamese translation (T-676 Part 2) and SD 10 review and translation (T-681); PO: try a design prompt with the real grader; Claude: Stage 3, starting with SD 11 (Level 38, Reliability) |
+| Next action | ChatGPT: SD 10 content review (T-681); Vietnamese translations from SD 9 on are paused by the PO; PO: try a design prompt with the real grader; Claude: Stage 3, starting with SD 11 (Level 38, Reliability) |
