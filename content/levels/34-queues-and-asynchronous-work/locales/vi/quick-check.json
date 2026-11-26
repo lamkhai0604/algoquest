@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Giả định bài tập: mỗi giây có 50 việc tạo hóa đơn đến. Có 30 worker, mỗi worker làm một việc tại một thời điểm; mỗi việc mất 0.8 giây. Bắt đầu với backlog rỗng, việc chưa xong tích lại nhanh thế nào khi tải này tiếp tục?",
+    "options": [
+      "12.5 việc mỗi giây: năng lực worker là 30 × (1 ÷ 0.8) = 37.5, dưới tốc độ đến 50.",
+      "26 việc mỗi giây: năng lực worker là 30 × 0.8 = 24, nên 50 - 24 = 26.",
+      "Backlog không tăng: mỗi worker có thể bắt đầu việc mới ngay khi nhận, dù việc trước vẫn đang chạy.",
+      "20 việc mỗi giây: 30 worker hoàn thành 30 việc mỗi giây bất kể thời lượng."
+    ],
+    "answer": 0,
+    "explanation": "Một worker xong 1 ÷ 0.8 = 1.25 việc mỗi giây. Ba mươi worker xong 30 × 1.25 = 37.5. Tốc độ đến vượt năng lực 50 - 37.5 = 12.5 việc mỗi giây, nên việc chưa xong tích lại ở tốc độ ấy khi tải ổn định. Nhân số worker với giây mỗi việc cho sai đơn vị năng lực. Đây là mô hình tải ổn định, không khẳng định từng phần lẻ của việc hoàn tất mỗi thời điểm."
+  },
+  {
+    "question": "Worker ghi xong hóa đơn vào database rồi hỏng trước khi ack message. Cơ chế giao là at-least-once. Hành vi và cách bảo vệ nào đúng?",
+    "options": [
+      "Broker nhận ra lệnh ghi database thành công và xóa message mà không cần ack.",
+      "Worker tiếp theo nên ack trước khi ghi, để sự cố không gây giao lại.",
+      "Sau timeout, message có thể được giao lại; dùng cùng khóa công việc và quy tắc uniqueness/kiểm tra nguyên tử trong database để không tạo hóa đơn thứ hai.",
+      "Dùng khóa ngẫu nhiên mới cho mỗi lần thử để database coi mỗi lần giao lại là việc mới."
+    ],
+    "answer": 2,
+    "explanation": "Broker chưa nhận ack, nên có thể giao message lại sau timeout. Việc lặp phải mang cùng khóa, như order id. Với tác dụng trong database này, unique constraint hoặc kiểm tra-và-ghi nguyên tử giúp lặp không gây tác dụng thêm. Ack sau hoàn tất, không phải trước: ack sớm có thể làm mất việc nếu worker hỏng. Broker không tự suy ra thành công từ lệnh ghi database riêng."
+  },
+  {
+    "question": "Email, kho và phân tích đều cần mọi sự kiện đã đặt đơn. Phân tích còn cần đọc lại sự kiện tuần trước. Giả sử hệ thống được cấu hình giữ lịch sử đó, mỗi service phải tiến triển độc lập. Cấu hình broker nào phù hợp?",
+    "options": [
+      "Một queue chung, email, kho và phân tích cạnh tranh nhau làm worker.",
+      "Topic pub/sub mà bản sao của subscriber bị xóa sau ack, không giữ lịch sử.",
+      "Một queue chung, mỗi worker ack trước khi chuyển sự kiện cho service tiếp theo.",
+      "Event log giữ lịch sử cần thiết, mỗi service có consumer offset riêng."
+    ],
+    "answer": 3,
+    "explanation": "Event log giữ sự kiện sau khi đọc. Offset riêng cho email, kho và phân tích đọc luồng theo tốc độ riêng; phân tích có thể đặt lại vị trí để đọc tuần trước. Queue chung chia việc thay vì cho mỗi service một bản. Pub/sub không giữ lịch sử giúp phát cho nhiều bên nhưng không cung cấp lại sự kiện tuần trước đã ack."
+  }
+]

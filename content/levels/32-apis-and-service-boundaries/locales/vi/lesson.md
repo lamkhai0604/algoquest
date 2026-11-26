@@ -4,7 +4,7 @@
 
 - Thiết kế REST (phong cách thiết kế API theo tài nguyên) API nhỏ: đặt tên resource (tài nguyên), chọn HTTP method (phương thức HTTP) và trả status code (mã trạng thái) phù hợp.
 - Phân biệt safe method (phương thức an toàn, chỉ đọc) và idempotent (gửi lại nhiều lần vẫn giữ cùng trạng thái dự kiến) HTTP method với các phương thức khác, giải thích vì sao quan trọng khi gửi lại request.
-- Phân trang danh sách dài bằng offset (số mục bỏ qua) hoặc cursor (con trỏ đánh dấu vị trí trang trước), giải thích vì sao cursor giữ được tính đúng và tốc độ.
+- Phân trang danh sách dài bằng offset (vị trí trong dãy dữ liệu (số mục đã đi qua)) hoặc cursor (con trỏ đánh dấu vị trí trang trước), giải thích vì sao cursor giữ được tính đúng và tốc độ.
 - Thay đổi API mà không làm hỏng ứng dụng vẫn dùng phiên bản cũ.
 - Chọn polling (hỏi lại định kỳ), long polling (hỏi và chờ đến khi có thay đổi), server-sent events (server đẩy sự kiện qua một kết nối mở) hoặc WebSocket (kết nối mở hai chiều) cho cập nhật trực tiếp, và ước lượng chi phí polling.
 - Quyết định khi nào tách một service thành nhiều service, ước lượng độ trễ và sự cố mà call chain (chuỗi lời gọi giữa các service) giữa các service thêm vào.
