@@ -1,0 +1,702 @@
+[
+  {
+    "title": "A. Bytes and details",
+    "body": "**Part A: object storage.** A photo is 3 MB of bytes plus about 500 bytes of details: owner, caption, size. The bytes go to **object storage** under a key such as `photos/9f3c.jpg`; the database keeps the details and the key, the **metadata**. At 1 million photos a day, storage grows 3 TB a day and the database only 500 MB, so the database stays small, fast and quick to back up.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Photo DB",
+            "x": 5,
+            "y": 8,
+            "note": "500 bytes each"
+          },
+          {
+            "kind": "db",
+            "label": "Object storage",
+            "x": 9,
+            "y": 3,
+            "note": "3 MB each"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "per photo",
+          "value": "3 MB of bytes, 500 bytes of details"
+        },
+        {
+          "name": "storage grows",
+          "value": "3 TB a day"
+        },
+        {
+          "name": "database grows",
+          "value": "500 MB a day"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A. Who carries the bytes?",
+    "body": "At peak, 400 photos a second arrive. If the app servers relayed them, **400 × 3 MB = 1.2 GB per second** would pass through servers that can carry about 1 GB per second for everything. Instead, the app checks the user's rights, saves the photo as pending, and returns a **signed upload URL** for one key, valid for 10 minutes. The phone sends the bytes straight to storage, and the app marks the photo ready when storage confirms.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3,
+            "note": "1 GB/s for all"
+          },
+          {
+            "kind": "db",
+            "label": "Photo DB",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Object storage",
+            "x": 9,
+            "y": 3
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "uploads at peak",
+          "value": "400 per second"
+        },
+        {
+          "name": "photo size",
+          "value": "3 MB"
+        },
+        {
+          "name": "through the servers",
+          "value": "1.2 GB per second"
+        },
+        {
+          "name": "with signed URLs",
+          "value": "a small request per upload"
+        }
+      ],
+      "predict": {
+        "question": "At peak, 400 photos of 3 MB each are uploaded every second. If the app servers relayed every photo to storage, how much data would pass through them each second?",
+        "options": [
+          "About 120 MB",
+          "About 400 MB",
+          "About 1.2 GB",
+          "About 12 GB"
+        ],
+        "answer": 2,
+        "explanation": "400 × 3 MB = 1,200 MB, about 1.2 GB per second, more than the servers' 1 GB per second for everything. With a signed upload URL the bytes go from the phone straight to storage.",
+        "hides": [
+          "through the servers"
+        ]
+      }
+    }
+  },
+  {
+    "title": "A. Large files in parts",
+    "body": "A 2 GB video sent in one piece must start again from zero if the connection breaks near the end. With a **multipart upload**, the phone sends 20 parts of 100 MB, several at a time; a failed part is sent again alone, so a break costs at most 100 MB. When all parts have arrived, storage joins them into one object. Downloads of popular files are served through a **CDN** (SD 3).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Photo DB",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Object storage",
+            "x": 9,
+            "y": 3,
+            "note": "20 parts of 100 MB"
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 7,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            0,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              4,
+              0
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "video",
+          "value": "2 GB"
+        },
+        {
+          "name": "parts",
+          "value": "20 × 100 MB"
+        },
+        {
+          "name": "a broken connection costs",
+          "value": "at most one part"
+        }
+      ]
+    }
+  },
+  {
+    "title": "B. Searching by scanning",
+    "body": "**Part B: full-text search.** A shop has 10 million products with about 1 KB of description each. `WHERE description LIKE '%red%'` cannot use a normal index (SD 4), because the word can be anywhere in the text. So the database reads all **10 GB** of descriptions for every search. That takes seconds, and a few searches at once keep the database busy.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Products DB",
+            "x": 5,
+            "y": 8,
+            "note": "reads all 10 GB",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "products",
+          "value": "10 million"
+        },
+        {
+          "name": "description",
+          "value": "about 1 KB"
+        },
+        {
+          "name": "read per search",
+          "value": "10 GB"
+        }
+      ]
+    }
+  },
+  {
+    "title": "B. An inverted index",
+    "body": "An **inverted index** stores, for each word, the sorted list of products that contain it. Descriptions are **tokenized** first, so \"Red\", \"red,\" and \"RED\" become `red`. A search for \"red shoes\" reads two lists, `red → [3, 8, 15, 21]` and `shoes → [8, 9, 21, 40]`, and walks them together, keeping IDs that are in both: **8 and 21**. With real lists of 200,000 and 50,000 IDs, that is about 250,000 steps, a few milliseconds. The index is a copy, updated from the database within seconds.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Products DB",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Search index",
+            "x": 8,
+            "y": 6,
+            "note": "word → product IDs"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "red",
+          "value": "[3, 8, 15, 21]"
+        },
+        {
+          "name": "shoes",
+          "value": "[8, 9, 21, 40]"
+        },
+        {
+          "name": "red shoes",
+          "value": "[8, 21]"
+        }
+      ],
+      "predict": {
+        "question": "The index has red → [3, 8, 15, 21] and shoes → [8, 9, 21, 40]. Which products match a search for both words?",
+        "options": [
+          "8 and 21",
+          "3, 8, 9, 15, 21 and 40",
+          "8 only",
+          "None"
+        ],
+        "answer": 0,
+        "explanation": "A product matches both words only if its ID is in both lists. Walking the two sorted lists together finds 8 and 21. All six IDs would be the products that contain either word.",
+        "hides": [
+          "red shoes"
+        ]
+      }
+    }
+  },
+  {
+    "title": "C. Counting up across shards",
+    "body": "**Part C: unique IDs.** With one database, **auto-increment** is simple: 1, 2, 3, in order, 8 bytes. After the photos are split into two shards (SD 8), each shard counts on its own: shard 1 and shard 2 both create photo **1001**. Giving each shard a separate range, or asking one central counter, fixes it, but every new ID then depends on that arrangement. Auto-increment IDs also tell anyone how many rows you create a day.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 7,
+            "y": 4,
+            "note": "next id: 1001"
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 10,
+            "y": 7,
+            "note": "next id: 1001",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "shard 1 creates",
+          "value": "photo 1001"
+        },
+        {
+          "name": "shard 2 creates",
+          "value": "photo 1001"
+        },
+        {
+          "name": "result",
+          "value": "two photos with one ID"
+        }
+      ]
+    }
+  },
+  {
+    "title": "C. Random IDs",
+    "body": "A **random UUID** (version 4) has 122 random bits, so any server, or a phone while offline, can make one without asking anyone. Even after a billion IDs, the chance that two are equal is about 1 in 10¹⁹. But random IDs do not sort by time, and each new row lands at a random place in the database's index, touching pages all over it instead of only the last one. They are also 16 bytes instead of 8.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3,
+            "note": "makes UUIDs itself"
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 7,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "random bits",
+          "value": "122"
+        },
+        {
+          "name": "repeat after a billion",
+          "value": "about 1 in 10¹⁹"
+        },
+        {
+          "name": "sorts by time",
+          "value": "no"
+        },
+        {
+          "name": "size",
+          "value": "16 bytes"
+        }
+      ]
+    }
+  },
+  {
+    "title": "C. IDs that sort by time",
+    "body": "A **time-ordered ID** packs three parts into 64 bits: **41 bits** of milliseconds since a start date (about 69 years), **10 bits** of machine number (up to 1,024 machines) and **12 bits** of counter (4,096 per millisecond). Each machine makes IDs alone, IDs never clash because machine numbers differ, and newer IDs are larger, so new rows land at the end of the index and \"newest first\" is a simple sort. UUID version 7 follows the same idea in 128 bits.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 7,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 10,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "ID maker",
+            "x": 3,
+            "y": 0,
+            "note": "time|machine|count"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          1,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              1,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "time",
+          "value": "41 bits, milliseconds"
+        },
+        {
+          "name": "machine",
+          "value": "10 bits"
+        },
+        {
+          "name": "counter",
+          "value": "12 bits, 4,096 per ms"
+        },
+        {
+          "name": "per machine per second",
+          "value": "about 4.1 million"
+        }
+      ],
+      "predict": {
+        "question": "A 64-bit ID gives each machine a 12-bit counter per millisecond (4,096 values). How many IDs can one machine make per second?",
+        "options": [
+          "4,096",
+          "About 410,000",
+          "About 4.1 million",
+          "About 4.1 billion"
+        ],
+        "answer": 2,
+        "explanation": "4,096 IDs per millisecond × 1,000 milliseconds = 4,096,000, about 4.1 million per second per machine. When the counter runs out within a millisecond, the machine waits for the next one.",
+        "hides": [
+          "per machine per second"
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "id": "D41-video-upload",
+    "level": 41,
+    "title": "Teachers Upload Lesson Videos",
+    "prompt": "A learning platform lets teachers upload lesson videos for their courses, which students then watch. Design how a video gets from a teacher's computer into storage and becomes visible to students.",
+    "facts": [
+      "About 2,000 videos a day, about 1 GB on average and up to 4 GB; at peak about 20 uploads run at once, each at up to 25 MB per second",
+      "The app servers can carry about 500 MB per second in total, and also serve every page and API call",
+      "An object storage service is available: it accepts signed upload URLs, including one per part of a multipart upload with parts of up to 100 MB, and tells the app when an upload completes",
+      "The team may instead run its own upload service on separate servers, each able to carry about 1 GB per second",
+      "Students watch videos through a CDN in front of object storage",
+      "Requirement: only a teacher of a course can upload a video into it",
+      "Requirement: if a teacher's connection drops, the upload continues without resending more than 100 MB",
+      "Requirement: students see a video only after its upload has completed; uploads abandoned for 1 day are cleaned up"
+    ],
+    "scope": [
+      "Uploading videos and making them visible",
+      "Video conversion to other sizes is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the course-teacher rule, resuming with at most 100 MB resent, visibility only after completion, and cleanup after 1 day"
+      ],
+      "estimation": [
+        "Bandwidth if the app servers relayed uploads: 20 × 25 MB per second = 500 MB per second, all of their capacity",
+        "Parts: a 4 GB video is 40 parts of 100 MB; storage grows by about 2,000 × 1 GB = 2 TB a day"
+      ],
+      "design": [
+        "Bytes go from the teacher to object storage without passing through the app servers, either by signed URLs or through a separate upload service; metadata in the database"
+      ],
+      "data": [
+        "What the database stores for a video (course, teacher, key, status pending or ready, size)",
+        "How the app learns that the upload completed"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: signed URLs need no new servers but the app cannot look at the bytes on the way; a separate upload service can check files as they arrive but is one more system to run and pay for"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, direct multipart upload with signed URLs: the app checks that the user teaches the course, creates a video row with status pending and a storage key, starts a multipart upload, and returns one signed URL per 100 MB part (40 for a 4 GB video). The browser sends parts straight to storage, several at once; a dropped connection resends only the parts not yet confirmed, at most 100 MB each. When storage reports the upload complete, the app marks the video ready and students can see it through the CDN. A daily job deletes videos still pending after 1 day. The app servers carry none of the 500 MB per second. Trade-off: the app cannot inspect the bytes until the upload is complete.",
+      "Design B, a separate upload service: after the same course check and pending row, the app gives the browser a short-lived upload ticket for that video. The browser sends 100 MB chunks to the upload service, which checks the ticket, writes each chunk to object storage and records which chunks arrived; after a drop, the browser asks which chunks are missing and resends only those. At peak 20 × 25 MB per second = 500 MB per second needs one upload server (1 GB per second), plus a second for failures. When all chunks are stored, the service joins them, and the app marks the video ready. Abandoned uploads are cleaned after 1 day. Trade-off: two more servers to run, but the service can check file types and sizes as the bytes arrive."
+    ],
+    "reference": {
+      "assumptions": [
+        "Teachers are logged in (SD 13)",
+        "Object storage reports completed uploads reliably"
+      ],
+      "design": "The app checks that the user teaches the course, then creates a video row with status pending, the course, the teacher and a storage key from a new ID.\nIt starts a multipart upload and returns a signed URL for each 100 MB part: 40 parts for a 4 GB video. The browser sends the parts straight to object storage, a few at a time; after a dropped connection it resends only the parts that were not confirmed, so at most 100 MB is sent again for each.\nRelaying through the app servers would need 20 × 25 MB per second = 500 MB per second at peak, all of their capacity, so the bytes never pass through them.\nWhen storage reports the upload complete, the app marks the video ready, and students see it through the CDN. A daily job removes videos still pending after 1 day, and their parts. Storage grows by about 2 TB a day.",
+      "alternatives": [
+        "A separate upload service that receives chunks and writes them to storage: can check files on the way, but is more to run",
+        "Rejected: storing videos in the database, because it would grow by about 2 TB a day and its backups and copies would slow down",
+        "Rejected: relaying uploads through the app servers, because at peak that takes all 500 MB per second they can carry"
+      ]
+    }
+  },
+  {
+    "id": "D41-product-search",
+    "level": 41,
+    "title": "Search for a Shop with 10 Million Products",
+    "prompt": "A shop's product search uses LIKE on the descriptions and has become slow. Design how product search works, how fast changes appear in it, and how it handles the load.",
+    "facts": [
+      "About 10 million products, each with a title and about 1 KB of description",
+      "Up to 2,000 searches per second at peak; about 100 product changes per second",
+      "The database offers a built-in full-text index, which is an inverted index kept in the same transaction as the product row; with it a search costs about 5 ms of database work, and the database has spare room for about 4,000 such searches per second beyond its order traffic",
+      "A separate search engine can be run instead: each node holds the whole inverted index in memory (about 8 GB) and answers about 1,000 searches per second; it can be fed by the database's change events, which arrive within about 2 seconds",
+      "Requirement: a search for one or more words returns matching products within 200 ms",
+      "Requirement: a new or changed product can be found within 10 seconds",
+      "Requirement: product search must leave the database at least half of its spare room for growth in orders"
+    ],
+    "scope": [
+      "Searching product titles and descriptions by words",
+      "Ranking beyond simple matching is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the 200 ms result time, changes searchable within 10 seconds, the 2,000 searches per second peak, and the limit on database load"
+      ],
+      "estimation": [
+        "Load on the chosen part, such as: the database index, 2,000 of 4,000 spare searches per second, exactly half; or the search engine, 2,000 ÷ 1,000 = 2 nodes, plus at least 1 spare",
+        "Why LIKE fails: about 10 GB of descriptions read per search"
+      ],
+      "design": [
+        "An inverted index, either inside the database or in a separate search engine fed by change events"
+      ],
+      "data": [
+        "Tokenizing: lowercase, split into words, so \"Shoes\" and \"shoes,\" match",
+        "How a change reaches the index and how long it takes"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: the database's own index is always current but adds search load to the order database; a separate search engine keeps that load away but is a few seconds behind and is one more system to run"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, the database's full-text index: titles and descriptions are tokenized into the database's built-in inverted index, updated in the same transaction as each product change, so changes can be found at once. A search costs about 5 ms; 2,000 searches per second use 2,000 of the 4,000 spare, exactly the half allowed, and results come back well within 200 ms. Trade-off: no room for search growth without eating into the order database's spare room; a search spike would hit orders.",
+      "Design B, a separate search engine: each node keeps the whole inverted index (about 8 GB) in memory; 2,000 searches per second ÷ 1,000 per node = 2 nodes, run as 3 so one can fail. The database's change events reach the index within about 2 seconds, inside the 10-second limit; the 100 changes per second are small. Searches never touch the database, so its spare room is untouched. Trade-off: results can be about 2 seconds behind, and there is one more system to run and keep in step; if it loses its index, it is rebuilt from the database."
+    ],
+    "reference": {
+      "assumptions": [
+        "Searches are spread across the day's peak hour evenly enough for per-second numbers",
+        "Search words are matched as whole words after tokenizing"
+      ],
+      "design": "Product titles and descriptions are tokenized: lowercased and split into words, so \"Shoes\" and \"shoes,\" become the same word. A separate search engine keeps the inverted index, word → sorted list of product IDs, about 8 GB, in memory on each node.\nA search looks up each word and walks the sorted lists together, keeping products that contain every word, in milliseconds, well within 200 ms. At 2,000 searches per second and 1,000 per node, 2 nodes are needed; 3 are run so one can fail.\nEvery product change in the database produces a change event; the index applies it within about 2 seconds, inside the 10-second limit. The database does no search work, so its spare room stays for orders. If the index is lost, it is rebuilt from the database, which stays the source of truth.\nLIKE '%word%' would read about 10 GB of descriptions per search and is not used.",
+      "alternatives": [
+        "The database's own full-text index: always current, but uses exactly the half of the spare room allowed, leaving none for search growth",
+        "Rejected: keeping LIKE, because each search reads about 10 GB of descriptions"
+      ]
+    }
+  }
+]
