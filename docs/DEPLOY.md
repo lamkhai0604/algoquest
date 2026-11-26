@@ -61,7 +61,7 @@ Deploys run automatically after each merge to `main`, once the GitHub checks pas
 
 ## 3. Frontend — Vercel
 
-1. **Add New → Project**, import the repository, **Root Directory** `frontend`. The framework (Vite) and build settings come from `frontend/vercel.json`.
+1. **Add New → Project**, import the repository, **Root Directory** `frontend`. The framework (Vite) and build settings come from `frontend/vercel.json`. The same file limits automatic deployments to the `main` and `dev` branches (`git.deploymentEnabled`); other branches are checked by GitHub Actions only, which keeps the Hobby plan under its daily build limit.
 2. Add the environment variable `VITE_API_URL` = backend URL from step 2 (no trailing slash), for Production. Optional: `VITE_APP_NAME` changes the site name shown in the header, footer, page title, and sign-in page (default `AlgoQuest`); redeploy after changing it. Link previews use `VITE_SITE_URL` (for example `https://algoquest-murex.vercel.app`) or, when it is not set, the production address Vercel provides at build time; the preview image `frontend/public/og-image.jpg` shows the default name.
 3. Deploy. Note the production URL, for example `https://algoquest.vercel.app`.
 
