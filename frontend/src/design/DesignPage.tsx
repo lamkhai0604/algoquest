@@ -13,12 +13,14 @@ import {
 } from "../components";
 import { levelLabel } from "../game/levelLabel";
 import { useTranslation } from "../i18n";
+import type { TranslationKey } from "../i18n";
 import game from "../pages/Game.module.css";
 import pages from "../pages/Pages.module.css";
 import pattern from "../pattern/Pattern.module.css";
 import styles from "./Design.module.css";
 import type {
   DesignAnswer,
+  DesignForm,
   DesignResult,
   DesignSection,
   PromptView,
@@ -28,12 +30,32 @@ import type {
 const MIN_SECTION = 10;
 const MAX_SECTION = 2000;
 
-const EMPTY: DesignAnswer = {
-  requirements: "",
-  estimate: "",
-  components: "",
-  failure: "",
+/** Label and hint for each heading, by the prompt's form. */
+const HEADINGS: Record<
+  DesignForm,
+  Partial<Record<DesignSection, [TranslationKey, TranslationKey]>>
+> = {
+  scaffold: {
+    requirements: ["design.section_requirements", "design.hint_requirements"],
+    estimate: ["design.section_estimate", "design.hint_estimate"],
+    components: ["design.section_components", "design.hint_components"],
+    failure: ["design.section_failure", "design.hint_failure"],
+  },
+  routine: {
+    requirements: ["design.routine_requirements", "design.routineHint_requirements"],
+    estimate: ["design.routine_estimate", "design.routineHint_estimate"],
+    api: ["design.routine_api", "design.routineHint_api"],
+    data: ["design.routine_data", "design.routineHint_data"],
+    design: ["design.routine_design", "design.routineHint_design"],
+    deepdive: ["design.routine_deepdive", "design.routineHint_deepdive"],
+    failures: ["design.routine_failures", "design.routineHint_failures"],
+    summary: ["design.routine_summary", "design.routineHint_summary"],
+  },
 };
+
+function headingKeys(form: DesignForm, section: DesignSection) {
+  return HEADINGS[form][section] ?? HEADINGS.scaffold.requirements!;
+}
 
 function ReferenceDesign({ reference }: { reference: Reference }) {
   const { t } = useTranslation();
@@ -120,7 +142,8 @@ function Result({ result }: { result: DesignResult }) {
 
 function Prompt({ prompt }: { prompt: PromptView }) {
   const { t } = useTranslation();
-  const [answer, setAnswer] = useState<DesignAnswer>(EMPTY);
+  const [answer, setAnswer] = useState<DesignAnswer>({});
+  const text = (section: DesignSection) => answer[section] ?? "";
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<DesignResult | null>(null);
@@ -128,7 +151,7 @@ function Prompt({ prompt }: { prompt: PromptView }) {
 
   const ready =
     prompt.sections.every(
-      (section) => answer[section].trim().length >= MIN_SECTION,
+      (section) => text(section).trim().length >= MIN_SECTION,
     ) && left > 0;
 
   const submit = async (event: FormEvent) => {
@@ -140,10 +163,9 @@ function Prompt({ prompt }: { prompt: PromptView }) {
       const graded = await api.post<DesignResult>(
         `/api/v1/designs/${prompt.id}/answers`,
         {
-          requirements: answer.requirements.trim(),
-          estimate: answer.estimate.trim(),
-          components: answer.components.trim(),
-          failure: answer.failure.trim(),
+          sections: Object.fromEntries(
+            prompt.sections.map((section) => [section, text(section).trim()]),
+          ),
         },
       );
       setResult(graded);
@@ -183,16 +205,16 @@ function Prompt({ prompt }: { prompt: PromptView }) {
             {prompt.sections.map((section) => (
               <div key={section} className={styles.section}>
                 <label htmlFor={`design-${section}`}>
-                  {t(`design.section_${section}`)}
+                  {t(headingKeys(prompt.form, section)[0])}
                 </label>
                 <p className={styles.sectionHint} id={`design-${section}-hint`}>
-                  {t(`design.hint_${section}`)}
+                  {t(headingKeys(prompt.form, section)[1])}
                 </p>
                 <textarea
                   id={`design-${section}`}
                   aria-describedby={`design-${section}-hint`}
                   className={pattern.textarea}
-                  value={answer[section]}
+                  value={text(section)}
                   maxLength={MAX_SECTION}
                   disabled={result !== null || sending}
                   onChange={(event) => set(section, event.target.value)}

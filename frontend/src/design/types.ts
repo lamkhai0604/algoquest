@@ -1,6 +1,22 @@
 /** Design prompts (D-085). Criteria never reach the client; the reference arrives with a grade. */
-export type DesignSection =
+/** The four headings of early prompts. */
+export type ScaffoldSection =
   "requirements" | "estimate" | "components" | "failure";
+
+/** The eight steps of the full design interview routine (Level 42 on, T-699). */
+export type RoutineSection =
+  | "requirements"
+  | "estimate"
+  | "api"
+  | "data"
+  | "design"
+  | "deepdive"
+  | "failures"
+  | "summary";
+
+export type DesignSection = ScaffoldSection | RoutineSection;
+
+export type DesignForm = "scaffold" | "routine";
 
 export type RubricCategory =
   "requirements" | "estimation" | "design" | "data" | "tradeoffs";
@@ -20,6 +36,7 @@ export interface PromptView {
   prompt: string;
   facts: string[];
   scope: string[];
+  form: DesignForm;
   sections: DesignSection[];
   answersLeftToday: number;
 }
@@ -45,4 +62,4 @@ export interface DesignResult {
   answersLeftToday: number;
 }
 
-export type DesignAnswer = Record<DesignSection, string>;
+export type DesignAnswer = Partial<Record<DesignSection, string>>;

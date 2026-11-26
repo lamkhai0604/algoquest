@@ -41,7 +41,7 @@ The owner is in the room the whole time, so the builder talks while drawing: "I'
 - **Estimates:** before choosing components, so the choices follow from the numbers: one database or several, a cache or not, a queue or not.
 - **A deep dive:** where the hardest requirement is, or where the interviewer points; one done well beats three done briefly.
 - **Failures with conditions:** for each important part, say what fails, when, and what users see.
-- **In AlgoQuest's design prompts:** the answer form has four boxes. Put clarified requirements and scope in the first, all estimates in the second, the API, data model, high-level design and deep dive in the third, and failures and a one-line summary in the fourth.
+- **In AlgoQuest's design prompts:** from this level on, the answer form has one box for each step of the routine, from requirements and scope to the summary.
 
 ## Template code
 

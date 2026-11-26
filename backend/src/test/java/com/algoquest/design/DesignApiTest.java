@@ -68,13 +68,35 @@ class DesignApiTest {
   }
 
   private ResultActions answer(String requirements, String estimate) throws Exception {
+    return send("D1-counter", body(requirements, estimate, LONG, LONG));
+  }
+
+  /** A JSON answer: heading names and texts, alternating. */
+  private static String body(String... parts) {
+    String[] names = parts.length == 4 ? SCAFFOLD : ROUTINE;
+    StringBuilder json = new StringBuilder("{\"sections\":{");
+    for (int i = 0; i < parts.length; i++) {
+      json.append(i == 0 ? "" : ",").append('"').append(names[i]).append("\":\"");
+      json.append(parts[i]).append('"');
+    }
+    return json.append("}}").toString();
+  }
+
+  private static final String[] SCAFFOLD = {"requirements", "estimate", "components", "failure"};
+  private static final String[] ROUTINE = {
+    "requirements", "estimate", "api", "data", "design", "deepdive", "failures", "summary"
+  };
+
+  private ResultActions send(String id, String body) throws Exception {
     return mvc.perform(
-        post("/api/v1/designs/D1-counter/answers")
+        post("/api/v1/designs/" + id + "/answers")
             .with(player)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(
-                "{\"requirements\":\"%s\",\"estimate\":\"%s\",\"components\":\"%s\",\"failure\":\"%s\"}"
-                    .formatted(requirements, estimate, LONG, LONG)));
+            .content(body));
+  }
+
+  private static String routine(String summary) {
+    return body(LONG, LONG, LONG, LONG, LONG, LONG, LONG, summary);
   }
 
   @Test
@@ -86,6 +108,7 @@ class DesignApiTest {
     mvc.perform(get("/api/v1/designs/D1-counter").with(player))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.facts[0]").value("About 100 visits per second at peak"))
+        .andExpect(jsonPath("$.form").value("scaffold"))
         .andExpect(jsonPath("$.sections[2]").value("components"))
         .andExpect(jsonPath("$.answersLeftToday").value(DesignService.DAILY_LIMIT))
         .andExpect(content().string(not(containsString("criteria"))))
@@ -112,6 +135,22 @@ class DesignApiTest {
   void badAnswersAreRefused() throws Exception {
     answer(LONG, "").andExpect(status().isBadRequest());
     mvc.perform(get("/api/v1/designs/D9-nothing").with(player)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  void aRoutinePromptHasTheEightStepsOfTheRoutine() throws Exception {
+    mvc.perform(get("/api/v1/designs/D1-routine").with(player))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.form").value("routine"))
+        .andExpect(jsonPath("$.sections.length()").value(8))
+        .andExpect(jsonPath("$.sections[5]").value("deepdive"));
+    send("D1-routine", routine(LONG))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.total").value(100));
+    send("D1-routine", routine("")).andExpect(status().isBadRequest());
+    send("D1-counter", routine(LONG)).andExpect(status().isBadRequest());
+    mvc.perform(get("/api/v1/admin/design-answers").with(owner))
+        .andExpect(jsonPath("$[0].answer.sections.deepdive").value(LONG));
   }
 
   @Test

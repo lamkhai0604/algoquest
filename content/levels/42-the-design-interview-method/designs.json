@@ -3,7 +3,7 @@
     "id": "D42-live-poll",
     "level": 42,
     "title": "Live Polls for a TV Show",
-    "prompt": "A TV show asks viewers a question on air, and viewers vote in the show's app during a 60-second window; the result is shown on screen right after. Design the voting system, using the full routine: put requirements and scope in the first box; all estimates in the second; the API, data model, high-level design and one deep dive in the third; failures with conditions and a short summary in the fourth.",
+    "prompt": "A TV show asks viewers a question on air, and viewers vote in the show's app during a 60-second window; the result is shown on screen right after. Design the voting system, using the full routine.",
     "facts": [
       "About 2 million viewers vote in each poll; measured at earlier polls, the busiest second brings about 100,000 votes, and the app servers admit at most 120,000 votes per second",
       "A vote counts if an app server receives it before the window closes, by the servers' clock; phones send at once and retry with the same vote ID for up to 2 seconds",
@@ -51,13 +51,14 @@
         "Count from a queue: safer replay, a couple of seconds of lag",
         "Rejected: writing every vote straight to the database, because the peak of 100,000 per second is twenty times its 5,000"
       ]
-    }
+    },
+    "form": "routine"
   },
   {
     "id": "D42-parking",
     "level": 42,
     "title": "Free Parking Spaces in a City",
-    "prompt": "A city puts a sensor in every space of its public garages and wants an app that shows how many spaces are free in each garage. Design it, using the full routine: put requirements and scope in the first box; all estimates in the second; the API, data model, high-level design and one deep dive in the third; failures with conditions and a short summary in the fourth.",
+    "prompt": "A city puts a sensor in every space of its public garages and wants an app that shows how many spaces are free in each garage. Design it, using the full routine.",
     "facts": [
       "100 garages with 40,000 spaces in total; each sensor reports an event when a car arrives or leaves, about 200 events per second at rush hour",
       "A sensor resends an event until the system acknowledges it, so the same event can arrive more than once; each event carries the sensor ID and an event number that grows for that sensor",
@@ -105,6 +106,7 @@
         "A queue with in-memory counters: fresher counts, more parts",
         "Rejected: adding or subtracting from the garage count for every event without checking its number, because a resent event would change the count twice"
       ]
-    }
+    },
+    "form": "routine"
   }
 ]

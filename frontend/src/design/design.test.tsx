@@ -14,6 +14,7 @@ const VIEW: PromptView = {
   prompt: "Design a service that counts visits to one page.",
   facts: ["About 100 visits per second at peak"],
   scope: ["One page only"],
+  form: "scaffold",
   sections: ["requirements", "estimate", "components", "failure"],
   answersLeftToday: 3,
 };
@@ -96,10 +97,12 @@ describe("design prompts", () => {
 
     const [, init] = fetchFn.mock.calls.find(([, i]) => i?.method === "POST")!;
     expect(JSON.parse(String(init?.body))).toEqual({
-      requirements: SECTIONS[0][1],
-      estimate: SECTIONS[1][1],
-      components: SECTIONS[2][1],
-      failure: SECTIONS[3][1],
+      sections: {
+        requirements: SECTIONS[0][1],
+        estimate: SECTIONS[1][1],
+        components: SECTIONS[2][1],
+        failure: SECTIONS[3][1],
+      },
     });
     expect(await screen.findByText("82/100")).toBeVisible();
     expect(screen.getByText("Trade-offs and failures")).toBeVisible();
@@ -117,5 +120,53 @@ describe("design prompts", () => {
     ).toBeVisible();
     expect(screen.getByText(/not the only correct answer/)).toBeVisible();
     expect(screen.getByText(/2 answers left today/)).toBeVisible();
+  });
+
+  it("shows the eight steps of the routine and sends every one", async () => {
+    const routine: PromptView = {
+      ...VIEW,
+      id: "D42-poll",
+      form: "routine",
+      sections: [
+        "requirements",
+        "estimate",
+        "api",
+        "data",
+        "design",
+        "deepdive",
+        "failures",
+        "summary",
+      ],
+    };
+    const fetchFn = fakeApi({
+      ...base,
+      "GET /api/v1/designs/D42-poll": () => json(200, routine),
+      "POST /api/v1/designs/D42-poll/answers": () => json(200, RESULT),
+    });
+    renderSignedInAt("/designs/D42-poll");
+
+    const grade = await screen.findByRole("button", {
+      name: "Grade my design",
+    });
+    const labels = [
+      "1. Requirements and scope",
+      "2. Estimates",
+      "3. API",
+      "4. Data model",
+      "5. High-level design",
+      "6. Deep dive",
+      "7. Failures",
+      "8. Summary",
+    ];
+    for (const label of labels) {
+      await userEvent.type(screen.getByLabelText(label), `Text for ${label}`);
+    }
+    await userEvent.click(grade);
+
+    const [, init] = fetchFn.mock.calls.find(([, i]) => i?.method === "POST")!;
+    const body = JSON.parse(String(init?.body));
+    expect(Object.keys(body.sections)).toEqual(routine.sections);
+    expect(body.sections.deepdive).toBe("Text for 6. Deep dive");
+    expect(await screen.findByText("82/100")).toBeVisible();
   });
 });

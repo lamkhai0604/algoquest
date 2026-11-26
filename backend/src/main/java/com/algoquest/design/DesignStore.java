@@ -7,11 +7,14 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 /** Graded design prompt answers (D-085). */
 @Repository
@@ -29,6 +32,10 @@ public class DesignStore {
       int gradingMs,
       Instant at) {}
 
+  private static final JsonMapper JSON = JsonMapper.builder().build();
+  private static final TypeReference<LinkedHashMap<String, String>> SECTIONS =
+      new TypeReference<>() {};
+
   private final JdbcTemplate jdbc;
 
   public DesignStore(JdbcTemplate jdbc) {
@@ -44,17 +51,14 @@ public class DesignStore {
       int gradingMs,
       Instant at) {
     jdbc.update(
-        "insert into design_attempt (id, user_id, prompt_id, requirements, estimate, components,"
-            + " failure, score_requirements, score_estimation, score_design, score_data,"
-            + " score_tradeoffs, strengths, improve, grader, grading_ms, created_at)"
-            + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "insert into design_attempt (id, user_id, prompt_id, sections, score_requirements,"
+            + " score_estimation, score_design, score_data, score_tradeoffs, strengths, improve,"
+            + " grader, grading_ms, created_at)"
+            + " values (?, ?, ?, cast(? as jsonb), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         UUID.randomUUID(),
         userId,
         promptId,
-        answer.requirements(),
-        answer.estimate(),
-        answer.components(),
-        answer.failure(),
+        JSON.writeValueAsString(answer.sections()),
         result.requirements(),
         result.estimation(),
         result.design(),
@@ -115,7 +119,8 @@ public class DesignStore {
               rs.getObject("id", UUID.class),
               rs.getString("display_name"),
               rs.getString("prompt_id"),
-              new DesignAnswer(
+              answer(
+                  rs.getString("sections"),
                   rs.getString("requirements"),
                   rs.getString("estimate"),
                   rs.getString("components"),
@@ -127,6 +132,20 @@ public class DesignStore {
               rs.getTimestamp("created_at").toInstant());
         },
         limit);
+  }
+
+  /** The stored sections, or the four columns of answers saved before T-699. */
+  private static DesignAnswer answer(
+      String sections, String requirements, String estimate, String components, String failure) {
+    if (sections != null) {
+      return new DesignAnswer(JSON.readValue(sections, SECTIONS));
+    }
+    Map<String, String> old = new LinkedHashMap<>();
+    old.put("requirements", requirements);
+    old.put("estimate", estimate);
+    old.put("components", components);
+    old.put("failure", failure);
+    return new DesignAnswer(old);
   }
 
   private static final String TOTAL =
