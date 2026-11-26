@@ -78,6 +78,123 @@
     }
   },
   {
+    "title": "API, data and the design",
+    "body": "**API:** each API server calls `allow(key)` before handling a request; refused requests get 429 and `Retry-After` with the seconds until the next token. **Data model:** per key in a shared in-memory store, tokens left and the last refill time, with an expiry a few minutes after the key's last request. **High-level design:** clients → load balancer → API servers, which all check the same **limit store**, with a replica.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7,
+            "note": "tokens, last refill"
+          },
+          {
+            "kind": "cache",
+            "label": "Store replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "check",
+          "value": "allow(key)"
+        },
+        {
+          "name": "refused",
+          "value": "429 + Retry-After"
+        },
+        {
+          "name": "per key",
+          "value": "tokens, last refill time"
+        }
+      ]
+    }
+  },
+  {
     "title": "Counting by the minute",
     "body": "The simplest rule is a **fixed window**: one counter per key per minute, reset at the top of each minute. But a client can send 100 requests at 0:59.9 and 100 more at 1:00.0: **200 requests within about a second**, twice the limit. If the promise is \"at most 100 in any minute\", a fixed window breaks it at every window edge.",
     "visual": {
@@ -249,123 +366,6 @@
           "pass at once"
         ]
       }
-    }
-  },
-  {
-    "title": "API, data and the design",
-    "body": "**API:** each API server calls `allow(key)` before handling a request; refused requests get 429 and `Retry-After` with the seconds until the next token. **Data model:** per key in a shared in-memory store, tokens left and the last refill time, with an expiry a few minutes after the key's last request. **High-level design:** clients → load balancer → API servers, which all check the same **limit store**, with a replica.",
-    "visual": {
-      "cells": [],
-      "arch": {
-        "nodes": [
-          {
-            "kind": "client",
-            "label": "Clients",
-            "x": 0,
-            "y": 8
-          },
-          {
-            "kind": "lb",
-            "label": "Load balancer",
-            "x": 2,
-            "y": 4
-          },
-          {
-            "kind": "server",
-            "label": "API server 1",
-            "x": 5,
-            "y": 1
-          },
-          {
-            "kind": "server",
-            "label": "API server 2",
-            "x": 6,
-            "y": 5
-          },
-          {
-            "kind": "cache",
-            "label": "Limit store",
-            "x": 9,
-            "y": 7,
-            "note": "tokens, last refill"
-          },
-          {
-            "kind": "cache",
-            "label": "Store replica",
-            "x": 10,
-            "y": 3
-          },
-          {
-            "kind": "server",
-            "label": "Services",
-            "x": 9,
-            "y": 0
-          }
-        ],
-        "links": [
-          [
-            0,
-            1
-          ],
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            3
-          ],
-          [
-            2,
-            4
-          ],
-          [
-            3,
-            4
-          ],
-          [
-            4,
-            5
-          ],
-          [
-            2,
-            6
-          ],
-          [
-            3,
-            6
-          ]
-        ],
-        "path": [
-          0,
-          1,
-          2,
-          4
-        ],
-        "flows": [
-          {
-            "path": [
-              1,
-              3,
-              4
-            ]
-          }
-        ]
-      },
-      "vars": [
-        {
-          "name": "check",
-          "value": "allow(key)"
-        },
-        {
-          "name": "refused",
-          "value": "429 + Retry-After"
-        },
-        {
-          "name": "per key",
-          "value": "tokens, last refill time"
-        }
-      ]
     }
   },
   {
@@ -626,7 +626,7 @@
   },
   {
     "title": "When the store is down",
-    "body": "If the store's main copy fails, its replica takes over within about 2 seconds; tokens taken in that moment may be lost, letting a few extra requests through. If the store is unreachable, the limiter must choose. **Fail-closed**, refusing everything, would turn a short store outage into a full API outage. **Fail-open**, allowing everything, leaves no protection. For a general API, the team **fails open to per-node limits**: each server allows 5 per minute per key until the store returns. For an action that costs money each time, such as sending paid text messages, failing closed can be the right choice.",
+    "body": "If the store's main copy fails, its replica takes over within about 2 seconds; tokens taken in that moment may be lost, letting a few extra requests through. If the store does not answer within 5 ms, the server treats it as unreachable, and the limiter must choose. **Fail-closed**, refusing everything, would turn a short store outage into a full API outage. **Fail-open**, allowing everything, leaves no protection. For a general API whose requirements accept a few extra requests during an outage, the team **fails open to per-node limits**: each server allows 5 per minute per key until the store returns. For an action that costs money each time, such as sending paid text messages, failing closed can be the right choice.",
     "visual": {
       "cells": [],
       "arch": {

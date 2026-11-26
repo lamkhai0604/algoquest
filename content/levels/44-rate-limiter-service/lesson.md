@@ -77,9 +77,9 @@ There is no code in this level. Apply the **routine** with these questions for a
 
 **A race without atomic updates.** Two servers read a client's count of 99 at the same moment, both see room for one more, and both write 100: 101 requests got through. Thousands of servers make larger overshoots. An increment or a script that runs in the store does the read, the check and the write in one step.
 
-| Choice | Holds the limit when requests spread | Extra cost per request | When the store is down |
+| Choice | Never passes the limit | Extra cost per request | When the store is down |
 | --- | --- | --- | --- |
-| Per-node limit (limit ÷ servers each) | Only if spread evenly; a client stuck to one server gets a fraction | None | Unaffected |
+| Per-node limit (limit ÷ servers each) | Yes, the shares cannot add up past the limit; but a client stuck to one server can use only its share | None | Unaffected |
 | Global limit in a shared store | Yes | One store call, about 1 ms | Must fail open or closed, or fall back to per-node |
 
 ## Common mistakes
@@ -103,7 +103,7 @@ The sliding counter keeps only two numbers per client: this minute's count and l
 
 ## Worked example
 
-**Problem:** A public API has 1 million API keys and 20 servers behind a load balancer, and handles up to 50,000 requests per second at peak. Each key may make 100 requests per minute, and may send up to 20 at once after a quiet time. Refused requests get 429 with Retry-After. The limiter may add at most 2 ms to a request. Measured: a shared in-memory store node answers a small script within 1 ms and runs about 100,000 per second; it can run with a replica that takes over within 2 seconds. Design the limiter, including what happens if the store is down.
+**Problem:** A public API has 1 million API keys and 20 servers behind a load balancer, and handles up to 50,000 requests per second at peak. Each key may make 100 requests per minute, and may send up to 20 at once after a quiet time. Refused requests get 429 with Retry-After. While the store works, the limiter may add at most 2 ms to a request. During a store outage, a few extra requests per key are acceptable, but the API must keep answering. Measured: a shared in-memory store node answers a small script within 1 ms and runs about 100,000 per second; it can run with a replica that takes over within 2 seconds. Design the limiter, including what happens if the store is down.
 
 **Solution:**
 
@@ -113,7 +113,7 @@ The sliding counter keeps only two numbers per client: this minute's count and l
 4. **Data model.** Per key in the store: tokens left and the last refill time, with an expiry of a few minutes after the last request.
 5. **High-level design.** Clients → load balancer → API servers, each calling the shared store with a replica.
 6. **Deep dive.** A token bucket with room for 20 and a refill of 100 per minute matches "bursts of 20, 100 per minute in the long run". One script in the store refills by the time passed, takes a token if there is one, and saves the result, as one atomic step: no two servers can both take the last token. Because the count is global, a client whose requests all reach one server still gets its full 100. One call takes about 1 ms, within 2 ms.
-7. **Failures.** If the store's main copy fails, the replica takes over within 2 seconds; tokens taken in the last moment may be lost, letting a few extra requests through. If the store is unreachable, the API fails open with a per-node fallback: each server allows 100 ÷ 20 = 5 per minute per key, plus a small burst, because refusing every request would take the whole API down for a short store outage, while a few extra requests per key are cheap.
+7. **Failures.** If the store's main copy fails, the replica takes over within 2 seconds; tokens taken in the last moment may be lost, letting a few extra requests through. If the store has not answered within 5 ms, the server treats it as unreachable, so a request waits at most 5 ms extra during an outage. The API then fails open with a per-node fallback: each server allows 100 ÷ 20 = 5 per minute per key, plus a small burst, because refusing every request would take the whole API down for a short store outage, while a few extra requests per key are cheap and the requirement allows them. When the store returns, counting starts again from the store.
 8. **Summary.** F1 by the token bucket; F2 by 429 with Retry-After; N1 at half a node's capacity; N2 by one 1 ms call; N3 by the global, atomic count; store outages handled by failing open to per-node limits.
 
 **Answer:** A token bucket per key (room for 20, 100 per minute) kept in a shared in-memory store, updated by one atomic script per request: 50,000 calls per second, about 100 MB, 1 ms each. The global count holds however requests are spread. If the store is down, the API fails open to per-node limits of 5 per minute per key, because a short outage should not refuse every client.
