@@ -1,0 +1,11 @@
+{
+  "question": "A deli has three counters, each with its own ticket machine, and every machine starts at 1. Two customers end up with ticket 57. Which change keeps tickets unique without making everyone queue at one machine?",
+  "options": [
+    "Print the counter's number and the time on each ticket, next to the count",
+    "Make every customer take a ticket from the first counter's machine",
+    "Ask customers to remember who came first",
+    "Restart every machine at 1 each hour"
+  ],
+  "answer": 0,
+  "explanation": "Adding the counter number makes tickets from different machines different, and the time keeps them in order, so each machine can still work alone. One shared machine works too, but everyone must queue for it, like one auto-increment counter for all servers."
+}

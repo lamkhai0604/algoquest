@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Part A. A social app stores 3 MB profile photos with each photo's owner and upload time. Where should each piece go?",
+    "options": [
+      "The photo bytes in object storage under a key; the owner, upload time and key in the database",
+      "Everything, bytes included, in one database row",
+      "Everything in object storage, with no database row",
+      "The bytes on each app server's own disk"
+    ],
+    "answer": 0,
+    "explanation": "Object storage is built for large files written whole, and keeps copies cheaply; the database is built for small details you query, such as all photos of one owner. Bytes in the database make it huge and slow to back up, and files on one server's disk vanish with that server."
+  },
+  {
+    "question": "Part B. Why does a normal database index on the description column not speed up WHERE description LIKE '%shoe%'?",
+    "options": [
+      "Because the word can be anywhere in the text, while a normal index is sorted by how the whole text begins",
+      "Because LIKE is not part of SQL",
+      "Because the table has too few rows for an index to matter",
+      "Because indexes work only on numbers"
+    ],
+    "answer": 0,
+    "explanation": "A normal index (SD 4) is sorted by the start of the value, so it helps with \"starts with shoe\" but not with \"contains shoe somewhere\". The database must read every description. An inverted index lists, for each word, the rows that contain it."
+  },
+  {
+    "question": "Part C. Orders are created on 6 database shards, and the order list must show the newest first without asking one central counter. Which kind of ID fits?",
+    "options": [
+      "An auto-increment number on each shard",
+      "A random UUID (version 4)",
+      "A time-ordered ID made of time, machine number and counter",
+      "The customer's email address"
+    ],
+    "answer": 2,
+    "explanation": "Each server can make time-ordered IDs alone, the machine number keeps them from clashing, and newer IDs are larger, so newest first is a simple sort. Auto-increment repeats across shards, random UUIDs do not sort by time, and an email is not unique per order."
+  }
+]

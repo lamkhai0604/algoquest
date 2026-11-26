@@ -278,5 +278,12 @@
     "title": "Security for System Design",
     "summary": "Put checks and limits in the right place: authentication and authorization, sessions or tokens, sign-in with another site, HTTPS, secrets, least privilege and rate limits on abuse.",
     "phase": 4
+  },
+  {
+    "number": 41,
+    "slug": "storage-search-and-ids",
+    "title": "Storage, Search and IDs",
+    "summary": "Three short parts: files in object storage with direct uploads, full-text search with an inverted index, and unique IDs from many servers.",
+    "phase": 4
   }
 ]
