@@ -8,7 +8,7 @@
       "Half of all checkouts take about 3 seconds"
     ],
     "answer": 1,
-    "explanation": "p50 says half of checkouts take 90 ms or less, so most are faster than the average. p99 says the slowest 1 in 100 take 3 seconds or more. The average mixes them into a number no user actually sees."
+    "explanation": "p50 says half of checkouts take 90 ms or less, so most are faster than the average. p99 says the slowest 1 in 100 take 3 seconds or more. The average alone describes neither group: it hides the slow tail and is higher than what most users see."
   },
   {
     "question": "Checkout's SLO is 99.9% of requests good over 30 days. This month there are 10 million checkout requests. How many bad requests can the month absorb?",

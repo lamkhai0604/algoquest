@@ -1,0 +1,742 @@
+[
+  {
+    "title": "Who are you, what may you do?",
+    "body": "Alice logs in with her password. The login service checks it and gives her app proof for later requests: that is **authentication**, \"who are you?\". Each later request asks a second question: \"may Alice do **this**, to **this** object?\" That is **authorization**. Being logged in answers the first question only.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2,
+            "note": "may you do this?"
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Login service",
+            "x": 8,
+            "y": 6,
+            "note": "who are you?"
+          },
+          {
+            "kind": "db",
+            "label": "Session store",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "authentication",
+          "value": "who are you?"
+        },
+        {
+          "name": "authorization",
+          "value": "may you do this, to this?"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Changing one number",
+    "body": "The app asks for `GET /orders/123`, Alice's order. Alice edits the request to `/orders/124`, which is Bob's. The server checks only that the request comes from a logged-in user, so it returns **Bob's order** with his name and address. The fix is an **authorization check on the server for every object**: does order 124 belong to Alice? If not, answer 403 or 404. Hiding the order in the app does not help: users can send any request they like.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8,
+            "note": "GET /orders/124"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 7,
+            "y": 2
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "logged in as",
+          "value": "Alice"
+        },
+        {
+          "name": "her order",
+          "value": "123"
+        },
+        {
+          "name": "asks for",
+          "value": "124 (Bob's)"
+        },
+        {
+          "name": "server checks",
+          "value": "logged in only"
+        },
+        {
+          "name": "result",
+          "value": "Bob's order is shown"
+        }
+      ],
+      "predict": {
+        "question": "Alice is logged in and owns order 123. She edits the request to ask for order 124, which is Bob's. The server only checks that the request comes from a logged-in user. What happens?",
+        "options": [
+          "The server answers 401, because Alice is not logged in",
+          "The server returns Bob's order",
+          "The server quietly returns order 123 instead",
+          "The app refuses to send the edited request"
+        ],
+        "answer": 1,
+        "explanation": "Alice is logged in, so the only check passes, and nothing asks whether order 124 is hers. The app cannot stop her, because she can send any request. Only a server-side check that the order belongs to the logged-in user stops this.",
+        "hides": [
+          "result"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Sessions",
+    "body": "With a **session**, the server stores \"session 7f2c… is Alice, until next month\" in a shared store, and the app sends only the random session ID. Every request costs one lookup: at 5,000 requests per second, about 5% of a store that handles 100,000. In return, logging out or blocking Alice deletes the session, and her **next request fails at once**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Session store",
+            "x": 5,
+            "y": 8,
+            "note": "7f2c… = Alice"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "app sends",
+          "value": "a random session ID"
+        },
+        {
+          "name": "per request",
+          "value": "one lookup, about 1 ms"
+        },
+        {
+          "name": "5,000 requests/s",
+          "value": "5% of the store"
+        },
+        {
+          "name": "logout or block",
+          "value": "effective at once"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Signed tokens",
+    "body": "With a **token**, the server gives Alice a small signed note: \"Alice, valid until 10:15\". Any server checks the signature and the time by itself, with **no lookup**. But the note cannot be called back: if Alice is blocked at 10:00, her token still works until **10:15**. So access tokens are kept short, and a long-lived **refresh token**, checked on the server, gets new ones. A block then stops the next refresh.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2,
+            "note": "checks signature"
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 7,
+            "y": 2
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "token says",
+          "value": "Alice, valid until 10:15"
+        },
+        {
+          "name": "blocked at",
+          "value": "10:00"
+        },
+        {
+          "name": "servers check",
+          "value": "signature and expiry"
+        },
+        {
+          "name": "still works until",
+          "value": "10:15"
+        }
+      ],
+      "predict": {
+        "question": "Alice's access token says \"valid until 10:15\". She is blocked at 10:00. The servers check only the token's signature and expiry time. Until when can she keep making requests with it?",
+        "options": [
+          "Until 10:00, when she is blocked",
+          "Until 10:15, when the token expires",
+          "Until she logs out herself",
+          "For as long as she keeps the app open"
+        ],
+        "answer": 1,
+        "explanation": "Nothing in the check looks up whether Alice is blocked; the signature is still valid and 10:15 has not passed. That is the price of skipping the lookup. Short access tokens, or a list of blocked tokens that is looked up, close the gap.",
+        "hides": [
+          "still works until"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Sign in with another site",
+    "body": "\"Sign in with Google\" uses **OAuth**. The app sends Alice to the **identity provider**, where she logs in and agrees to share, say, her email address (a **scope**). The provider sends her back with a short one-time code, and the app's server swaps the code for a token. The app never sees Alice's Google password, and the token allows only what the scopes say.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "ID provider",
+            "x": 9,
+            "y": 8,
+            "note": "scope: email"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "Alice logs in at",
+          "value": "the identity provider"
+        },
+        {
+          "name": "app receives",
+          "value": "a one-time code, then a token"
+        },
+        {
+          "name": "app never sees",
+          "value": "her password"
+        },
+        {
+          "name": "token allows",
+          "value": "only the scopes she agreed to"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Passwords, secrets and HTTPS",
+    "body": "Passwords are stored as a **slow hash with a salt**, tuned to about 100 ms: 50 logins per second cost 5 CPU cores, but a stolen table yields only about 10 guesses per second per core. The database password lives in a **secret store**, not in code, and only the services that need it can read it. Every connection uses **HTTPS**, between internal services too, so nobody on the network can read or change requests.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5,
+            "note": "HTTPS"
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Secret store",
+            "x": 10,
+            "y": 0,
+            "note": "DB password"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "password hash",
+          "value": "slow, salted, about 100 ms"
+        },
+        {
+          "name": "50 logins/s",
+          "value": "5 CPU cores"
+        },
+        {
+          "name": "secrets",
+          "value": "in a secret store"
+        },
+        {
+          "name": "connections",
+          "value": "HTTPS everywhere"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Least privilege",
+    "body": "A small reporting service reads orders for daily totals. If it connects as the database administrator, a flaw in it could **delete every order**. With **least privilege**, it has its own database user that can only read the orders table. If an attacker takes over the reporting service, the damage is limited to reading orders. The same rule applies to people, keys and tokens: give each only what it needs.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Reports",
+            "x": 10,
+            "y": 3,
+            "note": "read-only user",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            4,
+            3
+          ]
+        ],
+        "path": [
+          4,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "reports needs",
+          "value": "read orders"
+        },
+        {
+          "name": "as administrator",
+          "value": "could delete everything"
+        },
+        {
+          "name": "with least privilege",
+          "value": "can only read orders"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Limit the guessing",
+    "body": "A guesser tries common passwords against Alice's account. The login service allows **5 failed attempts per account every 15 minutes**: a day has 96 such periods, so the guesser gets 5 × 96 = **480** tries a day, and a list of a million common passwords would take over 2,000 days. The wait ends by itself, so nobody can lock Alice out for good. A limit per network address helps too, but alone it fails against a guesser with many addresses.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Login service",
+            "x": 8,
+            "y": 6,
+            "note": "5 fails / 15 min",
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Session store",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          4
+        ]
+      },
+      "vars": [
+        {
+          "name": "limit",
+          "value": "5 failures per 15 minutes"
+        },
+        {
+          "name": "periods in a day",
+          "value": "96"
+        },
+        {
+          "name": "guesses a day",
+          "value": "480"
+        }
+      ],
+      "predict": {
+        "question": "Login allows 5 failed attempts per account every 15 minutes, and the wait ends by itself. How many guesses can someone make against one account in a day?",
+        "options": [
+          "5",
+          "96",
+          "480",
+          "1,440"
+        ],
+        "answer": 2,
+        "explanation": "A day has 24 × 60 ÷ 15 = 96 periods of 15 minutes, with 5 attempts in each: 5 × 96 = 480. Slow enough that a million common passwords would take over 2,000 days.",
+        "hides": [
+          "guesses a day"
+        ]
+      }
+    }
+  }
+]

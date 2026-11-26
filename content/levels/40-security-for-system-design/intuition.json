@@ -1,0 +1,11 @@
+{
+  "question": "An office gives visitors a badge at the front desk. The server room door opens for any badge. What is wrong?",
+  "options": [
+    "The server room door should check whether this badge is allowed in that room",
+    "The front desk should check IDs more slowly",
+    "Visitors should get badges with a nicer design",
+    "The building should have more front desks"
+  ],
+  "answer": 0,
+  "explanation": "The front desk checks who you are (authentication), but each door must still check whether you may enter (authorization). A door that accepts any badge lets every visitor into the server room, just as an API that checks only \"logged in\" lets every user read every order."
+}
