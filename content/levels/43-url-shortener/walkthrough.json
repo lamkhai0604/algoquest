@@ -237,8 +237,8 @@
     }
   },
   {
-    "title": "API and data model",
-    "body": "**API:** `POST /links {longUrl}` returns `{code}`; `PATCH /links/{code}` changes the destination; `GET /{code}` answers with a redirect whose `Location` header holds the long link. **Data model:** `links(code primary key, long_url, owner, created_at)`, sharded by code (SD 8), and a click count per link and day. A redirect is one lookup by primary key, the cheapest query a database has.",
+    "title": "API, data and the two paths",
+    "body": "**API:** `POST /links {longUrl}` returns `{code}`; `PATCH /links/{code}` changes the destination; `GET /{code}` answers with a redirect whose `Location` header holds the long link. **Data model:** `links(code primary key, long_url, owner, created_at)`, sharded by code (SD 8), and a click count per link and day. **High-level design:** creations go users → load balancer → app servers → database; redirects go users → CDN → load balancer → app servers → link cache, and the database only on a cache miss.",
     "visual": {
       "cells": [],
       "arch": {
@@ -248,6 +248,12 @@
             "label": "Users",
             "x": 0,
             "y": 8
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 1,
+            "y": 4
           },
           {
             "kind": "lb",
@@ -262,11 +268,29 @@
             "y": 3
           },
           {
+            "kind": "cache",
+            "label": "Link cache",
+            "x": 5,
+            "y": 8
+          },
+          {
             "kind": "db",
             "label": "Links DB",
             "x": 9,
             "y": 7,
             "note": "code primary key"
+          },
+          {
+            "kind": "db",
+            "label": "Replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "queue",
+            "label": "Click queue",
+            "x": 8,
+            "y": 0
           }
         ],
         "links": [
@@ -281,13 +305,42 @@
           [
             2,
             3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
           ]
         ],
         "path": [
           0,
           1,
           2,
-          3
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              5
+            ]
+          }
         ]
       },
       "vars": [
@@ -484,7 +537,7 @@
   },
   {
     "title": "Fast redirects",
-    "body": "A few links get most clicks. The CDN answers repeated clicks for up to 60 seconds; the app servers keep popular links in a **link cache** whose entries expire within 4 minutes, so a change shows within 5 minutes. Most of the 20,000 redirects per second never reach the database, and a cached lookup takes about a millisecond, well within 50 ms. Each redirect that reaches the servers sends a click event to a queue, counted in batches, and the CDN's own logs add the clicks it answered.",
+    "body": "The redirect path from step 4, with its numbers. The CDN may keep each redirect for 60 seconds, and the app's **link cache** entries expire within 4 minutes, so a change shows within 5 minutes. Measured on a test setup, the CDN answers about 90% of the 20,000 redirects per second at peak, so the servers see about 2,000, and each takes at most 30 ms even when the link cache misses, within 50 ms. Each redirect that reaches the servers sends a click event to a queue, counted in batches, and the CDN's own logs add the clicks it answered.",
     "visual": {
       "cells": [],
       "arch": {
@@ -612,7 +665,7 @@
   },
   {
     "title": "Failures and summary",
-    "body": "**If the database's main copy fails**, redirects continue from the cache and a read replica (SD 6), while creations wait for failover. **If the link cache is lost**, the replicas carry the redirects until it refills. **A hot link** is answered mostly by the CDN. **Summary:** F1 by random codes; N3 by the unique key; F2 and N2 by cached key lookups; F3 by 302 with short cache times; F4 by click events counted in batches.",
+    "body": "**If the database's main copy fails**, redirects continue from the cache and a read replica (SD 6), while creations wait for failover. **If the link cache is lost**, the 2,000 server redirects per second go to the database, about 500 per shard, within each copy's measured 5,000. **A hot link** is answered mostly by the CDN. **Summary:** F1 by random codes; N3 by the unique key; F2 and N2 by cached key lookups; F3 by 302 with short cache times; F4 by click events counted in batches.",
     "visual": {
       "cells": [],
       "arch": {
@@ -722,7 +775,7 @@
         },
         {
           "name": "cache lost",
-          "value": "replicas carry the load"
+          "value": "about 500 per shard"
         },
         {
           "name": "hot link",

@@ -71,7 +71,7 @@ There is no code in this level. Apply the **routine** with these questions for a
 
 **Collisions with random codes.** When 6 billion of 3.5 trillion codes are taken, a new random code repeats an old one with chance 6 ÷ 3,500 ≈ 0.17%, about 1 in 580. Over all 6 billion creations, that adds up to millions of repeats, so they cannot be ignored: inserting the new code under a unique primary key fails on a repeat, and the server tries a new code. Almost every creation succeeds on the first try.
 
-**Redirect cost.** A redirect is a lookup by primary key. With a cache in front of the database holding the most-clicked links, most of the 20,000 redirects per second never reach the database.
+**Redirect cost.** A redirect is a lookup by primary key. How much load reaches the servers and the database depends on how often the same links are clicked again, so it is measured, not assumed: if the CDN answers 90% of 20,000 redirects per second, the servers see 2,000, and the database only the ones their cache misses.
 
 | Code choice | Collisions | Guessable | Same long link, same code |
 | --- | --- | --- | --- |
@@ -79,10 +79,10 @@ There is no code in this level. Apply the **routine** with these questions for a
 | Counter or ID in base62 | None | Yes, unless the number is shuffled | No |
 | Hash of the long link, first 7 characters | Rare; caught and resolved, such as by adding a salt and hashing again | No | Yes |
 
-| Redirect | Browser keeps it | Clicks seen by the server | Destination can change |
+| Redirect | Browser reuses it without asking | Clicks seen by the server | Destination can change |
 | --- | --- | --- | --- |
 | 301 with a long max-age | Yes, for the max-age | Only the first one per browser | Not for browsers that kept it |
-| 302 with `max-age=0` or `no-store` | No | Every click | Yes, at once |
+| 302 with `max-age=0` (must check first) or `no-store` (not stored) | No | Every click | Yes, at once |
 | 302 with `max-age=0, s-maxage=60` | No; the CDN keeps it 60 s | Server clicks plus the CDN's logs | Yes, within 60 s at the CDN |
 
 ## Common mistakes
@@ -106,7 +106,7 @@ Writing to the database on every redirect would add work to the fastest path. In
 
 ## Worked example
 
-**Problem:** Design a URL shortener for a marketing team. They create about 100 million links a month, each opened about 100 times on average, with peaks of 20,000 redirects per second. Links are kept for 5 years. The team wants click counts within a few minutes and the ability to change a link's destination within 5 minutes. A redirect should take under 50 ms inside the system.
+**Problem:** Design a URL shortener for a marketing team. They create about 100 million links a month, each opened about 100 times on average, with peaks of 20,000 redirects per second. Links are kept for 5 years. The team wants click counts within a few minutes and the ability to change a link's destination within 5 minutes. A redirect should take under 50 ms inside the system. Measured on a test setup: the CDN answers about 90% of redirects at peak when it may keep them for 60 seconds; an app server answers a redirect from its cache within 10 ms and from the database within 30 ms; the database has 4 shards, each with a replica, and each copy handles about 5,000 lookups per second.
 
 **Solution:**
 
@@ -115,8 +115,8 @@ Writing to the database on every redirect would add work to the fastest path. In
 3. **API.** `POST /links {longUrl}` → `{code}`; `PATCH /links/{code} {longUrl}`; `GET /{code}` → 302 with `Location`.
 4. **Data model.** `links(code primary key, long_url, owner, created_at)`; a separate click count per link and day.
 5. **High-level design.** Users → CDN → load balancer → app servers → link cache → sharded database. Creations go to the database; redirects read the cache first.
-6. **Deep dive: codes and redirects.** The server picks 7 random base62 characters and inserts the row; the unique primary key rejects a repeat (about 1 in 580 near the end), and the server tries a new code. Redirects answer 302, because the team needs click counts and changes: a 301 would be kept by browsers, hiding clicks and old destinations. The response says `Cache-Control: max-age=0, s-maxage=60`: browsers ask again every time, while the CDN may keep the redirect for 60 seconds. The app's link cache entries expire within 4 minutes, so a change takes effect within 5 minutes. Each redirect that reaches the servers sends a click event to a queue, and redirects the CDN answers are counted from its logs, both in batches.
-7. **Failures.** If the database's main copy fails, redirects continue from the cache and from a read replica (SD 6), while creations wait until failover. If the cache is lost, the database's replicas take the redirect load until the cache refills. A hot link is served mostly by the CDN.
-8. **Summary.** F1 by random codes; N3 by the unique key; F2 and N2 by cached key lookups; F3 by 302 with short cache times; F4 by click events counted in batches.
+6. **Deep dive: codes and redirects.** The server picks 7 random base62 characters and inserts the row; the unique primary key rejects a repeat (about 1 in 580 near the end), and the server tries a new code. Redirects answer 302, because the team needs click counts and changes: a 301 would be kept by browsers, hiding clicks and old destinations. The response says `Cache-Control: max-age=0, s-maxage=60`: browsers must check again before reusing it, while the CDN may keep the redirect for 60 seconds. The app's link cache entries expire within 4 minutes, so a change takes effect within 5 minutes. With the CDN answering about 90%, the servers see about 2,000 redirects per second at peak, each within 30 ms even when it misses the cache, inside the 50 ms target. Each redirect that reaches the servers sends a click event to a queue, and redirects the CDN answers are counted from its logs, both in batches.
+7. **Failures.** If a shard's main copy fails, redirects continue from the cache and from its replica (SD 6), while creations on that shard wait for failover. If the app's link cache is lost, all 2,000 server redirects per second go to the database until it refills; spread over 4 shards, about 500 per shard, well within one copy's 5,000. If the CDN stopped answering, 20,000 per second would reach the servers: within the 4 × 2 × 5,000 = 40,000 lookups the copies handle, but only if the app servers can take that many too, which would have to be measured. A hot link is served mostly by the CDN.
+8. **Summary.** F1 by random codes; N3 by the unique key; F2 and N2 by measured redirects within 30 ms with the CDN answering most; F3 by 302 with short cache times; F4 by click events counted in batches.
 
 **Answer:** Seven-character random base62 codes, inserted under a unique primary key that rejects the rare repeat, with a retry. Redirects use 302 with short shared-cache times, so clicks are counted and destinations can change within 5 minutes. A CDN and a link cache keep redirects fast, and the database is sharded for 3 TB over 5 years.
