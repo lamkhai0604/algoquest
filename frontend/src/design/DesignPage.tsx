@@ -42,7 +42,10 @@ const HEADINGS: Record<
     failure: ["design.section_failure", "design.hint_failure"],
   },
   routine: {
-    requirements: ["design.routine_requirements", "design.routineHint_requirements"],
+    requirements: [
+      "design.routine_requirements",
+      "design.routineHint_requirements",
+    ],
     estimate: ["design.routine_estimate", "design.routineHint_estimate"],
     api: ["design.routine_api", "design.routineHint_api"],
     data: ["design.routine_data", "design.routineHint_data"],
