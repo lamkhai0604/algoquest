@@ -274,8 +274,7 @@
 }
 
 .side {
-  position: sticky;
-  top: var(--space-4);
+  align-self: start;
 }
 
 .stepNav {
@@ -614,10 +613,6 @@
   .split,
   .visualizer {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .side {
-    position: static;
   }
 }
 

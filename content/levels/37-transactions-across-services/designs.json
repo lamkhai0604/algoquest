@@ -3,13 +3,15 @@
     "id": "D37-trip-booking",
     "level": 37,
     "title": "Booking a Trip in One Click",
-    "prompt": "A travel site sells trips that combine a flight, a hotel and a rental car, each booked through a different partner's API, and then charges the customer. Design how a trip is booked so that a customer is never left with half a trip.",
+    "prompt": "A travel site sells trips that combine a flight, a hotel and a rental car, each booked through a different partner's API, and then charges the customer. Design how a trip is booked so that a customer is never charged for, or left holding, half a trip.",
     "facts": [
       "About 50 trip bookings per second at peak",
       "Measured failure rates: the car partner has no car for about 5% of requests, the hotel about 2%, the flight about 1%; the card charge fails for about 2%",
-      "Every partner accepts an idempotency key and offers a free cancellation within 24 hours of booking; the card provider can refund a charge",
-      "Requirement: the customer is never charged for an incomplete trip, never holds an incomplete trip, and learns the result within 30 seconds; the confirmation email cannot be taken back",
-      "Each partner call takes up to 3 seconds; the trip service saves its own data in its own database"
+      "Every partner accepts an idempotency key per action and offers a free cancellation within 24 hours of booking; the card provider can refund a charge",
+      "Each partner call and the charge return success or failure within 3 seconds; if a call times out, a status lookup with the same key returns the answer within 1 second; a message between steps takes up to 100 ms",
+      "Requirement: the customer is never charged for an incomplete trip and is shown \"confirmed\" only when all three bookings exist. While a trip is pending, some bookings may exist for a short time; after a failure, every completed booking is cancelled within the free 24-hour window",
+      "Requirement: the customer is shown \"confirmed\" or \"failed\" within 30 seconds; cancellations after a failure may finish later. The confirmation email cannot be taken back",
+      "The trip service saves its own data in its own database"
     ],
     "scope": [
       "Booking a trip",
@@ -17,33 +19,33 @@
     ],
     "criteria": {
       "requirements": [
-        "States that the customer must never be charged for or keep an incomplete trip, the 30-second result, and that the email cannot be undone"
+        "States that the customer is never charged for an incomplete trip, sees \"confirmed\" only with all three bookings, that partial bookings may exist only while pending and must be cancelled after a failure, the 30-second result, and that the email cannot be undone"
       ],
       "estimation": [
         "Compensations per second for the chosen step order, such as: with the car first, the 5% car failures (2.5 per second) need no compensation; with the flight first and the car last, each car failure needs 2 cancellations, about 5 per second",
-        "Or time: three partner calls and a charge at up to 3 seconds each is at most about 12 seconds, within 30"
+        "Or time to a result: four calls, each at most 3 s plus a 1 s status lookup plus a 100 ms message, is at most 4 × 4.1 = 16.4 s, within 30"
       ],
       "design": [
         "A saga: one local step per partner and for the charge, each with its compensation (cancel booking, refund), run by an orchestrator or by events"
       ],
       "data": [
         "Step order with a reason: the most likely failure (the car) first, the charge after all bookings, the email last",
-        "Idempotency keys (the trip id) on every call and compensation; a saved trip state with an outbox so a crash does not lose the next step"
+        "An idempotency key per action built from the trip id (such as trip7-car and trip7-car-cancel), reused on retries of that action; a saved trip state with an outbox so a crash does not lose the next step"
       ],
       "tradeoffs": [
-        "Names a trade-off or failure with its condition, such as: a partner call that times out may have booked, so the saga asks again with the same key before cancelling; a cancellation that fails is retried and then parked for a person; choreography is harder to follow than one orchestrator"
+        "Names a trade-off or failure with its condition, such as: a partner call that times out may have booked, so the saga looks up its status with the same key before cancelling; a cancellation that keeps failing is retried and then given to a person, who must finish it within the free 24-hour window, while the customer sees \"failed\" and is not charged; choreography is harder to follow than one orchestrator"
       ]
     },
     "fullMarkDesigns": [
-      "Design A, orchestrated saga: the trip service saves the trip as pending with an outbox row, then books car → hotel → flight → charges the card → sends the email, each call with the trip id as idempotency key. A car failure (5%, 2.5 per second) needs no compensation; a hotel failure cancels the car; a flight failure cancels the hotel and car; a charge failure cancels all three. Worst case about 4 × 3 = 12 seconds, within 30. Trade-off: the trip service holds the workflow logic, one more part to run.",
-      "Design B, choreography: the trip service publishes \"trip requested\"; the car service books and publishes \"car booked\" or \"car failed\"; the hotel service reacts to \"car booked\", and so on, each saving its state and outbox in one local transaction. Each service listens for a later failure and cancels its own booking. Same step order and failure counts (car first, no compensation for 2.5 per second); same 12-second worst case. Trade-off: no single place shows the whole flow, which makes it harder to follow and debug as steps grow."
+      "Design A, orchestrated saga: the trip service saves the trip as pending with an outbox row, then books car → hotel → flight → charges the card → sends the email, each action with its own key built from the trip id (trip7-car, trip7-car-cancel). A car failure (5%, 2.5 per second) needs no compensation; a hotel failure cancels the car; a flight failure cancels the hotel and car; a charge failure cancels all three. The customer sees \"failed\" as soon as a step fails, while cancellations continue. Worst case to a result: 4 × (3 + 1 + 0.1) = 16.4 s, within 30. Trade-off: the trip service holds the workflow logic, one more part to run.",
+      "Design B, choreography: the trip service publishes \"trip requested\"; the car service books and publishes \"car booked\" or \"car failed\"; the hotel service reacts to \"car booked\", and so on, each saving its state and outbox in one local transaction, with a key per action. Each service listens for a later failure and cancels its own booking; the trip service shows \"confirmed\" only after \"charged\", and \"failed\" after any failure event. Same step order and failure counts (car first, no compensation for 2.5 per second); same 16.4-second worst case to a result. Trade-off: no single place shows the whole flow, which makes it harder to follow and debug as steps grow."
     ],
     "reference": {
       "assumptions": [
         "Partners honor free cancellation within 24 hours",
         "Partner failures are independent of each other"
       ],
-      "design": "The trip service runs an orchestrated saga. It saves the trip as \"pending\" together with an outbox row, and its relay starts the first step.\nSteps, in order: book the car (most likely to fail, 5%), book the hotel, book the flight, charge the card, then send the confirmation email, which cannot be taken back and so comes last. Every call carries the trip id as an idempotency key.\nIf a step fails, the service runs compensations in reverse for the steps that succeeded: a charge failure cancels the flight, hotel and car; a car failure needs nothing. With the car first, the 2.5 car failures per second need no cancellations, instead of about 5 per second if the car were booked last.\nA call that times out is asked again with the same key before anything is cancelled. A cancellation that keeps failing goes to a dead-letter queue for a person.\nWorst case: four calls at up to 3 seconds each, about 12 seconds, within 30.",
+      "design": "The trip service runs an orchestrated saga. It saves the trip as \"pending\" together with an outbox row, and its relay starts the first step. While pending, some bookings may exist; the customer sees \"pending\", and is never charged until all three bookings exist.\nSteps, in order: book the car (most likely to fail, 5%), book the hotel, book the flight, charge the card, then send the confirmation email, which cannot be taken back and so comes last. Every action has its own idempotency key built from the trip id, such as trip7-car and trip7-car-cancel; a retry of an action reuses its key.\nIf a step fails, the customer sees \"failed\" and the service runs compensations in reverse for the steps that succeeded: a charge failure cancels the flight, hotel and car; a car failure needs nothing. With the car first, the 2.5 car failures per second need no cancellations, instead of about 5 per second if the car were booked last.\nA call that times out is followed by a status lookup with the same key before anything is cancelled. A cancellation that keeps failing goes to a dead-letter queue, and a person finishes it within the free 24-hour window.\nWorst case to a result: four calls at up to 3 s, each with a 1 s status lookup and a 100 ms message, 4 × 4.1 = 16.4 s, within 30.",
       "alternatives": [
         "Choreography with events: no central orchestrator, but harder to follow",
         "Rejected: charging the card first, because a later booking failure would need a refund for many trips"
@@ -59,8 +61,9 @@
       "About 200 delivery confirmations per second at peak",
       "The Order service saves the confirmation in its own database; Ledger, Points and Email are separate services with their own databases",
       "Requirement: once a confirmation is saved, the seller is credited and the points are added exactly once in effect, and the receipt is sent; nothing may be lost if a server crashes at any moment",
-      "Requirement: other services learn about a confirmation within 1 second",
-      "A broker with at-least-once delivery is available (SD 7); the email provider accepts an idempotency key"
+      "Requirement: while the relay and broker are running, other services learn about a confirmation within 1 second; after a relay crash, delivery may wait until the relay restarts, which takes up to 30 seconds",
+      "A broker with at-least-once delivery is available (SD 7); it handles at least 5,000 messages per second and delivers a published message to consumers within 100 ms; the email provider accepts an idempotency key",
+      "A polling relay reads and publishes a batch of up to 500 rows in at most 50 ms; a change data capture tool publishes a committed row within 300 ms"
     ],
     "scope": [
       "Spreading the confirmation to other services",
@@ -68,17 +71,17 @@
     ],
     "criteria": {
       "requirements": [
-        "States that nothing may be lost after the confirmation is saved, that credits and points must take effect once, and the 1-second delay"
+        "States that nothing may be lost after the confirmation is saved, that credits and points must take effect once, and the 1-second delay while the relay runs (with a longer delay after a relay crash)"
       ],
       "estimation": [
-        "Outbox load and delay, such as: 200 rows per second; a relay checking every 200 ms publishes about 40 rows per check, each within about 200 ms, within 1 second",
-        "Or explains that at-least-once delivery means some of the 200 per second can arrive twice after a relay crash"
+        "Delay, such as: polling every 200 ms, a row waits up to 200 ms, is published within 50 ms and delivered within 100 ms: 350 ms, within 1 second; with change data capture, 300 + 100 = 400 ms",
+        "Load: about 40 rows per 200 ms check, under the 500-row batch; 200 messages per second, under the broker's 5,000"
       ],
       "design": [
         "The Order service saves the confirmation and an outbox row in one local transaction; a relay publishes an event that Ledger, Points and Email each receive"
       ],
       "data": [
-        "Each consumer is idempotent: Ledger and Points record the order id with their change in one local transaction (a unique constraint), and Email passes the order id as the provider's idempotency key",
+        "Each consumer is idempotent: Ledger and Points record the order id with their change in one local transaction (a unique constraint), and Email passes a key for the receipt, such as order123-receipt, to the provider",
         "The relay reads the outbox by polling or by change data capture, and marks rows as sent after publishing"
       ],
       "tradeoffs": [
@@ -86,17 +89,17 @@
       ]
     },
     "fullMarkDesigns": [
-      "Design A, outbox with a polling relay: the Order service writes the confirmation and an outbox row in one transaction; a relay polls every 200 ms, publishes about 40 rows per check to an \"order delivered\" topic and marks them sent. Ledger and Points each insert (order id, change) under a unique constraint in the same transaction as the credit, so a repeat fails harmlessly; Email uses the order id as the provider's key. Delay about 200 ms, within 1 second. Trade-off: polling every 200 ms adds a small steady load on the database.",
-      "Design B, outbox read by change data capture: the same outbox table, but a CDC tool reads new rows from the database's log and publishes them as they commit, usually within well under a second, without polling queries. Consumers are idempotent in the same way. Estimate: 200 events per second through one stream, well within a broker's capacity. Trade-off: a CDC tool is one more system to run and watch, in exchange for less database load and shorter delay."
+      "Design A, outbox with a polling relay: the Order service writes the confirmation and an outbox row in one transaction; a relay polls every 200 ms, publishes about 40 rows per check (under the 500-row batch) to an \"order delivered\" topic and marks them sent. Ledger and Points each insert (order id, change) under a unique constraint in the same transaction as the credit, so a repeat fails harmlessly; Email uses order123-receipt as the provider's key. Delay at most 200 + 50 + 100 = 350 ms, within 1 second; after a relay crash, rows wait in the outbox up to 30 s and none is lost. Trade-off: polling every 200 ms adds a small steady load on the database.",
+      "Design B, outbox read by change data capture: the same outbox table, but a CDC tool reads new rows from the database's log and publishes each within 300 ms, without polling queries. Consumers are idempotent in the same way. Delay at most 300 + 100 = 400 ms, within 1 second; 200 messages per second is under the broker's 5,000. Trade-off: a CDC tool is one more system to run and watch, in exchange for less database load."
     ],
     "reference": {
       "assumptions": [
         "The broker keeps messages until consumers acknowledge them",
         "Consumers acknowledge only after their local transaction commits"
       ],
-      "design": "The Order service saves the confirmation and an outbox row in one local transaction, so either both exist or neither does.\nA relay polls the outbox every 200 ms, publishes the new rows (about 40 per check at 200 per second) to an \"order delivered\" topic, and then marks them sent. Each event reaches consumers within about 200 ms, within 1 second.\nIf the relay crashes after publishing but before marking, it publishes those rows again. Ledger and Points therefore record the order id with their change in the same transaction, under a unique constraint: a second delivery fails the insert and changes nothing. Email passes the order id as the provider's idempotency key.\nThe result is at-least-once delivery with an exactly-once effect: every confirmation credits the seller and adds points once, and nothing is lost if a server crashes.",
+      "design": "The Order service saves the confirmation and an outbox row in one local transaction, so either both exist or neither does.\nA relay polls the outbox every 200 ms, publishes the new rows (about 40 per check at 200 per second, under its 500-row batch) to an \"order delivered\" topic within 50 ms, and then marks them sent. The broker delivers within 100 ms, so each event reaches consumers within 200 + 50 + 100 = 350 ms, within 1 second.\nIf the relay crashes, rows wait in the outbox until it restarts, up to 30 seconds, and none is lost. If it crashes after publishing but before marking, it publishes those rows again. Ledger and Points therefore record the order id with their change in the same transaction, under a unique constraint: a second delivery fails the insert and changes nothing. Email passes order123-receipt as the provider's idempotency key.\nThe result is at-least-once delivery with an exactly-once effect: every confirmation credits the seller and adds points once, and nothing is lost if a server crashes.",
       "alternatives": [
-        "Change data capture instead of polling: lower delay and load, one more tool",
+        "Change data capture instead of polling: about 400 ms delay and less database load, one more tool",
         "Rejected: saving the confirmation and then publishing in a separate step, because a crash in between loses the credit"
       ]
     }

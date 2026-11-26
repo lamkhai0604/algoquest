@@ -1,0 +1,110 @@
+[
+  {
+    "id": "D38-flash-sale",
+    "level": 38,
+    "title": "A Flash Sale at Six O'Clock",
+    "prompt": "A shop has announced a flash sale for 18:00. Design how its servers carry the sale's traffic, and what happens if even more arrives than planned.",
+    "facts": [
+      "One server's measured limit is about 300 requests per second; with recommendations turned off it is about 450, because recommendations are a third of each request's work",
+      "The normal peak is 900 requests per second on 6 servers; normally the team keeps each server at or below 65% of its limit, and during a sale it accepts up to 90%",
+      "Last year's sale peaked at 2,400 requests per second for 30 minutes; the team plans for the same peak",
+      "A new server takes 4 minutes to start and pass its health checks; the autoscaler adds servers after average CPU stays above 65% for 1 minute",
+      "The budget allows at most 10 servers at any time",
+      "The business allows recommendations to be turned off for up to 1 hour, but would rather keep them",
+      "Requirement: up to 2,400 requests per second, no request is refused; at any traffic, no server runs above 90% of its current limit. Above 2,400, the shop admits as much as fits within that 90% ceiling and refuses the rest at once with \"try again in a minute\", instead of slowing everyone down. Retries count as new requests"
+    ],
+    "scope": [
+      "Server capacity during the sale",
+      "The checkout flow and the database are out of scope; assume the database keeps up"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the 2,400 per second plan with nothing refused, the 90% ceiling per server at any traffic, the 10-server budget, and that traffic beyond the ceiling is refused quickly"
+      ],
+      "estimation": [
+        "Capacity for the chosen design, such as: 10 servers × 300 = 3,000, and 2,400 ÷ 10 = 240 per server, 80% of the limit; or 6 servers with recommendations off, 2,400 ÷ 6 = 400, 89% of 450",
+        "The gap if the team waited for the autoscaler: 1 + 4 = 5 minutes on 6 servers (1,800 per second), short by 600 per second, about 180,000 requests in 5 minutes"
+      ],
+      "design": [
+        "Capacity in place before 18:00, by scaling ahead of time or by turning off recommendations, plus refusing extra requests early at the load balancer"
+      ],
+      "data": [
+        "The admission threshold: servers × limit per server × 0.9, recomputed when servers are added or recommendations are turned off, and which requests are refused first (browsing before checkout)",
+        "Clients retry a refused request at most a few times, with backoff and jitter; those retries count against the same threshold"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: scaling ahead pays for 4 extra servers for the sale; turning off recommendations costs nothing but runs at 89%, close to the ceiling; waiting for the autoscaler leaves a 5-minute gap"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, scale ahead: schedule the server count to rise to the budget of 10 at 17:50, ten minutes before the sale and more than the 4 minutes a server needs. 10 × 300 = 3,000 per second; at 2,400 each server takes 240, 80% of its limit, below 90%, with recommendations on. The load balancer admits up to 10 × 300 × 0.9 = 2,700 per second, retries included, and refuses the rest with \"try again in a minute\", browsing before checkout; phones retry at most twice with backoff and jitter. Trade-off: the shop pays for 4 extra servers for about 40 minutes even if fewer users come.",
+      "Design B, degrade ahead: keep 6 servers and turn off recommendations from 17:55 to 18:35, within the 1-hour allowance. Each server's limit becomes 450; at 2,400 each takes 400, 89% of 450, below 90%. The load balancer admits up to 6 × 450 × 0.9 = 2,430 per second, retries included, and refuses the rest; if traffic stays high the autoscaler adds up to 4 more servers, and the threshold rises by 405 for each one that passes its health checks, up to 10 × 405 = 4,050. Trade-off: no extra cost, but no recommendations during the sale and only 1% of margin below the ceiling."
+    ],
+    "reference": {
+      "assumptions": [
+        "The sale time is known in advance",
+        "Last year's peak is a good guide for this year"
+      ],
+      "design": "The sale time is known, so the shop does not wait for the autoscaler, which would leave a 1 + 4 = 5-minute gap on 6 servers: 1,800 per second against 2,400.\nAt 17:50 a scheduled action raises the server count to the budget of 10. At 2,400 per second each server takes 240, 80% of its 300 limit, below the 90% ceiling, and recommendations stay on.\nThe load balancer admits up to 10 × 300 × 0.9 = 2,700 requests per second, retries included, and refuses the rest at once with \"try again in a minute\", browsing before checkout. Phones retry a refused request at most twice, with backoff and jitter.\nIf traffic is much higher than planned, recommendations are turned off as a second step. Each server's limit becomes 450, so the admission threshold rises to 10 × 450 × 0.9 = 4,050 per second; the raw 4,500 is not admitted, because it would break the 90% ceiling.",
+      "alternatives": [
+        "Turning off recommendations during the sale on 6 servers: 400 per server, 89% of 450; no extra cost, but no recommendations",
+        "Rejected: waiting for the autoscaler, because new servers arrive about 5 minutes after the jump, while 600 requests per second have nowhere to go"
+      ]
+    }
+  },
+  {
+    "id": "D38-fraud-check",
+    "level": 38,
+    "title": "Checkout and a Slow Fraud Check",
+    "prompt": "Every checkout asks a fraud-check service whether to accept the order. A few times a month that service becomes very slow. Design checkout so that it keeps working when that happens.",
+    "facts": [
+      "About 200 checkouts per second at peak, arriving steadily; the shop's servers have 400 workers in total, shared by checkout and every other page. Other pages need up to 200 workers at peak, so checkout may hold at most 200",
+      "Measured local work per checkout: saving the order (with an outbox row if used) takes up to 20 ms, and building the answer takes up to 30 ms",
+      "The servers can cap the total number of calls they send to the fraud service per second, counting every first try, retry and background check; calls above the cap fail at once without a worker waiting",
+      "The fraud-check service normally answers within 150 ms; a few times a month it slows down to up to 20 seconds per answer, for up to 10 minutes. When healthy it can check up to 240 orders per second",
+      "Requirement: the customer gets an answer within 1 second, either \"confirmed\" or \"received, we will email you\" (pending)",
+      "Requirement: a slow fraud check must not stop other pages (checkout holds at most 200 workers), and the fraud service must never receive more than 1.2 times its normal 200 requests per second, that is 240 calls in total",
+      "Orders under $50 are 80% of orders; during a fraud-service problem the business accepts confirming them without a check. Orders of $50 or more may stay pending for up to 1 hour and must be checked before they ship",
+      "A queue with at-least-once delivery is available (SD 7); checking the same order twice gives the same answer"
+    ],
+    "scope": [
+      "Checkout and the fraud check",
+      "Payment and shipping are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the 1-second answer (confirmed or pending), that other pages must keep working, the 1.2 times limit on the fraud service, and which orders may skip the check"
+      ],
+      "estimation": [
+        "Checkout time and workers with a timeout, such as: worst case 20 + 300 + 200 + 300 + 30 = 850 ms, within 1 second, holding 200 × 0.85 = 170 workers, within the 200 allowed; without a timeout, 200 × 20 = 4,000 workers",
+        "Or the backlog of pending orders, such as: 200 per second × 600 s = 120,000 orders in a 10-minute slowdown; the spare 40 per second (240 − 200) clears the 24,000 orders of $50 or more in 600 s, within 1 hour"
+      ],
+      "design": [
+        "A timeout on the fraud call and a fallback when it fails, or a queue between checkout and the fraud check"
+      ],
+      "data": [
+        "One total cap of 240 calls per second to the fraud service, split between first tries, retries and background checks, or the queue's consumers capped at 240 calls per second",
+        "What is saved for a pending order so the check can run later"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: confirming small orders without a check accepts some fraud during a slowdown; answering \"pending\" for every order is safer but less pleasant for customers; a retry helps with a lost answer but adds load"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, call with a timeout and fall back: the servers cap all fraud calls at 240 per second: up to 200 first tries, up to 20 retries (10% of first tries) and up to 20 background checks; a call over the cap fails at once. Checkout calls with a 300 ms timeout and retries once after a random 0–200 ms wait. Worst case 20 + 300 + 200 + 300 + 30 = 850 ms, within 1 second, holding 200 × 0.85 = 170 workers, within the 200 allowed. If both tries fail, orders under $50 are confirmed and larger orders are saved as pending on a queue: 40 per second × 600 s = 24,000 in a 10-minute slowdown. Afterwards a worker checks them with the 20 background calls per second, putting a failed check back on the queue, so about 24,000 ÷ 20 = 1,200 s, 20 minutes, within 1 hour. Trade-off: about 96,000 small orders may be confirmed unchecked during a slowdown.",
+      "Design B, always check from a queue: checkout saves every order as pending with a message (outbox, SD 10) and answers \"received, we will email you\" in 20 + 30 = 50 ms, holding 200 × 0.05 = 10 workers and none on the fraud service. Consumers call the fraud service with a 300 ms timeout under the cap of 240 calls per second, retries included, 1.2 times the normal load; a failed check goes back on the queue with backoff. In a 10-minute slowdown 120,000 orders wait; afterwards the spare 40 per second clears the 24,000 orders of $50 or more first, in 600 s, within 1 hour. Trade-off: every customer waits for an email instead of an instant \"confirmed\", even when the fraud service is healthy."
+    ],
+    "reference": {
+      "assumptions": [
+        "A check can safely be repeated",
+        "Small orders are rarely fraudulent"
+      ],
+      "design": "The servers cap every call to the fraud service at 240 per second, 1.2 times the normal 200: up to 200 first tries, up to 20 retries and up to 20 background checks. A call over the cap fails at once.\nCheckout calls with a 300 ms timeout, two times the normal 150 ms answer, and retries once after a random 0–200 ms wait. Worst case: 20 (save) + 300 + 200 + 300 + 30 (answer) = 850 ms, within 1 second. Checkout holds at most 200 × 0.85 = 170 workers, within its 200, so other pages keep their 200; without a timeout a slowdown would need 200 × 20 = 4,000.\nWhen both tries fail, orders under $50 are confirmed without a check, as the business allows. Orders of $50 or more are saved as pending on a queue: in a 10-minute slowdown, 40 × 600 = 24,000 orders. Afterwards they are checked with the 20 background calls per second; a failed check goes back on the queue. That takes about 24,000 ÷ 20 = 1,200 s, 20 minutes, within 1 hour.",
+      "alternatives": [
+        "Always checking from a queue: no worker waits, but every customer gets \"pending\" instead of \"confirmed\"",
+        "A circuit breaker that stops calling the fraud service for 30 seconds after many failures, so slow calls are not even tried",
+        "Rejected: calling without a timeout, because a 20-second slowdown would need 4,000 workers and stop every page"
+      ]
+    }
+  }
+]

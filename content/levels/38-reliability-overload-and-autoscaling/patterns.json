@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P38-where-to-copy",
+    "level": 38,
+    "title": "Where to Add a Copy",
+    "statement": "Every request passes through a load balancer (up 99.99% of the time), one server (up 99.5%) and a database with its own standby (up 99.95%). All three are needed. The goal is 99.9% availability in a month. Exercise assumptions: failures of different parts and of different copies are independent; the load balancer's health checks move traffic off a failed server within seconds; each extra server or extra database copy costs the same, and the team prefers the cheapest change that meets the goal. Which change fits?",
+    "examples": [
+      "Today: 0.9999 × 0.995 × 0.9995 ≈ 0.9944, about 99.44%, about 4 hours of downtime in a 30-day month."
+    ],
+    "constraints": [
+      "Reach at least 99.9% for the whole path.",
+      "Use the supplied availability numbers and independence assumption.",
+      "Prefer the fewest extra copies."
+    ],
+    "approaches": [
+      {
+        "id": "second-server",
+        "name": "Add a second server behind the load balancer",
+        "hint": "Copy the part that limits the whole",
+        "label": "best",
+        "time": "Server tier 1 − 0.005 × 0.005 = 99.9975%; whole path about 99.94%",
+        "space": "One extra server",
+        "why": "The single server was the weakest part. Two copies are down together only 0.005 × 0.005 = 0.000025 of the time. The whole path becomes 0.9999 × 0.999975 × 0.9995 ≈ 0.99937, above 99.9%, with one extra copy."
+      },
+      {
+        "id": "three-servers",
+        "name": "Add two more servers, three in total",
+        "hint": "More copies of the same part",
+        "label": "valid",
+        "time": "Server tier about 99.99999%; whole path about 99.94%",
+        "space": "Two extra servers",
+        "why": "It meets the goal, but the whole path barely improves: the load balancer and database now set the limit at about 99.94%. It costs twice as much as one extra server for almost no gain."
+      },
+      {
+        "id": "database-copy",
+        "name": "Add another database copy",
+        "hint": "Copy a part that is already strong",
+        "label": "unsuitable",
+        "time": "Whole path about 99.49%",
+        "space": "One extra database copy",
+        "why": "The database is already at 99.95%. Even a perfect database leaves 0.9999 × 0.995 ≈ 99.49%, because the single 99.5% server still fails about 3.6 hours a month. The goal is missed."
+      }
+    ]
+  },
+  {
+    "id": "P38-search-timeout",
+    "level": 38,
+    "title": "A Timeout for the Search Call",
+    "statement": "A product page calls a search service. Measured: 999 of every 1,000 search answers arrive within 120 ms. A few times a week the search service hangs, and calls then wait up to 10 seconds. The page receives 100 requests per second, arriving steadily, and its servers have 300 workers in total; other pages need up to 200 of them at peak, so search may hold at most 100. Exercise assumptions: the page may spend at most 450 ms on search, including any retry; a search is safe to repeat; when search fails, the page shows products without search results. The team prefers a policy that can recover from a single lost answer when one retry fits. Which policy fits?",
+    "examples": [
+      "Busy workers ≈ requests per second × seconds each request holds a worker."
+    ],
+    "constraints": [
+      "Spend at most 450 ms on search per page, including retries.",
+      "Hold at most 100 workers for search during a hang, leaving 200 for other pages.",
+      "Prefer recovering from one lost answer."
+    ],
+    "approaches": [
+      {
+        "id": "timeout-150-one-retry",
+        "name": "Time out after 150 ms and retry once after a random 0–100 ms wait",
+        "hint": "Just above the normal answer, with room for one retry",
+        "label": "best",
+        "time": "Worst case 150 + 100 + 150 = 400 ms",
+        "space": "At most 100 × 0.4 = 40 busy workers",
+        "why": "150 ms is a little above the 120 ms that 999 of 1,000 answers meet, so normal calls rarely time out. One retry with jitter recovers a lost answer and still fits 450 ms, and a hang holds at most 40 workers, within the 100 allowed, leaving 260 for other pages."
+      },
+      {
+        "id": "timeout-400-no-retry",
+        "name": "Time out after 400 ms and do not retry",
+        "hint": "One long wait",
+        "label": "valid",
+        "time": "Worst case 400 ms",
+        "space": "At most 100 × 0.4 = 40 busy workers",
+        "why": "It fits 450 ms and holds at most 40 workers, within the 100 allowed, but a single lost answer always means a page without search results, against the stated preference."
+      },
+      {
+        "id": "no-timeout",
+        "name": "Wait as long as the search service takes",
+        "hint": "Trust the dependency",
+        "label": "unsuitable",
+        "time": "Up to 10 seconds during a hang",
+        "space": "100 × 10 = 1,000 workers needed",
+        "why": "During a hang, search alone would need 1,000 workers, far more than its 100 and more than the 300 in total, so every page would stop. It also breaks the 450 ms limit."
+      }
+    ]
+  },
+  {
+    "id": "P38-noisy-client",
+    "level": 38,
+    "title": "One Partner Sends Too Much",
+    "statement": "An API's servers can finish about 1,800 requests per second. Normally other clients send 850 per second and a partner sends about 50. A bug in the partner's app starts a loop that sends 1,500 requests per second, so 2,350 arrive. Exercise assumptions: each client sends a key that identifies it; checking a client's count costs almost nothing; other clients must keep being served normally; extra servers take about 5 minutes to arrive; the loop and the partner's real calls use the same key; the team would rather keep some partner traffic working than block the partner completely. Which response fits?",
+    "examples": [
+      "A refused request gets \"too many requests\" at once, without doing the work."
+    ],
+    "constraints": [
+      "Other clients are not refused or slowed.",
+      "The servers stay below their 1,800 per second limit.",
+      "Prefer keeping some partner traffic working."
+    ],
+    "approaches": [
+      {
+        "id": "per-client-limit",
+        "name": "Limit each client, such as the partner to 200 requests per second, and refuse the rest",
+        "hint": "Count requests per client key",
+        "label": "best",
+        "time": "About 850 + 200 = 1,050 requests per second reach the servers",
+        "space": "A counter per client key",
+        "why": "The partner is cut to 200 requests per second in total. Its real calls share that allowance with the loop, so some of them are refused, but some still get through, unlike a full block. The servers carry about 1,050 of 1,800, and other clients see no change. How to count over time is the topic of SD 17; the idea is a limit per client."
+      },
+      {
+        "id": "block-partner",
+        "name": "Block the partner's key entirely until the bug is fixed",
+        "hint": "Stop the source",
+        "label": "valid",
+        "time": "About 850 requests per second reach the servers",
+        "space": "One blocked key",
+        "why": "It protects other clients at once, but every partner request is refused, including its real calls, against the stated preference."
+      },
+      {
+        "id": "random-shedding",
+        "name": "Refuse about a quarter of all requests at random",
+        "hint": "Shed across everyone",
+        "label": "unsuitable",
+        "time": "About 1,760 requests per second reach the servers",
+        "space": "No per-client state",
+        "why": "It keeps the servers below their limit, but about 210 per second of other clients' requests are refused, breaking the rule that other clients are served normally. One client's bug becomes everyone's outage."
+      }
+    ]
+  }
+]

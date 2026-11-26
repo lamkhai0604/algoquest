@@ -1,0 +1,11 @@
+{
+  "question": "A restaurant kitchen can cook 60 meals an hour, and tonight 90 guests an hour are arriving. An extra cook can come, but needs 45 minutes to get there. What keeps the evening working best?",
+  "options": [
+    "Offer a shorter menu that cooks faster, tell late arrivals the honest wait, and call the extra cook now",
+    "Seat everyone and let the wait for food grow",
+    "Have the waiters ask the kitchen every minute whether the food is ready",
+    "Wait until the line is long before calling the extra cook"
+  ],
+  "answer": 0,
+  "explanation": "More guests arrive than the kitchen can feed, so the wait grows every minute. A shorter menu lowers the work per guest (graceful degradation), an honest wait or \"come back later\" limits who is seated (load shedding), and calling the cook early covers the 45-minute delay (scaling before it is too late). Asking the kitchen again and again only adds work, like retries."
+}

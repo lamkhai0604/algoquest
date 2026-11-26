@@ -1,0 +1,986 @@
+[
+  {
+    "title": "The average looks fine",
+    "body": "Customers say checkout is sometimes really slow, but the dashboard shows an **average** of 194 ms and CPU at 60%. An average adds every request together, so a few very slow requests barely move it when most are fast. A **metric** like this is cheap and good for trends, but it can hide exactly the users who are unhappy.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5,
+            "note": "average 194 ms"
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "average checkout",
+          "value": "194 ms"
+        },
+        {
+          "name": "CPU",
+          "value": "60%"
+        },
+        {
+          "name": "customers",
+          "value": "\"sometimes really slow\""
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sort the times",
+    "body": "Take 100 checkouts and sort them by time: 90 took 100 ms, 8 took 300 ms and 2 took 4,000 ms. The middle one, the 50th, took 100 ms: that is **p50**. The 95th took 300 ms (**p95**), and the 99th took **4,000 ms (p99)**. The average, 194 ms, matches no real request. Percentiles show both the usual experience and the slow tail.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5,
+            "note": "100 checkouts"
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "90 requests",
+          "value": "100 ms"
+        },
+        {
+          "name": "8 requests",
+          "value": "300 ms"
+        },
+        {
+          "name": "2 requests",
+          "value": "4,000 ms"
+        },
+        {
+          "name": "average",
+          "value": "194 ms"
+        },
+        {
+          "name": "p99",
+          "value": "4,000 ms"
+        }
+      ],
+      "predict": {
+        "question": "Of 100 checkouts, 90 took 100 ms, 8 took 300 ms and 2 took 4,000 ms. Sorted from fastest to slowest, what is p99, the time of the 99th request?",
+        "options": [
+          "100 ms",
+          "194 ms",
+          "300 ms",
+          "4,000 ms"
+        ],
+        "answer": 3,
+        "explanation": "Positions 1 to 90 take 100 ms, 91 to 98 take 300 ms, and 99 and 100 take 4,000 ms. The 99th request is one of the two slow ones. 194 ms is the average, which no request actually took.",
+        "hides": [
+          "p99"
+        ]
+      }
+    }
+  },
+  {
+    "title": "One page, many calls",
+    "body": "Checkout calls several services, and the page is slow if **any** of them is slow. If a page waits on 10 calls and each is slow 1% of the time, the page is fast only when all 10 are: 0.99¹⁰ ≈ 0.90. So about **10%** of pages are slow, ten times the 1% of each service. That is why **tail latency** matters: the p99 of each part becomes a common experience for the whole.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2,
+            "note": "waits on 10 calls"
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              5,
+              6
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "calls per page",
+          "value": "10"
+        },
+        {
+          "name": "each call slow",
+          "value": "1% of the time"
+        },
+        {
+          "name": "pages slow",
+          "value": "about 10%"
+        }
+      ],
+      "predict": {
+        "question": "A page waits on 10 calls. Each call is slow 1% of the time, independently. About what share of pages is slow?",
+        "options": [
+          "About 0.1%",
+          "About 1%",
+          "About 10%",
+          "About 50%"
+        ],
+        "answer": 2,
+        "explanation": "A page is fast only if all 10 calls are fast: 0.99 multiplied 10 times is about 0.904. So about 1 − 0.904 ≈ 9.6% of pages are slow, roughly ten times the 1% of a single call.",
+        "hides": [
+          "pages slow"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Three kinds of signal",
+    "body": "**Metrics** answer \"is something wrong, and since when?\": checkout's p99 jumped at 14:00. **Traces** answer \"where did this request spend its time?\". **Logs** answer \"what exactly happened in this step?\", such as the error message. Each service sends all three to a **monitoring** system. Metrics are small; traces and logs grow with traffic, so they are kept selectively.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Monitoring",
+            "x": 10,
+            "y": 4,
+            "note": "metrics/traces/logs"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              4,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "metrics",
+          "value": "is it wrong, since when?"
+        },
+        {
+          "name": "traces",
+          "value": "where did the time go?"
+        },
+        {
+          "name": "logs",
+          "value": "what happened here?"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Follow one request",
+    "body": "The load balancer gives each request a **request ID**, and every service passes it on and writes it in its logs. The **trace** for one slow checkout shows its **spans**: Checkout 20 ms, Inventory 15 ms, Payment **3,850 ms**, of which 3,800 ms is waiting for the card provider. The logs with the same request ID show why: a timeout, then a retry. The trace turned \"checkout is slow\" into \"Payment waits on the card provider\".",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2,
+            "note": "span: 20 ms"
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6,
+            "note": "span: 15 ms"
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2,
+            "note": "span: 3,850 ms"
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0,
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "request ID",
+          "value": "req-8f31"
+        },
+        {
+          "name": "Checkout",
+          "value": "20 ms"
+        },
+        {
+          "name": "Inventory",
+          "value": "15 ms"
+        },
+        {
+          "name": "Payment",
+          "value": "3,850 ms (3,800 waiting)"
+        },
+        {
+          "name": "logs for req-8f31",
+          "value": "timeout, then retry"
+        }
+      ]
+    }
+  },
+  {
+    "title": "How good is good enough?",
+    "body": "The team writes down what users feel as an **SLI**: the share of checkouts that succeed within 2 seconds, measured at the load balancer. The **SLO** is the target: 99.9% over 30 days. That leaves an **error budget** of 0.1%: at about 104 million checkouts a month, about 104,000 may be bad. While budget is left, the team ships changes; if it runs out, reliability work comes first.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5,
+            "note": "SLI measured here"
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Monitoring",
+            "x": 10,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          7
+        ]
+      },
+      "vars": [
+        {
+          "name": "SLI",
+          "value": "checkouts good within 2 s"
+        },
+        {
+          "name": "SLO",
+          "value": "99.9% over 30 days"
+        },
+        {
+          "name": "checkouts a month",
+          "value": "about 104 million"
+        },
+        {
+          "name": "error budget",
+          "value": "about 104,000 bad"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Spending the budget",
+    "body": "A bad release makes 5% of checkouts fail. The SLO allows 0.1%, so the budget is being spent at a **burn rate** of 5% ÷ 0.1% = 50, fifty times faster than even. A 30-day budget then lasts 30 ÷ 50 = 0.6 days, about **14 hours**. The same 5% for ten minutes would use only a small part of it; what matters is how fast the budget goes.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Monitoring",
+            "x": 10,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "bad checkouts",
+          "value": "5%"
+        },
+        {
+          "name": "SLO allows",
+          "value": "0.1%"
+        },
+        {
+          "name": "burn rate",
+          "value": "50"
+        },
+        {
+          "name": "budget lasts",
+          "value": "about 14 hours"
+        }
+      ],
+      "predict": {
+        "question": "The SLO allows 0.1% of checkouts to be bad over 30 days. Suddenly 5% are bad, and it continues. About how long until the month's whole budget is used?",
+        "options": [
+          "About 30 days",
+          "About 3 days",
+          "About 14 hours",
+          "About 36 minutes"
+        ],
+        "answer": 2,
+        "explanation": "Bad checkouts arrive 5% ÷ 0.1% = 50 times faster than the SLO allows on average. A budget meant to last 30 days lasts 30 ÷ 50 = 0.6 days, about 14.4 hours.",
+        "hides": [
+          "burn rate",
+          "budget lasts"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Alert on what users feel",
+    "body": "Wake someone (a **page**) when users are hurt and the budget would be gone soon: here, when more than 3% of an hour's checkouts are bad, a burn rate of 30 that empties the budget within a day. Open a **ticket** for working hours when the budget would run out before the month ends. Do not page on causes such as CPU at 90%: SD 11 planned for that, and it may hurt nobody. Dashboards show the causes that explain a symptom.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Monitoring",
+            "x": 10,
+            "y": 4,
+            "note": "page if >3% bad/hr"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          1,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              4,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "page",
+          "value": "budget gone within a day"
+        },
+        {
+          "name": "ticket",
+          "value": "budget gone before month end"
+        },
+        {
+          "name": "no page",
+          "value": "CPU, disk, one error line"
+        }
+      ]
+    }
+  }
+]

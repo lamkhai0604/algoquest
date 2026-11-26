@@ -985,6 +985,141 @@
           "term": "CRDT",
           "vi": "kiểu dữ liệu tự gộp được không mất thay đổi",
           "firstLevel": 36
+        },
+        {
+          "term": "nines",
+          "vi": "số chữ số 9 của độ sẵn sàng",
+          "firstLevel": 38
+        },
+        {
+          "term": "redundancy",
+          "vi": "dự phòng bằng nhiều bản sao",
+          "firstLevel": 38
+        },
+        {
+          "term": "retry storm",
+          "vi": "bão thử lại",
+          "firstLevel": 38
+        },
+        {
+          "term": "retry budget",
+          "vi": "ngân sách thử lại",
+          "firstLevel": 38
+        },
+        {
+          "term": "overload",
+          "vi": "quá tải",
+          "firstLevel": 38
+        },
+        {
+          "term": "load shedding",
+          "vi": "chủ động từ chối bớt tải",
+          "firstLevel": 38
+        },
+        {
+          "term": "graceful degradation",
+          "vi": "giảm chức năng có kiểm soát",
+          "firstLevel": 38
+        },
+        {
+          "term": "autoscaling",
+          "vi": "tự động thêm bớt server",
+          "firstLevel": 38
+        },
+        {
+          "term": "scale-out delay",
+          "vi": "độ trễ khi thêm server",
+          "firstLevel": 38
+        },
+        {
+          "term": "rate limiting",
+          "vi": "giới hạn số request",
+          "firstLevel": 38
+        },
+        {
+          "term": "fail fast",
+          "vi": "báo lỗi ngay",
+          "firstLevel": 38
+        },
+        {
+          "term": "circuit breaker",
+          "vi": "cầu dao ngắt cuộc gọi",
+          "firstLevel": 38
+        },
+        {
+          "term": "half-open",
+          "vi": "trạng thái nửa mở",
+          "firstLevel": 38
+        },
+        {
+          "term": "log",
+          "vi": "dòng ghi sự kiện",
+          "firstLevel": 39
+        },
+        {
+          "term": "metric",
+          "vi": "số đo theo thời gian",
+          "firstLevel": 39
+        },
+        {
+          "term": "trace",
+          "vi": "dấu vết một request qua các service",
+          "firstLevel": 39
+        },
+        {
+          "term": "span",
+          "vi": "một bước trong trace",
+          "firstLevel": 39
+        },
+        {
+          "term": "request ID",
+          "vi": "mã định danh request",
+          "firstLevel": 39
+        },
+        {
+          "term": "percentile (p50, p95, p99)",
+          "vi": "phân vị",
+          "firstLevel": 39
+        },
+        {
+          "term": "tail latency",
+          "vi": "độ trễ của nhóm request chậm nhất",
+          "firstLevel": 39
+        },
+        {
+          "term": "SLI (service level indicator)",
+          "vi": "chỉ số mức dịch vụ",
+          "firstLevel": 39
+        },
+        {
+          "term": "SLO (service level objective)",
+          "vi": "mục tiêu mức dịch vụ",
+          "firstLevel": 39
+        },
+        {
+          "term": "SLA (service level agreement)",
+          "vi": "cam kết mức dịch vụ trong hợp đồng",
+          "firstLevel": 39
+        },
+        {
+          "term": "error budget",
+          "vi": "ngân sách lỗi",
+          "firstLevel": 39
+        },
+        {
+          "term": "burn rate",
+          "vi": "tốc độ tiêu ngân sách lỗi",
+          "firstLevel": 39
+        },
+        {
+          "term": "page (alert)",
+          "vi": "cảnh báo gọi người trực",
+          "firstLevel": 39
+        },
+        {
+          "term": "golden signals",
+          "vi": "bốn tín hiệu vàng",
+          "firstLevel": 39
         }
       ]
     },

@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Giả định bài tập: region US và châu Âu đều tiếp tục chạy, trả lời người dùng cục bộ, nhưng message giữa hai region không đi qua được. Điều gì đã xảy ra?",
+    "options": [
+      "Server châu Âu đã crash và ngừng xử lý request.",
+      "Dữ liệu lưu ở cả hai region đã bị xóa.",
+      "Network partition ngăn cách hai nhóm server đang chạy.",
+      "Replication lag thông thường trên đường truyền còn hoạt động: hai region vẫn trao đổi được message."
+    ],
+    "answer": 2,
+    "explanation": "Network partition nghĩa là các nhóm không đến được nhau dù cả hai còn sống. Crash làm server ngừng hoạt động; riêng partition không có nghĩa dữ liệu đã bị xóa. Vì cả hai vẫn nhận request, chúng có thể nhận ghi xung đột trừ khi thiết kế giới hạn nơi quyết định."
+  },
+  {
+    "question": "Giả định bài tập: buổi hòa nhạc còn một ghế. Hai region mất liên lạc nhưng vẫn chạy đều thấy ghế trống và nhận lượt mua. Quy tắc cấm bán một ghế hai lần, cho phép từ chối khi không đến được region quyết định. Chính sách nào phù hợp?",
+    "options": [
+      "Mỗi region xác nhận từ bản cục bộ rồi đối soát lượt bán khi kết nối lại.",
+      "Một home region cố định quyết định bán bằng thao tác nguyên tử; từ chối lượt không đến được nó.",
+      "Xác nhận cả hai: replication bảo đảm các bản cuối cùng giống nhau mà không hủy lượt bán.",
+      "Mỗi region xác nhận cục bộ, rồi dùng last write wins chọn reservation cuối khi kết nối lại."
+    ],
+    "answer": 1,
+    "explanation": "Home duy nhất quyết định có thể giữ ghế một lần bằng thao tác nguyên tử. Region bị ngăn cách phải từ chối thay vì hứa bán lần thứ hai. Replication hoặc last write wins sau kết nối có thể phát hiện/chọn giữa các reservation xung đột, nhưng không thể đáp ứng hai người đã được xác nhận với một ghế mà vẫn giữ quy tắc không bán trùng."
+  },
+  {
+    "question": "Tính năng nào phù hợp nhất với eventual consistency theo các yêu cầu của bài tập?",
+    "options": [
+      "Số dư thanh toán phải từ chối mọi lần rút làm tài khoản âm.",
+      "Đăng ký username không bao giờ được cấp cùng tên cho hai người.",
+      "Kiểm tra quyền phải thực thi việc thu hồi đã hoàn tất ngay ở request kế tiếp.",
+      "Số lượt thích bài viết phải trả lời cục bộ, có thể tạm thiếu lượt thích từ region khác."
+    ],
+    "answer": 3,
+    "explanation": "Bộ đếm lượt thích được phép tạm cũ một cách rõ ràng, nên các region tiếp tục đếm cục bộ rồi gộp sau. Số dư, tên duy nhất toàn hệ thống và thu hồi quyền tức thì không chấp nhận câu trả lời cũ hoặc xung đột đã nêu. Chọn consistency theo tính năng thay vì một chính sách cho cả ứng dụng."
+  }
+]

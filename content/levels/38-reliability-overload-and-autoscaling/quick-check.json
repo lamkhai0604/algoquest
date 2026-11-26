@@ -1,0 +1,35 @@
+[
+  {
+    "question": "An API needs its server tier and one database for every request. The server tier is two copies behind a load balancer, each up 99.9% of the time, with independent failures and quick failover; the database is up 99.9%. Ignore the load balancer. About how available is the API?",
+    "options": [
+      "About 99.9999%, because the servers have a copy",
+      "About 99.9%, limited by the single database",
+      "About 99.8%, because two parts are needed",
+      "About 99.7%, because there are three parts"
+    ],
+    "answer": 1,
+    "explanation": "The two servers are down together only 0.001 × 0.001 = 0.000001 of the time, so the tier is up 99.9999%. The database has no copy, so the whole is 0.999999 × 0.999 ≈ 0.999, or 99.9%. A copy helps only the part it copies; the single database now sets the limit."
+  },
+  {
+    "question": "A service that many others call starts failing. Which retry policy protects it best while still saving some requests?",
+    "options": [
+      "Every layer retries immediately until the call succeeds",
+      "Every layer retries up to 3 times, after exactly 100 ms each time",
+      "Only the outermost caller retries, at most 2 more times, with growing random waits, and stops when retries pass 10% of requests",
+      "No caller sets a timeout, so no retry is ever needed"
+    ],
+    "answer": 2,
+    "explanation": "Retrying at one layer avoids multiplying attempts: three layers, each trying three times, give 3 × 3 × 3 = 27 calls. Growing waits (backoff) with a random part (jitter) spread retries out instead of sending them in waves, and a 10% budget keeps the failing service near its normal load. Retrying immediately or at fixed times adds load exactly when the service can least take it."
+  },
+  {
+    "question": "Servers can finish 1,800 requests per second, but 2,400 arrive for the next five minutes, until new servers start. Users give up after 2 seconds of waiting. Which response serves the most users on time?",
+    "options": [
+      "Queue every request; each one is served eventually",
+      "Refuse about 600 requests per second at once with \"try again shortly\"",
+      "Do nothing until the new servers arrive",
+      "Have the servers retry requests that took too long"
+    ],
+    "answer": 1,
+    "explanation": "Queuing everything makes the line grow by 600 a second; after about 6 seconds every new request waits more than 2 seconds, so nearly all users give up even though the servers stay busy. Refusing the extra quickly keeps the line short, so 1,800 requests per second are served on time and the refused users can try again. If optional work can be turned off, degrading first may avoid refusing anyone."
+  }
+]

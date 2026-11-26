@@ -1,0 +1,11 @@
+{
+  "question": "Hai chi nhánh dùng điện thoại chia sẻ một danh sách tồn kho. Đường dây hỏng, khách ở chi nhánh A hỏi áo khoác cuối. A có thể làm gì?",
+  "options": [
+    "Bán ngay và chấp nhận B cũng bán, hoặc từ chối đến khi kết nối lại",
+    "Bán an toàn vì B sẽ nhận ra và ngừng bán",
+    "Kiểm tra danh sách bên kia trước",
+    "Bán rồi danh sách tự khớp"
+  ],
+  "answer": 0,
+  "explanation": "Khi đường dây đứt, A không biết B đang làm gì. A có thể giữ availability và mạo hiểm bán trùng, hoặc giữ consistency và từ chối đến khi kiểm tra được. Không có lựa chọn thứ ba khi đường dây đứt; đó là lựa chọn CAP mô tả."
+}
