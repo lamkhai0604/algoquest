@@ -5,12 +5,12 @@ import java.util.List;
 /**
  * A design prompt (D-085): the learner writes a design under the prompt's headings, and the AI
  * grades it with the five-category rubric of the System Design syllabus. {@code form} chooses the
- * headings: {@code scaffold} (the default) gives the four headings of early prompts;
- * {@code routine} gives the eight steps of the full design interview routine taught in Level 42
- * (T-699). {@code criteria} lists the task-specific points for each category;
- * {@code fullMarkDesigns} describes at least two different designs that earn full marks, so the
- * grader does not reward one shape only. Neither is sent to the learner. The {@code reference}
- * design is shown only after a graded answer.
+ * headings: {@code scaffold} (the default) gives the four headings of early prompts; {@code
+ * routine} gives the eight steps of the full design interview routine taught in Level 42 (T-699).
+ * {@code criteria} lists the task-specific points for each category; {@code fullMarkDesigns}
+ * describes at least two different designs that earn full marks, so the grader does not reward one
+ * shape only. Neither is sent to the learner. The {@code reference} design is shown only after a
+ * graded answer.
  */
 public record DesignPrompt(
     String id,
