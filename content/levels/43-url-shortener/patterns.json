@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P43-code-source",
+    "level": 43,
+    "title": "Where Codes Come From",
+    "statement": "A shortener creates about 20 links per second and will hold about 2 billion links, with 7-character base62 codes (62⁷ ≈ 3.5 trillion). Some links lead to private pages. Exercise assumptions: no two links may share a code; codes must not be guessable from other codes; the database's primary key is the code; the team prefers the fewest extra parts to run.",
+    "examples": [
+      "A plain counter gives codes in order: 0000001, 0000002, …"
+    ],
+    "constraints": [
+      "Codes never shared.",
+      "Codes not guessable.",
+      "Prefer the fewest extra parts."
+    ],
+    "approaches": [
+      {
+        "id": "random-unique-key",
+        "name": "Random 7-character codes, inserted under the unique primary key, with a retry when the insert is rejected",
+        "hint": "Let the key catch repeats",
+        "label": "best",
+        "time": "One insert, rarely two",
+        "space": "Nothing extra",
+        "why": "Random codes cannot be guessed, and the unique key rejects the rare repeat (at most about 1 in 1,750 at 2 billion links), so retrying keeps every code unique, with no extra service."
+      },
+      {
+        "id": "ranges-shuffled",
+        "name": "Numbers handed out in ranges by a small service, then turned into codes by a secret one-to-one shuffle",
+        "hint": "Unique numbers, scrambled",
+        "label": "valid",
+        "time": "One insert, no retries",
+        "space": "A range service and a secret key",
+        "why": "It never collides and the codes look random, so it meets both rules, but it adds a range service and a secret to run, against the stated preference."
+      },
+      {
+        "id": "plain-counter",
+        "name": "A database counter written in base62",
+        "hint": "Count up",
+        "label": "unsuitable",
+        "time": "One insert",
+        "space": "Nothing extra",
+        "why": "Codes never collide, but anyone who sees one code can try the next ones and find private pages, breaking the rule that codes are not guessable."
+      }
+    ]
+  },
+  {
+    "id": "P43-redirect-code",
+    "level": 43,
+    "title": "Choosing the Redirect",
+    "statement": "A company's printed manuals use short links that will never change, and nobody needs click counts. Up to 20,000 clicks per second arrive at peak, but the app servers handle about 5,000 redirects per second. A CDN in front can keep responses that allow it. Exercise assumptions: every click must reach the right page; the servers must stay within their capacity; the team prefers the fewest requests reaching the CDN and servers.",
+    "examples": [
+      "Browsers may keep a 301 for as long as its cache time allows."
+    ],
+    "constraints": [
+      "Every click reaches the right page.",
+      "Servers stay within 5,000 redirects per second.",
+      "Prefer the fewest requests to the CDN and servers."
+    ],
+    "approaches": [
+      {
+        "id": "301-long",
+        "name": "301 with a long cache time, such as one year, for browsers and the CDN",
+        "hint": "Permanent, and say so",
+        "label": "best",
+        "time": "Repeat clicks answered by the browser",
+        "space": "Nothing extra",
+        "why": "The links never change and nobody counts clicks, so a permanent redirect is correct, and browsers and the CDN can answer repeats themselves: the fewest requests, far below the servers' limit."
+      },
+      {
+        "id": "302-cdn",
+        "name": "302 with `max-age=0, s-maxage=300`, so only the CDN keeps it",
+        "hint": "Temporary, cached at the edge",
+        "label": "valid",
+        "time": "Every click reaches the CDN; servers see about one per link every 5 minutes",
+        "space": "Nothing extra",
+        "why": "It is correct and the CDN shields the servers, but every click still travels to the CDN, more requests than needed for links that never change, against the stated preference."
+      },
+      {
+        "id": "302-no-store",
+        "name": "302 with `no-store`, so nobody keeps it",
+        "hint": "Always ask the server",
+        "label": "unsuitable",
+        "time": "All 20,000 clicks per second reach the servers",
+        "space": "Nothing extra",
+        "why": "Every click goes to the servers, 20,000 per second against their 5,000, so redirects slow down or fail at peak."
+      }
+    ]
+  },
+  {
+    "id": "P43-hot-link",
+    "level": 43,
+    "title": "A Link Goes Viral",
+    "statement": "One short link in a viral post is clicked 50,000 times per second. The app servers can answer about 30,000 redirects per second in total, from their cache; a CDN in front of them can absorb any number of repeated clicks for a response it may keep. Exercise assumptions: the link's destination may change, and a change must take effect within 5 minutes; responses use 302 so browsers do not keep them; the team prefers changes to show as quickly as possible.",
+    "examples": [
+      "With s-maxage=60 the CDN asks the servers about once a minute per CDN location."
+    ],
+    "constraints": [
+      "Serve 50,000 clicks per second.",
+      "A change takes effect within 5 minutes.",
+      "Prefer changes to show quickly."
+    ],
+    "approaches": [
+      {
+        "id": "cdn-60",
+        "name": "Let the CDN keep the redirect for 60 seconds (`s-maxage=60`)",
+        "hint": "Short edge caching",
+        "label": "best",
+        "time": "Almost all clicks answered by the CDN",
+        "space": "Nothing extra",
+        "why": "The CDN answers nearly all 50,000 clicks per second and asks the servers about once a minute per location, so the servers stay far below 30,000, and a change shows within about a minute plus the app cache's time."
+      },
+      {
+        "id": "cdn-240",
+        "name": "Let the CDN keep the redirect for 4 minutes (`s-maxage=240`)",
+        "hint": "Longer edge caching",
+        "label": "valid",
+        "time": "Almost all clicks answered by the CDN",
+        "space": "Nothing extra",
+        "why": "It serves the load just as well and a change still shows within 5 minutes if the app cache is short, but changes take up to 4 minutes at the CDN, against the preference for quick changes."
+      },
+      {
+        "id": "servers-only",
+        "name": "Let every click reach the app servers, which answer from their cache",
+        "hint": "Cache in the app only",
+        "label": "unsuitable",
+        "time": "50,000 requests per second to the servers",
+        "space": "Nothing extra",
+        "why": "The servers can answer about 30,000 per second, so 20,000 clicks per second would wait or fail."
+      }
+    ]
+  }
+]

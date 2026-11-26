@@ -1290,6 +1290,46 @@
           "term": "sorted set",
           "vi": "tập hợp có thứ tự theo điểm",
           "firstLevel": 42
+        },
+        {
+          "term": "short code",
+          "vi": "mã rút gọn",
+          "firstLevel": 43
+        },
+        {
+          "term": "base62",
+          "vi": "hệ 62 ký tự",
+          "firstLevel": 43
+        },
+        {
+          "term": "collision",
+          "vi": "trùng mã",
+          "firstLevel": 43
+        },
+        {
+          "term": "redirect",
+          "vi": "chuyển hướng",
+          "firstLevel": 43
+        },
+        {
+          "term": "301 Moved Permanently",
+          "vi": "chuyển hướng vĩnh viễn",
+          "firstLevel": 43
+        },
+        {
+          "term": "302 Found",
+          "vi": "chuyển hướng tạm thời",
+          "firstLevel": 43
+        },
+        {
+          "term": "Cache-Control",
+          "vi": "header điều khiển cache",
+          "firstLevel": 43
+        },
+        {
+          "term": "hot link",
+          "vi": "link được bấm rất nhiều",
+          "firstLevel": 43
         }
       ]
     },
