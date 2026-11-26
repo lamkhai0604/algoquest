@@ -1,0 +1,35 @@
+[
+  {
+    "question": "An interviewer says, \"Design a chat app for hospital staff.\" What should you do first?",
+    "options": [
+      "Ask about the number of users, the key features and the most important quality, and say what is out of scope",
+      "Draw the load balancer, servers and database",
+      "Choose a database product",
+      "Start the deep dive on message ordering"
+    ],
+    "answer": 0,
+    "explanation": "Every later choice depends on the requirements and their numbers: 500 staff and 5 million users need very different designs. A few minutes of questions, ending with numbered requirements and a scope, makes the rest of the hour count."
+  },
+  {
+    "question": "5 million users each open the app about 8 times a day, and each opening makes 2 requests. Using 100,000 seconds for a day, about how many requests per second is that on average?",
+    "options": [
+      "About 80",
+      "About 800",
+      "About 8,000",
+      "About 80,000"
+    ],
+    "answer": 1,
+    "explanation": "5,000,000 × 8 × 2 = 80,000,000 requests a day, and 80,000,000 ÷ 100,000 = 800 per second on average. Peaks are often a few times higher, so a design would plan for a few thousand."
+  },
+  {
+    "question": "You have 10 minutes for a deep dive. Which part should you choose?",
+    "options": [
+      "The part with the hardest requirement or the biggest number, unless the interviewer points elsewhere",
+      "The login page, because every app has one",
+      "Every component briefly, so nothing is missed",
+      "Whatever you know best, even if it is not in the design"
+    ],
+    "answer": 0,
+    "explanation": "A deep dive shows how you handle real difficulty, so it belongs where the design could fail: the biggest load, the strictest latency or the hardest consistency rule. One part done well shows more than many done briefly; if the interviewer asks about another part, follow them."
+  }
+]

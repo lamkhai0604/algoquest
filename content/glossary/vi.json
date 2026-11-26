@@ -1245,6 +1245,51 @@
           "term": "time-ordered ID",
           "vi": "ID sắp theo thời gian",
           "firstLevel": 41
+        },
+        {
+          "term": "functional requirement",
+          "vi": "yêu cầu chức năng",
+          "firstLevel": 42
+        },
+        {
+          "term": "non-functional requirement",
+          "vi": "yêu cầu phi chức năng",
+          "firstLevel": 42
+        },
+        {
+          "term": "back-of-the-envelope estimate",
+          "vi": "ước lượng nhanh",
+          "firstLevel": 42
+        },
+        {
+          "term": "latency budget",
+          "vi": "ngân sách độ trễ",
+          "firstLevel": 42
+        },
+        {
+          "term": "data model",
+          "vi": "mô hình dữ liệu",
+          "firstLevel": 42
+        },
+        {
+          "term": "high-level design",
+          "vi": "thiết kế tổng quan",
+          "firstLevel": 42
+        },
+        {
+          "term": "deep dive",
+          "vi": "đi sâu vào một phần",
+          "firstLevel": 42
+        },
+        {
+          "term": "thinking aloud",
+          "vi": "nói to suy nghĩ của mình",
+          "firstLevel": 42
+        },
+        {
+          "term": "sorted set",
+          "vi": "tập hợp có thứ tự theo điểm",
+          "firstLevel": 42
         }
       ]
     },
