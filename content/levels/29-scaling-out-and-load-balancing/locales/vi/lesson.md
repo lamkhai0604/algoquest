@@ -8,7 +8,7 @@
 - So sánh Layer 4 — tầng 4 (tầng vận chuyển) — với Layer 7 — tầng 7 (tầng ứng dụng) — của load balancer; đồng thời so sánh round robin (chia lần lượt) với least connections (ưu tiên máy ít kết nối nhất).
 - Giải thích cách health check (kiểm tra tình trạng hoạt động) loại server bị lỗi khỏi danh sách nhận request.
 
-### Thuật ngữ chính (Key terms)
+### Thuật ngữ chính
 
 - **CPU (bộ xử lý).** Bộ phận máy tính thực thi code. Khi CPU bận 100% thời gian, request mới phải chờ đến lượt.
 - **Requests per second (số yêu cầu mỗi giây).** Số request một server hoàn thành mỗi giây. **Limit (giới hạn)** là mức mà server đã bận hết công suất.

@@ -8,7 +8,7 @@
 - Ước lượng tải bằng các con số gần đúng và chỉ ra đâu là giả định.
 - Biết nên kiểm tra bước nào trước khi một trang web chạy chậm.
 
-### Thuật ngữ chính (Key terms)
+### Thuật ngữ chính
 
 - **Client và server.** Client — máy khách (chương trình gửi yêu cầu) — là browser hoặc ứng dụng điện thoại gửi yêu cầu. Server (máy chủ) là máy tính trả lời. Hai bên trao đổi dữ liệu qua mạng.
 - **IP address — địa chỉ IP (số định danh máy tính trên mạng).** Dãy số giúp xác định một máy tính trên internet, giống địa chỉ nhà, ví dụ 142.250.72.14.
