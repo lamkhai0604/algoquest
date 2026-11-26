@@ -46,13 +46,13 @@
     "id": "P38-search-timeout",
     "level": 38,
     "title": "A Timeout for the Search Call",
-    "statement": "A product page calls a search service. Measured: 999 of every 1,000 search answers arrive within 120 ms. A few times a week the search service hangs, and calls then wait up to 10 seconds. The page receives 100 requests per second, and its servers have 300 workers in total, shared with other pages. Exercise assumptions: the page may spend at most 450 ms on search, including any retry; a search is safe to repeat; when search fails, the page shows products without search results. The team prefers a policy that can recover from a single lost answer when one retry fits. Which policy fits?",
+    "statement": "A product page calls a search service. Measured: 999 of every 1,000 search answers arrive within 120 ms. A few times a week the search service hangs, and calls then wait up to 10 seconds. The page receives 100 requests per second, arriving steadily, and its servers have 300 workers in total; other pages need up to 200 of them at peak, so search may hold at most 100. Exercise assumptions: the page may spend at most 450 ms on search, including any retry; a search is safe to repeat; when search fails, the page shows products without search results. The team prefers a policy that can recover from a single lost answer when one retry fits. Which policy fits?",
     "examples": [
       "Busy workers ≈ requests per second × seconds each request holds a worker."
     ],
     "constraints": [
       "Spend at most 450 ms on search per page, including retries.",
-      "Keep the 300 workers free for other pages during a hang.",
+      "Hold at most 100 workers for search during a hang, leaving 200 for other pages.",
       "Prefer recovering from one lost answer."
     ],
     "approaches": [
@@ -63,7 +63,7 @@
         "label": "best",
         "time": "Worst case 150 + 100 + 150 = 400 ms",
         "space": "At most 100 × 0.4 = 40 busy workers",
-        "why": "150 ms is a little above the 120 ms that 999 of 1,000 answers meet, so normal calls rarely time out. One retry with jitter recovers a lost answer and still fits 450 ms, and a hang holds at most 40 of the 300 workers."
+        "why": "150 ms is a little above the 120 ms that 999 of 1,000 answers meet, so normal calls rarely time out. One retry with jitter recovers a lost answer and still fits 450 ms, and a hang holds at most 40 workers, within the 100 allowed, leaving 260 for other pages."
       },
       {
         "id": "timeout-400-no-retry",
@@ -72,7 +72,7 @@
         "label": "valid",
         "time": "Worst case 400 ms",
         "space": "At most 100 × 0.4 = 40 busy workers",
-        "why": "It fits 450 ms and protects the workers, but a single lost answer always means a page without search results, against the stated preference."
+        "why": "It fits 450 ms and holds at most 40 workers, within the 100 allowed, but a single lost answer always means a page without search results, against the stated preference."
       },
       {
         "id": "no-timeout",
@@ -81,7 +81,7 @@
         "label": "unsuitable",
         "time": "Up to 10 seconds during a hang",
         "space": "100 × 10 = 1,000 workers needed",
-        "why": "During a hang, search alone would need 1,000 workers, more than the 300 in total, so every page would stop. It also breaks the 450 ms limit."
+        "why": "During a hang, search alone would need 1,000 workers, far more than its 100 and more than the 300 in total, so every page would stop. It also breaks the 450 ms limit."
       }
     ]
   },
@@ -89,14 +89,14 @@
     "id": "P38-noisy-client",
     "level": 38,
     "title": "One Partner Sends Too Much",
-    "statement": "An API's servers can finish about 1,800 requests per second. Normally other clients send 850 per second and a partner sends about 50. A bug in the partner's app starts a loop that sends 1,500 requests per second, so 2,350 arrive. Exercise assumptions: each client sends a key that identifies it; checking a client's count costs almost nothing; other clients must keep being served normally; extra servers take about 5 minutes to arrive; the team would rather keep serving the partner's normal traffic than block the partner completely. Which response fits?",
+    "statement": "An API's servers can finish about 1,800 requests per second. Normally other clients send 850 per second and a partner sends about 50. A bug in the partner's app starts a loop that sends 1,500 requests per second, so 2,350 arrive. Exercise assumptions: each client sends a key that identifies it; checking a client's count costs almost nothing; other clients must keep being served normally; extra servers take about 5 minutes to arrive; the loop and the partner's real calls use the same key; the team would rather keep some partner traffic working than block the partner completely. Which response fits?",
     "examples": [
       "A refused request gets \"too many requests\" at once, without doing the work."
     ],
     "constraints": [
       "Other clients are not refused or slowed.",
       "The servers stay below their 1,800 per second limit.",
-      "Prefer keeping the partner's normal traffic."
+      "Prefer keeping some partner traffic working."
     ],
     "approaches": [
       {
@@ -106,7 +106,7 @@
         "label": "best",
         "time": "About 850 + 200 = 1,050 requests per second reach the servers",
         "space": "A counter per client key",
-        "why": "The partner's loop is cut to 200 per second, above its normal 50, so its real traffic still works. The servers carry 1,050 of 1,800, and other clients see no change. How to count over time is the topic of Level 44; the idea is a limit per client."
+        "why": "The partner is cut to 200 requests per second in total. Its real calls share that allowance with the loop, so some of them are refused, but some still get through, unlike a full block. The servers carry about 1,050 of 1,800, and other clients see no change. How to count over time is the topic of SD 17; the idea is a limit per client."
       },
       {
         "id": "block-partner",
@@ -115,7 +115,7 @@
         "label": "valid",
         "time": "About 850 requests per second reach the servers",
         "space": "One blocked key",
-        "why": "It protects other clients at once, but the partner's normal 50 per second are refused too, against the stated preference."
+        "why": "It protects other clients at once, but every partner request is refused, including its real calls, against the stated preference."
       },
       {
         "id": "random-shedding",
