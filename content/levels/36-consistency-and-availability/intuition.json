@@ -1,0 +1,11 @@
+{
+  "question": "Two branches of a shop share one stock list by phone. The phone line goes dead, and a customer in branch A asks for the last jacket. What can branch A do?",
+  "options": [
+    "Sell it now and risk branch B selling it too, or refuse until the line is back",
+    "Sell it safely, because branch B will notice and stop",
+    "Check the other branch's list first",
+    "Sell it, then the lists will match automatically"
+  ],
+  "answer": 0,
+  "explanation": "With the line dead, branch A cannot learn what branch B is doing. It can stay available and risk a double sale, or stay consistent and turn the customer away until it can check. There is no third option while the line is down; that is the choice CAP describes."
+}

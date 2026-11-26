@@ -243,5 +243,12 @@
     "title": "Partitioning and Consistent Hashing",
     "summary": "Split data across servers when one cannot hold it or take its writes, choose a partition key, and add servers without moving everything.",
     "phase": 4
+  },
+  {
+    "number": 36,
+    "slug": "consistency-and-availability",
+    "title": "Consistency and Availability",
+    "summary": "Decide what copies in different regions do when the network between them breaks, and choose consistency or availability for each feature.",
+    "phase": 4
   }
 ]
