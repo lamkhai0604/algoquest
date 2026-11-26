@@ -43,6 +43,12 @@ const PHASES = [
   },
 ] as const;
 
+/** Electives after the phases, not yet open (D-070, D-087); OOP first, since patterns build on it. */
+const ELECTIVES = [
+  { titleKey: "home.oop", goalKey: "home.oopGoal" },
+  { titleKey: "home.designPatterns", goalKey: "home.designPatternsGoal" },
+] as const;
+
 function stateLabel(
   level: Level,
   locale: Locale,
@@ -251,22 +257,23 @@ function LearningPath({ levels }: { levels: Level[] }) {
           }
         />
       ))}
-      <section
-        className={cx(game.phase, game.phaseLocked)}
-        aria-label={t("home.designPatterns")}
-      >
-        <div className={game.phaseSummary}>
-          <span className={game.phaseText}>
-            <span className={game.phaseTitle}>
-              {t("home.elective")} · {t("home.designPatterns")}
+      {ELECTIVES.map((elective) => (
+        <section
+          key={elective.titleKey}
+          className={cx(game.phase, game.phaseLocked)}
+          aria-label={t(elective.titleKey)}
+        >
+          <div className={game.phaseSummary}>
+            <span className={game.phaseText}>
+              <span className={game.phaseTitle}>
+                {t("home.elective")} · {t(elective.titleKey)}
+              </span>
+              <span className={game.phaseGoal}>{t(elective.goalKey)}</span>
             </span>
-            <span className={game.phaseGoal}>
-              {t("home.designPatternsGoal")}
-            </span>
-          </span>
-          <Badge>{t("common.comingSoon")}</Badge>
-        </div>
-      </section>
+            <Badge>{t("common.comingSoon")}</Badge>
+          </div>
+        </section>
+      ))}
     </>
   );
 }

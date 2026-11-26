@@ -136,6 +136,8 @@
     "systemDesign": "Thiết kế hệ thống",
     "systemDesignGoal": "Thiết kế dịch vụ chịu tải lớn: cân bằng tải, caching, cơ sở dữ liệu, hàng đợi, và các bài thiết kế trọn vẹn trình bày như khi phỏng vấn.",
     "elective": "Ngoại khóa",
+    "oop": "Lập trình hướng đối tượng (OOP)",
+    "oopGoal": "Tùy chọn: class và object, đóng gói, trừu tượng, kế thừa và đa hình, composition, interface, và cách thiết kế các class cho một hệ thống nhỏ.",
     "designPatterns": "Design Patterns",
     "designPatternsGoal": "Tùy chọn: các mẫu thiết kế hướng đối tượng phổ biến, khi nào nên dùng và khi nào chỉ làm code phức tạp thêm."
   },
