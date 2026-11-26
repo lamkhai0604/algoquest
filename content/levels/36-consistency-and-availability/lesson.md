@@ -100,7 +100,7 @@ For each feature:
 
 ## Worked example
 
-**Problem:** The ticket app sells tickets for events in the United States and Europe and shows a "people interested" counter on every event page. 200 purchase attempts arrive per second, 40% from Europe; about 90% of buyers buy tickets for events in their own region. A purchase must be confirmed within 500 ms and a seat must never be sold twice. The counter may be up to a minute old. The round trip between the regions is about 90 ms; local work takes about 5 ms. Partitions between the regions happen a few times a year and last up to 20 minutes. Design how each feature behaves, normally and during a partition.
+**Problem:** The ticket app sells tickets for events in the United States and Europe and shows a "people interested" counter on every event page. 200 purchase attempts arrive per second, 40% from Europe; about 90% of buyers buy tickets for events in their own region. A purchase must be confirmed within 500 ms and a seat must never be sold twice. While the regions are connected, the counter may be up to a minute old; during a partition it may stay stale until the link returns. The round trip between the regions is about 90 ms; local work takes about 5 ms. Partitions between the regions happen a few times a year and last up to 20 minutes. Design how each feature behaves, normally and during a partition.
 
 **Solution:**
 
@@ -108,6 +108,6 @@ For each feature:
 2. **A home region per event.** Each event's seats are decided in the region where the event takes place. A local buyer's purchase takes about 5 ms; a buyer across the ocean waits about 5 + 90 = 95 ms. Both are within 500 ms.
 3. **During a partition.** Only buyers whose event's home is across the break are refused: about 10% of 200 = 20 attempts per second, 20 × 1,200 = 24,000 over 20 minutes, instead of 96,000 if every event's home were in the United States. They see "we cannot confirm this purchase right now, please try again shortly".
 4. **The counter needs availability.** Each region counts "interested" clicks for every event and sends its count to the other region every few seconds; the page shows the sum. During a partition each region keeps counting, and the sums catch up when the link returns. The counter is at most a minute old normally; during a partition it may lag further, which is harmless.
-5. **Each buyer's own tickets.** "My tickets" is read from the event's home region, so a buyer always sees the purchase they just made.
+5. **Each buyer's own tickets.** "My tickets" is read from the event's home region, so whenever that region can be reached, a buyer sees the purchase they just made. During a partition, a buyer across the break gets "try again shortly" for this page rather than an old list.
 
 **Answer:** Tickets are strongly consistent through a home region per event, which costs at most one 90 ms round trip and refuses about 24,000 attempts in a 20-minute partition; the interested counter is eventually consistent, counted in both regions and summed. The same page uses two different choices, one per feature.
