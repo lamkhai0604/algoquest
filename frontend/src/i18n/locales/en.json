@@ -136,6 +136,8 @@
     "systemDesign": "System Design",
     "systemDesignGoal": "Design services that scale: load balancing, caching, databases, queues, and full designs explained like in an interview.",
     "elective": "Elective",
+    "oop": "Object-Oriented Programming",
+    "oopGoal": "Optional: classes and objects, encapsulation, abstraction, inheritance and polymorphism, composition, interfaces, and how to design classes for a small system.",
     "designPatterns": "Design Patterns",
     "designPatternsGoal": "Optional: common object-oriented design patterns, when each one helps, and when it adds needless complexity."
   },

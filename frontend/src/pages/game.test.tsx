@@ -97,6 +97,14 @@ describe("learning path", () => {
     const elective = screen.getByRole("region", { name: "Design Patterns" });
     expect(elective).toHaveTextContent("Elective · Design Patterns");
     expect(elective).toHaveTextContent("Coming soon");
+    const oop = screen.getByRole("region", {
+      name: "Object-Oriented Programming",
+    });
+    expect(oop).toHaveTextContent("Elective · Object-Oriented Programming");
+    expect(oop).toHaveTextContent("Coming soon");
+    expect(
+      oop.compareDocumentPosition(elective) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
 
     const phases = screen.getAllByRole("group");
     expect(phases).toHaveLength(1);
