@@ -3,7 +3,7 @@
     "id": "P40-password-storage",
     "level": 40,
     "title": "How to Store Passwords",
-    "statement": "A service stores passwords for 2 million accounts. Logins peak at 50 per second, and the login servers have 8 CPU cores for checking passwords. Exercise assumptions: a stolen copy of the password table must be slow to guess from; the same password used by two people must not look the same in the table; the team prefers to leave some spare cores at peak. Which way of storing passwords fits?",
+    "statement": "A service stores passwords for 2 million accounts. Password checks peak at 50 per second, failed ones included, and a cap before hashing refuses more; the login servers have 8 CPU cores for checking passwords. Exercise assumptions: a stolen copy of the password table must be slow to guess from; the same password used by two people must not look the same in the table; the team prefers to leave some spare cores at peak. Which way of storing passwords fits?",
     "examples": [
       "Cores busy at peak = logins per second × seconds of CPU per check."
     ],
@@ -46,13 +46,13 @@
     "id": "P40-guessing-limit",
     "level": 40,
     "title": "Stopping Password Guessing",
-    "statement": "Someone is guessing passwords against a few accounts, from about 1,000 different network addresses. Exercise assumptions: at most a few hundred guesses per account per day may get through; a real user must never be locked out for more than 1 hour; the team prefers that a real user who mistypes waits as little as possible. Which limit fits?",
+    "statement": "Someone is guessing passwords against a few accounts, from about 1,000 different network addresses. Exercise assumptions: at most 500 guesses per account per day may get through; after failures, a single wait must last at most 1 hour, and refused attempts during a wait do not extend it; a real user who keeps meeting waits while guessing continues can sign in with an emailed one-time link; the team prefers that a real user who mistypes waits as little as possible. Which limit fits?",
     "examples": [
       "A day has 96 periods of 15 minutes."
     ],
     "constraints": [
-      "At most a few hundred guesses per account per day.",
-      "No real user locked out for more than 1 hour.",
+      "At most 500 guesses per account per day.",
+      "A single wait lasts at most 1 hour and is not extended by refused attempts.",
       "Prefer short waits for real users."
     ],
     "approaches": [
@@ -63,7 +63,7 @@
         "label": "best",
         "time": "5 × 96 = 480 guesses a day per account",
         "space": "A counter per account",
-        "why": "However many addresses the guesser uses, each account allows only 480 failures a day. A real user who mistypes waits at most 15 minutes, and the wait ends by itself."
+        "why": "However many addresses the guesser uses, each account allows only 480 failures a day, under 500. A single wait lasts at most 15 minutes and is not extended by refused attempts; if guessing keeps causing new waits, the real user can use the email link."
       },
       {
         "id": "per-account-hour",
@@ -72,7 +72,7 @@
         "label": "valid",
         "time": "5 × 24 = 120 guesses a day per account",
         "space": "A counter per account",
-        "why": "It meets the guessing limit with room and never locks anyone out for more than an hour, but a real user who mistypes five times may wait up to an hour instead of 15 minutes, against the stated preference."
+        "why": "It meets the guessing limit with room, 120 a day, and each wait lasts at most an hour, but a real user who mistypes five times may wait up to an hour instead of 15 minutes, against the stated preference."
       },
       {
         "id": "per-address-only",
@@ -81,7 +81,7 @@
         "label": "unsuitable",
         "time": "Up to 100 × 1,000 per minute from 1,000 addresses",
         "space": "A counter per address",
-        "why": "With 1,000 addresses the guesser gets up to 100,000 tries a minute against one account, far more than a few hundred a day. A per-address limit helps only alongside a per-account one."
+        "why": "With 1,000 addresses the guesser gets up to 100,000 tries a minute against one account, far more than 500 a day. A per-address limit helps only alongside a per-account one."
       }
     ]
   },
@@ -89,13 +89,13 @@
     "id": "P40-download-link",
     "level": 40,
     "title": "Letting Users Download Their Files",
-    "statement": "Users download their own files, about 4 MB each, from a storage service, at up to 200 downloads per second. The app servers can carry about 1 GB per second in total and also serve all other requests. The storage service can check signed links that expire. Exercise assumptions: only a user with rights to a file may download it; a link must stop working within 10 minutes; the team prefers that file bytes do not pass through the app servers. Which way fits?",
+    "statement": "Users download their own files, about 4 MB each, from a storage service, at up to 200 downloads per second. The app servers can carry about 1 GB per second in total and also serve all other requests. The storage service can check signed links that expire. Exercise assumptions: only a user with rights to a file may be given a way to download it; the business accepts that whoever holds a download link can use it until it expires, at most 10 minutes; after a user loses rights, new downloads must stop within 10 minutes, while a download already running may finish; the team prefers that file bytes do not pass through the app servers. Which way fits?",
     "examples": [
       "200 downloads per second × 4 MB = 800 MB per second."
     ],
     "constraints": [
-      "Only users with rights may download.",
-      "Links stop working within 10 minutes.",
+      "Only users with rights get a way to download.",
+      "New downloads stop within 10 minutes of losing rights.",
       "Prefer keeping file bytes off the app servers."
     ],
     "approaches": [
@@ -106,7 +106,7 @@
         "label": "best",
         "time": "One small request to the app per download",
         "space": "No file bytes on the app servers",
-        "why": "Rights are checked on the server before the link is made, the link expires on its own after 10 minutes, and the 800 MB per second go straight from storage to users."
+        "why": "Rights are checked on the server before a link is made, so only users with rights get one. The link works for whoever holds it, which the business accepts, and expires after 10 minutes, so a user who loses rights cannot start new downloads with it after that. The 800 MB per second go straight from storage to users."
       },
       {
         "id": "app-streams",
@@ -115,7 +115,7 @@
         "label": "valid",
         "time": "800 MB per second through the app servers",
         "space": "File bytes on the app servers",
-        "why": "It is secure and has no links to expire, but 800 MB per second uses 80% of the app servers' 1 GB per second, against the preference and leaving little for other requests."
+        "why": "It checks rights on every download, so losing rights stops new downloads at once, but 800 MB per second uses 80% of the app servers' 1 GB per second, against the preference and leaving little for other requests."
       },
       {
         "id": "public-link",
@@ -124,7 +124,7 @@
         "label": "unsuitable",
         "time": "No check at download",
         "space": "No file bytes on the app servers",
-        "why": "Anyone who gets the link, by forwarding or a leak, can download the file forever, and losing rights does not stop it. It breaks both the rights rule and the 10-minute rule."
+        "why": "The link never expires, so a user who loses rights, or anyone they forwarded it to, can start new downloads forever. It breaks the 10-minute rule."
       }
     ]
   }

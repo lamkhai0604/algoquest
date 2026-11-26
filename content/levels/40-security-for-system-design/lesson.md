@@ -91,7 +91,7 @@ There is no code in this level. Use this **design template** for securing a feat
 - **A user's rights change.** If a user loses access to a project, a token that lists their projects stays wrong until it expires. Keep rights on the server and check them there, or keep tokens short.
 - **Internal calls.** A request from inside the network is not automatically trusted. Services authenticate each other too, over HTTPS.
 - **Error messages.** "No account with this email" tells a guesser which emails exist. Answer the same way for a wrong email and a wrong password.
-- **Rate limits that lock real users out.** Locking an account for good after five failures lets anyone lock out anyone. Use a short wait that ends by itself.
+- **Rate limits that lock real users out.** Locking an account for good after five failures lets anyone lock out anyone. Use a short wait that ends by itself and is not extended by refused attempts, and give real users another way in, such as a one-time link by email, while guessing continues.
 
 ### Extension (optional): signed URLs and multi-tenant isolation
 
@@ -107,9 +107,9 @@ A **signed URL** lets a user download a file straight from storage: the app chec
 
 1. **Authorization first.** Every order request checks on the server that the order's `customer_id` is the logged-in user's. This one check fixes last week's problem; no choice of sessions or tokens would have.
 2. **Sessions or tokens.** Sessions: 5,000 lookups per second is 5% of the store, and a block takes effect at once. Tokens valid for 15 minutes would let a blocked user continue for up to 15 minutes, too long. Tokens valid for 1 minute meet the rule but need about 100,000 ÷ 60 ≈ 1,700 refreshes per second. The team chooses sessions: simpler, and well within the store's capacity.
-3. **30-day login.** The session lives 30 days, renewed while the user is active; logout and blocking delete it.
-4. **Passwords.** A slow salted hash tuned to about 100 ms: 50 logins per second × 0.1 s = 5 CPU cores at peak.
-5. **Guessing.** At most 5 failed logins per account every 15 minutes (480 a day), plus a limit per network address; the wait ends by itself, so nobody can lock a real user out for good.
+3. **30-day login.** The session lives 30 days, renewed while the user is active; logout deletes that phone's session, and blocking deletes all of the user's sessions.
+4. **Passwords.** A slow salted hash tuned to about 100 ms: 50 logins per second × 0.1 s = 5 CPU cores at peak. A total cap on password checks, applied before hashing, stops guessing across many accounts from taking more cores.
+5. **Guessing.** At most 5 failed logins per account every 15 minutes (480 a day), plus a limit per network address. Each wait ends by itself after 15 minutes, and refused attempts do not extend it, so nobody can lock a real user out for good.
 6. **Transport and secrets.** HTTPS from the app to the load balancer and between all services; the database password is in the secret store, readable only by the services that need it, and each service's database user has only the rights it needs.
 
 **Answer:** Fix authorization with an ownership check on every request. Use sessions in the shared store (5% of its capacity), deleted on logout or block, so blocks take effect at once. Hash passwords slowly (about 5 cores at peak), limit failed logins to 5 per account per 15 minutes, use HTTPS everywhere, and keep secrets in a secret store with least privilege.
