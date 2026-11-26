@@ -372,6 +372,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-679 | Vercel builds only `main` and `dev`; task branches are checked by GitHub Actions only, so previews no longer use up the Hobby plan's daily build limit | NFR, D-039 | P1 | Done 2026-11-25: configuration in `frontend/vercel.json`; confirmed: a push to a task branch no longer starts a Vercel build |
 | T-680 | SD 9 review fixes from review round 1 (2 Major, 3 Minor): partition exceptions to freshness limits stated in the visible facts, a supplied ID-based merge rule for the shared list, neutral step 4 prediction, peak-based partition backlog, read-your-writes limited to a reachable home region | FR-03, D-085 | P1 | Done 2026-11-25 |
 | T-681 | SD 10 content review against CONTENT-GUIDE section 4a by ChatGPT; Vietnamese translations for SD 9 and SD 10 are paused by the PO | FR-03, D-079 | P1 | Assigned 2026-11-25 |
+| T-682 | Lesson page: the "After this lesson you can" card stays in place instead of following the scroll, so it no longer covers the full-width key terms | NFR | P2 | Done 2026-11-25 |
 
 ## Maintenance
 
