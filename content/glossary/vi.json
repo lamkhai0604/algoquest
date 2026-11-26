@@ -535,6 +535,76 @@
           "term": "log archiving",
           "vi": "lưu trữ nhật ký thay đổi",
           "firstLevel": 33
+        },
+        {
+          "term": "local transaction",
+          "vi": "transaction trong database của một service",
+          "firstLevel": 37
+        },
+        {
+          "term": "distributed transaction",
+          "vi": "giao dịch trải trên nhiều database",
+          "firstLevel": 37
+        },
+        {
+          "term": "partial failure",
+          "vi": "hỏng một phần",
+          "firstLevel": 37
+        },
+        {
+          "term": "saga",
+          "vi": "chuỗi transaction cục bộ có bước bù trừ",
+          "firstLevel": 37
+        },
+        {
+          "term": "compensating transaction",
+          "vi": "transaction bù trừ",
+          "firstLevel": 37
+        },
+        {
+          "term": "orchestration",
+          "vi": "điều phối tập trung",
+          "firstLevel": 37
+        },
+        {
+          "term": "orchestrator",
+          "vi": "service điều phối",
+          "firstLevel": 37
+        },
+        {
+          "term": "choreography",
+          "vi": "các service tự phản ứng theo sự kiện",
+          "firstLevel": 37
+        },
+        {
+          "term": "transactional outbox",
+          "vi": "bảng outbox ghi cùng transaction với dữ liệu",
+          "firstLevel": 37
+        },
+        {
+          "term": "relay",
+          "vi": "tiến trình chuyển message từ outbox",
+          "firstLevel": 37
+        },
+        {
+          "term": "change data capture (CDC)",
+          "vi": "đọc thay đổi từ nhật ký database",
+          "firstLevel": 37
+        },
+        {
+          "term": "two-phase commit (2PC)",
+          "vi": "cam kết hai pha",
+          "firstLevel": 37
+        },
+        {
+          "term": "coordinator",
+          "vi": "bên điều phối",
+          "firstLevel": 37
+        },
+        {
+          "term": "exactly-once effect",
+          "vi": "hiệu ứng như chỉ xử lý một lần",
+          "firstLevel": 37
         }
       ]
     },

@@ -1,0 +1,11 @@
+{
+  "question": "You book a flight, then a hotel, then find that no rental car is available, so you call off the trip. How do you get back to where you started?",
+  "options": [
+    "Cancel the hotel, then the flight: new actions that may cost a fee",
+    "Press undo, and both bookings disappear as if they never happened",
+    "Do nothing, because the car failure cancels the other bookings",
+    "Book the car anyway and cancel it later"
+  ],
+  "answer": 0,
+  "explanation": "Each booking was a separate, finished action with a different company. Nothing spans all three, so you undo the finished ones with new actions, cancellations, in reverse order. They are compensations, not an undo: they take time, and the airline may keep a fee. Booking the hardest-to-get item first would have saved the trouble."
+}

@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P37-split-or-merge",
+    "level": 37,
+    "title": "A Balance and Its History",
+    "statement": "A loyalty app currently has a Balance service and a Points History service with separate databases. Each award changes a member's balance and inserts its matching history row. Exercise assumptions: the product requires atomic visibility through every supported read path: readers may see the complete old pair or complete new pair, never a new balance without its history row or the reverse, including during a failure between steps. A local database transaction plus a read of the pair from one database snapshot provides that visibility. One team of four owns both services, they deploy together, and their storage and scaling needs match. Peak load is 100 awards/s; one combined service/database safely handles 1,000 awards/s and the full 200 GB dataset within its 500 GB capacity. A combined local transaction takes at most 8 ms. The API must confirm successful awards within 100 ms under these healthy-operation measurements. A two-service saga would take 20 ms per local step plus two 10 ms message handoffs, about 60 ms total, but the services' read APIs expose their committed rows immediately. No pending-state filter, shared snapshot or cross-database transaction is available. Which boundary fits?",
+    "examples": [
+      "After an award, both the new balance and its history row must appear together; later compensation cannot erase a reader's earlier observation of a partial pair."
+    ],
+    "constraints": [
+      "Keep balance and history atomically visible as one pair through every supported read path.",
+      "Fit the supplied 100 awards/s and 200 GB workload and confirm healthy successes within 100 ms.",
+      "Use the stated transaction/read capabilities; a period of visible partial state is not accepted."
+    ],
+    "approaches": [
+      {
+        "id": "two-service-saga",
+        "name": "Keep the services separate and compensate the first step if the second fails",
+        "hint": "Recover committed work with a new action",
+        "label": "unsuitable",
+        "time": "About 20 + 20 + 10 + 10 = 60 ms on a healthy success",
+        "space": "Two databases plus durable saga and compensation state",
+        "why": "The timing fits, but after the first local commit and before the second, the read APIs expose only one changed half. Compensation can eventually repair the pair, but cannot satisfy atomic visibility at every read. This exercise explicitly disallows that intermediate state; a saga is not one isolated database transaction."
+      },
+      {
+        "id": "one-service-local-transaction",
+        "name": "Place both records in one service database and update them in one local transaction",
+        "hint": "Choose the boundary of the data that changes together",
+        "label": "best",
+        "time": "At most 8 ms for the award transaction",
+        "space": "The full 200 GB dataset in one database with 500 GB capacity",
+        "why": "The supplied local transaction exposes both changes together or neither, even if it aborts. Eight milliseconds fit 100 ms; 100 awards/s fit 1,000/s and 200 GB fit 500 GB. The same team, joint deployment and matching scaling needs give no stated reason to keep a distributed boundary between these coupled records."
+      },
+      {
+        "id": "separate-calls",
+        "name": "Call Balance and then Points History, returning after both, with no compensation",
+        "hint": "Sequence two existing API calls",
+        "label": "unsuitable",
+        "time": "Two local commits with a gap between them",
+        "space": "The existing two databases",
+        "why": "The first committed record becomes visible before the second. If the second call fails, the partial pair also remains indefinitely. Returning only after both calls does not hide the first commit from other readers, so this breaks the atomic-visibility requirement."
+      }
+    ]
+  },
+  {
+    "id": "P37-orchestrate-or-choreograph",
+    "level": 37,
+    "title": "Support Needs to Follow Checkout",
+    "statement": "Checkout has five possible steps: save the pending order, reserve stock, authorize payment, arrange delivery and confirm the order. After payment, delivery takes one of two branches: pickup or courier. Support must look up any order and see the last reported state of each applicable step, including pending or failed steps, within 1 second of a report. Exercise assumptions for this reporting bound: the app services, broker and reporting storage stay healthy; a payment provider can be unavailable, in which case its step is reported pending. Each participant durably saves its local change and outgoing status in an outbox. Reports include order id, step id, branch and state, with enough version information to reject older or duplicate reports. Relay and broker delivery together take at most 200 ms; applying a report to durable coordinator state or to a read-only status view takes at most 100 ms. Capacity is sufficient. The team prefers one place to change branch and compensation rules. The outside payment provider supports idempotent payment/void requests but does not participate in prepare/commit protocols. Delivery arrangement is a cancellable reservation; actual dispatch and email are outside this workflow. The reversible effects have cancel-order, release-stock, void-authorization and cancel-delivery compensations. Final confirmation is safely retryable and cannot introduce a new business rejection after those steps succeed. Which coordination style fits?",
+    "examples": [
+      "An order can show stock reserved and payment pending, so support can identify the unfinished step even while the payment provider is unavailable."
+    ],
+    "constraints": [
+      "Run the five-step workflow and its pickup/courier branches, compensating completed reversible steps after a definite later failure.",
+      "Make each step and compensation idempotent; persist messages/state so work can resume.",
+      "Show the last reported per-step states within 1 second under the supplied healthy reporting assumptions; prefer one place for branch/compensation rules."
+    ],
+    "approaches": [
+      {
+        "id": "orchestrator",
+        "name": "Use a durable orchestrator that directs steps and stores their reported states",
+        "hint": "Keep a workflow definition with its progress",
+        "label": "best",
+        "time": "A reported state reaches coordinator storage within 200 + 100 = 300 ms",
+        "space": "Durable workflow state plus participant outboxes",
+        "why": "The orchestrator stores progress, chooses pickup/courier and directs reverse compensations for completed reversible steps. Outboxes and stable action keys make delivery/retries safe. The 300 ms reporting bound is below 1 second, and support reads the recorded per-step state. One workflow definition matches the visible preference for changing the rules in one place."
+      },
+      {
+        "id": "events-and-status-view",
+        "name": "Use choreography for step/compensation events and maintain a read-only per-order status view",
+        "hint": "Separate event reactions from support's view",
+        "label": "valid",
+        "time": "A report reaches the status view within 200 + 100 = 300 ms",
+        "space": "Participant outboxes, distributed workflow rules and a durable read-only status view",
+        "why": "Participants react to successful or definite-failure events to run the branches and reverse compensations, using stable action keys. A view stores the supplied per-step reports, rejects older/duplicate versions and exposes them to support within 300 ms. It meets all fixed requirements, including observability; choreography alone without that view would not establish the stated support lookup. It is valid but spreads branch/compensation rules across participants and adds a derived reporting view, contrary to the team's soft preference for one workflow definition."
+      },
+      {
+        "id": "two-phase-commit",
+        "name": "Make all five services and the payment provider participants in one two-phase commit",
+        "hint": "Ask every participant to prepare before deciding",
+        "label": "unsuitable",
+        "time": "Cannot complete the proposed prepare/commit protocol with the provider",
+        "space": "Coordinator state and locks in prepared participants",
+        "why": "The outside provider explicitly does not participate in prepare/commit. The proposed transaction therefore cannot include its payment effect. Database support for 2PC in the app's own services does not add that capability to an external API."
+      }
+    ]
+  },
+  {
+    "id": "P37-timeout",
+    "level": 37,
+    "title": "The Card Call Has No Reply",
+    "statement": "A checkout sends one charge request with stable key order123-charge. The client times out after 200 ms and does not know whether the provider charged the card. Exercise assumptions: the provider preserves the result for a key and identical charge parameters; repeating that key never creates a second charge. The original request reaches a terminal succeeded/failed state within 2 seconds of its first submission. Both status lookup and same-key repeat requests return the authoritative pending/succeeded/failed state within 100 ms; a request started after the terminal transition returns that terminal result, and the provider permits at most five requests/s for this order. These status operations and local storage remain available. The application must learn the outcome within 5 seconds of the first submission, proceed once on confirmed success, or cancel on confirmed failure. It must never mark a still-pending payment cancelled or charge twice. A refund submitted before a charge exists is rejected and is not held for a possible future charge; that rejection does not cancel the original request. There is no customer cancellation request in this exercise. Which timeout policy fits?",
+    "examples": [
+      "The original call can charge successfully after the client timed out. A rejected early refund would not stop that later charge."
+    ],
+    "constraints": [
+      "Resolve the original result within 5 seconds under the supplied terminal-state and response bounds.",
+      "Proceed once after confirmed success or cancel after confirmed failure; do not treat pending or timeout as definite failure.",
+      "Keep the same charge key/parameters and respect the limit of five provider requests/s for this order."
+    ],
+    "approaches": [
+      {
+        "id": "refund-and-cancel",
+        "name": "Attempt a refund immediately after timeout and mark the order cancelled",
+        "hint": "Start compensation when the reply is missing",
+        "label": "unsuitable",
+        "time": "A refund attempt can occur before the original charge reaches its terminal result",
+        "space": "A cancellation/refund attempt record",
+        "why": "The original charge may still be pending. If no charge exists yet, the refund is rejected and does not cancel the original; that original can then succeed for an order already marked cancelled. The timeout did not prove failure, so this violates the required outcome-aware transition and can leave an unmatched charge."
+      },
+      {
+        "id": "resolve-original-key",
+        "name": "Look up the original result or repeat the identical request with its original key; wait 200 ms after a pending reply before asking again",
+        "hint": "Resolve the operation already in progress",
+        "label": "best",
+        "time": "Conservative resolution bound: 2 + 0.1 + 0.2 + 0.1 = 2.4 seconds from the first submission",
+        "space": "The durable original key, charge parameters and pending/terminal outcome",
+        "why": "No request uses a new charge identity. Pending replies do not trigger compensation or cancellation. Wait 200 ms after each pending reply, so request starts are at least 200 ms apart and respect five/s. After the original is terminal by 2 s, allow an in-flight 100 ms reply, a 200 ms wait and a final 100 ms lookup: by 2.4 s the outcome is known, below 5 s. Persist it and use an idempotent local transition to proceed once on success or cancel on definite failure."
+      },
+      {
+        "id": "retry-new-key",
+        "name": "Send another charge request with a new key after the timeout",
+        "hint": "Create a fresh request identity",
+        "label": "unsuitable",
+        "time": "The second request can overlap the original pending charge",
+        "space": "Two independent charge identities for one order",
+        "why": "The provider deduplicates by key, so a fresh key is a new operation. The original timed-out call may succeed and the new one may succeed too, charging the order twice. A faster second reply does not repair that violation."
+      }
+    ]
+  }
+]

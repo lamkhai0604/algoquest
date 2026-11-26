@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Exercise assumptions: a saga runs (1) save a pending order, (2) authorize a card, (3) reserve stock, then (4) send a confirmation email. Steps 1 and 2 succeed. Step 3 reports a definite failure and its local transaction leaves no reservation. Step 4 has not run. Which recovery sequence fits?",
+    "options": [
+      "Void the authorization from step 2, then cancel the pending order from step 1.",
+      "Cancel the pending order from step 1, then void the authorization from step 2.",
+      "Release a reservation from failed step 3, void step 2, then cancel step 1.",
+      "Roll back all service databases automatically without issuing new actions."
+    ],
+    "answer": 0,
+    "explanation": "Compensate only the completed steps, in reverse order: undo step 2, then step 1. The failed stock transaction explicitly left no reservation, so there is no step-3 effect to undo. The email has not been sent. These are new compensating actions, not one automatic rollback of earlier committed transactions. Use stable keys so retrying a compensation does not repeat its business effect."
+  },
+  {
+    "question": "A service must save an order and announce it to a broker. Publishing after a separate save can lose the announcement after a crash; publishing before saving can announce an order whose save later fails. What does a transactional outbox change?",
+    "options": [
+      "It publishes first and then saves, so the broker's copy guarantees that the order row will commit.",
+      "It saves the order and message separately, then relies on a faster relay to make the gap harmless.",
+      "It saves the order and outbox message in one local transaction; a relay publishes committed rows, and consumers still handle duplicate publications safely.",
+      "It saves the order and message in one local transaction, which also guarantees that the broker delivers the message exactly once."
+    ],
+    "answer": 2,
+    "explanation": "The order change and outgoing message row either commit together or neither commits. A relay later publishes committed outbox rows. If it crashes after publishing but before recording that the row was sent, it can publish again, so consumers still need stable keys and idempotent processing. The outbox removes the save/publish gap; it does not remove duplicates or make the database commit and broker delivery one transaction."
+  },
+  {
+    "question": "Exercise assumptions: only three steps need ordering. Stock reservation has a 30% definite-failure rate; card authorization has a 2% definite-failure rate. Those failures are independent, leave no effect, and either successful step can be compensated at the same cost. A confirmation email cannot be taken back and must only be sent after both succeed. Email is a supplied retryable final action that eventually succeeds without triggering compensation. Among orders that satisfy that email rule, which order gives the fewest expected compensating actions?",
+    "options": [
+      "Authorize card, reserve stock, send email.",
+      "Reserve stock, authorize card, send email.",
+      "Reserve stock, send email, authorize card.",
+      "Send email, reserve stock, authorize card."
+    ],
+    "answer": 1,
+    "explanation": "Put the more failure-prone reversible step first and the email last. Stock first needs a compensation only when stock succeeds and the card fails: 0.70 × 0.02 = 0.014 expected actions per attempt. Card first needs one when the card succeeds and stock fails: 0.98 × 0.30 = 0.294. Sending the email before either risky step can require taking back a message, which the exercise forbids. Equal compensation costs and the stated failure model make the comparison valid."
+  }
+]

@@ -317,7 +317,7 @@
     }
   },
   {
-    "title": "Both sides sell the last seat",
+    "title": "Purchases during the break",
     "body": "A concert has one seat left. If both regions keep accepting purchases during the partition, a New York buyer and a Berlin buyer can each buy it from their own copy: each copy checks its own data, sees one seat, and sells it. When the link returns, the copies hold **two sales for one seat**, a **conflict** that needs a refund and an apology. Staying available for a seat means risking this.",
     "visual": {
       "cells": [],
@@ -410,12 +410,12 @@
           "value": "1"
         },
         {
-          "name": "sold in the US",
-          "value": "seat 12"
+          "name": "US buyer",
+          "value": "wants the last seat"
         },
         {
-          "name": "sold in the EU",
-          "value": "seat 12"
+          "name": "EU buyer",
+          "value": "wants the last seat"
         },
         {
           "name": "after the link returns",
@@ -423,7 +423,7 @@
         }
       ],
       "predict": {
-        "question": "During the partition, both regions accept purchases from their own copy. The last seat is bought in the US and in the EU. What does the app find when the link returns?",
+        "question": "During the partition, both regions accept purchases from their own copy. A US buyer and an EU buyer each try to buy the last seat at the same time. What does the app find when the link returns?",
         "options": [
           "The second sale is cancelled automatically before anyone pays",
           "Two buyers have paid for the same seat",
@@ -764,7 +764,7 @@
   },
   {
     "title": "One choice per feature",
-    "body": "The same page uses both choices. Seats, payments and usernames choose **consistency**, because a wrong answer costs money or trust; the \"interested\" counter, reviews and feeds choose **availability**, because a slightly old value is harmless. A buyer's own tickets are read from the event's home region, so they always see the purchase they just made. Decide per feature by asking what a stale or conflicting answer would cost.",
+    "body": "The same page uses both choices. Seats, payments and usernames choose **consistency**, because a wrong answer costs money or trust; the \"interested\" counter, reviews and feeds choose **availability**, because a slightly old value is harmless. A buyer's own tickets are read from the event's home region, so whenever that region can be reached they see the purchase they just made; during a partition a buyer across the break is asked to try again. Decide per feature by asking what a stale or conflicting answer would cost.",
     "visual": {
       "cells": [],
       "arch": {
@@ -862,7 +862,7 @@
         },
         {
           "name": "own tickets",
-          "value": "read from the home region"
+          "value": "home region, if reachable"
         }
       ]
     }
