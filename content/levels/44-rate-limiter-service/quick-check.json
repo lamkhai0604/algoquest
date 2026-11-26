@@ -24,12 +24,12 @@
   {
     "question": "The shared store behind a rate limiter is down. The limited action is sending paid text messages, and the phone carrier blocks the whole account if it gets too many. What should the limiter do?",
     "options": [
-      "Fail closed: refuse sends until the store returns, or allow only a safe per-server share",
+      "Fail closed: refuse new sends quickly with 429 until the store returns",
       "Fail open: allow every send",
       "Pick allow or refuse at random",
-      "Crash the API servers"
+      "Wait for the store as long as it takes"
     ],
     "answer": 0,
-    "explanation": "Each extra message costs money, and passing the carrier's limit blocks every customer for an hour, so letting everything through is the expensive mistake. Refusing sends, or allowing only shares that cannot add up past the carrier's limit, keeps the worst case small."
+    "explanation": "Each extra message costs money, and passing the carrier's limit blocks every customer for an hour, so letting everything through is the expensive mistake. Refusing new sends quickly keeps the worst case small; waiting for the store would leave every request hanging."
   }
 ]
