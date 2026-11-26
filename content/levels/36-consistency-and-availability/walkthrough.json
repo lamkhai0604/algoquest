@@ -1,0 +1,870 @@
+[
+  {
+    "title": "Two regions, two copies",
+    "body": "The ticket app runs in two **regions**, the United States and Europe, so each user talks to nearby servers. Each region keeps a full copy of the data, and every change is sent to the other region, normally within a fraction of a second. A round trip between the regions takes about 90 ms.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users in US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "US servers",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "US data",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "EU data",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "EU servers",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Users in EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              4,
+              3,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "regions",
+          "value": "US and EU"
+        },
+        {
+          "name": "copies",
+          "value": "one full copy each"
+        },
+        {
+          "name": "round trip between them",
+          "value": "about 90 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A like crosses the ocean",
+    "body": "A user in Europe clicks \"interested\". The EU copy counts it at once and sends it to the US a moment later, about 200 ms in all. A US user who loads the page 50 ms after the click still sees the **old count**, 1,203 instead of 1,204. A fraction of a second later both copies agree. This is **eventual consistency**: copies may disagree for a while but become the same when writes stop, and for a counter that is harmless.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users in US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "US servers",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "US data",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "EU data",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "EU servers",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Users in EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          5,
+          4,
+          3,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "click in EU",
+          "value": "t = 0 ms"
+        },
+        {
+          "name": "reaches the US copy",
+          "value": "about t = 200 ms"
+        },
+        {
+          "name": "US read at t = 50 ms",
+          "value": "1,203 (old)"
+        }
+      ],
+      "predict": {
+        "question": "The EU copy counts a click at t = 0 and sends it to the US copy, which has it about 200 ms later. A US user reads the counter at t = 50 ms from the US copy. What do they see?",
+        "options": [
+          "The new count, because the click was saved",
+          "The old count, one lower",
+          "An error, because the copies disagree",
+          "Nothing, the read waits until the copies agree"
+        ],
+        "answer": 1,
+        "explanation": "At t = 50 ms the click has not reached the US copy yet, so the US copy still holds the old count. The system answers anyway with what it has; that is eventual consistency. The copies will agree about 150 ms later.",
+        "hides": [
+          "US read at t = 50 ms"
+        ]
+      }
+    }
+  },
+  {
+    "title": "The link breaks",
+    "body": "The undersea link between the regions fails for 20 minutes. This is a **network partition**: both regions keep running and keep serving their own users, but neither can reach the other. It is not a crash. US users still buy tickets in the US, EU users in Europe, and every change made on one side stays on that side until the link returns.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users in US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "US servers",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "US data",
+            "x": 4,
+            "y": 0,
+            "note": "running"
+          },
+          {
+            "kind": "db",
+            "label": "EU data",
+            "x": 9,
+            "y": 1,
+            "note": "running"
+          },
+          {
+            "kind": "server",
+            "label": "EU servers",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Users in EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          2,
+          3
+        ],
+        "drop": true,
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              5,
+              4,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "US region",
+          "value": "up"
+        },
+        {
+          "name": "EU region",
+          "value": "up"
+        },
+        {
+          "name": "link between them",
+          "value": "down for 20 min"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Both sides sell the last seat",
+    "body": "A concert has one seat left. If both regions keep accepting purchases during the partition, a New York buyer and a Berlin buyer can each buy it from their own copy: each copy checks its own data, sees one seat, and sells it. When the link returns, the copies hold **two sales for one seat**, a **conflict** that needs a refund and an apology. Staying available for a seat means risking this.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users in US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "US servers",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "US data",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "EU data",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "EU servers",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Users in EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              4,
+              3
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "seats left before",
+          "value": "1"
+        },
+        {
+          "name": "sold in the US",
+          "value": "seat 12"
+        },
+        {
+          "name": "sold in the EU",
+          "value": "seat 12"
+        },
+        {
+          "name": "after the link returns",
+          "value": "two buyers, one seat"
+        }
+      ],
+      "predict": {
+        "question": "During the partition, both regions accept purchases from their own copy. The last seat is bought in the US and in the EU. What does the app find when the link returns?",
+        "options": [
+          "The second sale is cancelled automatically before anyone pays",
+          "Two buyers have paid for the same seat",
+          "Only the first sale was saved, because the copies were in step",
+          "Nothing, because each copy sold its own seat"
+        ],
+        "answer": 1,
+        "explanation": "Each copy checked only its own data, saw one seat, and sold it; neither could ask the other. Both sales were confirmed to buyers, so the conflict appears only when the copies compare notes after the partition. Avoiding it means one side must refuse while the link is down.",
+        "hides": [
+          "after the link returns"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Choose consistency for seats",
+    "body": "To never sell a seat twice, one place must decide. Each event gets a **home region**: this concert's home is the US, so only the US copy sells its seats. During the partition, the Berlin buyer's request cannot reach the home region and is refused with \"we cannot confirm this right now, please try again shortly\". This is choosing **consistency** over **availability**: some users get an error, but no seat is sold twice. That is the choice the **CAP** idea describes: while the network is split, a system cannot both answer everyone and keep one consistent truth.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users in US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "US servers",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "US data",
+            "x": 4,
+            "y": 0,
+            "note": "home of the event"
+          },
+          {
+            "kind": "db",
+            "label": "EU data",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "EU servers",
+            "x": 10,
+            "y": 5,
+            "note": "refuses the sale"
+          },
+          {
+            "kind": "client",
+            "label": "Users in EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              4,
+              3,
+              2
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "decides the seat",
+          "value": "the home region (US)"
+        },
+        {
+          "name": "Berlin buyer",
+          "value": "refused during the partition"
+        },
+        {
+          "name": "seats sold twice",
+          "value": "0"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Choose availability for the counter",
+    "body": "The \"interested\" counter makes the other choice. Each region keeps counting clicks during the partition: the US adds 300, the EU adds 200. When the link returns, each region sends the clicks it counted, and both copies show 1,204 + 300 + 200 = 1,704. Nobody got an error, and the only cost was a counter that was a little low on each side for 20 minutes. Counts that add up can always be merged.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users in US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "US servers",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "US data",
+            "x": 4,
+            "y": 0,
+            "note": "+300"
+          },
+          {
+            "kind": "db",
+            "label": "EU data",
+            "x": 9,
+            "y": 1,
+            "note": "+200"
+          },
+          {
+            "kind": "server",
+            "label": "EU servers",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Users in EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              2
+            ]
+          },
+          {
+            "path": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              5,
+              4,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "before",
+          "value": "1,204"
+        },
+        {
+          "name": "counted in the US",
+          "value": "+300"
+        },
+        {
+          "name": "counted in the EU",
+          "value": "+200"
+        },
+        {
+          "name": "after merging",
+          "value": "1,704"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Consistency costs time every day",
+    "body": "Partitions are rare, but strong consistency also costs time when the network is fine. A Berlin buyer purchasing a seat for a US event must reach the home region: about 5 ms of local work + one 90 ms round trip = about **95 ms**, while a click on the counter is confirmed by the EU copy in about 5 ms. Choosing consistency means paying that round trip on every write that crosses regions; a home region near most buyers keeps most writes local.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users in US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "US servers",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "US data",
+            "x": 4,
+            "y": 0,
+            "note": "home of the event"
+          },
+          {
+            "kind": "db",
+            "label": "EU data",
+            "x": 9,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "EU servers",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Users in EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          5,
+          4,
+          3,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "local work",
+          "value": "5 ms"
+        },
+        {
+          "name": "round trip to the US",
+          "value": "90 ms"
+        },
+        {
+          "name": "purchase from Berlin",
+          "value": "about 95 ms"
+        },
+        {
+          "name": "click on the counter",
+          "value": "about 5 ms"
+        }
+      ],
+      "predict": {
+        "question": "A Berlin buyer buys a seat for an event whose home region is the US. Local work takes 5 ms and a round trip between the regions takes 90 ms. About how long does the purchase take?",
+        "options": [
+          "About 5 ms",
+          "About 95 ms",
+          "About 185 ms",
+          "About 900 ms"
+        ],
+        "answer": 1,
+        "explanation": "The purchase needs the local work plus one round trip to the home region: 5 + 90 = 95 ms. The counter click needs no round trip, so it takes about 5 ms. 185 ms would count the round trip twice.",
+        "hides": [
+          "purchase from Berlin"
+        ]
+      }
+    }
+  },
+  {
+    "title": "One choice per feature",
+    "body": "The same page uses both choices. Seats, payments and usernames choose **consistency**, because a wrong answer costs money or trust; the \"interested\" counter, reviews and feeds choose **availability**, because a slightly old value is harmless. A buyer's own tickets are read from the event's home region, so they always see the purchase they just made. Decide per feature by asking what a stale or conflicting answer would cost.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users in US",
+            "x": 0,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "US servers",
+            "x": 2,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "US data",
+            "x": 4,
+            "y": 0,
+            "note": "seats: home region"
+          },
+          {
+            "kind": "db",
+            "label": "EU data",
+            "x": 9,
+            "y": 1,
+            "note": "counter: both count"
+          },
+          {
+            "kind": "server",
+            "label": "EU servers",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "client",
+            "label": "Users in EU",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              4,
+              3
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "seats, payments",
+          "value": "consistency"
+        },
+        {
+          "name": "counters, reviews",
+          "value": "availability"
+        },
+        {
+          "name": "own tickets",
+          "value": "read from the home region"
+        }
+      ]
+    }
+  }
+]

@@ -850,6 +850,71 @@
           "term": "global index",
           "vi": "chỉ mục chung được chia theo trường được đánh chỉ mục",
           "firstLevel": 35
+        },
+        {
+          "term": "region",
+          "vi": "vùng địa lý gồm các trung tâm dữ liệu",
+          "firstLevel": 36
+        },
+        {
+          "term": "network partition",
+          "vi": "mạng bị chia cắt",
+          "firstLevel": 36
+        },
+        {
+          "term": "strong consistency",
+          "vi": "nhất quán mạnh",
+          "firstLevel": 36
+        },
+        {
+          "term": "linearizability",
+          "vi": "mọi lần đọc thấy lần ghi mới nhất",
+          "firstLevel": 36
+        },
+        {
+          "term": "eventual consistency",
+          "vi": "nhất quán sau cùng",
+          "firstLevel": 36
+        },
+        {
+          "term": "availability",
+          "vi": "luôn trả lời được request",
+          "firstLevel": 36
+        },
+        {
+          "term": "CAP",
+          "vi": "khi mạng bị chia cắt, chọn nhất quán hoặc sẵn sàng",
+          "firstLevel": 36
+        },
+        {
+          "term": "conflict",
+          "vi": "xung đột dữ liệu",
+          "firstLevel": 36
+        },
+        {
+          "term": "home region",
+          "vi": "vùng duy nhất nhận lệnh ghi cho một dữ liệu",
+          "firstLevel": 36
+        },
+        {
+          "term": "PACELC",
+          "vi": "mở rộng của CAP: lúc bình thường chọn độ trễ hoặc nhất quán",
+          "firstLevel": 36
+        },
+        {
+          "term": "quorum",
+          "vi": "số bản sao tối thiểu phải đồng ý",
+          "firstLevel": 36
+        },
+        {
+          "term": "last write wins",
+          "vi": "lần ghi sau cùng thắng",
+          "firstLevel": 36
+        },
+        {
+          "term": "CRDT",
+          "vi": "kiểu dữ liệu tự gộp được không mất thay đổi",
+          "firstLevel": 36
         }
       ]
     },
