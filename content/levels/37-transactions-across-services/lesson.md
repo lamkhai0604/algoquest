@@ -58,7 +58,7 @@ There is no code in this level. Use this **design template** for a workflow acro
 4. Run it: an orchestrator (one place, easier to follow) or choreography
    (events, fewer moving parts for small flows).
 5. Every message: save it with the data in an outbox, publish it with a
-   relay, and make every step and compensation idempotent (order id as key).
+   relay, and make every step and compensation idempotent (one key per action).
 6. While the saga runs, what does the user see? ("pending", then
    "confirmed" or "cancelled and refunded")
 ```
@@ -69,9 +69,9 @@ There is no code in this level. Use this **design template** for a workflow acro
 
 **How often it happens.** If 1% of 100 orders per second fail at the stock step, that is 1 failed saga per second. With the charge before the stock step, that is a refund per second, each with fees and an unhappy customer; with the stock step first, it is only a cancelled pending order.
 
-**How long a saga takes.** Steps are local transactions linked by messages. Reserving stock takes about 20 ms, authorizing a card usually 200 ms to 2 seconds (approximate) and confirming the order about 10 ms, plus a few milliseconds per message. The customer sees "order received" right after the order is saved (about 30 ms) and "confirmed" a second or two later.
+**How long a saga takes.** Steps are local transactions linked by messages. Reserving stock takes about 20 ms, authorizing a card 200 ms to 2 seconds in normal operation (approximate) and confirming the order about 10 ms, plus a few milliseconds per message. The customer sees "order received" right after the order is saved (about 30 ms) and "confirmed" a second or two later.
 
-**Outbox delay and duplicates.** A relay that checks the outbox every 100 ms publishes each message within about 100 ms. If the relay crashes after publishing but before marking a row as sent, it publishes that message again: consumers must be idempotent, as in SD 7.
+**Outbox delay and duplicates.** A relay that checks the outbox every 100 ms picks up each new row within about 100 ms; publishing and delivery add the broker's own delay, and if the relay is down, messages wait in the outbox until it restarts. If the relay crashes after publishing but before marking a row as sent, it publishes that message again: consumers must be idempotent, as in SD 7.
 
 | Approach | All or nothing? | Locks held | Works with outside providers | Typical use |
 | --- | --- | --- | --- | --- |
@@ -82,7 +82,7 @@ There is no code in this level. Use this **design template** for a workflow acro
 ## Common mistakes
 
 - **Calling every service in a row and hoping.** If the third call fails or times out, the first two have already changed their data, and nothing undoes them.
-- **Compensations that are not idempotent.** A refund message delivered twice must not refund twice; use the order id as the key, as for every step.
+- **Compensations that are not idempotent.** A refund message delivered twice must not refund twice; give every action its own key built from the order id, such as `order123-authorize` for the authorization and `order123-void` for cancelling it. A retry of the same action reuses its key; a compensation is a different action with a different key.
 - **Sending what cannot be undone too early.** An email that says "your order is confirmed" before the stock step can turn into "sorry, it was not". Put such steps last.
 - **Saving data and then publishing in two separate steps.** A crash between them leaves an order that nobody hears about. Use the outbox.
 - **Assuming a timeout means failure.** A payment call that times out may have charged the card. Ask the provider again with the same idempotency key, or check its status, before compensating.
@@ -91,7 +91,7 @@ There is no code in this level. Use this **design template** for a workflow acro
 
 - **A compensation fails.** The refund call itself can fail. Compensations are retried with backoff (SD 7) until they succeed; a compensation that keeps failing goes to a dead-letter queue for a person.
 - **The user acts during the saga.** A customer cancels while their order is still being confirmed. The orchestrator must handle the cancel as another step, not as a separate change that races with the saga.
-- **Other users see the middle state.** Reserved stock is unavailable to others while the saga runs, even if the order is later cancelled; reservations should expire if a saga stalls.
+- **Other users see the middle state.** Reserved stock is unavailable to others while the saga runs, even if the order is later cancelled; reservations should expire if a saga stalls. Expiring and using a reservation must be competing local transactions on the reservation row in the Inventory service: using it succeeds only while it is still active, and expiring it succeeds only while it is not yet used, so exactly one wins.
 - **Steps that cannot be compensated.** Shipped goods cannot be "unshipped"; the saga must finish all risky steps before any such step, and after that point it can only move forward.
 
 ### Extension (optional): two-phase commit, and exactly-once as an effect
@@ -102,15 +102,15 @@ In **two-phase commit**, the coordinator first sends "prepare": each participant
 
 ## Worked example
 
-**Problem:** The shop places 100 orders per second at peak. Placing an order must reserve stock (Inventory service, about 20 ms), authorize the card (Payment service, through a card provider, usually 200 ms to 2 s), mark the order confirmed (Order service, about 10 ms) and send a confirmation email. About 1% of orders fail at the stock step and 2% at the card step. The customer must see a first answer within 300 ms and know the final result within about 5 seconds. The card provider accepts an idempotency key and offers "void authorization" to cancel an authorization. Design the workflow.
+**Problem:** The shop places 100 orders per second at peak. Placing an order must reserve stock (Inventory service, about 20 ms), authorize the card (Payment service, through a card provider that answers within 2 s in normal operation; if a call times out, a status lookup with the same key answers within 500 ms), mark the stock reservation as used (Inventory, about 20 ms), mark the order confirmed (Order service, about 10 ms) and send a confirmation email. About 1% of orders fail at the stock step and 2% at the card step. Messages between services take up to 10 ms. The customer must see a first answer within 300 ms and, while the services and the card provider are working normally, know the final result within 5 seconds. The card provider accepts an idempotency key and offers "void authorization" to cancel an authorization. Design the workflow.
 
 **Solution:**
 
-1. **Order of steps.** Save the order as "pending" → reserve stock → authorize the card → confirm the order → send the email. Stock goes before payment because a stock failure then needs no refund; the email goes last because it cannot be taken back.
+1. **Order of steps.** Save the order as "pending" → reserve stock → authorize the card → mark the reservation as used and confirm the order → send the email. Stock goes before payment because a stock failure then needs no refund; the email goes last because it cannot be taken back.
 2. **First answer.** The Order service saves the pending order and an outbox row in one local transaction (about 30 ms) and answers "order received", well within 300 ms.
-3. **Orchestration.** The Order service runs the saga: its relay publishes "reserve stock for order 123"; on success it asks the Payment service to authorize; on success it confirms the order and only then queues the email. Every message carries the order id as the idempotency key.
+3. **Orchestration.** The Order service runs the saga: its relay publishes "reserve stock for order 123"; on success it asks the Payment service to authorize; on success it confirms the order and only then queues the email. Every action carries its own idempotency key built from the order id, such as `order123-reserve`, `order123-authorize` and, if needed, `order123-void`.
 4. **Failures.** Stock fails (1 per second at peak): cancel the order; nothing else to undo. The card fails (2 per second): release the stock, then cancel the order, in reverse order. A card call that times out is asked again with the same key before anything is compensated.
-5. **Timing.** About 30 + 20 + up to 2,000 + 10 ms plus a few milliseconds per message: the customer knows the result in about 2 seconds at worst, within 5. The page shows "pending" until then.
-6. **Stuck sagas.** A reservation that is not confirmed within 10 minutes expires and returns the stock, so a stalled saga cannot hide items forever.
+5. **Timing.** On the slowest normal path: 30 (save) + 20 (stock) + 2,000 (card) + 500 (one status lookup after a timeout) + 20 (use the reservation) + 10 (confirm) + 4 messages × 10 = 2,620 ms, about 2.6 seconds, within 5. The page shows "pending" until then. Compensations after a failure may finish later; the customer is told "order failed" as soon as the failure is known.
+6. **Stuck sagas.** A reservation that is not used within 10 minutes expires and returns the stock, so a stalled saga cannot hide items forever. Using and expiring are competing local transactions on the reservation row: exactly one wins. If a stalled saga resumes and Inventory answers that its reservation expired, it voids the authorization (`order123-void`) and cancels the order. A late or repeated message for that reservation finds it expired and changes nothing.
 
 **Answer:** An orchestrated saga run by the Order service: pending order with an outbox, stock reservation, card authorization, confirmation, then the email. Each step is a local transaction with an idempotency key; failures are undone in reverse (release stock, void the authorization, cancel the order), and the only step that cannot be undone comes last.
