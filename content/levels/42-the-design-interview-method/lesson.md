@@ -58,7 +58,7 @@ There is no code in this level. Use this **routine** for any design question, wi
 6. Deep dive (10 min): one or two parts with the hardest requirement.
 7. Failures (5 min): what fails, under which condition, what users see.
 8. Summary (3 min): how the design meets each requirement; what you
-   would do next. Leave a few minutes for questions.
+   would do next. That is 43 minutes; leave 2 for questions.
 ```
 
 ## Complexity
@@ -103,17 +103,17 @@ Interviewers usually give hints: a follow-up question about one part ("what happ
 
 ## Worked example
 
-**Problem:** Design a leaderboard for a mobile game. Use the routine and the time plan.
+**Problem:** Design a leaderboard for a mobile game. Use the routine and the time plan. Assume an in-memory store whose node holds about 25 GB, handles about 100,000 sorted-set updates per second, answers a rank lookup within 1 ms, can update a score only if the new one is higher, and runs with a replica.
 
 **Solution:**
 
 1. **Clarify.** Functional: (F1) a player submits a score after each game; (F2) anyone can see the global top 100; (F3) a player can see their own rank. Non-functional: (N1) 10 million daily players, about 20 games each, 50 million players in total; (N2) a new best score shows in the rankings within 5 seconds; (N3) "my rank" answers within 200 ms; (N4) only each player's best score counts. Out of scope: friends' leaderboards, cheating detection.
 2. **Estimate.** 10 million × 20 = 200 million scores a day ÷ 100,000 ≈ 2,000 writes per second, about 10,000 at peak. 50 million players × 100 bytes = 5 GB. Top-100 reads: 10 KB each. Latency budget for N3: 100 ms network, 10 ms server, 5 ms store, spare 85 ms. Cost: about 10 servers and one in-memory store with a copy, a few thousand dollars a month.
 3. **API.** `POST /scores {score}` → 202 Accepted; `GET /leaderboard/top?n=100`; `GET /leaderboard/me` → rank and score. The player comes from the login (SD 13), never from the request body.
-4. **Data model.** In the database: `best_scores(player_id PK, score, updated_at)`. In an in-memory store: a sorted set of (score, player_id), which keeps players ordered by score and answers "rank of player" and "top 100" in about log₂(50 million) ≈ 26 steps.
-5. **High-level design.** Phone → load balancer → app servers. A score write updates `best_scores` only if higher, then updates the sorted set. "Top 100" is cached for 1 second in front of the servers; "my rank" reads the sorted set.
-6. **Deep dive: the sorted set.** 10,000 writes per second at peak and 5 GB fit one in-memory store, with a replica for failover. Only higher scores update it, so most writes do nothing after the first games of the day. N2 holds because the update happens in the same request, well within 5 seconds.
-7. **Failures.** If the store's main copy fails, the replica takes over within seconds; scores written in the gap are still in `best_scores` and are written again to the set. If both are lost, the set is rebuilt from `best_scores` (50 million rows, minutes), while the cached top 100 stays visible and "my rank" shows "updating". If the database is slow, writes queue briefly and N2 may be missed for that time.
-8. **Summary.** F1 to F3 by the API; N1 by 10,000 writes per second on one sorted set; N2 by updating in the same request; N3 by a 5 ms rank lookup in a 200 ms budget; N4 by "update only if higher".
+4. **Data model.** In the database: `best_scores(player_id PK, score, updated_at)` and an outbox table (SD 10). In the in-memory store: a sorted set of (score, player_id), which keeps players ordered by score and answers "rank of player" and "top 100" in about log₂(50 million) ≈ 26 steps.
+5. **High-level design.** Phone → load balancer → app servers. A score write updates `best_scores` only if higher and, in the same transaction, adds an outbox row; a relay copies each row to the sorted set with "update only if higher", so a crash cannot lose the update and a late, lower score cannot overwrite a newer one. "Top 100" is cached for 1 second in front of the servers, and the last list is also kept as a fallback; "my rank" reads the sorted set.
+6. **Deep dive: the sorted set.** 10,000 writes per second at peak are a tenth of the node's 100,000, and 5 GB, even doubled for the set's own structure, fits in 25 GB, with a replica for failover. Rank lookups take under 1 ms, inside the 5 ms budget. Only higher scores change anything, so most writes do nothing after the first games of the day. N2 holds while the relay runs, because it copies each row within about a second.
+7. **Failures.** If the store's main copy fails, the replica takes over within seconds; outbox rows the set did not confirm are copied again, and "only if higher" makes repeats harmless. If both copies are lost, the set is rebuilt from `best_scores` (50 million rows, minutes) with the same rule, while the relay keeps applying new rows; meanwhile the app shows the last saved top 100 and "my rank" shows "updating", so N2 and N3 are missed until the rebuild ends. If the relay stops, rows wait in the outbox and N2 is missed until it restarts.
+8. **Summary.** F1 to F3 by the API; N1 by 10,000 writes per second, a tenth of one node; N2 by the outbox relay, within seconds while it runs; N3 by a rank lookup under 1 ms in a 200 ms budget; N4 by "only if higher" in both the database and the set.
 
-**Answer:** Requirements with numbers, then about 2,000 writes per second (10,000 peak) and 5 GB, so one in-memory sorted set with a replica answers ranks in about 26 steps, with best scores kept in the database for rebuilds. A 1-second cache serves the top 100. Failures are stated with conditions, and the summary checks each requirement.
+**Answer:** Requirements with numbers, then about 2,000 writes per second (10,000 peak) and 5 GB, so one in-memory sorted set with a replica answers ranks in about 26 steps. Best scores live in the database, and an outbox relay updates the set with "only if higher", so no update is lost or applied backwards. A 1-second cache serves the top 100, with the last list kept for rebuilds. Failures are stated with conditions, and the summary checks each requirement.
