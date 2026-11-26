@@ -1,0 +1,57 @@
+[
+  {
+    "id": "D44-sms-api",
+    "level": 44,
+    "title": "Limits for a Text Message API",
+    "prompt": "A company sells an API that sends text messages for its business customers, such as login codes and delivery alerts. Each message costs money, and the phone carrier blocks the whole account for an hour if it receives too many. Design the rate limiting, using the full routine.",
+    "facts": [
+      "About 5,000 business customers; each may send up to 10 messages per second, with bursts of up to 50 after a quiet time",
+      "The carrier accepts at most 2,000 messages per second in total for the company; above that, it blocks the company's account for an hour",
+      "At peak, customers together try to send about 3,000 messages per second; reading a message's delivery status is a separate call, about 5,000 per second at peak",
+      "15 API servers behind a load balancer; a customer's requests may all arrive on one server",
+      "Measured: a shared in-memory store answers a small script within 1 ms, runs about 100,000 scripts per second, and acknowledges only after its replica has the change; if its main copy fails, the replica takes over within 2 seconds",
+      "Requirement: never send the carrier more than 2,000 messages per second; each customer stays within 10 per second with bursts of 50; a refused send gets 429 with Retry-After within 100 ms",
+      "Requirement: status reads keep working during a store outage; sending may stop during a store outage, but must never risk the carrier block"
+    ],
+    "scope": [
+      "Rate limiting for sending messages and reading their status",
+      "Billing and the message content are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the carrier's 2,000 per second hard limit and its one-hour block, the per-customer limit with bursts of 50, 429 with Retry-After, and different behaviour for sends and status reads during a store outage"
+      ],
+      "estimation": [
+        "Store load: about 3,000 send checks per second, each checking two limits in one script, far under 100,000; status reads need no shared check",
+        "The carrier limit across 15 servers: a per-node share would be 2,000 ÷ 15 ≈ 133 per second on each server; peak demand of 3,000 means about 1,000 sends per second must be refused or delayed"
+      ],
+      "design": [
+        "API (send returns accepted or 429; status read), data model (a token bucket per customer and one for the carrier), a high-level design with a shared store and replica, and a deep dive on atomic counting, global versus per-node limits, and the failure mode for each kind of call"
+      ],
+      "data": [
+        "One atomic script that checks and takes from both the customer's bucket and the carrier's bucket, so neither can be passed by two servers at once",
+        "Per-node or global for each limit, and fail-closed for sends with fail-open for status reads, each with the reason"
+      ],
+      "tradeoffs": [
+        "Names failures with conditions and a trade-off, such as: failing closed for sends stops all messages during a store outage but cannot trigger the carrier block; per-node carrier shares avoid the store but waste capacity when a server is down or traffic is uneven; a summary that checks each requirement"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, global token buckets for both limits. Requirements: 2,000 per second to the carrier at most, 10 per second with bursts of 50 per customer, 429 with Retry-After within 100 ms, status reads always available. Estimates: about 3,000 send checks per second at peak, of which about 1,000 must be refused; 5,000 customer buckets plus one carrier bucket, a few hundred KB. API: POST /messages → 202 or 429 with Retry-After; GET /messages/{id}. Data: in the store, bucket(customer) with room for 50 and refill 10 per second, and bucket(carrier) with room for 2,000 and refill 2,000 per second. High-level: load balancer → API servers → store with replica → sending workers. Deep dive: one atomic script takes a token from the customer's bucket and from the carrier's bucket together, or from neither, so no two servers can both pass either limit, and a customer on one server still gets its full 10 per second; one 1 ms call, about 3,000 per second. Failures: if the main copy fails, the replica, which has every acknowledged change, takes over within 2 seconds; if the store is unreachable, sends fail closed with 429, because guessing could exceed 2,000 and block everyone for an hour, while status reads need no limiter and keep working. Summary: each requirement is met. Trade-off: sending stops during a store outage.",
+      "Design B, per-node carrier shares with a global customer limit. Requirements and estimates as in Design A: 2,000 per second hard, 10 per second per customer with bursts of 50, about 3,000 send attempts per second at peak. API and data: the same calls; customer buckets in the shared store; each server keeps its own carrier bucket of 2,000 ÷ 15 ≈ 133 per second. High-level: load balancer → API servers → store for customer limits only → sending workers. Deep dive: per-customer limits use one atomic script in the store, so they hold however requests spread; the carrier limit is enforced on each server with no store call, so 15 × 133 = 1,995 can never exceed 2,000 even when the store is down. Failures: if the store is unreachable, sends continue under each server's carrier share, with a per-node customer fallback of 10 ÷ 15 per second plus a small burst, and the carrier is still never passed; status reads are unaffected. Summary: each requirement is met. Trade-off: when a server is down or traffic is uneven, the company sends fewer than 2,000 per second, wasting part of the carrier's allowance."
+    ],
+    "reference": {
+      "assumptions": [
+        "Each send is one message",
+        "The sending workers send only what the limiter accepted"
+      ],
+      "design": "Requirements: never more than 2,000 messages per second to the carrier; 10 per second per customer with bursts of 50; 429 with Retry-After within 100 ms; status reads always available; sending may pause during a store outage but must never risk the block.\nEstimates: about 3,000 send attempts per second at peak, about 1,000 of them refused; 5,000 customer buckets and one carrier bucket, a few hundred KB in the store; 3,000 scripts per second, far under 100,000.\nAPI: POST /messages → 202 or 429 with Retry-After; GET /messages/{id}. Data: token buckets in the shared store: per customer (room for 50, 10 per second) and one for the carrier (room for 2,000, 2,000 per second).\nDesign and deep dive: one atomic script takes a token from both buckets or from neither, so two servers can never both pass either limit, and a customer whose requests all reach one server still gets its full limit. Global counting is needed for the carrier because 3,000 attempts per second exceed it and requests spread unevenly.\nFailures: the store's replica holds every acknowledged change and takes over within 2 seconds. If the store is unreachable, sends fail closed, because allowing them could exceed 2,000 per second and block the company for an hour, while status reads do not use the limiter and keep working. Summary: each requirement is met.",
+      "alternatives": [
+        "Per-node carrier shares of about 133 per second on each server, with customer limits in the store: never passes 2,000 even when the store is down, but wastes capacity when traffic is uneven",
+        "Rejected: failing open for sends when the store is down, because the carrier limit could be passed and the account blocked for an hour",
+        "Rejected: reading and then writing counts in two steps, because two servers could both take the last carrier token"
+      ]
+    },
+    "form": "routine"
+  }
+]
