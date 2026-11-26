@@ -579,7 +579,7 @@
     }
   },
   {
-    "title": "Saved, but never announced",
+    "title": "A crash between two steps",
     "body": "The Order service saves the order and then publishes \"reserve stock for order 123\" in a separate step. If it crashes between the two, the order is saved but no message was sent: the order stays pending forever. With a **transactional outbox**, the service writes the order and an outbox row with the message in **one local transaction**; a relay reads the outbox and publishes. Either both are saved or neither is.",
     "visual": {
       "cells": [],
@@ -601,8 +601,7 @@
             "kind": "db",
             "label": "Orders DB",
             "x": 1,
-            "y": 1,
-            "note": "order + outbox row"
+            "y": 1
           },
           {
             "kind": "queue",
@@ -717,7 +716,7 @@
   },
   {
     "title": "The same message twice",
-    "body": "The relay publishes the message, then crashes before marking the outbox row as sent. When it restarts, it publishes the same message again. The outbox never loses a message, but it can repeat one: delivery is at least once (SD 7). Every step and every compensation uses the **order id as an idempotency key**: the Payment service charges order 123 once, however many times it is asked. At-least-once delivery plus idempotent steps gives an exactly-once **effect**.",
+    "body": "The relay publishes the message, then crashes before marking the outbox row as sent. When it restarts, it publishes the same message again. The outbox never loses a message, but it can repeat one: delivery is at least once (SD 7). Every action has its own **idempotency key** built from the order id, such as `order123-authorize`; a compensation such as `order123-void` has a different key. The Payment service authorizes order 123 once, however many times it is asked. At-least-once delivery plus idempotent steps gives an exactly-once **effect**.",
     "visual": {
       "cells": [],
       "arch": {
@@ -763,7 +762,7 @@
             "label": "Payment",
             "x": 7,
             "y": 8,
-            "note": "key 123: seen"
+            "note": "auth key: seen"
           },
           {
             "kind": "db",
@@ -823,10 +822,10 @@
         },
         {
           "name": "idempotency key",
-          "value": "order 123"
+          "value": "order123-authorize"
         },
         {
-          "name": "card charged",
+          "name": "card authorized",
           "value": "once"
         }
       ]
