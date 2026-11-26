@@ -1,0 +1,804 @@
+[
+  {
+    "title": "Một database làm mọi việc",
+    "body": "App server của cửa hàng gửi mọi query đến một database server: 8,000 lệnh đọc và 800 lệnh ghi mỗi giây trong đợt giảm giá. Server xử lý khoảng 3,000 query mỗi giây, và nhóm giữ nó ở mức không quá 70%, tức 2,100. Tải cao gần gấp bốn lần mức an toàn; server mạnh hơn cũng chỉ giúp cầm cự vài tháng.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "8,800 query/s",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "reads per second",
+          "value": "8,000"
+        },
+        {
+          "name": "writes per second",
+          "value": "800"
+        },
+        {
+          "name": "safe limit per server",
+          "value": "2,100"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Bản sao trả lời lệnh đọc",
+    "body": "Với **replication theo mô hình leader-follower**, **leader** nhận mọi lệnh ghi rồi gửi từng thay đổi đến các **follower**, nơi áp dụng cùng thay đổi theo cùng thứ tự. Follower cũng trả lời lệnh đọc gọi là **read replica**. Lệnh ghi vẫn chỉ đến leader; lệnh đọc có thể đến bất kỳ replica nào.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "ghi"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          },
+          {
+            "path": [
+              2,
+              4
+            ]
+          },
+          {
+            "path": [
+              1,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "writes go to",
+          "value": "leader"
+        },
+        {
+          "name": "reads go to",
+          "value": "replica"
+        },
+        {
+          "name": "changes flow",
+          "value": "leader → follower"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cần bao nhiêu replica?",
+    "body": "Khoảng 5% lệnh đọc phải thấy dữ liệu mới và đến leader (bước 5), nên 8,000 − 400 = 7,600 lệnh đọc mỗi giây đến replica. Mỗi replica cũng phải áp dụng cả 800 lệnh ghi mỗi giây từ leader, nên ở giới hạn an toàn 2,100 query mỗi giây, nó còn 2,100 − 800 = 1,300 cho đọc. 7,600 ÷ 1,300 ≈ 5.8, nên cần **6 replica**. Replica chỉ tăng năng lực đọc: nếu ghi đạt 2,100 mỗi giây, replica không còn năng lực cho đọc.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "reads to replicas",
+          "value": "7,600/s"
+        },
+        {
+          "name": "writes applied by each",
+          "value": "800/s"
+        },
+        {
+          "name": "read room per replica",
+          "value": "1,300/s"
+        },
+        {
+          "name": "replicas needed",
+          "value": "6"
+        }
+      ],
+      "predict": {
+        "question": "Lệnh đọc đến các replica tổng cộng 7,600 mỗi giây. Giới hạn an toàn của mỗi replica là 2,100 query mỗi giây, và mỗi replica còn phải áp dụng 800 lệnh ghi mỗi giây từ leader. Cần bao nhiêu replica?",
+        "options": [
+          "4",
+          "6",
+          "3",
+          "10"
+        ],
+        "answer": 1,
+        "explanation": "Mỗi replica áp dụng mọi lệnh ghi, nên còn 2,100 − 800 = 1,300 query mỗi giây dành cho đọc. 7,600 ÷ 1,300 ≈ 5.8, làm tròn lên thành 6. Quên tính lệnh ghi sẽ cho 7,600 ÷ 2,100 ≈ 3.6, tức 4, khiến mọi replica quá tải.",
+        "hides": [
+          "read room per replica",
+          "replicas needed"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Thay đổi tưởng như biến mất",
+    "body": "Khách sửa địa chỉ giao hàng. Lệnh ghi đến leader ở thời điểm 0. Replication là **asynchronous** và replica chậm hơn 2 giây: đó là **replication lag**. Nửa giây sau khách tải lại trang, lệnh đọc đến replica và trang hiện **địa chỉ cũ**. Thay đổi không mất, chỉ chưa đến replica, nhưng với khách trông như đã mất.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "địa chỉ mới"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0,
+            "note": "chậm: 2 s"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "write to leader",
+          "value": "t = 0 s"
+        },
+        {
+          "name": "replica lag",
+          "value": "2 s"
+        },
+        {
+          "name": "reload from replica",
+          "value": "t = 0.5 s"
+        },
+        {
+          "name": "page shows",
+          "value": "địa chỉ cũ"
+        }
+      ],
+      "predict": {
+        "question": "Địa chỉ mới được ghi vào leader tại t = 0. Replica chậm hơn 2 giây. Tại t = 0.5 s, khách tải lại trang và lệnh đọc đến replica. Trang hiện địa chỉ nào?",
+        "options": [
+          "Địa chỉ mới, vì lệnh ghi đã được xác nhận",
+          "Địa chỉ cũ",
+          "Báo lỗi vì replica chưa cập nhật",
+          "Cả hai địa chỉ"
+        ],
+        "answer": 1,
+        "explanation": "Tại t = 0.5 s, replica mới áp dụng các thay đổi đến khoảng 2 giây trước, nên vẫn giữ địa chỉ cũ. Leader đã xác nhận lệnh ghi, nhưng xác nhận từ leader không nói gì về các replica khi replication là asynchronous.",
+        "hides": [
+          "page shows"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Đọc thay đổi của chính mình",
+    "body": "Cách khắc phục là **read-your-writes**: sau khi khách sửa dữ liệu, các lần đọc chính dữ liệu đó của họ đến **leader** trong một khoảng ngắn, ở đây là 30 giây. Cách này hiệu quả vì nhóm ngừng sử dụng mọi replica chậm hơn 10 giây, nên không replica đang phục vụ nào cũ hơn 10 giây. Người khác vẫn đọc từ replica. Cách khác là nhớ vị trí thay đổi trong nhật ký, chỉ dùng replica đã áp dụng đến vị trí đó.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "tự đọc, 30 s"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "own data after a change",
+          "value": "leader, 30 s"
+        },
+        {
+          "name": "everything else",
+          "value": "replica"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Có chờ bản sao hay không?",
+    "body": "Với replication **synchronous**, leader chỉ xác nhận lệnh ghi sau khi một follower được chọn đã lưu bền vững. Khi đó lệnh ghi đã xác nhận luôn tồn tại trên hai server; nâng chính follower ấy lên sau khi leader hỏng sẽ không mất dữ liệu. Nhưng mỗi lệnh ghi phải chờ thêm một round trip: khoảng 0.5 ms trong cùng data center, 100 ms hoặc hơn qua đại dương; nếu follower đó ngừng trả lời, lệnh ghi cũng phải chờ. Replication **asynchronous** xác nhận ngay rồi mới gửi thay đổi: nhanh hơn, nhưng các lệnh ghi mới nhất chỉ tồn tại trên leader trong một lúc. Nhiều nhóm dùng một synchronous follower ở gần, các follower còn lại asynchronous.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0,
+            "note": "synchronous"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5,
+            "note": "asynchronous"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "synchronous",
+          "value": "không mất, +1 round trip"
+        },
+        {
+          "name": "asynchronous",
+          "value": "nhanh, có thể mất dữ liệu mới nhất"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Leader hỏng",
+    "body": "Server của leader ngừng hoạt động. Trong **failover**, một follower được **nâng lên** làm leader mới, và app server gửi lệnh ghi đến nó. Với asynchronous replication, các lệnh ghi đến leader cũ nhưng chưa đến follower sẽ mất: vào cuối buổi tối, độ trễ 3 giây ở mức 200 lệnh ghi mỗi giây có thể làm mất đến **600** lệnh ghi đã báo thành công cho khách. Thay vào đó, nâng synchronous follower lên sẽ giữ mọi lệnh ghi đã xác nhận; nâng một asynchronous follower còn chậm sẽ không giữ được.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "state": "down"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0,
+            "note": "đã nâng lên"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "lag at the failure",
+          "value": "3 s"
+        },
+        {
+          "name": "writes per second",
+          "value": "200"
+        },
+        {
+          "name": "writes at risk",
+          "value": "tối đa 600"
+        }
+      ],
+      "predict": {
+        "question": "Replication là asynchronous. Leader hỏng vào cuối buổi tối, khi follower chậm hơn 3 giây và cửa hàng ghi khoảng 200 lần mỗi giây. Có thể mất khoảng bao nhiêu lệnh ghi đã xác nhận khi follower được nâng lên?",
+        "options": [
+          "Không mất, vì mọi lệnh ghi đã được xác nhận",
+          "Khoảng 200",
+          "Khoảng 600",
+          "Khoảng 3"
+        ],
+        "answer": 2,
+        "explanation": "Follower thiếu 3 giây ghi cuối: 3 × 200 = 600. Leader cũ đã xác nhận các lệnh ghi đó với khách; đây chính là rủi ro của asynchronous replication.",
+        "hides": [
+          "writes at risk"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Replication không phải backup",
+    "body": "Kỹ sư vô tình xóa đơn hàng của một ngày. Leader áp dụng lệnh xóa, mọi replica cũng sao chép nó trong một giây. Chỉ **backup** giữ riêng mới giúp được: restore full backup của đêm trước rồi phát lại nhật ký đã lưu đến một phút trước lệnh xóa (**point-in-time recovery**). Cách này cũng loại bỏ đơn hàng hợp lệ sau lệnh xóa, nên nhóm chép lại chúng từ database bị ảnh hưởng. **RPO** cho biết được phép mất bao nhiêu dữ liệu, quyết định tần suất lưu nhật ký; **RTO** cho biết khôi phục được kéo dài bao lâu, phải kiểm tra bằng restore thật: 400 GB ở 200 MB/s mất khoảng 33 phút, chưa tính phát lại nhật ký.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Leader",
+            "x": 6,
+            "y": 2,
+            "note": "đã xóa đơn hàng"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 1",
+            "x": 10,
+            "y": 0,
+            "note": "cũng đã xóa"
+          },
+          {
+            "kind": "db",
+            "label": "Replica 2",
+            "x": 10,
+            "y": 5,
+            "note": "cũng đã xóa"
+          },
+          {
+            "kind": "db",
+            "label": "Backups",
+            "x": 6,
+            "y": 8,
+            "note": "đêm trước + log"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            5
+          ]
+        ],
+        "path": [
+          2,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          },
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "replicas",
+          "value": "sao chép cả lệnh xóa"
+        },
+        {
+          "name": "restore",
+          "value": "backup + log đến 1 min trước"
+        },
+        {
+          "name": "restore of 400 GB",
+          "value": "≈33 min + phát lại"
+        }
+      ]
+    }
+  }
+]
