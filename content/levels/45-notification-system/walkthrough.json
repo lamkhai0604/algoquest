@@ -1,0 +1,716 @@
+[
+  {
+    "title": "Requirements",
+    "body": "A shopping app with 50 million users sends push, email and SMS. Requirements: (F1) notify users about events such as \"order shipped\" and login codes; (F2) send promotional campaigns of up to 10 million emails; (F3) respect opt-outs and quiet hours at the moment of sending, also on retries and fallbacks. (N1) Order updates within 1 minute and login codes within 30 seconds, even during a campaign; (N2) never exceed a provider's quota; (N3) one event notifies a user at most once.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0,
+            "note": "1,000 per second"
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [3, 4]
+        ],
+        "path": [0, 1, 2, 3, 4]
+      },
+      "vars": [
+        {
+          "name": "users",
+          "value": "50 million"
+        },
+        {
+          "name": "transactional",
+          "value": "20 million a day"
+        },
+        {
+          "name": "campaign",
+          "value": "up to 10 million emails"
+        },
+        {
+          "name": "order updates",
+          "value": "within 1 minute"
+        },
+        {
+          "name": "login codes",
+          "value": "within 30 seconds"
+        }
+      ]
+    }
+  },
+  {
+    "title": "How long is a campaign?",
+    "body": "The email provider accepts **1,000 emails per second**. A campaign of 10 million emails therefore takes 10,000,000 ÷ 1,000 = **10,000 seconds, about 2.8 hours**, even if everything else is instant. Transactional traffic is about 20 million a day, about 230 per second on average. If both share one queue, every \"order shipped\" email waits behind the campaign for up to 2.8 hours.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1,
+            "note": "10 M emails",
+            "state": "hot"
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [3, 4]
+        ],
+        "path": [2, 3, 4]
+      },
+      "vars": [
+        {
+          "name": "campaign",
+          "value": "10 million emails"
+        },
+        {
+          "name": "quota",
+          "value": "1,000 per second"
+        },
+        {
+          "name": "campaign takes",
+          "value": "about 2.8 hours"
+        },
+        {
+          "name": "transactional",
+          "value": "about 230 per second"
+        }
+      ],
+      "predict": {
+        "question": "A campaign sends 10 million emails through a provider that accepts 1,000 emails per second. About how long does it take?",
+        "options": [
+          "About 17 minutes",
+          "About 2.8 hours",
+          "About 28 hours",
+          "About 10 seconds"
+        ],
+        "answer": 1,
+        "explanation": "10,000,000 ÷ 1,000 = 10,000 seconds, and 10,000 ÷ 3,600 ≈ 2.8 hours. Any email that waits behind the campaign in the same queue waits that long.",
+        "hides": ["campaign takes"]
+      }
+    }
+  },
+  {
+    "title": "API, data and design",
+    "body": "**API:** services call `notify(eventId, userId, type)`; users change settings through a preferences API. **Data:** preferences per user, channel and category, with quiet hours; `sent(notification key, status)` with the key as primary key; device tokens and addresses. **High-level design:** events arrive on a queue with at-least-once delivery; notification workers read preferences, record the key, and put each message on a queue per channel and priority; a pacer per provider sends to the provider.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Preferences",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Sent keys",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 9,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Push service",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [2, 4],
+          [2, 5],
+          [2, 6],
+          [5, 7],
+          [6, 8]
+        ],
+        "path": [0, 1, 2, 5, 7],
+        "flows": [
+          {
+            "path": [2, 6, 8]
+          },
+          {
+            "path": [2, 3]
+          },
+          {
+            "path": [2, 4]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "API",
+          "value": "notify(eventId, userId, type)"
+        },
+        {
+          "name": "sent",
+          "value": "notification key, status"
+        },
+        {
+          "name": "queues",
+          "value": "per channel and priority"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Quotas and priority",
+    "body": "The email pacer sends at most **1,000 per second**, counting retries (SD 17). It always takes transactional messages first and keeps **200 per second** for them; the campaign uses the other 800, about 10,000,000 ÷ 800 = 12,500 seconds, about 3.5 hours. An order update never waits behind the campaign, so it arrives within the minute. When transactional traffic is low, the campaign may use the spare room.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1,
+            "note": "urgent first"
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0,
+            "note": "≤ 1,000 per second"
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [3, 4]
+        ],
+        "path": [2, 3, 4]
+      },
+      "vars": [
+        {
+          "name": "quota",
+          "value": "1,000 per second"
+        },
+        {
+          "name": "kept for transactional",
+          "value": "200 per second"
+        },
+        {
+          "name": "campaign",
+          "value": "800 per second, about 3.5 hours"
+        }
+      ]
+    }
+  },
+  {
+    "title": "The same event twice",
+    "body": "The event queue delivers at least once, so \"order 123 shipped\" can reach two workers, or the same worker twice after a crash. Without a check, each delivery sends an email: the user gets **two**. Instead, each worker first inserts the **notification key** (event, user) into `sent`. The unique key accepts the first insert and rejects the second, so only one worker sends. Records are kept 7 days, longer than any redelivery: about 3 GB a day.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4,
+            "note": "delivered twice"
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Preferences",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Sent keys",
+            "x": 5,
+            "y": 8,
+            "note": "key: order123:u42"
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 9,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Push service",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [2, 4],
+          [2, 5],
+          [2, 6],
+          [5, 7],
+          [6, 8]
+        ],
+        "path": [1, 2, 4],
+        "flows": [
+          {
+            "path": [2, 5]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "event",
+          "value": "order 123 shipped"
+        },
+        {
+          "name": "deliveries",
+          "value": "2"
+        },
+        {
+          "name": "emails without a key",
+          "value": "2"
+        },
+        {
+          "name": "with the key",
+          "value": "1"
+        }
+      ],
+      "predict": {
+        "question": "\"Order 123 shipped\" is delivered twice by the event queue, and the workers have no deduplication. How many emails does the customer get?",
+        "options": ["0", "1", "2", "It depends on the email provider's quota"],
+        "answer": 2,
+        "explanation": "Each delivery looks like a new event to the worker that gets it, so each one sends an email. Recording a notification key under a unique constraint before sending lets only the first delivery through.",
+        "hides": ["emails without a key", "with the key"]
+      }
+    }
+  },
+  {
+    "title": "A crash after sending",
+    "body": "A worker sends an email and crashes before recording \"sent\". After restart, it finds the key in status \"sending\" and cannot tell whether the provider got the email. **Send again**, and the user may get two; **don't**, and the user may get none. The email provider accepts an **idempotency key**: the retry uses the same notification key, and the provider drops the repeat. Push has no such key, so push errs on a rare miss; SMS login codes are sent before recording, so they err on a rare duplicate, because a missing code locks the user out.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 5,
+            "y": 4,
+            "state": "down"
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0,
+            "note": "same key: dropped"
+          },
+          {
+            "kind": "db",
+            "label": "Sent keys",
+            "x": 5,
+            "y": 8,
+            "note": "status: sending"
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [3, 4],
+          [2, 5]
+        ],
+        "path": [2, 3, 4]
+      },
+      "vars": [
+        {
+          "name": "email",
+          "value": "retry with the same provider key"
+        },
+        {
+          "name": "push",
+          "value": "no retry: rare miss"
+        },
+        {
+          "name": "SMS login code",
+          "value": "send first: rare duplicate"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Preferences at send time",
+    "body": "A campaign is queued at 11 a.m. and reaches a user's message at 2 p.m. The user unsubscribed from promotions at noon. If preferences were checked when the campaign was **queued**, the email still goes out at 2 p.m. Checking them just **before sending** respects the change. The same check runs on every retry. Quiet hours do not drop a promotion: it waits in a delay queue until the user's morning, in the user's time zone.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 5,
+            "y": 4,
+            "note": "checks at 2 p.m."
+          },
+          {
+            "kind": "db",
+            "label": "Preferences",
+            "x": 3,
+            "y": 0,
+            "note": "opted out at noon"
+          },
+          {
+            "kind": "db",
+            "label": "Sent keys",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 9,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Push service",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [2, 4],
+          [2, 5],
+          [2, 6],
+          [5, 7],
+          [6, 8]
+        ],
+        "path": [2, 3],
+        "flows": [
+          {
+            "path": [2, 5, 7]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "queued",
+          "value": "11 a.m."
+        },
+        {
+          "name": "unsubscribed",
+          "value": "noon"
+        },
+        {
+          "name": "sent at",
+          "value": "2 p.m."
+        },
+        {
+          "name": "checked when queued",
+          "value": "the email is sent"
+        },
+        {
+          "name": "checked when sending",
+          "value": "no email"
+        }
+      ],
+      "predict": {
+        "question": "A promotion is queued at 11 a.m. and sent at 2 p.m. The user unsubscribed at noon. Preferences are checked only when the campaign is queued. Does the user get the email?",
+        "options": [
+          "No, the unsubscribe always wins",
+          "Yes, because the check happened before noon",
+          "Only if it is quiet hours",
+          "Only on retries"
+        ],
+        "answer": 1,
+        "explanation": "At 11 a.m. the user was still subscribed, so the message passed the check and waited in the queue. Nothing looked again at 2 p.m. Checking preferences just before sending, and on every retry, respects the noon unsubscribe.",
+        "hides": ["checked when queued", "checked when sending"]
+      }
+    }
+  },
+  {
+    "title": "Fallbacks, failures, summary",
+    "body": "If a push for an order update fails and the user allows email for order updates, the email uses the **same notification key**: the user gets one notification, not both, and only through a channel they allow. If the email provider is down, messages back off with jitter for up to an hour, then go to a dead-letter queue. **Summary:** priority and reserved quota for N1; pacers that count retries for N2; the notification key, shared by fallbacks and passed to the email provider, for N3; preferences checked at send time for F3.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Workers",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Preferences",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Sent keys",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1,
+            "note": "fallback, same key"
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 9,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Push service",
+            "x": 10,
+            "y": 5,
+            "state": "down"
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [2, 4],
+          [2, 5],
+          [2, 6],
+          [5, 7],
+          [6, 8]
+        ],
+        "path": [2, 6, 8],
+        "flows": [
+          {
+            "path": [2, 5, 7]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "push fails",
+          "value": "email, if allowed, same key"
+        },
+        {
+          "name": "provider down",
+          "value": "backoff, then dead-letter"
+        },
+        {
+          "name": "N1",
+          "value": "priority, 200/s kept"
+        },
+        {
+          "name": "N3",
+          "value": "one key per notification"
+        }
+      ]
+    }
+  }
+]

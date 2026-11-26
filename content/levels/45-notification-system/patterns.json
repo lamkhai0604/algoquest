@@ -1,0 +1,129 @@
+[
+  {
+    "id": "P45-campaign-quota",
+    "level": 45,
+    "title": "Sharing an Email Quota",
+    "statement": "An email provider accepts 1,000 emails per second, counting retries. Transactional emails such as receipts peak at 150 per second and must arrive within 1 minute. A campaign of 5 million emails must finish within 3 hours. Exercise assumptions: the pacer can keep separate queues and always take one first; the team prefers the campaign to finish as early as possible.",
+    "examples": [
+      "5,000,000 ÷ 800 per second = 6,250 seconds, about 1.7 hours."
+    ],
+    "constraints": [
+      "Transactional email within 1 minute.",
+      "The campaign within 3 hours.",
+      "Never more than 1,000 per second; prefer the campaign to finish early."
+    ],
+    "approaches": [
+      {
+        "id": "priority-spare",
+        "name": "Two queues; transactional always first; the campaign uses whatever room is left, at least 850 per second",
+        "hint": "Urgent first, campaign fills the rest",
+        "label": "best",
+        "time": "Campaign at least 850 per second: under 1.7 hours",
+        "space": "Two queues",
+        "why": "Transactional email never waits behind the campaign, so it arrives within the minute; the campaign always has at least 1,000 − 150 = 850 per second, finishing within 5,000,000 ÷ 850 ≈ 5,900 seconds, about 1.6 hours, and the pacer never passes 1,000."
+      },
+      {
+        "id": "fixed-split",
+        "name": "Two queues with a fixed split: 400 per second for transactional, 600 for the campaign",
+        "hint": "Reserve a generous share",
+        "label": "valid",
+        "time": "Campaign 600 per second: about 2.3 hours",
+        "space": "Two queues",
+        "why": "Transactional email has more room than its 150 peak and the campaign finishes in 5,000,000 ÷ 600 ≈ 2.3 hours, within 3, but unused transactional room is wasted, so the campaign ends later than it could, against the stated preference."
+      },
+      {
+        "id": "one-queue",
+        "name": "One queue in arrival order",
+        "hint": "First come, first served",
+        "label": "unsuitable",
+        "time": "A receipt behind the campaign waits up to about 1.4 hours",
+        "space": "One queue",
+        "why": "Once the campaign is queued, a receipt waits behind up to 5 million emails at 1,000 per second, about 1.4 hours, far beyond 1 minute."
+      }
+    ]
+  },
+  {
+    "id": "P45-crash-order",
+    "level": 45,
+    "title": "A Crash Around a Send",
+    "statement": "Workers send promotional emails. A worker can crash at any moment, and its message is then delivered to another worker. The email provider accepts an idempotency key and drops a repeated request with the same key. Exercise assumptions: a user must never get the same promotion twice; the team prefers that no promotion is missed either.",
+    "examples": ["The notification key is (campaign, user)."],
+    "constraints": [
+      "Never the same promotion twice.",
+      "Prefer no missed promotion.",
+      "A crash can happen between any two steps."
+    ],
+    "approaches": [
+      {
+        "id": "record-key-send",
+        "name": "Record the key as \"sending\", send with the key as the provider's idempotency key, then record \"sent\"; a redelivered message in \"sending\" is sent again with the same key",
+        "hint": "Let the provider drop the repeat",
+        "label": "best",
+        "time": "One send, or a retry the provider drops",
+        "space": "One record per notification",
+        "why": "A crash before sending leads to a send on redelivery; a crash after sending leads to a retry with the same key, which the provider drops. No duplicate and no miss."
+      },
+      {
+        "id": "record-then-send",
+        "name": "Record the key as \"sent\", then send without the provider's key; a redelivered message that finds the key is skipped",
+        "hint": "Record first",
+        "label": "valid",
+        "time": "One send at most",
+        "space": "One record per notification",
+        "why": "A promotion is never sent twice, but a crash after recording and before sending means the user never gets it, against the stated preference."
+      },
+      {
+        "id": "send-then-record",
+        "name": "Send without the provider's key, then record \"sent\"",
+        "hint": "Send first",
+        "label": "unsuitable",
+        "time": "One send, sometimes two",
+        "space": "One record per notification",
+        "why": "A crash after sending and before recording makes the next worker send again, so the user gets the promotion twice."
+      }
+    ]
+  },
+  {
+    "id": "P45-retry-preferences",
+    "level": 45,
+    "title": "Preferences During Retries",
+    "statement": "A promotional push to a user fails and is retried with backoff for up to 2 hours. Exercise assumptions: if the user opts out of promotions, no attempt may start more than 5 minutes after the opt-out; reading preferences costs one database lookup per attempt, which the database can afford; the team prefers an opt-out to take effect as soon as possible.",
+    "examples": [
+      "Attempts at 0, 1, 5, 20 and 60 minutes after the first failure."
+    ],
+    "constraints": [
+      "No attempt more than 5 minutes after an opt-out.",
+      "One lookup per attempt is affordable.",
+      "Prefer the opt-out to apply at once."
+    ],
+    "approaches": [
+      {
+        "id": "check-each-attempt",
+        "name": "Read the preferences from the database just before every attempt",
+        "hint": "Check every time",
+        "label": "best",
+        "time": "One lookup per attempt",
+        "space": "Nothing extra",
+        "why": "Every attempt sees the latest choice, so an opt-out applies to the very next attempt."
+      },
+      {
+        "id": "check-cached",
+        "name": "Read the preferences before every attempt from a cache that can be up to 1 minute old",
+        "hint": "Check every time, cheaply",
+        "label": "valid",
+        "time": "One cache read per attempt",
+        "space": "A preferences cache",
+        "why": "An opt-out reaches the check within 1 minute, inside the 5-minute rule, but attempts in that minute still go out, against the preference for an immediate effect."
+      },
+      {
+        "id": "check-once",
+        "name": "Read the preferences once, before the first attempt",
+        "hint": "Check at the start",
+        "label": "unsuitable",
+        "time": "One lookup in total",
+        "space": "Nothing extra",
+        "why": "A user who opts out after the first attempt still gets retries for up to 2 hours, breaking the 5-minute rule."
+      }
+    ]
+  }
+]
