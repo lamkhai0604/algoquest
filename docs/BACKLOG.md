@@ -368,6 +368,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-675 | SD 9 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude, no changes; content check in CI |
 | T-676 | SD 9 content review, including its two design prompts, and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | Assigned 2026-11-25 |
 | T-679 | Vercel builds only `main` and `dev`; task branches are checked by GitHub Actions only, so previews no longer use up the Hobby plan's daily build limit | NFR, D-039 | P1 | Done 2026-11-25: configuration in `frontend/vercel.json`; confirmed: a push to a task branch no longer starts a Vercel build |
+| T-680 | SD 9 review fixes from review round 1 (2 Major, 3 Minor): partition exceptions to freshness limits stated in the visible facts, a supplied ID-based merge rule for the shared list, neutral step 4 prediction, peak-based partition backlog, read-your-writes limited to a reachable home region | FR-03, D-085 | P1 | Done 2026-11-25 |
 
 ## Maintenance
 
