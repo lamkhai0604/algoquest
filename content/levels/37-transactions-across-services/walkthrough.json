@@ -1,0 +1,956 @@
+[
+  {
+    "title": "One database, one transaction",
+    "body": "When the shop was one program with one database, placing an order saved the order, took the stock and recorded the payment in one **local transaction** (SD 4). If the stock was gone, the database undid everything: no order, no payment. All or nothing came for free.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Customer",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Shop app",
+            "x": 3,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shop DB",
+            "x": 6,
+            "y": 4,
+            "note": "one transaction"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "steps",
+          "value": "order, stock, payment"
+        },
+        {
+          "name": "databases",
+          "value": "1"
+        },
+        {
+          "name": "if stock is gone",
+          "value": "everything is undone"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Three services, three databases",
+    "body": "Now an Order service, an Inventory service and a Payment service each own their database. Placing an order changes all three, but no single transaction covers them: each service can only commit its own part. This is a **distributed transaction**, and the shop has lost its free all-or-nothing.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Customer",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Order events",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Payments DB",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              3,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "services",
+          "value": "3"
+        },
+        {
+          "name": "databases",
+          "value": "3"
+        },
+        {
+          "name": "one transaction for all",
+          "value": "not possible"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Stopped halfway",
+    "body": "The services are called in a row: the Order service saves the order, the Payment service charges the card, and then the Inventory service finds the last item already gone. Two steps committed and one failed: a **partial failure**. The customer has **paid for an item they will not get**, and the order is stuck as pending, because nothing undoes the first two steps.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Customer",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Order events",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 0,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Payments DB",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ],
+        "drop": true,
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              3,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "order",
+          "value": "saved"
+        },
+        {
+          "name": "card",
+          "value": "charged"
+        },
+        {
+          "name": "stock",
+          "value": "failed"
+        },
+        {
+          "name": "result",
+          "value": "paid, no item"
+        }
+      ],
+      "predict": {
+        "question": "The order is saved, then the card is charged, then the stock reservation fails. Nothing else happens. What state is the shop in?",
+        "options": [
+          "Everything is undone, because the stock step failed",
+          "The customer is charged for an item they will not get",
+          "The order is confirmed and the item is back-ordered",
+          "Nothing was charged, because the card is charged last"
+        ],
+        "answer": 1,
+        "explanation": "Each service committed its own step. The stock failure only affects the Inventory database; the charge and the pending order stay. Undoing them needs new actions, because there is no transaction that spans the three databases.",
+        "hides": [
+          "result"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Undo by compensation",
+    "body": "A **saga** treats the workflow as a sequence of local transactions, each with a **compensating transaction** that undoes its business effect. Here the Order service acts as the **orchestrator**: when the stock step fails, it runs the compensations for the steps that succeeded, in reverse order: first **refund the charge**, then **cancel the order**. A refund is a new action, not a rollback: the charge happened and the customer may have seen it.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Customer",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Order events",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Payments DB",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          6,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "failed step",
+          "value": "stock (step 3)"
+        },
+        {
+          "name": "compensations",
+          "value": "refund, then cancel order"
+        },
+        {
+          "name": "order",
+          "value": "reverse"
+        }
+      ],
+      "predict": {
+        "question": "Steps were: 1 save the order, 2 charge the card, 3 reserve stock. Step 3 fails. Which compensations run, and in what order?",
+        "options": [
+          "Refund the charge, then cancel the order",
+          "Cancel the order, then refund the charge",
+          "Release the stock, then refund the charge",
+          "Only cancel the order; the bank returns the money"
+        ],
+        "answer": 0,
+        "explanation": "Only steps 1 and 2 succeeded, so only they need compensating, in reverse: undo step 2 (refund), then step 1 (cancel the order). Step 3 failed, so no stock was taken and there is nothing to release.",
+        "hides": [
+          "compensations",
+          "order"
+        ]
+      }
+    }
+  },
+  {
+    "title": "A better order of steps",
+    "body": "Reorder the saga: save the order, **reserve stock first**, then charge the card, then confirm. Now a stock failure needs only one compensation, cancelling the order, and the customer is never charged. Put steps that are likely to fail or cheap to undo early. And send the confirmation email **last**: it cannot be taken back, so it waits until every risky step has succeeded.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Customer",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Order events",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0,
+            "note": "step 2"
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8,
+            "note": "step 3"
+          },
+          {
+            "kind": "db",
+            "label": "Payments DB",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "new order",
+          "value": "order, stock, card, confirm, email"
+        },
+        {
+          "name": "stock fails",
+          "value": "1 compensation, no refund"
+        },
+        {
+          "name": "email",
+          "value": "last, cannot be undone"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Saved, but never announced",
+    "body": "The Order service saves the order and then publishes \"reserve stock for order 123\" in a separate step. If it crashes between the two, the order is saved but no message was sent: the order stays pending forever. With a **transactional outbox**, the service writes the order and an outbox row with the message in **one local transaction**; a relay reads the outbox and publishes. Either both are saved or neither is.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Customer",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 1,
+            "y": 1,
+            "note": "order + outbox row"
+          },
+          {
+            "kind": "queue",
+            "label": "Order events",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Payments DB",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "order saved",
+          "value": "yes"
+        },
+        {
+          "name": "message sent",
+          "value": "no (crash)"
+        },
+        {
+          "name": "without an outbox",
+          "value": "pending forever"
+        },
+        {
+          "name": "with an outbox",
+          "value": "relay sends it later"
+        }
+      ],
+      "predict": {
+        "question": "Without an outbox, the Order service saves the order, then crashes before it publishes the \"reserve stock\" message. What happens to the order?",
+        "options": [
+          "It stays pending forever, because no service hears about it",
+          "The database publishes the message when the service restarts",
+          "The order is deleted, because the message failed",
+          "The Inventory service notices the new row and reserves stock"
+        ],
+        "answer": 0,
+        "explanation": "The save committed, but the message was never published, and no other service reads the Orders database. Nothing moves the saga forward. The outbox puts the message in the same transaction as the order, so a relay can always publish it after a crash.",
+        "hides": [
+          "without an outbox",
+          "with an outbox"
+        ]
+      }
+    }
+  },
+  {
+    "title": "The same message twice",
+    "body": "The relay publishes the message, then crashes before marking the outbox row as sent. When it restarts, it publishes the same message again. The outbox never loses a message, but it can repeat one: delivery is at least once (SD 7). Every step and every compensation uses the **order id as an idempotency key**: the Payment service charges order 123 once, however many times it is asked. At-least-once delivery plus idempotent steps gives an exactly-once **effect**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Customer",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Order events",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8,
+            "note": "key 123: seen"
+          },
+          {
+            "kind": "db",
+            "label": "Payments DB",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          3,
+          6,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "message delivered",
+          "value": "twice"
+        },
+        {
+          "name": "idempotency key",
+          "value": "order 123"
+        },
+        {
+          "name": "card charged",
+          "value": "once"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Why not lock everything?",
+    "body": "**Two-phase commit** offers all-or-nothing across databases: a coordinator asks each participant to prepare and lock, then tells all to commit. But participants hold their locks until the decision arrives, across every round trip, and if the coordinator crashes after \"prepare\" they stay blocked. The card provider does not take part in such a protocol at all. So between services, teams use sagas: short local transactions, compensations, an outbox and idempotency keys.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Customer",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5,
+            "state": "down"
+          },
+          {
+            "kind": "db",
+            "label": "Orders DB",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Order events",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 0,
+            "note": "locked, waiting"
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Payments DB",
+            "x": 10,
+            "y": 8,
+            "note": "locked, waiting"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "2PC",
+          "value": "locks held until the decision"
+        },
+        {
+          "name": "coordinator crash",
+          "value": "participants blocked"
+        },
+        {
+          "name": "between services",
+          "value": "sagas instead"
+        }
+      ]
+    }
+  }
+]

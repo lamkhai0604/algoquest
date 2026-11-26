@@ -250,5 +250,12 @@
     "title": "Consistency and Availability",
     "summary": "Decide what copies in different regions do when the network between them breaks, and choose consistency or availability for each feature.",
     "phase": 4
+  },
+  {
+    "number": 37,
+    "slug": "transactions-across-services",
+    "title": "Transactions Across Services",
+    "summary": "Keep services in step when one action changes several databases: sagas with compensations, the transactional outbox, and why two-phase commit is rare.",
+    "phase": 4
   }
 ]
