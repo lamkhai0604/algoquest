@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P41-photo-upload",
+    "level": 41,
+    "title": "Part A: Where Uploads Go",
+    "statement": "A recipe app receives about 100,000 photos a day, 2 MB each, up to 50 per second at peak. Its app servers can carry about 1 GB per second in total. Its database holds 100 GB today and must stay under 500 GB for at least the next 2 years so that nightly backups finish. Object storage with signed upload URLs is available. Exercise assumptions: only logged-in users may upload, into their own recipes; the team prefers that photo bytes do not pass through the app servers. Which upload path fits?",
+    "examples": [
+      "Bytes per day = photos a day × size."
+    ],
+    "constraints": [
+      "Keep the database under 500 GB.",
+      "Stay within the app servers' 1 GB per second.",
+      "Prefer keeping photo bytes off the app servers."
+    ],
+    "approaches": [
+      {
+        "id": "signed-direct",
+        "name": "The app checks rights and returns a signed upload URL; the phone sends the photo straight to object storage; the app saves the details and key",
+        "hint": "Check on the server, bytes go straight to storage",
+        "label": "best",
+        "time": "One small request to the app per upload",
+        "space": "200 GB a day in object storage; a few hundred bytes per photo in the database",
+        "why": "Storage takes the 100,000 × 2 MB = 200 GB a day; the database grows by only the details, about 500 bytes a photo, 50 MB a day or about 37 GB in 2 years, staying far under 500 GB. No photo bytes cross the app servers."
+      },
+      {
+        "id": "relay-to-storage",
+        "name": "The phone sends the photo to the app server, which writes it to object storage",
+        "hint": "Everything through the app",
+        "label": "valid",
+        "time": "50 × 2 MB = 100 MB per second through the app servers at peak",
+        "space": "The same as the direct path",
+        "why": "The database stays small and 100 MB per second fits within 1 GB per second, but every byte passes through the app servers, against the stated preference."
+      },
+      {
+        "id": "bytes-in-db",
+        "name": "Store each photo's bytes in a database column",
+        "hint": "One place for everything",
+        "label": "unsuitable",
+        "time": "100 MB per second into the database at peak",
+        "space": "200 GB a day in the database",
+        "why": "At 200 GB a day the database passes 500 GB within three days, and backups stop finishing."
+      }
+    ]
+  },
+  {
+    "id": "P41-message-search",
+    "level": 41,
+    "title": "Part B: Searching Messages",
+    "statement": "A team chat app keeps 20 million messages, about 100 bytes each, in its database. Users search about 100 times per second, by one or more words. Measured: a search with LIKE '%word%' takes about 4 seconds even on an idle database; a search in an inverted index takes at most 50 ms at 100 searches per second; fed by change events, a new message is searchable within 5 seconds; a batch update, if used, runs every 30 seconds and takes at most 10 seconds. Exercise assumptions: results must come back within 300 ms; a new message must be findable within 1 minute; the team prefers new messages to be findable as soon as possible.",
+    "examples": [
+      "Reading every message is 20 million × 100 bytes = 2 GB per search."
+    ],
+    "constraints": [
+      "Results within 300 ms.",
+      "New messages findable within 1 minute.",
+      "Prefer new messages findable sooner."
+    ],
+    "approaches": [
+      {
+        "id": "index-from-events",
+        "name": "An inverted index of tokenized words, updated from each new message's change event within seconds",
+        "hint": "Word → message IDs, kept current",
+        "label": "best",
+        "time": "At most 50 ms per search, measured",
+        "space": "One list entry per word per message",
+        "why": "Each search returns within the measured 50 ms, within 300 ms, and a new message is searchable within 5 seconds."
+      },
+      {
+        "id": "index-in-batches",
+        "name": "The same inverted index, updated every 30 seconds in a batch",
+        "hint": "Word → message IDs, refreshed in batches",
+        "label": "valid",
+        "time": "At most 50 ms per search; new messages within 40 s",
+        "space": "One list entry per word per message",
+        "why": "Searches are just as fast, and a new message waits at most 30 seconds for the next batch plus 10 seconds for it to finish, 40 seconds, inside the 1-minute limit, but later than with change events, against the stated preference."
+      },
+      {
+        "id": "like-scan",
+        "name": "WHERE text LIKE '%word%' on the messages table",
+        "hint": "Search the text directly",
+        "label": "unsuitable",
+        "time": "About 4 seconds per search, measured",
+        "space": "No extra space",
+        "why": "Every search reads all 2 GB of messages and was measured at about 4 seconds even with nothing else running, far over 300 ms; at 100 searches per second it would be slower still."
+      }
+    ]
+  },
+  {
+    "id": "P41-offline-ids",
+    "level": 41,
+    "title": "Part C: IDs Made on Phones",
+    "statement": "A notes app lets about 5 million users create notes on their phones while offline; notes are sent to the server later. Exercise assumptions: a note's ID is chosen on the phone when the note is created, with no server reachable; there is no way to give each phone a unique machine number; the business accepts a chance of any repeated ID below 1 in a billion over the app's life, and if the server ever receives an ID that already exists, it refuses the note and the phone makes a new ID; the team prefers IDs that sort by the time each phone recorded, which may be off by a few seconds between phones, so lists can show the newest first without a separate time column.",
+    "examples": [
+      "A UUID version 7 starts with 48 bits of milliseconds, followed by random bits."
+    ],
+    "constraints": [
+      "IDs are made on the phone while offline.",
+      "Chance of any repeat below 1 in a billion; a repeat is refused and remade.",
+      "Prefer IDs that sort by each phone's recorded time."
+    ],
+    "approaches": [
+      {
+        "id": "uuid-v7",
+        "name": "A UUID version 7: the time in milliseconds followed by random bits",
+        "hint": "Time first, then randomness",
+        "label": "best",
+        "time": "Made on the phone instantly",
+        "space": "16 bytes per ID",
+        "why": "Phones need no server and no machine number. Within a millisecond, IDs differ by 74 random bits, so the chance of any repeat stays far below 1 in a billion, and the server refuses a repeat if it ever happens. IDs sort by the time each phone recorded, which is the order the team asked for."
+      },
+      {
+        "id": "uuid-v4",
+        "name": "A random UUID (version 4)",
+        "hint": "All randomness",
+        "label": "valid",
+        "time": "Made on the phone instantly",
+        "space": "16 bytes per ID",
+        "why": "It works offline, and with 122 random bits the chance of any repeat stays far below 1 in a billion, but the IDs do not sort by time, so lists need a separate time column to show the newest first, against the stated preference."
+      },
+      {
+        "id": "auto-increment",
+        "name": "An auto-increment number from the server's database",
+        "hint": "Count up in one place",
+        "label": "unsuitable",
+        "time": "Needs the server",
+        "space": "8 bytes per ID",
+        "why": "The phone is offline when the note is created, so it cannot get the next number; numbering on each phone would clash across phones."
+      }
+    ]
+  }
+]

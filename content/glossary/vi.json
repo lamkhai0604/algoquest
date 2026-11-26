@@ -1190,6 +1190,61 @@
           "term": "multi-tenant isolation",
           "vi": "cách ly giữa các tenant",
           "firstLevel": 40
+        },
+        {
+          "term": "object storage",
+          "vi": "kho lưu đối tượng (file)",
+          "firstLevel": 41
+        },
+        {
+          "term": "object",
+          "vi": "đối tượng (một file trong kho)",
+          "firstLevel": 41
+        },
+        {
+          "term": "bucket",
+          "vi": "thùng chứa object",
+          "firstLevel": 41
+        },
+        {
+          "term": "metadata",
+          "vi": "siêu dữ liệu (thông tin mô tả file)",
+          "firstLevel": 41
+        },
+        {
+          "term": "signed upload URL",
+          "vi": "đường dẫn tải lên có chữ ký",
+          "firstLevel": 41
+        },
+        {
+          "term": "multipart upload",
+          "vi": "tải lên theo từng phần",
+          "firstLevel": 41
+        },
+        {
+          "term": "inverted index",
+          "vi": "chỉ mục đảo",
+          "firstLevel": 41
+        },
+        {
+          "term": "tokenizing",
+          "vi": "tách từ",
+          "firstLevel": 41
+        },
+        {
+          "term": "auto-increment ID",
+          "vi": "ID tự tăng",
+          "firstLevel": 41
+        },
+        {
+          "term": "UUID",
+          "vi": "định danh duy nhất 128 bit",
+          "firstLevel": 41
+        },
+        {
+          "term": "time-ordered ID",
+          "vi": "ID sắp theo thời gian",
+          "firstLevel": 41
         }
       ]
     },
