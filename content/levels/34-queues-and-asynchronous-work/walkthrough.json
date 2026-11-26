@@ -193,7 +193,7 @@
   },
   {
     "title": "How many workers?",
-    "body": "A worker does one job at a time. Building an invoice takes 0.8 seconds, so one worker finishes 1 ÷ 0.8 = 1.25 invoices per second. At a sale, 50 orders arrive per second: 50 ÷ 1.25 = **40 workers** busy all the time, or 50 × 0.8 = 40 in one step. To keep them at most 70% busy, run 40 ÷ 0.7 ≈ 57.",
+    "body": "A worker does one job at a time. Building an invoice takes 0.8 seconds, so one worker finishes 1 ÷ 0.8 = 1.25 invoices per second. At a sale, 50 orders arrive per second: 50 ÷ 1.25 = **40 workers** busy all the time, or 50 × 0.8 = 40 in one step. To keep them at most 70% busy, run 40 ÷ 0.7 ≈ 57.1, rounded up to 58.",
     "visual": {
       "cells": [],
       "arch": {
@@ -533,7 +533,7 @@
   },
   {
     "title": "Make repeats harmless",
-    "body": "The fix is an **idempotency key**. The worker sends the order id with the email request, and the email provider ignores a second request with the same key, so the customer gets one email however often the message repeats. Inside your own database, a unique constraint does the same job (SD 4): a second insert of \"email sent for order 123\" fails. With at-least-once delivery, every consumer must make its work safe to repeat.",
+    "body": "The fix is an **idempotency key**. The worker sends the order id with the email request, and the email provider ignores a second request with the same key, so the customer gets one email however often the message repeats. Inside your own database, a unique constraint protects a write made in that database, such as one invoice row per order (SD 4): a second insert fails. It cannot protect a separate call to another system, such as the email, which is why the provider's key is needed. With at-least-once delivery, every consumer must make its work safe to repeat.",
     "visual": {
       "cells": [],
       "arch": {

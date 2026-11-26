@@ -363,6 +363,7 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-670 | SD 8 (Level 35) Partitioning and Consistent Hashing in English: lesson, 8-step walkthrough with three predictions (shard count, range by date, keys moved by hash mod N), intuition, two design prompts; 16 glossary terms | FR-03, D-079, D-085 | P1 | Done 2026-11-25: content check in CI; facts F60–F68 confirmed (G-10); review and Vietnamese translation pending |
 | T-671 | SD 8 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude, no changes; content check in CI |
 | T-672 | SD 8 content review, including its two design prompts, and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | Assigned 2026-11-25 |
+| T-673 | SD 7 and SD 8 review round 1 fixes: video ready time scoped to no crashes with the crash delay stated; partner outage pattern, measured sending rate and an age budget; unique constraints limited to local writes; 58 workers for a strict 70%; neutral drawings for two SD 8 predictions; measured lookup imbalance for the link shortener (10 shards); new sensors in the storage plan (9 shards); dedicated shard qualified | FR-03, FR-05, D-085 | P1 | Done 2026-11-25: content check in CI |
 
 ## Maintenance
 

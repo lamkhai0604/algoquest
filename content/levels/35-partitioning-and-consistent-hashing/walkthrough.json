@@ -84,39 +84,10 @@
           },
           {
             "kind": "db",
-            "label": "Shard 1",
-            "x": 6,
-            "y": 0
-          },
-          {
-            "kind": "db",
-            "label": "Shard 2",
-            "x": 9,
-            "y": 0
-          },
-          {
-            "kind": "db",
-            "label": "Shard 3",
-            "x": 10,
-            "y": 3
-          },
-          {
-            "kind": "db",
-            "label": "Shard 4",
-            "x": 10,
-            "y": 6
-          },
-          {
-            "kind": "db",
-            "label": "Shard 5",
-            "x": 8,
-            "y": 8
-          },
-          {
-            "kind": "db",
-            "label": "Shard 6",
-            "x": 5,
-            "y": 8
+            "label": "Database",
+            "x": 7,
+            "y": 4,
+            "note": "split into ? shards"
           }
         ],
         "links": [
@@ -127,46 +98,12 @@
           [
             1,
             2
-          ],
-          [
-            1,
-            3
-          ],
-          [
-            1,
-            4
-          ],
-          [
-            1,
-            5
-          ],
-          [
-            1,
-            6
-          ],
-          [
-            1,
-            7
           ]
         ],
         "path": [
           0,
           1,
           2
-        ],
-        "flows": [
-          {
-            "path": [
-              1,
-              4
-            ]
-          },
-          {
-            "path": [
-              1,
-              6
-            ]
-          }
         ]
       },
       "vars": [
@@ -194,6 +131,8 @@
         "answer": 1,
         "explanation": "Storage needs 5 ÷ 1 = 5 shards and writes need 30,000 ÷ 5,000 = 6. Both limits must hold, so the larger, 6, wins. Adding them (11) double-counts: each shard provides both storage and write capacity.",
         "hides": [
+          "shards for storage",
+          "shards for writes",
           "shards needed"
         ]
       }
@@ -252,9 +191,7 @@
             "kind": "db",
             "label": "Shard 6",
             "x": 5,
-            "y": 8,
-            "note": "today: 30,000 w/s",
-            "state": "hot"
+            "y": 8
           }
         ],
         "links": [
