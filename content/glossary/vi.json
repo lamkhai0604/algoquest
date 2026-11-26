@@ -770,6 +770,86 @@
           "term": "stream processing",
           "vi": "xử lý theo luồng",
           "firstLevel": 34
+        },
+        {
+          "term": "partitioning",
+          "vi": "chia dữ liệu thành nhiều phần trên nhiều máy chủ",
+          "firstLevel": 35
+        },
+        {
+          "term": "sharding",
+          "vi": "chia dữ liệu theo shard",
+          "firstLevel": 35
+        },
+        {
+          "term": "partition",
+          "vi": "một phần dữ liệu",
+          "firstLevel": 35
+        },
+        {
+          "term": "shard",
+          "vi": "một phần dữ liệu nằm trên một máy chủ",
+          "firstLevel": 35
+        },
+        {
+          "term": "partition key",
+          "vi": "trường quyết định dữ liệu thuộc phần nào",
+          "firstLevel": 35
+        },
+        {
+          "term": "shard key",
+          "vi": "khoá quyết định shard",
+          "firstLevel": 35
+        },
+        {
+          "term": "range partitioning",
+          "vi": "chia theo khoảng giá trị",
+          "firstLevel": 35
+        },
+        {
+          "term": "hash partitioning",
+          "vi": "chia theo giá trị hash",
+          "firstLevel": 35
+        },
+        {
+          "term": "hot partition",
+          "vi": "phần dữ liệu bị dồn tải",
+          "firstLevel": 35
+        },
+        {
+          "term": "scatter-gather",
+          "vi": "hỏi mọi shard rồi gộp kết quả",
+          "firstLevel": 35
+        },
+        {
+          "term": "resharding",
+          "vi": "chia lại shard",
+          "firstLevel": 35
+        },
+        {
+          "term": "consistent hashing",
+          "vi": "hash nhất quán trên vòng",
+          "firstLevel": 35
+        },
+        {
+          "term": "hash ring",
+          "vi": "vòng giá trị hash",
+          "firstLevel": 35
+        },
+        {
+          "term": "virtual node",
+          "vi": "nút ảo",
+          "firstLevel": 35
+        },
+        {
+          "term": "local index",
+          "vi": "chỉ mục trong từng shard",
+          "firstLevel": 35
+        },
+        {
+          "term": "global index",
+          "vi": "chỉ mục chung được chia theo trường được đánh chỉ mục",
+          "firstLevel": 35
         }
       ]
     },

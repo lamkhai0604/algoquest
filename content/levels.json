@@ -236,5 +236,12 @@
     "title": "Queues and Asynchronous Work",
     "summary": "Move slow work out of the request with queues and workers, keep up with the load, and make repeated and failed work safe.",
     "phase": 4
+  },
+  {
+    "number": 35,
+    "slug": "partitioning-and-consistent-hashing",
+    "title": "Partitioning and Consistent Hashing",
+    "summary": "Split data across servers when one cannot hold it or take its writes, choose a partition key, and add servers without moving everything.",
+    "phase": 4
   }
 ]
