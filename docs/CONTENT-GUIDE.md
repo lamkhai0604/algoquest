@@ -82,7 +82,7 @@ Write 2–3 challenges per level. The backend validates the file with the rest o
 
 ### 4a. Design prompts (System Design levels, `content/levels/<n>-<slug>/designs.json`, D-085)
 
-A JSON array of prompts. The learner writes a short design under four headings (requirements, one estimate, components, one failure or trade-off); the AI grades it with the syllabus rubric: requirements and scope 20, estimation 15, high-level design 25, data and scaling 20, trade-offs and failures 20.
+A JSON array of prompts. The learner writes a design under the prompt's headings, and the AI grades it with the syllabus rubric: requirements and scope 20, estimation 15, high-level design 25, data and scaling 20, trade-offs and failures 20. Early prompts (SD 1 to SD 14) use four headings: requirements, one estimate, components, one failure or trade-off. From Level 42 on, prompts use the eight steps of the design interview routine (T-699).
 
 | Field | Rule |
 | --- | --- |
@@ -94,6 +94,7 @@ A JSON array of prompts. The learner writes a short design under four headings (
 | `criteria` | At least one task-specific point for each of `requirements`, `estimation`, `design`, `data` and `tradeoffs`; shown only to the grader |
 | `fullMarkDesigns` | At least two different designs that earn full marks; shown only to the grader, so it does not reward one shape only |
 | `reference` | `assumptions`, `design` and `alternatives`; shown after a graded answer, never called the correct answer |
+| `form` | Optional. `scaffold` (the default) for the four headings, or `routine` for the eight steps: requirements and scope, estimates, API, data model, high-level design, deep dive, failures, summary. Level 42 and every later level use `routine` |
 
 Rules from the first review of design prompts:
 

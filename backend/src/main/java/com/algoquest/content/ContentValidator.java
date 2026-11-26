@@ -1008,6 +1008,11 @@ final class ContentValidator {
       if (r == null || !filled(r.assumptions()) || blank(r.design()) || !filled(r.alternatives())) {
         problems.add(where + ": reference needs assumptions, a design and alternatives");
       }
+      if (d.form() != null
+          && !DesignPrompt.SCAFFOLD.equals(d.form())
+          && !DesignPrompt.ROUTINE.equals(d.form())) {
+        problems.add(where + ": form must be scaffold or routine");
+      }
     }
     return problems;
   }

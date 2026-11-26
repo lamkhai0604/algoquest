@@ -22,5 +22,30 @@
       "design": "One server increments a counter row; the page reads it.",
       "alternatives": ["Count in memory and write every second: fewer writes, may lose a second"]
     }
+  },
+  {
+    "id": "D1-routine",
+    "level": 1,
+    "title": "A Visit Counter, Full Routine",
+    "prompt": "Design a service that counts visits to one page and shows the total.",
+    "facts": ["About 100 visits per second at peak", "The total may be up to 5 seconds old"],
+    "scope": ["One page only", "No user accounts"],
+    "criteria": {
+      "requirements": ["Count every visit; show a total at most 5 seconds old"],
+      "estimation": ["100 writes per second is small for one database"],
+      "design": ["One server and one database are enough"],
+      "data": ["One counter row, updated with a single increment"],
+      "tradeoffs": ["A lost server loses no counts once written"]
+    },
+    "fullMarkDesigns": [
+      "One server increments one database row per visit; the page reads the row.",
+      "One server counts in memory and writes the sum to the database every second."
+    ],
+    "reference": {
+      "assumptions": ["Visits arrive evenly"],
+      "design": "One server increments a counter row; the page reads it.",
+      "alternatives": ["Count in memory and write every second: fewer writes, may lose a second"]
+    },
+    "form": "routine"
   }
 ]
