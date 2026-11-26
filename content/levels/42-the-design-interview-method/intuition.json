@@ -1,0 +1,11 @@
+{
+  "question": "A builder is asked to \"build a house\". What should come first?",
+  "options": [
+    "Ask how many people will live there, how many floors, the budget and the climate",
+    "Order the bricks, since every house needs them",
+    "Draw the roof in detail, since roofs are the hardest part",
+    "Start digging, and change the plan if the owner complains"
+  ],
+  "answer": 0,
+  "explanation": "Without the requirements and numbers, every later choice is a guess: the bricks, the roof and the digging all depend on the size, budget and climate. A system design interview works the same way: clarify first, then estimate, then design, then go deep where it is hardest."
+}

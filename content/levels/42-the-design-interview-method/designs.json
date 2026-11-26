@@ -1,0 +1,109 @@
+[
+  {
+    "id": "D42-live-poll",
+    "level": 42,
+    "title": "Live Polls for a TV Show",
+    "prompt": "A TV show asks viewers a question on air, and viewers vote in the show's app during a 60-second window; the result is shown on screen right after. Design the voting system, using the full routine: put requirements and scope in the first box; all estimates in the second; the API, data model, high-level design and one deep dive in the third; failures with conditions and a short summary in the fourth.",
+    "facts": [
+      "About 2 million viewers vote in each poll; half of them vote in the first 10 seconds of the 60-second window",
+      "Each vote is one small request from a logged-in viewer; a viewer may vote once per poll, and tapping again must not count twice",
+      "An app server handles about 5,000 vote requests per second",
+      "An in-memory store node handles about 100,000 simple operations per second, including an atomic \"set if not already set\" and an atomic counter increment; it can be run with a replica",
+      "A message queue handles about 200,000 messages per second; the database handles about 5,000 writes per second",
+      "Requirement: every vote sent within the window from a logged-in viewer is counted exactly once in effect",
+      "Requirement: the final result is shown within 5 seconds after the window closes; the system keeps working if one app server or one store node fails"
+    ],
+    "scope": [
+      "Collecting and counting votes for one poll at a time",
+      "Showing the result on the TV screen is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States one vote per viewer per poll, the 60-second window, the result within 5 seconds of closing, and survival of one server or store node failure"
+      ],
+      "estimation": [
+        "Peak votes: 1 million in 10 seconds = 100,000 per second, against an average of 2 million ÷ 60 ≈ 33,000",
+        "App servers: 100,000 ÷ 5,000 = 20 at peak, plus spares; why the database alone (5,000 writes per second) cannot take the peak directly"
+      ],
+      "design": [
+        "API (a vote call returning accepted), data model (one record per viewer per poll, a counter per option), a high-level design with a fast path for the peak, and a deep dive on counting each viewer once"
+      ],
+      "data": [
+        "How a repeated tap is ignored: an atomic \"set if not already set\" on (poll, viewer), or a unique key in a later step",
+        "Where the final counts come from and how they are kept after the poll"
+      ],
+      "tradeoffs": [
+        "Names failures with conditions and a trade-off, such as: if a store node fails, its replica takes over and votes in the last moment may need replaying from the queue; counting through a queue is safer but adds a few seconds; a summary that checks each requirement"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, count in the in-memory store: `POST /polls/{id}/votes {option}` returns 202. At 100,000 votes per second, 20 app servers plus 4 spares. Each vote does \"set if not already set\" on (poll, viewer) and, only if new, increments the option's counter: 2 operations per vote, 200,000 per second at peak, so the keys are split across 3 store nodes with replicas. The result is read from the counters right after the window: well within 5 seconds. A background job copies (poll, viewer, option) to the database at 5,000 per second over the next minutes for records. Failures: a dead app server is skipped by the load balancer; a dead store node is replaced by its replica, and the few votes in flight are retried by phones with the same vote ID. Summary: every requirement is met by the store's atomic operations at 200,000 per second. Trade-off: the counts live in memory until copied.",
+      "Design B, count from a queue: the vote call puts (poll, viewer, option) on a queue and returns 202; the queue takes 100,000 per second, under its 200,000. Consumers read in batches, keep a set of viewers who voted per poll in the in-memory store to drop repeats, and add batch totals to the option counters. Consumers keep up within about 2 seconds, so the final count is ready within 5 seconds after the window. Votes are also kept in the queue for replay, and written to the database in the background. Failures: a dead consumer's batch is read again, and the viewer set makes the replay harmless. Summary: one vote per viewer by the set, the 5-second result by consumers that keep up. Trade-off: one more moving part, and results lag a couple of seconds behind the votes."
+    ],
+    "reference": {
+      "assumptions": [
+        "Viewers are logged in (SD 13)",
+        "The phone gives each vote an ID and retries with it"
+      ],
+      "design": "Requirements: one vote per logged-in viewer per poll, 60-second window, result within 5 seconds after closing, survive one app server or store node failure. Out of scope: the TV graphics.\nEstimates: half of 2 million votes in 10 seconds is 100,000 per second at peak (average 33,000). 20 app servers at 5,000 each, plus spares. The database's 5,000 writes per second cannot take the peak directly.\nAPI: POST /polls/{id}/votes {option} → 202; GET /polls/{id}/result. Data: in the in-memory store, a \"voted\" key per (poll, viewer) and one counter per option; later, a votes table in the database.\nDesign and deep dive: each vote sets the (poll, viewer) key only if absent, and only then increments its option's counter: 200,000 operations per second at peak, spread over 3 store nodes with replicas. Repeated taps find the key and change nothing. Right after the window, the counters are the result, well within 5 seconds.\nFailures: the load balancer skips a dead app server; a dead store node's replica takes over, and phones retry their vote with the same ID. Summary: each requirement is met; the counts are copied to the database afterwards.",
+      "alternatives": [
+        "Count from a queue: safer replay, a couple of seconds of lag",
+        "Rejected: writing every vote straight to the database, because the peak of 100,000 per second is twenty times its 5,000"
+      ]
+    }
+  },
+  {
+    "id": "D42-parking",
+    "level": 42,
+    "title": "Free Parking Spaces in a City",
+    "prompt": "A city puts a sensor in every space of its public garages and wants an app that shows how many spaces are free in each garage. Design it, using the full routine: put requirements and scope in the first box; all estimates in the second; the API, data model, high-level design and one deep dive in the third; failures with conditions and a short summary in the fourth.",
+    "facts": [
+      "100 garages with 40,000 spaces in total; each sensor reports an event when a car arrives or leaves, about 200 events per second at rush hour",
+      "A sensor resends an event until the system acknowledges it, so the same event can arrive more than once; each event carries the sensor ID and an event number that grows for that sensor",
+      "Up to 3,000 app requests per second at rush hour, each asking for the free-space counts of the garages near the user",
+      "The database handles about 2,000 writes per second; an in-memory cache answers in about 1 ms",
+      "Requirement: a change in a garage shows in the app within 30 seconds",
+      "Requirement: a repeated event never changes a count twice",
+      "Requirement: if a garage has sent nothing for 5 minutes, the app shows its count as \"may be out of date\"; events are kept for 30 days"
+    ],
+    "scope": [
+      "Counting free spaces and showing them in the app",
+      "Payment and reservations are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States 30-second freshness, repeated events counted once, the 5-minute out-of-date rule, and 30 days of events"
+      ],
+      "estimation": [
+        "Writes: 200 events per second, under the database's 2,000",
+        "Storage: 200 × about 100 bytes × 86,400 ≈ 1.7 GB a day, about 52 GB for 30 days",
+        "Reads: 3,000 per second served from a cache, about 1 ms each"
+      ],
+      "design": [
+        "API for sensors and for the app, a data model with one row per space and a count per garage, a high-level design, and a deep dive on applying each event once"
+      ],
+      "data": [
+        "Applying an event only if its number is higher than the last one stored for that sensor",
+        "How the cache stays within the 30-second limit"
+      ],
+      "tradeoffs": [
+        "Names failures with conditions and a trade-off, such as: if the cache is lost, counts are read from the database until it fills again; a sensor that goes silent shows \"may be out of date\" after 5 minutes; caching for 10 seconds trades a little freshness for far fewer reads; a summary that checks each requirement"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, write straight to the database: sensors call `POST /events {sensor, number, occupied}`; the server updates the space's row only if the event number is higher than the stored one, and in the same transaction changes the garage's free count; then it acknowledges. 200 writes per second, under 2,000. The app calls `GET /garages?near=…`, served from a cache refreshed every 10 seconds from the garage counts: 3,000 reads per second at about 1 ms, and changes show within about 10 seconds. Each garage row keeps its last event time; older than 5 minutes means \"may be out of date\". Events are also appended to a log table: about 52 GB for 30 days. Failures: if the cache fails, reads go to the database for a short time; if the database is down, sensors keep resending until it returns. Summary: each requirement is met. Trade-off: one database does everything; simple, with room to spare at 200 writes per second.",
+      "Design B, a queue and counters in memory: sensors post events, which go on a queue and are acknowledged. Consumers apply each event to an in-memory record per space only if its number is higher, update the garage's free count in memory, and write the event to the database in batches. The app reads garage counts from memory: about 1 ms, and a change shows within a couple of seconds. Events in the database: about 52 GB for 30 days. Failures: if the in-memory records are lost, they are rebuilt from the last event per space in the database; until then, garages show \"may be out of date\". Summary: each requirement is met. Trade-off: fresher counts and a database that only receives batches, but more parts to run."
+    ],
+    "reference": {
+      "assumptions": [
+        "Sensor clocks are not needed: event numbers order each sensor's events",
+        "Garages are few enough to list all counts near a user in one small response"
+      ],
+      "design": "Requirements: counts within 30 seconds of a change, repeated events counted once, \"may be out of date\" after 5 silent minutes, events kept 30 days. Out of scope: payments and reservations.\nEstimates: 200 events per second at rush hour, under the database's 2,000 writes. Events: 200 × 100 bytes × 86,400 ≈ 1.7 GB a day, about 52 GB for 30 days. 3,000 app reads per second, from a cache.\nAPI: POST /events {sensor, number, occupied} for sensors; GET /garages?near=… for the app. Data: spaces(sensor_id, garage_id, occupied, last_number); garages(id, free, last_event_at); an event log.\nDesign and deep dive: the server updates a space only if the event's number is higher than last_number, and changes the garage's free count in the same transaction; a repeated or older event changes nothing, but is still acknowledged so the sensor stops resending. A cache refreshed every 10 seconds answers the app in about 1 ms, so changes show within about 10 seconds.\nFailures: if the cache is lost, reads go to the database briefly; if the database is down, sensors keep resending and nothing is lost; a silent garage shows \"may be out of date\" after 5 minutes. Summary: each requirement is met with plenty of room.",
+      "alternatives": [
+        "A queue with in-memory counters: fresher counts, more parts",
+        "Rejected: adding or subtracting from the garage count for every event without checking its number, because a resent event would change the count twice"
+      ]
+    }
+  }
+]
