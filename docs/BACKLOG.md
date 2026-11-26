@@ -360,8 +360,9 @@ About two levels per sprint at the standard of Levels 12–21. Planned order: Sp
 | T-667 | SD 7 (Level 34) Queues and Asynchronous Work in English: lesson, 8-step walkthrough with three predictions (answer time, workers needed, a crash before the ack), intuition, two design prompts; 22 glossary terms | FR-03, D-079, D-085 | P1 | Done 2026-11-25: content check in CI; facts F50–F59 confirmed (G-09); review and Vietnamese translation pending |
 | T-668 | SD 7 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude, no changes; content check in CI |
 | T-669 | SD 7 content review, including its two design prompts, and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | Assigned 2026-11-25 |
-| T-670 | SD 8 (Level 35) Partitioning and Consistent Hashing in English: lesson, 8-step walkthrough with three predictions (shard count, range by date, keys moved by hash mod N), intuition, two design prompts; 16 glossary terms | FR-03, D-079, D-085 | P1 | In progress 2026-11-25: quick check and challenges assigned (T-671); fact check assigned (G-10) |
-| T-671 | SD 8 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Assigned 2026-11-25 |
+| T-670 | SD 8 (Level 35) Partitioning and Consistent Hashing in English: lesson, 8-step walkthrough with three predictions (shard count, range by date, keys moved by hash mod N), intuition, two design prompts; 16 glossary terms | FR-03, D-079, D-085 | P1 | Done 2026-11-25: content check in CI; facts F60–F68 confirmed (G-10); review and Vietnamese translation pending |
+| T-671 | SD 8 quick check (3 questions) and trade-off challenges (3), drafted by ChatGPT from Claude's outline | FR-03, D-057 | P1 | Done 2026-11-25: reviewed by Claude, no changes; content check in CI |
+| T-672 | SD 8 content review, including its two design prompts, and Vietnamese translation, by ChatGPT | FR-03, D-057 | P1 | Assigned 2026-11-25 |
 
 ## Maintenance
 
