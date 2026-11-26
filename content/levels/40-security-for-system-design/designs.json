@@ -1,0 +1,113 @@
+[
+  {
+    "id": "D40-app-login",
+    "level": 40,
+    "title": "Login for a Mobile Shopping App",
+    "prompt": "Design how users of a mobile shopping app log in and stay logged in, how each request is checked, and how the app resists password guessing.",
+    "facts": [
+      "About 1 million users, up to 100,000 active at once; up to 5,000 API requests per second across 12 servers",
+      "Logins peak at 50 per second",
+      "A shared in-memory store answers a lookup in about 1 ms and handles up to 100,000 lookups per second",
+      "A slow salted password hash tuned to about 100 ms of CPU is available; the login servers have 8 CPU cores in total for hashing",
+      "Requirement: a blocked user loses access within 1 minute; a user who logs out loses access at once on that phone",
+      "Requirement: users stay logged in for 30 days unless they log out or are blocked",
+      "Requirement: a user can read and change only their own orders and address",
+      "Requirement: someone guessing passwords gets at most a few hundred tries per account per day, and cannot lock a real user out for more than 15 minutes"
+    ],
+    "scope": [
+      "Login, staying logged in, and checking requests",
+      "Payment and the card provider are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the 1-minute block, the 30-day login, ownership of orders and address, and the guessing limits"
+      ],
+      "estimation": [
+        "Cost of the chosen way to check requests, such as: sessions, 5,000 lookups per second, 5% of the store; or 1-minute access tokens, about 100,000 ÷ 60 ≈ 1,700 refreshes per second, each a lookup",
+        "Hashing: 50 × 0.1 s = 5 CPU cores of the 8",
+        "Guessing: 5 failures per 15 minutes is 5 × 96 = 480 tries a day"
+      ],
+      "design": [
+        "Login over HTTPS; a check of identity on every request; an ownership check for every order and address request on the server"
+      ],
+      "data": [
+        "What is stored for a login: a session record, or a refresh token record, and what deleting it does",
+        "Passwords as slow salted hashes; secrets in a secret store"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: sessions take effect at once but need the store on every request; short tokens avoid most lookups but need frequent refreshes; a stricter guessing limit makes real users who mistype wait longer"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, sessions: after a password check (slow hash, 5 of 8 cores at 50 logins per second), the login service stores a random session ID for 30 days in the shared store and sends it to the app. Every request looks it up: 5,000 per second, 5% of the store, about 1 ms. Logout or a block deletes the session, so the next request fails at once. Every order or address request checks on the server that it belongs to the session's user. Failed logins: 5 per account per 15 minutes (480 a day), with a wait that ends by itself. Trade-off: if the store is down, nobody can make requests, so it must be run with a copy.",
+      "Design B, short access tokens and a refresh token: the login service gives the app a signed access token valid for 1 minute and a refresh token valid for 30 days, stored in the shared store. Servers check access tokens by signature, with no lookup. Each minute the app refreshes: about 100,000 ÷ 60 ≈ 1,700 lookups per second, under 2% of the store. A block or logout deletes the refresh token, so access ends within 1 minute; for logout the app also discards its access token at once. Ownership is checked on the server for every request. Failed logins as in Design A. Trade-off: a blocked user keeps access for up to a minute, and the refresh logic is more complex."
+    ],
+    "reference": {
+      "assumptions": [
+        "Phones keep the session ID or tokens in the phone's secure storage",
+        "All traffic uses HTTPS"
+      ],
+      "design": "The login service checks the password against a slow salted hash tuned to about 100 ms: at 50 logins per second that is 5 of the 8 cores.\nIt then creates a session: a random ID stored in the shared store for 30 days, renewed while the user is active, and sent to the app over HTTPS.\nEvery request looks up the session: 5,000 lookups per second, 5% of the store's 100,000. Logout or a block deletes the session, so access ends at the next request, well within 1 minute.\nEvery request for an order or the address checks on the server that it belongs to the session's user; anything else is refused.\nFailed logins are limited to 5 per account per 15 minutes, 480 a day; the wait ends by itself, so a real user is never locked out for more than 15 minutes. A limit per network address is added on top.",
+      "alternatives": [
+        "Short access tokens with refresh tokens: no lookup on most requests, about 1,700 refreshes per second, access ends within 1 minute",
+        "Rejected: access tokens valid for 30 days with no lookup, because a blocked user would keep access for up to 30 days",
+        "Rejected: locking an account for good after 5 failures, because anyone could then lock out any user"
+      ]
+    }
+  },
+  {
+    "id": "D40-partner-api",
+    "level": 40,
+    "title": "An API for Partner Companies",
+    "prompt": "A wholesaler opens an API so that its 50 partner companies can read their own orders. Design how partners prove who they are, how each partner sees only its own data, and how one partner cannot slow down the others.",
+    "facts": [
+      "50 partner companies; each needs only to read its own orders",
+      "Measured: a partner sends up to 30 requests per second; the API servers can handle about 3,000 requests per second in total",
+      "Orders of all partners are in one database today, with a partner_id column on every order; the team can also run up to 60 small separate databases within its budget",
+      "Partners call from their own servers, never from a browser",
+      "Requirement: a partner can never read another partner's orders, even through a bug in one query",
+      "Requirement: a partner's key can be replaced without stopping that partner's calls",
+      "Requirement: one partner sending too many requests cannot slow down the others",
+      "Requirement: if one partner's key leaks, it gives access to that partner's orders only, and only to read them"
+    ],
+    "scope": [
+      "Partner access to orders",
+      "How orders are created is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States read-only access to own orders, isolation even against a query bug, key replacement without downtime, and protection from a noisy partner"
+      ],
+      "estimation": [
+        "Rate limits fit capacity: such as 50 requests per second per partner × 50 partners = 2,500, under 3,000, and above the measured 30",
+        "Or, for separate databases: 50 of the 60 allowed"
+      ],
+      "design": [
+        "A key per partner, sent over HTTPS and stored as a hash; isolation by a partner filter enforced in one shared place, or by a separate database per partner"
+      ],
+      "data": [
+        "Where the partner's identity comes from (the key, never a parameter the partner sends)",
+        "A read-only database user for the API"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: one database with an enforced filter is cheap but a mistake in the shared filter affects everyone; separate databases isolate strongly but cost more to run and change; two active keys per partner allow replacement but double what must be watched"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, one database with an enforced filter: each partner gets an API key, stored as a hash, with two keys active at once so a new one can replace the old without downtime. The API finds the partner from the key, never from a parameter, and every query goes through one shared data layer that adds partner_id = the caller's ID, and connects as a read-only database user. Rate limit: 50 requests per second per key, so 50 × 50 = 2,500, under 3,000, above the measured 30. A leaked key reads only that partner's orders. Trade-off: cheap, but a bug in the shared data layer could affect every partner.",
+      "Design B, a separate database per partner: each partner's orders are copied into its own small database, 50 of the 60 allowed. The partner's key maps to that database and to a read-only user that can reach only it, so even a query with no filter returns only that partner's orders. Keys as in Design A, two active at once; rate limit 50 per second per partner, 2,500 in total. A leaked key reads only that partner's database. Trade-off: the strongest isolation, but 50 databases to run, copy into and change."
+    ],
+    "reference": {
+      "assumptions": [
+        "Partners keep their keys secret on their own servers",
+        "Copying orders into partner databases keeps up within minutes"
+      ],
+      "design": "Each partner gets an API key over a secure channel; the API stores only a hash of it. Two keys can be active per partner, so the partner adds a new key, switches, and then the old one is removed, with no downtime.\nThe API identifies the partner from the key alone, never from a partner ID in the request. All queries go through one shared data layer that always adds partner_id = the caller's partner, so no single query can forget it, and the API connects as a database user that can only read orders.\nEach key is limited to 50 requests per second: above the measured 30, and 50 × 50 = 2,500 in total, under the 3,000 the servers handle, so one partner cannot slow the others.\nA leaked key gives read access to that partner's orders only, and can be replaced at once.",
+      "alternatives": [
+        "A separate database per partner: strongest isolation, 50 of 60 databases, more to run",
+        "Rejected: trusting a partner_id sent in each request, because any partner could ask for another partner's orders",
+        "Rejected: one shared key for all partners, because a leak would expose every partner and no partner could be limited alone"
+      ]
+    }
+  }
+]

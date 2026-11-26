@@ -1,0 +1,35 @@
+[
+  {
+    "question": "A logged-in user changes the order number in a request and sees another customer's order. What was missing?",
+    "options": [
+      "A check on the server that the order belongs to the logged-in user",
+      "HTTPS between the app and the load balancer",
+      "A slower password hash",
+      "A limit on failed logins"
+    ],
+    "answer": 0,
+    "explanation": "The user was authenticated, so login was not the problem. The server never asked whether this user may read this order. That authorization check must run on the server for every object; HTTPS, hashing and login limits protect other things."
+  },
+  {
+    "question": "Servers check signed access tokens without any lookup. Blocked users must lose access within 1 minute. Which design meets that?",
+    "options": [
+      "Access tokens valid for 24 hours",
+      "Access tokens valid for 1 minute, renewed with a refresh token that the server checks and deletes when the user is blocked",
+      "Access tokens that never expire",
+      "Access tokens valid for 15 minutes"
+    ],
+    "answer": 1,
+    "explanation": "A token cannot be called back, so a blocked user keeps access until the token expires. Only a lifetime of 1 minute or less meets the rule, with a refresh token checked on the server so that a block stops the next renewal."
+  },
+  {
+    "question": "Where should the order service's database password be kept?",
+    "options": [
+      "In the source code, so every copy of the service has it",
+      "In the mobile app, so it can talk to the database",
+      "In a secret store that only the order service can read, for a database user with only the rights the order service needs",
+      "In a shared configuration file with the administrator password, so all services use the same one"
+    ],
+    "answer": 2,
+    "explanation": "A secret store keeps the password out of code that may be copied or published, and lets only the right service read it. Giving that service its own database user with only the rights it needs means a leak can do limited harm (least privilege)."
+  }
+]

@@ -1120,6 +1120,76 @@
           "term": "golden signals",
           "vi": "bốn tín hiệu vàng",
           "firstLevel": 39
+        },
+        {
+          "term": "authentication",
+          "vi": "xác thực (bạn là ai)",
+          "firstLevel": 40
+        },
+        {
+          "term": "authorization",
+          "vi": "phân quyền (bạn được làm gì)",
+          "firstLevel": 40
+        },
+        {
+          "term": "access token",
+          "vi": "token truy cập ngắn hạn",
+          "firstLevel": 40
+        },
+        {
+          "term": "refresh token",
+          "vi": "token làm mới dài hạn",
+          "firstLevel": 40
+        },
+        {
+          "term": "OAuth",
+          "vi": "chuẩn đăng nhập/ủy quyền qua bên thứ ba",
+          "firstLevel": 40
+        },
+        {
+          "term": "scope",
+          "vi": "phạm vi quyền",
+          "firstLevel": 40
+        },
+        {
+          "term": "HTTPS (TLS)",
+          "vi": "kết nối mã hóa",
+          "firstLevel": 40
+        },
+        {
+          "term": "password hash",
+          "vi": "băm mật khẩu",
+          "firstLevel": 40
+        },
+        {
+          "term": "salt",
+          "vi": "chuỗi ngẫu nhiên thêm vào khi băm",
+          "firstLevel": 40
+        },
+        {
+          "term": "secret store",
+          "vi": "kho lưu bí mật",
+          "firstLevel": 40
+        },
+        {
+          "term": "least privilege",
+          "vi": "quyền tối thiểu",
+          "firstLevel": 40
+        },
+        {
+          "term": "signed URL",
+          "vi": "đường dẫn có chữ ký",
+          "firstLevel": 40
+        },
+        {
+          "term": "tenant",
+          "vi": "khách hàng thuê chung hệ thống",
+          "firstLevel": 40
+        },
+        {
+          "term": "multi-tenant isolation",
+          "vi": "cách ly giữa các tenant",
+          "firstLevel": 40
         }
       ]
     },

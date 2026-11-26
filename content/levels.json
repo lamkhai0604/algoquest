@@ -271,5 +271,12 @@
     "title": "Observability and SLOs",
     "summary": "See what users feel: logs, metrics and traces, p50 to p99 latency, SLIs, SLOs and error budgets, and alerts that wake someone only when it matters.",
     "phase": 4
+  },
+  {
+    "number": 40,
+    "slug": "security-for-system-design",
+    "title": "Security for System Design",
+    "summary": "Put checks and limits in the right place: authentication and authorization, sessions or tokens, sign-in with another site, HTTPS, secrets, least privilege and rate limits on abuse.",
+    "phase": 4
   }
 ]

@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P40-password-storage",
+    "level": 40,
+    "title": "How to Store Passwords",
+    "statement": "A service stores passwords for 2 million accounts. Logins peak at 50 per second, and the login servers have 8 CPU cores for checking passwords. Exercise assumptions: a stolen copy of the password table must be slow to guess from; the same password used by two people must not look the same in the table; the team prefers to leave some spare cores at peak. Which way of storing passwords fits?",
+    "examples": [
+      "Cores busy at peak = logins per second × seconds of CPU per check."
+    ],
+    "constraints": [
+      "A stolen table must be slow to guess from.",
+      "Equal passwords must not look equal.",
+      "Stay within 8 cores at peak, preferring spare cores."
+    ],
+    "approaches": [
+      {
+        "id": "slow-hash-100ms",
+        "name": "A slow password hash with a random salt per account, tuned to about 100 ms",
+        "hint": "Slow on purpose, different for each account",
+        "label": "best",
+        "time": "50 × 0.1 s = 5 cores at peak",
+        "space": "Hash and salt per account",
+        "why": "A thief can try only about 10 guesses per second per core, and the salt makes equal passwords look different, so each account must be guessed separately. 5 of 8 cores leaves room to spare."
+      },
+      {
+        "id": "slow-hash-150ms",
+        "name": "The same slow salted hash, tuned to about 150 ms",
+        "hint": "Even slower",
+        "label": "valid",
+        "time": "50 × 0.15 s = 7.5 cores at peak",
+        "space": "Hash and salt per account",
+        "why": "Guessing is a little slower still, and it fits in 8 cores, but at peak only half a core is left, against the stated preference for spare cores."
+      },
+      {
+        "id": "fast-hash",
+        "name": "A fast general-purpose hash with a salt",
+        "hint": "Quick to check",
+        "label": "unsuitable",
+        "time": "Almost no CPU per login",
+        "space": "Hash and salt per account",
+        "why": "The salt makes equal passwords look different, but a fast hash lets a thief try millions of guesses per second, so a stolen table is quick to guess from."
+      }
+    ]
+  },
+  {
+    "id": "P40-guessing-limit",
+    "level": 40,
+    "title": "Stopping Password Guessing",
+    "statement": "Someone is guessing passwords against a few accounts, from about 1,000 different network addresses. Exercise assumptions: at most a few hundred guesses per account per day may get through; a real user must never be locked out for more than 1 hour; the team prefers that a real user who mistypes waits as little as possible. Which limit fits?",
+    "examples": [
+      "A day has 96 periods of 15 minutes."
+    ],
+    "constraints": [
+      "At most a few hundred guesses per account per day.",
+      "No real user locked out for more than 1 hour.",
+      "Prefer short waits for real users."
+    ],
+    "approaches": [
+      {
+        "id": "per-account-15min",
+        "name": "Allow 5 failed logins per account every 15 minutes, then wait until the period ends",
+        "hint": "Count failures per account",
+        "label": "best",
+        "time": "5 × 96 = 480 guesses a day per account",
+        "space": "A counter per account",
+        "why": "However many addresses the guesser uses, each account allows only 480 failures a day. A real user who mistypes waits at most 15 minutes, and the wait ends by itself."
+      },
+      {
+        "id": "per-account-hour",
+        "name": "Allow 5 failed logins per account every hour",
+        "hint": "A stricter per-account limit",
+        "label": "valid",
+        "time": "5 × 24 = 120 guesses a day per account",
+        "space": "A counter per account",
+        "why": "It meets the guessing limit with room and never locks anyone out for more than an hour, but a real user who mistypes five times may wait up to an hour instead of 15 minutes, against the stated preference."
+      },
+      {
+        "id": "per-address-only",
+        "name": "Allow 100 failed logins per network address per minute",
+        "hint": "Count failures per address",
+        "label": "unsuitable",
+        "time": "Up to 100 × 1,000 per minute from 1,000 addresses",
+        "space": "A counter per address",
+        "why": "With 1,000 addresses the guesser gets up to 100,000 tries a minute against one account, far more than a few hundred a day. A per-address limit helps only alongside a per-account one."
+      }
+    ]
+  },
+  {
+    "id": "P40-download-link",
+    "level": 40,
+    "title": "Letting Users Download Their Files",
+    "statement": "Users download their own files, about 4 MB each, from a storage service, at up to 200 downloads per second. The app servers can carry about 1 GB per second in total and also serve all other requests. The storage service can check signed links that expire. Exercise assumptions: only a user with rights to a file may download it; a link must stop working within 10 minutes; the team prefers that file bytes do not pass through the app servers. Which way fits?",
+    "examples": [
+      "200 downloads per second × 4 MB = 800 MB per second."
+    ],
+    "constraints": [
+      "Only users with rights may download.",
+      "Links stop working within 10 minutes.",
+      "Prefer keeping file bytes off the app servers."
+    ],
+    "approaches": [
+      {
+        "id": "signed-url",
+        "name": "The app checks the user's rights, then returns a signed link valid for 10 minutes",
+        "hint": "Check once, let storage serve",
+        "label": "best",
+        "time": "One small request to the app per download",
+        "space": "No file bytes on the app servers",
+        "why": "Rights are checked on the server before the link is made, the link expires on its own after 10 minutes, and the 800 MB per second go straight from storage to users."
+      },
+      {
+        "id": "app-streams",
+        "name": "The app checks the user's rights on each download and streams the file through itself",
+        "hint": "Everything through the app",
+        "label": "valid",
+        "time": "800 MB per second through the app servers",
+        "space": "File bytes on the app servers",
+        "why": "It is secure and has no links to expire, but 800 MB per second uses 80% of the app servers' 1 GB per second, against the preference and leaving little for other requests."
+      },
+      {
+        "id": "public-link",
+        "name": "Give each file a public link with a long random name that never expires",
+        "hint": "Hard to guess, always works",
+        "label": "unsuitable",
+        "time": "No check at download",
+        "space": "No file bytes on the app servers",
+        "why": "Anyone who gets the link, by forwarding or a leak, can download the file forever, and losing rights does not stop it. It breaks both the rights rule and the 10-minute rule."
+      }
+    ]
+  }
+]
