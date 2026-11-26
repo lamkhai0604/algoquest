@@ -1,0 +1,11 @@
+{
+  "question": "A library splits its books between branches by the first letter of the title: A–E, F–J, and so on. A hugely popular new series starting with \"H\" arrives. What happens?",
+  "options": [
+    "The F–J branch gets most of the visitors while the others stay quiet",
+    "Visitors spread evenly because every branch has many books",
+    "The books of the series are shared between all branches",
+    "Nothing changes, because the series is only a few books"
+  ],
+  "answer": 0,
+  "explanation": "Splitting by ranges of a key keeps similar keys together, so everything that starts with \"H\" goes to one branch, and so do its visitors. That is a hot partition. Splitting by a scrambled number from the title (a hash) would have spread the series' visitors, at the cost of making \"all titles from A to C\" a visit to every branch."
+}

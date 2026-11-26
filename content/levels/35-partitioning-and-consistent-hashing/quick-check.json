@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Exercise assumptions: a database holds 8 TB and receives 27,000 writes/s. One shard safely holds 2 TB and handles 5,000 writes/s. Data and writes can be spread evenly. The 100,000 reads/s are already handled by read replicas. Before adding growth headroom or failure spares, what is the minimum shard count?",
+    "options": [
+      "10 shards",
+      "4 shards",
+      "6 shards",
+      "20 shards"
+    ],
+    "answer": 2,
+    "explanation": "Storage needs ceil(8 / 2) = 4 shards. Writes need ceil(27,000 / 5,000) = 6. Take the larger count, not their sum: 6 shards. Four shards cannot handle the writes. Reads already served by replicas do not add a shard requirement; dividing them by a write limit also mixes different capacities."
+  },
+  {
+    "question": "Exercise assumptions: an orders page always asks for one customer's orders. There are many customers; hashing customer_id spreads both stored data and peak writes evenly, and no customer exceeds one shard's capacity. All new orders have today's date. Without a separate routing index or scatter-gather, which partition key and rule fit this page?",
+    "options": [
+      "Range-partition by order_date",
+      "Hash-partition by order_id",
+      "Hash-partition by product_id",
+      "Hash-partition by customer_id"
+    ],
+    "answer": 3,
+    "explanation": "Hash customer_id so one customer's orders stay on one shard while many customers spread the load. A date range sends today's new writes to the newest shard. The page has neither an order_id nor a product_id to route by, and one customer's orders may contain many of each, so those keys require scatter-gather or an extra index."
+  },
+  {
+    "question": "Exercise assumptions: eight equal-capacity servers grow to nine. Hash values are uniformly distributed. Existing server numbers stay fixed for hash mod N; the consistent-hashing ring uses enough well-distributed virtual nodes for roughly equal shares. About what fraction of keys changes servers under each rule?",
+    "options": [
+      "Hash mod N: 8/9; consistent hashing: 1/9",
+      "Hash mod N: 1/9; consistent hashing: 8/9",
+      "Hash mod N: 1/9; consistent hashing: 1/9",
+      "Hash mod N: 8/9; consistent hashing: 8/9"
+    ],
+    "answer": 0,
+    "explanation": "Changing mod 8 to mod 9 preserves the old server for about 1/9 of keys, so about 8/9 (89%) move. With a balanced consistent-hashing ring, the new server takes about 1/9 (11%) of keys; other keys stay with their old servers. These are approximate shares under the stated distribution assumptions, not exact guarantees for a small dataset."
+  }
+]

@@ -1,0 +1,103 @@
+[
+  {
+    "id": "D35-link-shortener",
+    "level": 35,
+    "title": "Storing Billions of Short Links",
+    "prompt": "A link shortener turns long web addresses into short codes such as `sho.rt/aB3kZ9q`. Opening a short link looks up its code and redirects. Design how the links are stored across servers.",
+    "facts": [
+      "About 3 billion links, about 500 bytes each, and about 2,000 new links per second",
+      "Peak: about 200,000 link lookups per second; every lookup includes the code",
+      "Codes are 7 random characters, so new codes are spread evenly over all possible codes",
+      "Measured: one shard (a leader with two read replicas) holds about 500 GB and serves about 25,000 lookups per second and 5,000 writes per second safely",
+      "Target: plan for twice today's links and lookups without a full reshuffle of the data"
+    ],
+    "scope": [
+      "Storing and looking up links",
+      "Creating codes and analytics are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the lookup load, the storage, and that growth to twice the size must not move all the data"
+      ],
+      "estimation": [
+        "Storage: 3 × 10⁹ × 500 bytes = 1.5 TB ÷ 500 GB = 3 shards; lookups: 200,000 ÷ 25,000 = 8 shards; writes: 2,000 ÷ 5,000 needs less than 1; so 8 shards, about 16 when the size doubles"
+      ],
+      "design": [
+        "Shards partitioned by the code, with the app finding a code's shard from the code alone"
+      ],
+      "data": [
+        "A partition key of the code, since every lookup includes it",
+        "Growth without moving everything: consistent hashing with virtual nodes, or range partitioning by code with ranges that are split when they grow"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: hash mod N would move about 8 in 9 links when a ninth shard is added; range splits need a step that moves half of one range at a time; a viral link is a hot key but reads of one code are served by that shard's replicas (or a cache, SD 3)"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, consistent hashing: the code is hashed onto a ring with about 100 virtual nodes per shard. Storage needs 1.5 TB ÷ 500 GB = 3 shards and lookups 200,000 ÷ 25,000 = 8, so 8 shards, each with a leader and two read replicas. Doubling to 16 shards adds servers one at a time, and each new one takes about 1/(N+1) of the links from all the others. Trade-off: a very popular link is read from one shard's replicas; a cache in front can take that load.",
+      "Design B, range partitioning by code: because codes are random, 8 equal code ranges get equal load (200,000 ÷ 8 = 25,000 lookups each). When a range grows past 500 GB or 25,000 lookups per second, it is split in two and half moves to a new server, so growth to 16 shards moves one range at a time. Trade-off: a directory of ranges must be kept and read by the app, and splits must be planned."
+    ],
+    "reference": {
+      "assumptions": [
+        "Lookups are spread evenly over codes, apart from a few popular links",
+        "Each shard keeps its own replicas and backups"
+      ],
+      "design": "Links are hash-partitioned by their code with consistent hashing and about 100 virtual nodes per shard. Every lookup includes the code, so it reads exactly one shard.\nSize: 3 × 10⁹ × 500 bytes = 1.5 TB, 3 shards' worth; lookups: 200,000 ÷ 25,000 = 8 shards; writes need less than one. So 8 shards today, each a leader with two read replicas.\nGrowth: doubling to 16 shards means adding servers one at a time; each new one takes about 1/(N+1) of the links, a little from every shard, instead of the 8 in 9 that hash mod N would move.\nA viral link stays on one shard, whose replicas, and a cache if needed, serve it.",
+      "alternatives": [
+        "Range partitioning by code: works because codes are random, with planned range splits",
+        "Rejected: hash mod N, because adding a shard moves most links"
+      ]
+    }
+  },
+  {
+    "id": "D35-sensor-readings",
+    "level": 35,
+    "title": "Readings from 100,000 Sensors",
+    "prompt": "A company collects temperature readings from 100,000 sensors in buildings. Users look at one sensor's readings over the last day, and a nightly job computes hourly averages for every sensor. Design how the readings are stored across servers.",
+    "facts": [
+      "Each sensor sends one reading every 10 seconds; a reading takes about 100 bytes",
+      "Readings are kept for one year",
+      "Measured: one shard holds about 4 TB and takes about 3,000 writes per second safely",
+      "Target: a one-sensor, one-day query reads one shard; storage and write limits hold for the whole year",
+      "Sensor ids are assigned in order as sensors are installed, and new buildings add about 10,000 sensors a year"
+    ],
+    "scope": [
+      "Storing readings and the two queries",
+      "Alerts and dashboards are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the write rate, the one-year retention and that one sensor's day of readings must come from one shard"
+      ],
+      "estimation": [
+        "Writes: 100,000 ÷ 10 = 10,000 per second ÷ 3,000 ≈ 3.3, so 4 shards",
+        "Storage: 10,000 × 100 bytes × 86,400 × 365 ≈ 31.5 TB a year ÷ 4 TB ≈ 7.9, so 8 shards; storage wins"
+      ],
+      "design": [
+        "Shards partitioned by sensor, so one sensor's readings stay together, ordered by time within the shard"
+      ],
+      "data": [
+        "A partition key of the sensor id (hashed, or in ranges that stay balanced as sensors are added), with readings ordered by time inside the shard",
+        "Explains why partitioning by time alone would put all 10,000 writes per second on the newest shard"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: the nightly job reads every shard (scatter-gather), which is acceptable at night; ranges of sensor ids put all new sensors on the last shard, so they must be split or hashed; old readings could be deleted after a year by dropping old data per shard"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, hash by sensor id: 10,000 writes per second need 4 shards, but 31.5 TB a year needs 8, so 8 shards with consistent hashing. One sensor's day is about 8,640 readings on one shard, ordered by time. The nightly job reads all 8 shards in parallel. Trade-off: no range of sensor ids lives on one shard, which nobody needs here.",
+      "Design B, ranges of sensor ids: 8 ranges of 12,500 sensors each (about 4 TB a year and 1,250 writes per second per shard). Because new sensors get the highest ids, the last range grows; it is split when it passes 12,500 sensors, so about one split a year for 10,000 new sensors. Trade-off: splits must be planned, but a building's sensors, installed together, stay on one shard."
+    ],
+    "reference": {
+      "assumptions": [
+        "Readings arrive evenly over time",
+        "The nightly job may take an hour"
+      ],
+      "design": "Readings are partitioned by a hash of the sensor id, with consistent hashing, and stored by sensor and time inside each shard.\nWrites: 100,000 sensors ÷ 10 s = 10,000 readings per second, which 4 shards could take. Storage: 10,000 × 100 bytes × 86,400 × 365 ≈ 31.5 TB a year, which needs 8 shards of 4 TB. So 8 shards.\nA one-sensor, one-day query (about 8,640 readings) reads one shard. The nightly averages job reads all 8 shards in parallel, a scatter-gather that is fine at night.\nPartitioning by time would send all 10,000 writes per second to the newest shard.",
+      "alternatives": [
+        "Ranges of sensor ids with planned splits: keeps a building's sensors together",
+        "Rejected: partitioning by time, because the newest shard would take all writes"
+      ]
+    }
+  }
+]

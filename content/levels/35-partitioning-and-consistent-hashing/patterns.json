@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P35-when-to-shard",
+    "level": 35,
+    "title": "More Readers, the Same Dataset",
+    "statement": "A customer portal has outgrown its database's read capacity. Exercise assumptions at peak: the dataset is 160 GB, writes are 800/s and reads are 8,000/s. A standard server holds 1 TB, safely applies 2,000 writes/s, and has 3,000 reads/s of capacity remaining while applying this workload's 800 writes/s. Reads may lag by up to 5 seconds; supplied replication tests stay within that limit at this load. Three read replicas can each take 3,000 reads/s after applying all writes. A tested larger server holds the data and handles the writes, but has only 6,000 reads/s remaining. Alternatively, four hash shards evenly divide data, writes and reads; each standard shard safely handles its assigned load, and every query includes customer_id. All choices have enough disk for their assigned data. The team prefers a solution that avoids redistributing existing records when it meets all requirements. Consider healthy peak operation; failure recovery is outside this comparison.",
+    "examples": [
+      "The leader keeps all 800 writes/s. Three read replicas each receive those writes and serve part of the 8,000 reads/s."
+    ],
+    "constraints": [
+      "Serve 8,000 reads/s and 800 writes/s, and retain all 160 GB.",
+      "Keep read lag within 5 seconds under the supplied measurements.",
+      "Prefer avoiding redistribution of existing records when a suitable option exists."
+    ],
+    "approaches": [
+      {
+        "id": "four-hash-shards",
+        "name": "Split customer data across four hash shards",
+        "hint": "Divide the dataset by customer",
+        "label": "valid",
+        "time": "2,000 reads/s and 200 writes/s per shard",
+        "space": "40 GB of data per shard, 160 GB total",
+        "why": "The supplied even distribution gives each shard 160/4 = 40 GB, 800/4 = 200 writes/s and 8,000/4 = 2,000 reads/s, within the measured limits. Each query routes by customer_id. This meets the requirements, but requires moving existing records to new owners. Storage and writes do not yet force that extra work; the stated preference favors replicas."
+      },
+      {
+        "id": "read-replicas",
+        "name": "Keep the leader and add three read replicas",
+        "hint": "Separate read traffic from the write leader",
+        "label": "best",
+        "time": "9,000 reads/s across the replicas; 800 writes/s applied on each server",
+        "space": "160 GB on each of four servers, 640 GB total",
+        "why": "The leader's 800 writes/s fit below 2,000/s and its 160 GB fit below 1 TB. Each replica still applies every write; its stated 3,000 reads/s capacity already includes that work. Three provide 9,000 reads/s, above 8,000/s, and measured lag stays within 5 seconds. Replication copies the dataset, but does not redistribute ownership of existing records, matching the team's preference."
+      },
+      {
+        "id": "larger-server",
+        "name": "Move the database to the tested larger server",
+        "hint": "Increase the capacity of one machine",
+        "label": "unsuitable",
+        "time": "6,000 reads/s remaining after writes",
+        "space": "160 GB on the larger server",
+        "why": "The data and writes fit, but the measured 6,000 reads/s are below the required 8,000/s. Storage capacity alone does not resolve the read bottleneck."
+      }
+    ]
+  },
+  {
+    "id": "P35-hot-key",
+    "level": 35,
+    "title": "One Account Fills a Shard",
+    "statement": "An event store uses hash(account_id) across 16 shards. Exercise assumptions: one account writes 8,000 independent, append-only events/s. A shard safely accepts 3,000 writes/s. Every account-history request includes account_id and a time window, but no event_id; it must contact at most four shards and return every event in that window. Event order can be combined by timestamp after reading; no transaction spans events. The platform can explicitly place this account's four sub-keys on four distinct reserved shards, with no other writes there. Routing new events evenly across those sub-keys gives exactly 2,000 writes/s to each in this exercise. Hashing event_id instead spreads this account's writes across all 16 shards, but its history requires all 16. There is no separate account-to-event index. Each proposed layout has enough storage. Which partitioning change best meets the write and query requirements?",
+    "examples": [
+      "account42#0 through account42#3 hold different events for account42; a history request reads and combines the four sub-keys."
+    ],
+    "constraints": [
+      "Accept all 8,000 writes/s without exceeding 3,000 writes/s on any shard.",
+      "Return the complete account history for a requested time window by contacting at most four shards.",
+      "Use only the stated keys and routing; no separate lookup index is available."
+    ],
+    "approaches": [
+      {
+        "id": "more-account-shards",
+        "name": "Double the shard count while keeping hash(account_id)",
+        "hint": "Increase the number of destinations",
+        "label": "unsuitable",
+        "time": "8,000 writes/s still go to one destination",
+        "space": "More shard servers; the account's events remain together",
+        "why": "One unchanged account_id still maps to one shard. Its 8,000 writes/s exceed that shard's 3,000/s limit even with 32 shards. More destinations help spread different keys, not the writes of this single hot key."
+      },
+      {
+        "id": "hash-event-id",
+        "name": "Partition by hash(event_id) across the existing 16 shards",
+        "hint": "Choose a key with more distinct values",
+        "label": "unsuitable",
+        "time": "500 writes/s per shard; 16 shard contacts per history request",
+        "space": "The account's events spread across 16 shards",
+        "why": "8,000/16 = 500 writes/s fits the write limit. However, account_id and a time window cannot identify the event_id destinations. With no separate index, a complete history asks all 16 shards, exceeding the four-shard query limit."
+      },
+      {
+        "id": "four-account-subkeys",
+        "name": "Split the account into four routed sub-keys on distinct reserved shards",
+        "hint": "Change the unit that owns this account's events",
+        "label": "best",
+        "time": "2,000 writes/s per shard; four shard contacts per history request",
+        "space": "The same events spread across four shards, plus a small routing map",
+        "why": "The stated placement and even routing put 8,000/4 = 2,000 writes/s on each of four separate shards, below 3,000/s. A request derives the four sub-keys from account_id, reads each within the requested time window and combines by timestamp. It returns every event with four shard contacts. The reserved placement matters: merely creating four names would not guarantee four different physical shards."
+      }
+    ]
+  },
+  {
+    "id": "P35-range-or-hash",
+    "level": 35,
+    "title": "Read a Nearby Band of Sensors",
+    "statement": "A service stores readings for sensor IDs 0 through 999,999. Each query supplies an ID interval that lies entirely within one of these four bands: 0–249,999; 250,000–499,999; 500,000–749,999; 750,000–999,999. It asks for readings in that interval. Exercise assumptions at peak: 2,000 writes/s are evenly distributed over the IDs. Four servers each safely take 800 writes/s and have enough storage for their assigned data. A four-band range layout gives each server 500 writes/s; hash(sensor_id) over four servers also gives each 500 writes/s. Under the full stated workload, complete interval queries take 20 ms on the range layout and 70 ms including combining results on the hash layout. Queries must finish within 100 ms and may contact at most four shards. The team prefers fewer shard contacts per query among layouts that meet those limits. A two-band range layout splits IDs at 500,000 and sends 1,000 writes/s to each of its two servers; no extra capacity or read index is available.",
+    "examples": [
+      "The interval 10,000–19,999 stays inside the first band. Hashing those sensor IDs scatters the interval over four shards."
+    ],
+    "constraints": [
+      "Sustain all 2,000 writes/s without exceeding 800 writes/s per server.",
+      "Return the complete requested interval within 100 ms and at most four shard contacts.",
+      "Prefer fewer shard contacts per query among layouts that meet the fixed limits."
+    ],
+    "approaches": [
+      {
+        "id": "hash-four",
+        "name": "Hash sensor_id over four shards",
+        "hint": "Distribute individual sensor keys",
+        "label": "valid",
+        "time": "500 writes/s per shard; 70 ms per query across four shards",
+        "space": "All readings divided across four servers",
+        "why": "The supplied distribution keeps 500 writes/s below 800/s on each server. Scatter-gather returns the entire interval in the measured 70 ms with four contacts, meeting both limits. It works, but uses more shard contacts than the range layout for these band-contained queries."
+      },
+      {
+        "id": "range-four",
+        "name": "Use the four stated sensor-ID bands as range shards",
+        "hint": "Keep neighboring sensor IDs together",
+        "label": "best",
+        "time": "500 writes/s per shard; 20 ms per query on one shard",
+        "space": "All readings divided across four servers",
+        "why": "Writes are spread over existing sensor IDs rather than clustered into one newest range. Each band takes 2,000/4 = 500 writes/s, below 800/s. Every permitted interval stays in one band, so its complete answer takes one shard contact and the measured 20 ms. This meets the limits with fewer contacts than hashing."
+      },
+      {
+        "id": "range-two",
+        "name": "Use two sensor-ID ranges split at 500,000",
+        "hint": "Keep a smaller partition map",
+        "label": "unsuitable",
+        "time": "1,000 writes/s per server",
+        "space": "All readings divided across two servers",
+        "why": "Each half receives 2,000/2 = 1,000 writes/s, above the stated 800/s server limit. Keeping range queries together cannot make this two-server layout sustain the required write rate."
+      }
+    ]
+  }
+]
