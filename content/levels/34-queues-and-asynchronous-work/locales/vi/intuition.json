@@ -1,0 +1,11 @@
+{
+  "question": "Nhân viên phục vụ ghim mỗi phiếu gọi món lên thanh treo trong bếp rồi quay ngay lại bàn. Vì sao họ có thể nhận món của bàn tiếp theo ngay?",
+  "options": [
+    "Thanh treo giữ phiếu đến khi đầu bếp rảnh, nên nhân viên không chờ nấu",
+    "Đầu bếp nấu mọi món ngay lúc khách gọi",
+    "Phiếu giúp thức ăn chín nhanh hơn",
+    "Nhân viên chỉ nhận món khi bếp trống"
+  ],
+  "answer": 0,
+  "explanation": "Thanh treo là queue: giữ việc đến khi đầu bếp (worker) lấy, nên nhân viên (producer) chỉ tốn thời gian ghim phiếu. Nấu vẫn lâu như trước, chỉ không giữ chân nhân viên nữa. Nếu phiếu đến nhanh hơn đầu bếp nấu, hàng phiếu dài ra: backlog."
+}

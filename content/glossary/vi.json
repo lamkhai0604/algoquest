@@ -133,7 +133,7 @@
         },
         {
           "term": "offset",
-          "vi": "số mục bỏ qua",
+          "vi": "vị trí trong dãy dữ liệu (số mục đã đi qua)",
           "firstLevel": 32
         },
         {
