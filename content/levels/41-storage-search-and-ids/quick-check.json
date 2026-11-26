@@ -22,7 +22,7 @@
     "explanation": "A normal index (SD 4) is sorted by the start of the value, so it helps with \"starts with shoe\" but not with \"contains shoe somewhere\". The database must read every description. An inverted index lists, for each word, the rows that contain it."
   },
   {
-    "question": "Part C. Orders are created on 6 database shards, and the order list must show the newest first without asking one central counter. Which kind of ID fits?",
+    "question": "Part C. Orders are created on 6 database shards without asking one central counter, and the order list must show the newest first by sorting on the order ID alone, with no separate time column. Which kind of ID fits?",
     "options": [
       "An auto-increment number on each shard",
       "A random UUID (version 4)",
@@ -30,6 +30,6 @@
       "The customer's email address"
     ],
     "answer": 2,
-    "explanation": "Each server can make time-ordered IDs alone, the machine number keeps them from clashing, and newer IDs are larger, so newest first is a simple sort. Auto-increment repeats across shards, random UUIDs do not sort by time, and an email is not unique per order."
+    "explanation": "Each server can make time-ordered IDs alone, the machine number keeps them from clashing, and newer IDs are larger, so newest first is a simple sort. Auto-increment repeats across shards, sorting by random UUIDs alone does not give time order, and an email is not unique per order."
   }
 ]

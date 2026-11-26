@@ -3,7 +3,7 @@
     "id": "P41-photo-upload",
     "level": 41,
     "title": "Part A: Where Uploads Go",
-    "statement": "A recipe app receives about 100,000 photos a day, 2 MB each, up to 50 per second at peak. Its app servers can carry about 1 GB per second in total. Its database must stay under 500 GB so that nightly backups finish. Object storage with signed upload URLs is available. Exercise assumptions: only logged-in users may upload, into their own recipes; the team prefers that photo bytes do not pass through the app servers. Which upload path fits?",
+    "statement": "A recipe app receives about 100,000 photos a day, 2 MB each, up to 50 per second at peak. Its app servers can carry about 1 GB per second in total. Its database holds 100 GB today and must stay under 500 GB for at least the next 2 years so that nightly backups finish. Object storage with signed upload URLs is available. Exercise assumptions: only logged-in users may upload, into their own recipes; the team prefers that photo bytes do not pass through the app servers. Which upload path fits?",
     "examples": [
       "Bytes per day = photos a day × size."
     ],
@@ -20,7 +20,7 @@
         "label": "best",
         "time": "One small request to the app per upload",
         "space": "200 GB a day in object storage; a few hundred bytes per photo in the database",
-        "why": "Storage takes the 100,000 × 2 MB = 200 GB a day; the database grows by only the details. No photo bytes cross the app servers."
+        "why": "Storage takes the 100,000 × 2 MB = 200 GB a day; the database grows by only the details, about 500 bytes a photo, 50 MB a day or about 37 GB in 2 years, staying far under 500 GB. No photo bytes cross the app servers."
       },
       {
         "id": "relay-to-storage",
@@ -46,7 +46,7 @@
     "id": "P41-message-search",
     "level": 41,
     "title": "Part B: Searching Messages",
-    "statement": "A team chat app keeps 20 million messages, about 100 bytes each, in its database. Users search about 100 times per second, by one or more words. Exercise assumptions: results must come back within 300 ms; a new message must be findable within 1 minute; the team prefers new messages to be findable as soon as possible; a separate search index can be fed by the database's change events or rebuilt in batches.",
+    "statement": "A team chat app keeps 20 million messages, about 100 bytes each, in its database. Users search about 100 times per second, by one or more words. Measured: a search with LIKE '%word%' takes about 4 seconds even on an idle database; a search in an inverted index takes at most 50 ms at 100 searches per second; fed by change events, a new message is searchable within 5 seconds; a batch update, if used, runs every 30 seconds and takes at most 10 seconds. Exercise assumptions: results must come back within 300 ms; a new message must be findable within 1 minute; the team prefers new messages to be findable as soon as possible.",
     "examples": [
       "Reading every message is 20 million × 100 bytes = 2 GB per search."
     ],
@@ -61,27 +61,27 @@
         "name": "An inverted index of tokenized words, updated from each new message's change event within seconds",
         "hint": "Word → message IDs, kept current",
         "label": "best",
-        "time": "A few sorted lists per search, milliseconds",
+        "time": "At most 50 ms per search, measured",
         "space": "One list entry per word per message",
-        "why": "Each search reads only the lists for its words, far within 300 ms, and a new message is in the index within seconds."
+        "why": "Each search returns within the measured 50 ms, within 300 ms, and a new message is searchable within 5 seconds."
       },
       {
         "id": "index-in-batches",
         "name": "The same inverted index, updated every 30 seconds in a batch",
         "hint": "Word → message IDs, refreshed in batches",
         "label": "valid",
-        "time": "Milliseconds per search",
+        "time": "At most 50 ms per search; new messages within 40 s",
         "space": "One list entry per word per message",
-        "why": "Searches are just as fast, and new messages appear within 30 seconds, inside the 1-minute limit, but later than with change events, against the stated preference."
+        "why": "Searches are just as fast, and a new message waits at most 30 seconds for the next batch plus 10 seconds for it to finish, 40 seconds, inside the 1-minute limit, but later than with change events, against the stated preference."
       },
       {
         "id": "like-scan",
         "name": "WHERE text LIKE '%word%' on the messages table",
         "hint": "Search the text directly",
         "label": "unsuitable",
-        "time": "About 2 GB read per search",
+        "time": "About 4 seconds per search, measured",
         "space": "No extra space",
-        "why": "Every search reads all 2 GB of messages; at 100 searches per second that is 200 GB of reading per second, so results cannot come back within 300 ms."
+        "why": "Every search reads all 2 GB of messages and was measured at about 4 seconds even with nothing else running, far over 300 ms; at 100 searches per second it would be slower still."
       }
     ]
   },
@@ -89,14 +89,14 @@
     "id": "P41-offline-ids",
     "level": 41,
     "title": "Part C: IDs Made on Phones",
-    "statement": "A notes app lets about 5 million users create notes on their phones while offline; notes are sent to the server later. Exercise assumptions: a note's ID is chosen on the phone when the note is created, with no server reachable; IDs must never clash across all phones; there is no way to give each phone a unique machine number; the team prefers IDs that sort by creation time so lists can show the newest first.",
+    "statement": "A notes app lets about 5 million users create notes on their phones while offline; notes are sent to the server later. Exercise assumptions: a note's ID is chosen on the phone when the note is created, with no server reachable; there is no way to give each phone a unique machine number; the business accepts a chance of any repeated ID below 1 in a billion over the app's life, and if the server ever receives an ID that already exists, it refuses the note and the phone makes a new ID; the team prefers IDs that sort by the time each phone recorded, which may be off by a few seconds between phones, so lists can show the newest first without a separate time column.",
     "examples": [
       "A UUID version 7 starts with 48 bits of milliseconds, followed by random bits."
     ],
     "constraints": [
       "IDs are made on the phone while offline.",
-      "IDs must not clash.",
-      "Prefer IDs that sort by creation time."
+      "Chance of any repeat below 1 in a billion; a repeat is refused and remade.",
+      "Prefer IDs that sort by each phone's recorded time."
     ],
     "approaches": [
       {
@@ -106,7 +106,7 @@
         "label": "best",
         "time": "Made on the phone instantly",
         "space": "16 bytes per ID",
-        "why": "Phones need no server and no machine number; the random bits make a clash between phones practically impossible, and IDs sort by creation time."
+        "why": "Phones need no server and no machine number. Within a millisecond, IDs differ by 74 random bits, so the chance of any repeat stays far below 1 in a billion, and the server refuses a repeat if it ever happens. IDs sort by the time each phone recorded, which is the order the team asked for."
       },
       {
         "id": "uuid-v4",
@@ -115,7 +115,7 @@
         "label": "valid",
         "time": "Made on the phone instantly",
         "space": "16 bytes per ID",
-        "why": "It works offline and practically never clashes, but the IDs do not sort by time, so lists need a separate time column to show the newest first, against the stated preference."
+        "why": "It works offline, and with 122 random bits the chance of any repeat stays far below 1 in a billion, but the IDs do not sort by time, so lists need a separate time column to show the newest first, against the stated preference."
       },
       {
         "id": "auto-increment",
