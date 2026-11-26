@@ -19,7 +19,7 @@
       "No caller sets a timeout, so no retry is ever needed"
     ],
     "answer": 2,
-    "explanation": "Retrying at one layer avoids multiplying attempts (3 layers × 3 tries = 27 calls). Growing waits (backoff) with a random part (jitter) spread retries out instead of sending them in waves, and a 10% budget keeps the failing service near its normal load. Retrying immediately or at fixed times adds load exactly when the service can least take it."
+    "explanation": "Retrying at one layer avoids multiplying attempts: three layers, each trying three times, give 3 × 3 × 3 = 27 calls. Growing waits (backoff) with a random part (jitter) spread retries out instead of sending them in waves, and a 10% budget keeps the failing service near its normal load. Retrying immediately or at fixed times adds load exactly when the service can least take it."
   },
   {
     "question": "Servers can finish 1,800 requests per second, but 2,400 arrive for the next five minutes, until new servers start. Users give up after 2 seconds of waiting. Which response serves the most users on time?",
