@@ -306,5 +306,12 @@
     "title": "Rate Limiter Service",
     "summary": "A case study: token buckets and sliding windows, atomic counts in a shared store, per-node or global limits, and whether to fail open or closed when the store is down.",
     "phase": 4
+  },
+  {
+    "number": 45,
+    "slug": "notification-system",
+    "title": "Notification System",
+    "summary": "A case study: push, email and text messages within provider quotas, with no duplicates across retries and fallbacks, and user preferences checked at the moment of sending.",
+    "phase": 4
   }
 ]

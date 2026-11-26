@@ -1,0 +1,11 @@
+{
+  "question": "A post office's van to the airport holds 1,000 letters an hour. A shop drops off 50,000 advertising letters, and a hospital's urgent letters arrive soon after. What should the post office do?",
+  "options": [
+    "Load urgent letters first and keep some room in every van for them, sending the advertising in the rest",
+    "Send letters strictly in the order they arrived",
+    "Send everything at once in more vans than the airport accepts",
+    "Throw away the advertising letters"
+  ],
+  "answer": 0,
+  "explanation": "Strict arrival order makes urgent letters wait about 50 hours behind the advertising. Overloading the airport breaks its limit. Keeping room for urgent mail and filling the rest with advertising meets both needs, like a priority lane and a reserved share of a provider's quota."
+}
