@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Giả định bài tập: database có 8 TB và nhận 27,000 writes/s. Một shard chứa an toàn 2 TB, xử lý 5,000 writes/s. Dữ liệu và lệnh ghi có thể chia đều. 100,000 reads/s đã do read replica xử lý. Trước khi thêm dự phòng tăng trưởng hoặc sự cố, cần ít nhất bao nhiêu shard?",
+    "options": [
+      "10 shard",
+      "4 shard",
+      "6 shard",
+      "20 shard"
+    ],
+    "answer": 2,
+    "explanation": "Lưu trữ cần ceil(8 / 2) = 4 shard. Ghi cần ceil(27,000 / 5,000) = 6. Chọn số lớn hơn, không cộng: 6 shard. Bốn shard không chịu được tải ghi. Đọc đã do replica phục vụ không thêm yêu cầu shard; chia số lệnh đọc cho giới hạn ghi cũng trộn hai năng lực khác nhau."
+  },
+  {
+    "question": "Giả định bài tập: trang đơn hàng luôn hỏi đơn của một khách. Có nhiều khách; hash customer_id phân bố đều cả dữ liệu và tải ghi cao điểm, không khách nào vượt năng lực một shard. Mọi đơn mới mang ngày hôm nay. Không có index định tuyến riêng hoặc scatter-gather, partition key và quy tắc nào phù hợp?",
+    "options": [
+      "Range-partition theo order_date",
+      "Hash-partition theo order_id",
+      "Hash-partition theo product_id",
+      "Hash-partition theo customer_id"
+    ],
+    "answer": 3,
+    "explanation": "Hash customer_id giữ đơn của một khách trên một shard, đồng thời nhiều khách phân tán tải. Khoảng theo ngày gửi lệnh ghi hôm nay đến shard mới nhất. Trang không có order_id hay product_id để định tuyến; đơn của một khách có thể chứa nhiều giá trị mỗi loại, nên các khóa đó cần scatter-gather hoặc index thêm."
+  },
+  {
+    "question": "Giả định bài tập: tám server cùng năng lực tăng lên chín. Hash phân bố đều. Số hiệu server cũ giữ nguyên với hash mod N; vòng consistent hashing dùng đủ virtual node phân bố tốt để các phần gần đều. Khoảng bao nhiêu khóa đổi server theo mỗi quy tắc?",
+    "options": [
+      "Hash mod N: 8/9; consistent hashing: 1/9",
+      "Hash mod N: 1/9; consistent hashing: 8/9",
+      "Hash mod N: 1/9; consistent hashing: 1/9",
+      "Hash mod N: 8/9; consistent hashing: 8/9"
+    ],
+    "answer": 0,
+    "explanation": "Đổi mod 8 sang mod 9 giữ server cũ cho khoảng 1/9 khóa, nên khoảng 8/9 (89%) chuyển đi. Với vòng consistent hashing cân bằng, server mới nhận khoảng 1/9 (11%) khóa; khóa khác ở nguyên server cũ. Đây là tỷ lệ xấp xỉ theo giả định phân bố đã nêu, không bảo đảm chính xác cho tập dữ liệu nhỏ."
+  }
+]

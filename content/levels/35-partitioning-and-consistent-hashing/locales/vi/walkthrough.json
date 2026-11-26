@@ -1,0 +1,934 @@
+[
+  {
+    "title": "Một database không còn đủ",
+    "body": "Database của sàn giữ 5 TB và nhận 30,000 lệnh ghi đơn mỗi giây vào giờ cao điểm. Một server chứa thoải mái khoảng 1 TB và ghi an toàn khoảng 5,000 lần mỗi giây. Read replica (SD 6) không giúp: mỗi replica áp dụng mọi lệnh ghi, riêng leader không chịu được 30,000 mỗi giây. Phải chia chính dữ liệu: **partitioning**, còn gọi là **sharding**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 7,
+            "y": 4,
+            "note": "5 TB, 30,000 w/s",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "data",
+          "value": "5 TB"
+        },
+        {
+          "name": "writes per second",
+          "value": "30,000"
+        },
+        {
+          "name": "one server holds",
+          "value": "1 TB"
+        },
+        {
+          "name": "one server writes",
+          "value": "5,000/s"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cần bao nhiêu shard?",
+    "body": "Mỗi **shard** giữ một phần dữ liệu trên server riêng. Lưu trữ cần 5 TB ÷ 1 TB = 5 shard; ghi cần 30,000 ÷ 5,000 = 6. Chọn số lớn hơn: **6 shard**, thêm chỗ cho tăng trưởng. Mỗi shard giữ khoảng 5 ÷ 6 ≈ 0.8 TB và nhận khoảng 5,000 lệnh ghi mỗi giây.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 7,
+            "y": 4,
+            "note": "chia ? shard"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "shards for storage",
+          "value": "5"
+        },
+        {
+          "name": "shards for writes",
+          "value": "6"
+        },
+        {
+          "name": "shards needed",
+          "value": "6"
+        }
+      ],
+      "predict": {
+        "question": "Dữ liệu có 5 TB, một shard chứa 1 TB. Có 30,000 lệnh ghi mỗi giây, một shard xử lý 5,000 mỗi giây. Cần bao nhiêu shard?",
+        "options": [
+          "5",
+          "6",
+          "11",
+          "30"
+        ],
+        "answer": 1,
+        "explanation": "Lưu trữ cần 5 ÷ 1 = 5 shard; ghi cần 30,000 ÷ 5,000 = 6. Phải đáp ứng cả hai giới hạn, nên chọn số lớn hơn là 6. Cộng thành 11 là tính trùng: mỗi shard cung cấp cả dung lượng và năng lực ghi.",
+        "hides": [
+          "shards for storage",
+          "shards for writes",
+          "shards needed"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Chia theo ngày",
+    "body": "Ý tưởng đầu là **range partitioning** theo ngày đặt đơn: đơn tháng Một ở shard 1, tháng Hai ở shard 2, v.v. Báo cáo một tháng đọc một shard. Nhưng mọi đơn mới mang ngày hôm nay, nên cả 30,000 lệnh ghi mới mỗi giây dồn lên shard mới nhất, gấp sáu lần sức chịu tải, còn năm shard kia rảnh. Đó là **hot partition**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          7
+        ]
+      },
+      "vars": [
+        {
+          "name": "partition key",
+          "value": "ngày đặt đơn (range)"
+        },
+        {
+          "name": "new writes go to",
+          "value": "chỉ shard mới nhất"
+        },
+        {
+          "name": "load on that shard",
+          "value": "30,000 w/s, giới hạn 5,000"
+        }
+      ],
+      "predict": {
+        "question": "Đơn hàng chia vào shard theo tháng của ngày đặt đơn. 30,000 đơn mới mỗi giây hôm nay đến đâu?",
+        "options": [
+          "Chia đều trên sáu shard",
+          "Tất cả đến shard của tháng hiện tại",
+          "Đến shard còn nhiều dung lượng nhất",
+          "Một nửa đến shard mới nhất, một nửa đến cũ nhất"
+        ],
+        "answer": 1,
+        "explanation": "Ngày của đơn mới luôn là hôm nay, nên tháng luôn là tháng hiện tại; range partitioning gửi đến shard tháng ấy. Shard khác chỉ nhận đọc đơn cũ. Khóa mà mọi lệnh ghi mới dùng chung làm một partition hot.",
+        "hides": [
+          "new writes go to",
+          "load on that shard"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Chia theo hash của khách",
+    "body": "Với **hash partitioning** theo `customer_id`, khóa đi qua hàm hash (Level 3), hash chọn shard, nên khách phân bố đều: khoảng 5,000 lệnh ghi mỗi giây mỗi shard. “Đơn của tôi” có customer id nên đọc một shard. Query không có khóa, như “mọi đơn hôm nay”, phải hỏi cả sáu shard rồi gộp kết quả: **scatter-gather**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0,
+            "note": "khách 42"
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              1,
+              4
+            ]
+          },
+          {
+            "path": [
+              1,
+              5
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "partition key",
+          "value": "hash của customer_id"
+        },
+        {
+          "name": "writes per shard",
+          "value": "khoảng 5,000/s"
+        },
+        {
+          "name": "\"my orders\"",
+          "value": "một shard"
+        },
+        {
+          "name": "\"all of today\"",
+          "value": "mọi shard"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Một người bán, quá nhiều đơn",
+    "body": "Tài khoản doanh nghiệp lớn đặt 20% tổng đơn: 0.2 × 30,000 = 6,000 lệnh ghi mỗi giây cho một `customer_id`. Mọi lệnh ghi đó hash đến cùng shard, nơi còn phục vụ khách khác, nên quá tải: **hot key**. Thêm shard không giúp vì một khóa luôn đến một shard. Tách thành 4 sub-key, `seller42#0` đến `seller42#3`, phân tán khoảng 1,500 lệnh ghi mỗi giây mỗi sub-key; đọc đơn tài khoản đó phải đọc 4 sub-key.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6,
+            "note": "seller42: 6,000 w/s",
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "one key's share",
+          "value": "20%"
+        },
+        {
+          "name": "writes for that key",
+          "value": "6,000/s"
+        },
+        {
+          "name": "after splitting into 4",
+          "value": "khoảng 1,500/s mỗi"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Thêm shard thứ bảy",
+    "body": "Với “hash mod 6”, shard của khóa là số dư hash khi chia cho 6. Thêm shard thứ bảy đổi quy tắc thành “mod 7”; khóa chỉ ở nguyên nếu hai số dư bằng nhau, xảy ra với khoảng 1 khóa trong 7. Vì thế khoảng 6 trong 7, **86%** tổng đơn phải chuyển sang shard khác trong lúc hệ thống vẫn phục vụ.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 7",
+            "x": 7,
+            "y": 4,
+            "note": "mới"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            1,
+            8
+          ]
+        ],
+        "path": [
+          1,
+          8
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              1,
+              3
+            ]
+          },
+          {
+            "path": [
+              1,
+              4
+            ]
+          },
+          {
+            "path": [
+              1,
+              5
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "rule before",
+          "value": "hash mod 6"
+        },
+        {
+          "name": "rule after",
+          "value": "hash mod 7"
+        },
+        {
+          "name": "keys that stay",
+          "value": "khoảng 1 trong 7"
+        },
+        {
+          "name": "keys that move",
+          "value": "khoảng 86%"
+        }
+      ],
+      "predict": {
+        "question": "Khóa được đặt bằng hash mod 6. Thêm shard thứ bảy, đổi quy tắc thành hash mod 7. Khoảng bao nhiêu khóa phải chuyển sang shard khác?",
+        "options": [
+          "Khoảng 14%, một phần bảy",
+          "Khoảng 86%",
+          "Không khóa nào, khóa cũ ở nguyên",
+          "Tất cả"
+        ],
+        "answer": 1,
+        "explanation": "Khóa chỉ ở nguyên khi hash có cùng số dư cho 6 và 7; khoảng 1 khóa trong 7 thỏa điều đó (chẳng hạn hash 0 đến 5 trong mỗi 42). Còn lại 6 trong 7, khoảng 86%, phải chuyển. Một phần bảy là phần consistent hashing di chuyển.",
+        "hides": [
+          "keys that stay",
+          "keys that move"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Dùng vòng thay cho mod",
+    "body": "Với **consistent hashing**, server và khóa cùng được đặt lên vòng giá trị hash; mỗi khóa thuộc server kế tiếp theo chiều kim đồng hồ. Server mới chỉ nhận các khóa giữa nó và server đứng trước: khoảng 1 ÷ 7 ≈ **14%** khóa. Mọi khóa khác giữ nguyên shard, nên thêm server chỉ là di chuyển nhỏ, dần dần.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 7",
+            "x": 7,
+            "y": 4,
+            "note": "nhận ≈14%"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            1,
+            8
+          ]
+        ],
+        "path": [
+          1,
+          8
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "rule",
+          "value": "server kế theo chiều kim đồng hồ"
+        },
+        {
+          "name": "keys that move",
+          "value": "khoảng 1/7, 14%"
+        },
+        {
+          "name": "other keys",
+          "value": "giữ nguyên"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Nhiều điểm cho mỗi server",
+    "body": "Chỉ một điểm mỗi server thì khoảng cách trên vòng không đều: một server có thể sở hữu phần lớn hơn hẳn server khác, và server mới chỉ lấy khóa từ một láng giềng. Với **virtual node**, mỗi server nhận nhiều điểm, chẳng hạn 100, rải quanh vòng. Phần mỗi server nhận gần đều nhau, server mới lấy từng phần nhỏ từ mọi server khác. Mỗi shard vẫn giữ replica và backup riêng (SD 6).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 7",
+            "x": 7,
+            "y": 4,
+            "note": "100 điểm"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            1,
+            8
+          ]
+        ],
+        "path": [
+          1,
+          8
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              1
+            ]
+          },
+          {
+            "path": [
+              4,
+              1
+            ]
+          },
+          {
+            "path": [
+              6,
+              1
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "points per server",
+          "value": "100"
+        },
+        {
+          "name": "share per server",
+          "value": "gần đều"
+        },
+        {
+          "name": "new server takes from",
+          "value": "mỗi server một ít"
+        }
+      ]
+    }
+  }
+]
