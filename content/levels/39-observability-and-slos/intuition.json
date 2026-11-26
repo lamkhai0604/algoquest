@@ -1,0 +1,11 @@
+{
+  "question": "A delivery company reports \"98% of parcels on time\", yet one town keeps complaining. What is the best first step to understand the complaints?",
+  "options": [
+    "Open the tracking history of a few late parcels to that town",
+    "Report the average delivery time instead",
+    "Check how busy the trucks' engines were",
+    "Wait until the on-time share falls below 98%"
+  ],
+  "answer": 0,
+  "explanation": "The 98% is a summary over all parcels; the late ones can all go to one town without moving it much. The tracking history of a late parcel shows each stop with its time, so you can see where it waited, like a trace. Engine load is a cause that may not matter, and an average hides the late parcels even more."
+}

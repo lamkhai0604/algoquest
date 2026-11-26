@@ -1050,6 +1050,76 @@
           "term": "half-open",
           "vi": "trạng thái nửa mở",
           "firstLevel": 38
+        },
+        {
+          "term": "log",
+          "vi": "dòng ghi sự kiện",
+          "firstLevel": 39
+        },
+        {
+          "term": "metric",
+          "vi": "số đo theo thời gian",
+          "firstLevel": 39
+        },
+        {
+          "term": "trace",
+          "vi": "dấu vết một request qua các service",
+          "firstLevel": 39
+        },
+        {
+          "term": "span",
+          "vi": "một bước trong trace",
+          "firstLevel": 39
+        },
+        {
+          "term": "request ID",
+          "vi": "mã định danh request",
+          "firstLevel": 39
+        },
+        {
+          "term": "percentile (p50, p95, p99)",
+          "vi": "phân vị",
+          "firstLevel": 39
+        },
+        {
+          "term": "tail latency",
+          "vi": "độ trễ của nhóm request chậm nhất",
+          "firstLevel": 39
+        },
+        {
+          "term": "SLI (service level indicator)",
+          "vi": "chỉ số mức dịch vụ",
+          "firstLevel": 39
+        },
+        {
+          "term": "SLO (service level objective)",
+          "vi": "mục tiêu mức dịch vụ",
+          "firstLevel": 39
+        },
+        {
+          "term": "SLA (service level agreement)",
+          "vi": "cam kết mức dịch vụ trong hợp đồng",
+          "firstLevel": 39
+        },
+        {
+          "term": "error budget",
+          "vi": "ngân sách lỗi",
+          "firstLevel": 39
+        },
+        {
+          "term": "burn rate",
+          "vi": "tốc độ tiêu ngân sách lỗi",
+          "firstLevel": 39
+        },
+        {
+          "term": "page (alert)",
+          "vi": "cảnh báo gọi người trực",
+          "firstLevel": 39
+        },
+        {
+          "term": "golden signals",
+          "vi": "bốn tín hiệu vàng",
+          "firstLevel": 39
         }
       ]
     },
