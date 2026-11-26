@@ -66,7 +66,7 @@ C. IDs: who makes them (one database or many servers)? Must they sort by
 
 **A. Bytes through the app servers.** At 400 uploads per second of 3 MB, 400 × 3 MB = 1.2 GB per second would pass through the app servers if they relayed the photos; with signed upload URLs, they handle only a small request per upload. At 1 million photos a day, storage grows by 1,000,000 × 3 MB = 3 TB a day, while the metadata, about 500 bytes a photo, grows by only 500 MB a day.
 
-**A. Retrying a large file.** A 2 GB video sent in one piece must start again from zero if the connection breaks near the end. Sent as 20 parts of 100 MB, a failure costs at most one 100 MB part.
+**A. Retrying a large file.** A 2 GB video sent in one piece must start again from zero if the connection breaks near the end. Sent as 20 parts of 100 MB, one after another, a failure costs at most the 100 MB part in flight. Sending several parts at once is faster but puts more at risk: with 4 parts in flight, up to 400 MB.
 
 **B. Scanning versus an index.** `LIKE '%red%'` cannot use a normal index, because the word can be anywhere in the text, so the database reads every description: with 10 million products of about 1 KB each, that is 10 GB per search. With an inverted index, "red shoes" reads two lists, say 200,000 and 50,000 product IDs. Both lists are sorted, so one pass walks them together in about 250,000 steps, a few milliseconds.
 
@@ -89,7 +89,7 @@ C. IDs: who makes them (one database or many servers)? Must they sort by
 
 ## Edge cases
 
-- **A. Abandoned uploads.** A user who gets an upload URL and never finishes leaves pending metadata or unfinished parts. Clean them up after a deadline, such as a day.
+- **A. Abandoned uploads.** A user who gets an upload URL and never finishes leaves pending metadata or unfinished parts. A regular job removes uploads still pending a set time after they started, such as a day, with their parts. Completion and cleanup should both change only a photo that is still pending, so they cannot both win.
 - **B. Very common words.** "The" appears in nearly every document; its list is as long as the collection. Search engines skip such words or treat them specially.
 - **B. Typos and word forms.** "Shoe" and "shoes" should match; reducing words to a common form, or allowing small spelling differences, handles this at some cost.
 - **C. Clock going backwards.** A time-ordered ID generator whose clock is set back could repeat IDs; it must wait until its clock passes the last time it used.
@@ -107,6 +107,6 @@ Finding the matching documents is only half of search: the best ones must come f
 1. **A. Where the bytes go.** Photos go to object storage under a key such as `photos/<photo id>.jpg`; the database keeps owner, caption, size and key, about 500 bytes. Storage grows 3 TB a day, the database only 500 MB.
 2. **A. Upload.** Relaying 400 × 3 MB = 1.2 GB per second would exceed the servers' 1 GB per second. Instead the app checks the user's rights, saves the photo as "pending", and returns a signed upload URL valid for 10 minutes. The phone sends the bytes straight to storage. When storage confirms the upload, the app marks the photo "ready". Pending photos older than a day are cleaned up.
 3. **B. Search.** Each caption is tokenized and added to an inverted index: word → sorted list of photo IDs. A search for "sunset beach" reads two lists and walks them together. When a caption changes, the database sends an event and the index is updated within seconds.
-4. **C. IDs.** Auto-increment on 8 shards would repeat numbers. Random UUIDs would be unique but would not list the newest first. A time-ordered 64-bit ID (time in milliseconds, machine number, counter) is unique across servers, sorts by time and allows about 4.1 million IDs per second per machine, far above 400.
+4. **C. IDs.** Auto-increment on 8 shards would repeat numbers. Random UUIDs would be unique, but sorting by them alone would not list the newest first, and the team wants one ID that does both. A time-ordered 64-bit ID (time in milliseconds, machine number, counter) is unique across servers, sorts by time and allows about 4.1 million IDs per second per machine, far above 400.
 
 **Answer:** Bytes in object storage, uploaded directly with a signed URL (the app servers would otherwise carry 1.2 GB per second); metadata in the shards. Captions in an inverted index updated within seconds from the database. Time-ordered 64-bit IDs, made on each server, unique and sorted by time.

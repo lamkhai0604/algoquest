@@ -181,7 +181,7 @@
   },
   {
     "title": "A. Large files in parts",
-    "body": "A 2 GB video sent in one piece must start again from zero if the connection breaks near the end. With a **multipart upload**, the phone sends 20 parts of 100 MB, several at a time; a failed part is sent again alone, so a break costs at most 100 MB. When all parts have arrived, storage joins them into one object. Downloads of popular files are served through a **CDN** (SD 3).",
+    "body": "A 2 GB video sent in one piece must start again from zero if the connection breaks near the end. With a **multipart upload**, the phone sends 20 parts of 100 MB, one after another; after a break it asks storage which parts it has and sends only the rest, so a break costs at most the 100 MB part in flight. When all parts have arrived, storage joins them into one object. Downloads of popular files are served through a **CDN** (SD 3).",
     "visual": {
       "cells": [],
       "arch": {
@@ -591,7 +591,7 @@
   },
   {
     "title": "C. IDs that sort by time",
-    "body": "A **time-ordered ID** packs three parts into 64 bits: **41 bits** of milliseconds since a start date (about 69 years), **10 bits** of machine number (up to 1,024 machines) and **12 bits** of counter (4,096 per millisecond). Each machine makes IDs alone, IDs never clash because machine numbers differ, and newer IDs are larger, so new rows land at the end of the index and \"newest first\" is a simple sort. UUID version 7 follows the same idea in 128 bits.",
+    "body": "A **time-ordered ID** packs three parts into 64 bits: **41 bits** of milliseconds since a start date (about 69 years), **10 bits** of machine number (up to 1,024 machines) and **12 bits** of counter (4,096 per millisecond). Each machine makes IDs alone, IDs never clash because machine numbers differ, and newer IDs are larger as far as the machines' clocks agree, so new rows land near the end of the index and \"newest first\" is a simple sort. UUID version 7 follows the same idea in 128 bits.",
     "visual": {
       "cells": [],
       "arch": {
