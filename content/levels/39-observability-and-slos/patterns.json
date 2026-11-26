@@ -3,7 +3,7 @@
     "id": "P39-first-signal",
     "level": 39,
     "title": "Checkout Got Slow at 14:00",
-    "statement": "Checkout's p99 jumped from 400 ms to 3 seconds at 14:00, while its p50 stayed at 90 ms. Checkout calls six services. Exercise assumptions: every call carries a request ID; every slow or failed trace is kept; logs from all services are searchable by time and request ID; CPU graphs exist for every server. The team wants to name the slow service in a few minutes. Which first step fits?",
+    "statement": "Checkout's p99 jumped from 400 ms to 3 seconds at 14:00, while its p50 stayed at 90 ms. Checkout calls six services. Exercise assumptions: every call carries a request ID; the trace of every checkout that takes 1 second or more is kept; every service logs each call it handles with its duration and the request ID, and the logs are searchable; CPU graphs exist for every server. The team wants to name the slow service in a few minutes. Which first step fits?",
     "examples": [
       "A trace shows each service's span with its duration, so the longest span stands out."
     ],
@@ -15,21 +15,21 @@
     "approaches": [
       {
         "id": "open-slow-traces",
-        "name": "Open several kept traces of checkouts slower than 3 seconds since 14:00",
+        "name": "Open several kept traces of checkouts that took 3 seconds or more since 14:00",
         "hint": "Follow a slow request",
         "label": "best",
         "time": "A few traces, minutes",
         "space": "Traces already kept",
-        "why": "Each trace shows every span with its time, so the service where the 3 seconds went stands out, and several traces confirm it is the same one. The request IDs then lead to that service's logs."
+        "why": "A p99 of 3 seconds means at least 1 in 100 checkouts took 3 seconds or more, and all of them were kept. Each trace shows every span with its time, so the service where the time went stands out, and several traces confirm it is the same one."
       },
       {
         "id": "search-logs",
-        "name": "Search all services' logs from 14:00 for errors and timeouts",
-        "hint": "Read what happened around that time",
+        "name": "Search the six services' logs since 14:00 for calls that took 2 seconds or more",
+        "hint": "Every call is logged with its duration",
         "label": "valid",
-        "time": "Longer: many lines from six services",
+        "time": "Longer: queries over six services' logs",
         "space": "Logs already kept",
-        "why": "It can find the cause, especially if the slow service logs timeouts, but without starting from a slow request it means reading many lines from six services, and a slow service may log nothing at all."
+        "why": "Every call is logged with its duration, so the slow service's long calls show up, and the request IDs tie them to slow checkouts. It works, but it takes more queries than opening a few traces that already show the whole request."
       },
       {
         "id": "cpu-graphs",
@@ -89,33 +89,33 @@
     "id": "P39-page-rule",
     "level": 39,
     "title": "When to Wake Someone",
-    "statement": "An API has an SLO of 99.9% of requests good over 30 days and handles about 50 requests per second. Exercise assumptions: the requirement is to wake an engineer within an hour when a problem would use the whole month's budget within a day, and never for problems the budget can absorb; short blips of a few minutes happen several times a week and fix themselves; the team prefers as few pages as the requirement allows. Which rule fits?",
+    "statement": "An API has an SLO of 99.9% of requests good over 30 days and handles about 50 requests per second. Exercise assumptions: a problem would use the whole month's budget within a day when 3% or more of requests are bad (a burn rate of 30); the requirement is to wake an engineer within an hour of such a problem starting, and never for a blip; a blip lasts at most 5 minutes, makes at most 20% of requests bad while it lasts, and fixes itself; blips happen several times a week. The team also prefers that paging stops soon after a problem is fixed. Which rule fits?",
     "examples": [
       "Burn rate = bad share ÷ allowed share; at 30, a 30-day budget is gone in a day."
     ],
     "constraints": [
-      "Page within an hour when the budget would be gone within a day.",
-      "Do not page for problems the budget can absorb.",
-      "Prefer fewer pages."
+      "Page within an hour when 3% or more of requests stay bad.",
+      "Never page for a blip (at most 5 minutes, at most 20% bad).",
+      "Prefer paging that stops soon after the problem is fixed."
     ],
     "approaches": [
       {
-        "id": "hour-over-3pct",
-        "name": "Page when more than 3% of the last hour's requests are bad",
-        "hint": "Burn rate 30 over an hour",
+        "id": "hour-and-five-min",
+        "name": "Page when 3% or more of the last hour's requests and 3% or more of the last 5 minutes' requests are bad",
+        "hint": "A long window and a short one together",
         "label": "best",
-        "time": "Pages within an hour of a fast burn",
-        "space": "A bad-request count per hour",
-        "why": "3% is 30 × the allowed 0.1%, the burn rate that empties the budget in a day. Looking at a full hour fires within an hour for a real problem, while a few-minute blip rarely lifts an hour's share above 3%."
+        "time": "Pages within an hour; stops within 5 minutes of a fix",
+        "space": "Bad-request counts per hour and per 5 minutes",
+        "why": "A problem with 3% or more bad lifts the hour's share to 3% within an hour, and the last 5 minutes are above 3% too, so it pages. A blip makes at most 20% bad for 5 minutes, at most 20% × 5 ÷ 60 ≈ 1.7% of the hour, so the hour condition stays below 3% and it never pages. Once the problem is fixed, the 5-minute share drops and paging stops."
       },
       {
-        "id": "five-min-over-3pct",
-        "name": "Page when more than 3% of the last 5 minutes' requests are bad",
-        "hint": "Burn rate 30 over 5 minutes",
+        "id": "hour-over-3pct",
+        "name": "Page when 3% or more of the last hour's requests are bad",
+        "hint": "Burn rate 30 over an hour",
         "label": "valid",
-        "time": "Pages within minutes",
-        "space": "A bad-request count per 5 minutes",
-        "why": "It catches every fast burn within the hour, but the self-fixing blips several times a week also pass 3% for 5 minutes, so it wakes people more often than needed, against the stated preference."
+        "time": "Pages within an hour; may keep paging up to an hour after a fix",
+        "space": "A bad-request count per hour",
+        "why": "It pages within an hour for a real problem and never for a blip, which reaches at most about 1.7% of the hour. But after a fix the hour still contains the bad period, so the alert can keep firing for up to an hour, against the stated preference."
       },
       {
         "id": "every-failure",
