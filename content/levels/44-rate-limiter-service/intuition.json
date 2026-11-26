@@ -1,0 +1,11 @@
+{
+  "question": "A museum lets in at most 100 visitors an hour, but groups of up to 20 may enter together after a quiet spell. Which ticket rule fits?",
+  "options": [
+    "A jar holding at most 20 tickets, refilled with one ticket every 36 seconds",
+    "100 tickets that reset exactly on the hour",
+    "One ticket per visitor, refilled only when the visitor leaves",
+    "No tickets; the guard decides by how busy the hall looks"
+  ],
+  "answer": 0,
+  "explanation": "A jar of 20 lets a group in together after a quiet time, and refilling one ticket every 36 seconds gives 100 an hour in the long run: a token bucket. Tickets that reset on the hour let 100 in at 10:59 and 100 more at 11:00."
+}

@@ -1330,6 +1330,61 @@
           "term": "hot link",
           "vi": "link được bấm rất nhiều",
           "firstLevel": 43
+        },
+        {
+          "term": "rate limiter",
+          "vi": "bộ giới hạn tần suất request",
+          "firstLevel": 44
+        },
+        {
+          "term": "fixed window",
+          "vi": "cửa sổ cố định",
+          "firstLevel": 44
+        },
+        {
+          "term": "sliding window",
+          "vi": "cửa sổ trượt",
+          "firstLevel": 44
+        },
+        {
+          "term": "token bucket",
+          "vi": "thùng token",
+          "firstLevel": 44
+        },
+        {
+          "term": "429 Too Many Requests",
+          "vi": "mã lỗi quá nhiều request",
+          "firstLevel": 44
+        },
+        {
+          "term": "Retry-After",
+          "vi": "header báo khi nào thử lại",
+          "firstLevel": 44
+        },
+        {
+          "term": "atomic update",
+          "vi": "cập nhật nguyên tử",
+          "firstLevel": 44
+        },
+        {
+          "term": "per-node limit",
+          "vi": "giới hạn riêng từng server",
+          "firstLevel": 44
+        },
+        {
+          "term": "global limit",
+          "vi": "giới hạn toàn cục",
+          "firstLevel": 44
+        },
+        {
+          "term": "fail-open",
+          "vi": "lỗi thì cho qua",
+          "firstLevel": 44
+        },
+        {
+          "term": "fail-closed",
+          "vi": "lỗi thì chặn lại",
+          "firstLevel": 44
         }
       ]
     },

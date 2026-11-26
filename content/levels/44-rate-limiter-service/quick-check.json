@@ -1,0 +1,35 @@
+[
+  {
+    "question": "An API should let each client send up to 20 requests at once after a quiet time, but no more than 100 per minute in the long run. Which rule fits best?",
+    "options": [
+      "A token bucket with room for 20 tokens, refilled at 100 per minute",
+      "A fixed window of 100 per calendar minute",
+      "A fixed window of 20 per minute",
+      "A sliding log of 20 per second"
+    ],
+    "answer": 0,
+    "explanation": "The bucket's room of 20 allows the burst, and the refill of 100 per minute sets the long-run rate. A fixed window of 100 per minute allows 200 within a second across a window edge; 20 per minute is far below the long-run rate."
+  },
+  {
+    "question": "Twenty API servers share one count per client in a store. Each server reads the count, checks it, and then writes count + 1. What goes wrong at the limit?",
+    "options": [
+      "Several servers can read the same count, all allow a request, and the limit is passed",
+      "Nothing: the last write always wins correctly",
+      "The store refuses all writes",
+      "Clients are refused too early"
+    ],
+    "answer": 0,
+    "explanation": "Between one server's read and its write, other servers read the same old value and also decide there is room. Each allows a request, so the limit is passed without any error. An atomic increment or script in the store does the read, check and write as one step."
+  },
+  {
+    "question": "The shared store behind a rate limiter is down. The limited action is sending paid text messages, and the phone carrier blocks the whole account if it gets too many. What should the limiter do?",
+    "options": [
+      "Fail closed: refuse sends until the store returns, or allow only a safe per-server share",
+      "Fail open: allow every send",
+      "Pick allow or refuse at random",
+      "Crash the API servers"
+    ],
+    "answer": 0,
+    "explanation": "Each extra message costs money, and passing the carrier's limit blocks every customer for an hour, so letting everything through is the expensive mistake. Refusing sends, or allowing only shares that cannot add up past the carrier's limit, keeps the worst case small."
+  }
+]
