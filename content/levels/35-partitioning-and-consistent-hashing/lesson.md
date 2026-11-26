@@ -57,7 +57,8 @@ There is no code in this level. Use this **design template** for partitioning:
 3. Range or hash? Range keeps ranges together but can make one shard hot;
    hash spreads load but scatters range queries.
 4. Hot keys: can one key exceed a shard's limit? Split it (for example,
-   key#0..key#3) or give it its own shard.
+   key#0..key#3). Its own shard helps only if one server can take its
+   whole load.
 5. Queries without the key: scatter-gather to every shard, or keep a
    separate index (see the extension).
 6. Growth: consistent hashing with virtual nodes, so adding a server moves
