@@ -1,0 +1,11 @@
+{
+  "question": "A cloakroom gives each coat a numbered ticket. Two assistants pick random numbers from 1 to 1,000,000 for a busy evening. What must they do so that no two guests ever get the same number?",
+  "options": [
+    "Write each number on a shared board when it is given, and pick again if it is already there",
+    "Trust that random numbers will not repeat",
+    "Each assistant checks their own list only",
+    "Use shorter numbers so they are easier to read"
+  ],
+  "answer": 0,
+  "explanation": "Random numbers can repeat, and two assistants checking only their own lists would both hand out the same number. One shared board that refuses a number already on it, like a unique key in the database, catches every repeat, and the assistant simply picks again."
+}

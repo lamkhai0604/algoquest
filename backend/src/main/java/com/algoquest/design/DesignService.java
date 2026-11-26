@@ -10,6 +10,7 @@ import com.algoquest.grading.DesignResult;
 import com.algoquest.grading.GraderUnavailableException;
 import com.algoquest.shared.web.ApiException;
 import java.time.Clock;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -19,9 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**
- * Design prompts (D-085). The learner writes a design under four headings; the grader scores it
- * with the five-category rubric. The reference design is sent only with a graded answer. No XP is
- * awarded in the pilot.
+ * Design prompts (D-085). The learner writes a design under the prompt's headings; the grader
+ * scores it with the five-category rubric. The reference design is sent only with a graded answer.
+ * No XP is awarded in the pilot.
  */
 @Service
 public class DesignService {
@@ -31,9 +32,6 @@ public class DesignService {
 
   static final int MIN_SECTION = 10;
   static final int MAX_SECTION = 2000;
-
-  /** The scaffold headings of early design prompts, in order. */
-  static final List<String> SECTIONS = List.of("requirements", "estimate", "components", "failure");
 
   private static final Logger log = LoggerFactory.getLogger(DesignService.class);
 
@@ -68,6 +66,7 @@ public class DesignService {
       String prompt,
       List<String> facts,
       List<String> scope,
+      String form,
       List<String> sections,
       int answersLeftToday) {}
 
@@ -106,13 +105,14 @@ public class DesignService {
         prompt.prompt(),
         prompt.facts(),
         prompt.scope(),
-        SECTIONS,
+        prompt.formOrDefault(),
+        prompt.sections(),
         answersLeft(userId, id));
   }
 
   public AnswerResult answer(UUID userId, String id, DesignAnswer request) {
     DesignPrompt prompt = playable(userId, id);
-    DesignAnswer answer = cleaned(request);
+    DesignAnswer answer = cleaned(prompt, request);
     int left = answersLeft(userId, id);
     if (left <= 0) {
       throw new ApiException(
@@ -144,20 +144,24 @@ public class DesignService {
         left - 1);
   }
 
-  private static DesignAnswer cleaned(DesignAnswer request) {
-    if (request == null) {
+  /** Exactly the prompt's headings, each stripped and of an allowed length, in prompt order. */
+  private static DesignAnswer cleaned(DesignPrompt prompt, DesignAnswer request) {
+    if (request == null || request.sections() == null) {
       throw invalid();
     }
-    String[] parts = {
-      request.requirements(), request.estimate(), request.components(), request.failure()
-    };
-    for (int i = 0; i < parts.length; i++) {
-      parts[i] = parts[i] == null ? "" : parts[i].strip();
-      if (parts[i].length() < MIN_SECTION || parts[i].length() > MAX_SECTION) {
+    List<String> sections = prompt.sections();
+    if (!request.sections().keySet().stream().allMatch(sections::contains)) {
+      throw invalid();
+    }
+    Map<String, String> parts = new LinkedHashMap<>();
+    for (String section : sections) {
+      String text = request.get(section).strip();
+      if (text.length() < MIN_SECTION || text.length() > MAX_SECTION) {
         throw invalid();
       }
+      parts.put(section, text);
     }
-    return new DesignAnswer(parts[0], parts[1], parts[2], parts[3]);
+    return new DesignAnswer(parts);
   }
 
   private static ApiException invalid() {

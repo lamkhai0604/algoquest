@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P42-first-minutes",
+    "level": 42,
+    "title": "The First Five Minutes",
+    "statement": "An interviewer says only: \"Design a system that sends reminders for doctor appointments.\" Exercise assumptions: the interviewer will answer questions; they expect the design to fit about 45 minutes; they prefer candidates who check key assumptions with them rather than decide everything alone. How should the first five minutes go?",
+    "examples": [
+      "A requirement with a number: \"reminders go out within 1 minute of the scheduled time\"."
+    ],
+    "constraints": [
+      "End with numbered requirements that have numbers.",
+      "Say what is out of scope.",
+      "Prefer checking key assumptions with the interviewer."
+    ],
+    "approaches": [
+      {
+        "id": "ask-then-confirm",
+        "name": "Ask about users, scale, channels and timing; write numbered requirements with numbers and the scope; confirm them with the interviewer",
+        "hint": "Questions, then a short list to agree on",
+        "label": "best",
+        "time": "About 5 minutes",
+        "space": "A short list of requirements",
+        "why": "It turns the vague question into requirements the rest of the design can be checked against, and confirming them uses the interviewer's answers instead of guesses."
+      },
+      {
+        "id": "state-assumptions",
+        "name": "State reasonable assumptions out loud, such as 1 million reminders a day by SMS and email, write them as numbered requirements, say what is out of scope, and continue",
+        "hint": "Decide quickly and move on",
+        "label": "valid",
+        "time": "About 2 minutes",
+        "space": "A short list of requirements",
+        "why": "It also produces numbered requirements and a scope, and saves time, but it skips checking them with the interviewer, against the stated preference; a wrong guess can cost later."
+      },
+      {
+        "id": "draw-first",
+        "name": "Start drawing servers, a database and a queue, and add requirements later if asked",
+        "hint": "Boxes first",
+        "label": "unsuitable",
+        "time": "Time spent on boxes with no reason",
+        "space": "A diagram without requirements",
+        "why": "Without requirements and numbers, nothing shows whether a box is needed or big enough, and the interviewer cannot judge the choices. It breaks the first two constraints."
+      }
+    ]
+  },
+  {
+    "id": "P42-latency-budget",
+    "level": 42,
+    "title": "Fitting a 300 ms Budget",
+    "statement": "A product page must answer within 300 ms. Measured: the network to and from the phone takes up to 120 ms, the page server's own work up to 30 ms, the price lookup up to 40 ms, and the reviews service up to 150 ms; price and reviews do not depend on each other. A cache in front of reviews answers within 5 ms but may hold reviews up to 1 minute old, which the business accepts. The team prefers fresh reviews when the budget allows. Which plan fits?",
+    "examples": [
+      "Steps in a row add up; steps in parallel cost as much as the slowest one."
+    ],
+    "constraints": [
+      "The page answers within 300 ms.",
+      "Reviews may be up to 1 minute old.",
+      "Prefer fresh reviews."
+    ],
+    "approaches": [
+      {
+        "id": "parallel",
+        "name": "Call price and reviews at the same time",
+        "hint": "Overlap the independent calls",
+        "label": "best",
+        "time": "120 + 30 + max(40, 150) = 300 ms",
+        "space": "No extra store",
+        "why": "Running the two calls together costs only the slower one, 150 ms, so the page fits exactly within 300 ms with fresh reviews."
+      },
+      {
+        "id": "cached-reviews",
+        "name": "Call price, then read reviews from the cache",
+        "hint": "Make the slow part fast",
+        "label": "valid",
+        "time": "120 + 30 + 40 + 5 = 195 ms",
+        "space": "A reviews cache",
+        "why": "It fits easily, with room to spare, but reviews can be up to a minute old, against the stated preference for fresh reviews."
+      },
+      {
+        "id": "sequential",
+        "name": "Call price, then call the reviews service",
+        "hint": "One after the other",
+        "label": "unsuitable",
+        "time": "120 + 30 + 40 + 150 = 340 ms",
+        "space": "No extra store",
+        "why": "The steps add up to 340 ms, over the 300 ms budget."
+      }
+    ]
+  },
+  {
+    "id": "P42-deep-dive",
+    "level": 42,
+    "title": "Choosing the Deep Dive",
+    "statement": "You are designing a photo-sharing app with 10 minutes left for a deep dive. The requirements include: uploads at up to 400 photos of 3 MB per second, with the app servers able to carry about 1 GB per second; a profile page read about 100 times per second; and a settings page read about 5 times per second. The interviewer has not pointed at any part. Exercise assumptions: the deep dive must take one part in depth within the 10 minutes; the team prefers the part where the design is most likely to fail its requirements.",
+    "examples": [
+      "400 × 3 MB = 1.2 GB per second."
+    ],
+    "constraints": [
+      "One part in depth.",
+      "Fit in 10 minutes.",
+      "Prefer the part most at risk."
+    ],
+    "approaches": [
+      {
+        "id": "uploads",
+        "name": "Deep dive on uploads: direct upload to object storage with signed URLs (SD 14), multipart for large files, and what happens when an upload is abandoned",
+        "hint": "The biggest number",
+        "label": "best",
+        "time": "10 minutes on one part",
+        "space": "One part in depth",
+        "why": "Relaying 1.2 GB per second would exceed the servers' 1 GB per second, so uploads are where the design would fail; this deep dive fixes the biggest risk."
+      },
+      {
+        "id": "profile-cache",
+        "name": "Deep dive on caching the profile page",
+        "hint": "A common topic",
+        "label": "valid",
+        "time": "10 minutes on one part",
+        "space": "One part in depth",
+        "why": "It takes one part in depth within 10 minutes, but 100 reads per second is not at risk, so the upload problem stays unaddressed, against the stated preference."
+      },
+      {
+        "id": "everything-briefly",
+        "name": "Spend a minute or two on every part, settings page included",
+        "hint": "Cover everything",
+        "label": "unsuitable",
+        "time": "About 1 to 2 minutes per part",
+        "space": "Many parts, none in depth",
+        "why": "Nothing gets enough depth to show how a hard problem is solved, which breaks the rule of one part in depth, and the upload risk gets only a mention."
+      }
+    ]
+  }
+]

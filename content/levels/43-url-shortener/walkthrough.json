@@ -1,0 +1,734 @@
+[
+  {
+    "title": "Requirements",
+    "body": "A marketing team wants short links for posts, emails and printed flyers. Written as requirements: (F1) create a short link; (F2) redirect to the long link; (F3) change a destination, taking effect within 5 minutes; (F4) count clicks within a few minutes. With numbers: (N1) 100 million new links a month, opened about 100 times each, peaks of 20,000 redirects per second; (N2) a redirect within 50 ms inside the system; (N3) no two links ever share a code. Links are kept 5 years.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8,
+            "note": "posts and flyers"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Links DB",
+            "x": 9,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "new links",
+          "value": "100 million a month"
+        },
+        {
+          "name": "clicks per link",
+          "value": "about 100"
+        },
+        {
+          "name": "peak redirects",
+          "value": "20,000 per second"
+        },
+        {
+          "name": "change takes effect",
+          "value": "within 5 minutes"
+        },
+        {
+          "name": "kept",
+          "value": "5 years"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Estimate the traffic",
+    "body": "A month has about 2.6 million seconds. Creations: 100,000,000 ÷ 2,600,000 ≈ **40 per second**. Redirects: 100 million links × 100 clicks = 10 billion a month, 10,000,000,000 ÷ 2,600,000 ≈ **3,900 per second** on average, with peaks of 20,000. Reads outnumber writes about 100 to 1, so the design should make redirects cheap above all.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 6,
+            "y": 3,
+            "note": "reads per second?"
+          },
+          {
+            "kind": "db",
+            "label": "Links DB",
+            "x": 9,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "seconds in a month",
+          "value": "about 2.6 million"
+        },
+        {
+          "name": "creations",
+          "value": "about 40 per second"
+        },
+        {
+          "name": "redirects a month",
+          "value": "10 billion"
+        },
+        {
+          "name": "average redirects",
+          "value": "about 3,900 per second"
+        }
+      ],
+      "predict": {
+        "question": "100 million links a month are each opened about 100 times. With about 2.6 million seconds in a month, about how many redirects per second is that on average?",
+        "options": [
+          "About 40",
+          "About 390",
+          "About 3,900",
+          "About 39,000"
+        ],
+        "answer": 2,
+        "explanation": "100,000,000 × 100 = 10,000,000,000 redirects a month, and 10,000,000,000 ÷ 2,600,000 ≈ 3,850. About 40 per second is the rate of creations, a hundred times smaller.",
+        "hides": [
+          "average redirects"
+        ]
+      }
+    }
+  },
+  {
+    "title": "How long a code?",
+    "body": "Over 5 years: 100 million × 12 × 5 = **6 billion** links, about 3 TB at 500 bytes each. Codes use **base62**: digits, lowercase and uppercase letters. Six characters give 62⁶ ≈ 57 billion codes; seven give 62⁷ ≈ **3.5 trillion**. Seven characters keep 6 billion links under 0.2% of the space, so codes never run out and random ones rarely repeat.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Links DB",
+            "x": 9,
+            "y": 7,
+            "note": "6 billion links"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "links in 5 years",
+          "value": "6 billion"
+        },
+        {
+          "name": "6 characters",
+          "value": "about 57 billion codes"
+        },
+        {
+          "name": "7 characters",
+          "value": "about 3.5 trillion codes"
+        },
+        {
+          "name": "storage",
+          "value": "about 3 TB"
+        }
+      ]
+    }
+  },
+  {
+    "title": "API and data model",
+    "body": "**API:** `POST /links {longUrl}` returns `{code}`; `PATCH /links/{code}` changes the destination; `GET /{code}` answers with a redirect whose `Location` header holds the long link. **Data model:** `links(code primary key, long_url, owner, created_at)`, sharded by code (SD 8), and a click count per link and day. A redirect is one lookup by primary key, the cheapest query a database has.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Links DB",
+            "x": 9,
+            "y": 7,
+            "note": "code primary key"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "create",
+          "value": "POST /links"
+        },
+        {
+          "name": "change",
+          "value": "PATCH /links/{code}"
+        },
+        {
+          "name": "redirect",
+          "value": "GET /{code}"
+        },
+        {
+          "name": "table",
+          "value": "links(code, long_url, …)"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Catching collisions",
+    "body": "The server picks 7 random base62 characters, such as `aZ3kQ9x`, and inserts the row. Near the end of 5 years, 6 billion of 3.5 trillion codes are taken, so a new code repeats an old one about **1 time in 580**. Over 6 billion creations that happens millions of times, so it must be caught. The **unique primary key** makes the database reject the second insert, and the server simply tries a new code. Checking \"is it free?\" first and inserting later would let two servers take the same code between the steps.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 6,
+            "y": 3,
+            "note": "retry new code"
+          },
+          {
+            "kind": "db",
+            "label": "Links DB",
+            "x": 9,
+            "y": 7,
+            "note": "insert aZ3kQ9x",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "codes taken",
+          "value": "6 billion of 3.5 trillion"
+        },
+        {
+          "name": "chance of a repeat",
+          "value": "about 1 in 580"
+        },
+        {
+          "name": "caught by",
+          "value": "the unique primary key"
+        },
+        {
+          "name": "then",
+          "value": "try a new code"
+        }
+      ]
+    }
+  },
+  {
+    "title": "301 or 302?",
+    "body": "A **301** tells the browser the link moved for good, so the browser may keep the answer and go straight to the long link next time. The team then never sees those clicks, and if the destination changes, returning visitors still go to the **old page**. A **302** is temporary: the browser asks again each time. Here the team needs click counts and changes, so redirects use 302 with `Cache-Control: max-age=0, s-maxage=60`: browsers ask every time, and only the CDN may keep the answer for 60 seconds.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8,
+            "note": "clicked before"
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 1,
+            "y": 4
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Links DB",
+            "x": 9,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "first answer",
+          "value": "301 to the old page"
+        },
+        {
+          "name": "destination changed to",
+          "value": "a new page"
+        },
+        {
+          "name": "returning visitor goes to",
+          "value": "the old page"
+        },
+        {
+          "name": "chosen",
+          "value": "302, max-age=0, s-maxage=60"
+        }
+      ],
+      "predict": {
+        "question": "A link answered with 301 and a long cache time. Later its owner changes the destination. Where does a visitor who clicked it before go when they click it again?",
+        "options": [
+          "The new page, because the server changed",
+          "The old page, because the browser kept the 301",
+          "An error page",
+          "The short link itself, in a loop"
+        ],
+        "answer": 1,
+        "explanation": "A 301 says the move is permanent, so the browser may reuse it without asking the server. The visitor's browser goes straight to the old long link, and the server never sees the click. A 302 makes the browser ask each time.",
+        "hides": [
+          "returning visitor goes to"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Fast redirects",
+    "body": "A few links get most clicks. The CDN answers repeated clicks for up to 60 seconds; the app servers keep popular links in a **link cache** whose entries expire within 4 minutes, so a change shows within 5 minutes. Most of the 20,000 redirects per second never reach the database, and a cached lookup takes about a millisecond, well within 50 ms. Each redirect that reaches the servers sends a click event to a queue, counted in batches, and the CDN's own logs add the clicks it answered.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 1,
+            "y": 4,
+            "note": "keeps 60 s"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "cache",
+            "label": "Link cache",
+            "x": 5,
+            "y": 8,
+            "note": "entries ≤ 4 min"
+          },
+          {
+            "kind": "db",
+            "label": "Links DB",
+            "x": 9,
+            "y": 7
+          },
+          {
+            "kind": "db",
+            "label": "Replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "queue",
+            "label": "Click queue",
+            "x": 8,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "CDN",
+          "value": "keeps a redirect 60 s"
+        },
+        {
+          "name": "link cache",
+          "value": "entries expire within 4 min"
+        },
+        {
+          "name": "change visible",
+          "value": "within 5 minutes"
+        },
+        {
+          "name": "clicks",
+          "value": "queue + CDN logs, in batches"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Failures and summary",
+    "body": "**If the database's main copy fails**, redirects continue from the cache and a read replica (SD 6), while creations wait for failover. **If the link cache is lost**, the replicas carry the redirects until it refills. **A hot link** is answered mostly by the CDN. **Summary:** F1 by random codes; N3 by the unique key; F2 and N2 by cached key lookups; F3 by 302 with short cache times; F4 by click events counted in batches.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 1,
+            "y": 4
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "cache",
+            "label": "Link cache",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Links DB",
+            "x": 9,
+            "y": 7,
+            "state": "down"
+          },
+          {
+            "kind": "db",
+            "label": "Replica",
+            "x": 10,
+            "y": 3,
+            "note": "serves redirects"
+          },
+          {
+            "kind": "queue",
+            "label": "Click queue",
+            "x": 8,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ]
+        ],
+        "path": [
+          3,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "main DB fails",
+          "value": "redirects from cache and replica"
+        },
+        {
+          "name": "cache lost",
+          "value": "replicas carry the load"
+        },
+        {
+          "name": "hot link",
+          "value": "mostly the CDN"
+        }
+      ]
+    }
+  }
+]

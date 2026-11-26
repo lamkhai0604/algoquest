@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Two app servers create short links at the same moment, each with a random 7-character code. How do you make sure two links never get the same code?",
+    "options": [
+      "Insert each code under a unique primary key, and try a new code if the insert is rejected",
+      "First ask the database whether the code is free, then insert it in a separate step",
+      "Rely on 3.5 trillion codes being enough that repeats never happen",
+      "Let each server keep its own list of codes it has used"
+    ],
+    "answer": 0,
+    "explanation": "Only the database sees every code, and a unique key makes it reject the second insert atomically. Checking first and inserting later leaves a gap where both servers see the code as free; per-server lists miss the other server; and with billions of links, rare repeats still happen."
+  },
+  {
+    "question": "A team wants to count every click on its short links and sometimes change where a link goes. Which redirect fits?",
+    "options": [
+      "301 with a cache time of one year",
+      "302 with headers that stop browsers from keeping it",
+      "200 with the long link in the page body",
+      "404, so the browser searches for the page"
+    ],
+    "answer": 1,
+    "explanation": "A 302 is temporary, and with no browser caching each click comes back to the service, so it can be counted and sent to the current destination. A 301 with a long cache time lets browsers skip the service entirely and keep going to the old page."
+  },
+  {
+    "question": "A shortener will hold about 2 billion links. Six base62 characters give about 57 billion codes, seven give about 3.5 trillion. With random codes, about how often would a new 6-character code repeat an old one at the end?",
+    "options": [
+      "About 1 in 30,000",
+      "About 1 in 1,750",
+      "About 1 in 28",
+      "About 1 in 2"
+    ],
+    "answer": 2,
+    "explanation": "With 2 billion of 57 billion codes taken, a random new one is already taken with chance 2 ÷ 57 ≈ 3.5%, about 1 in 28, so many creations need retries and the space keeps filling. Seven characters bring it to about 2 ÷ 3,500, 1 in 1,750."
+  }
+]

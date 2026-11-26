@@ -1,0 +1,771 @@
+[
+  {
+    "title": "Clarify",
+    "body": "\"Design a leaderboard for a mobile game.\" Before drawing anything, ask and write down: (F1) submit a score after each game, (F2) see the global top 100, (F3) see my own rank. With numbers: (N1) 10 million daily players, about 20 games each, 50 million in total; (N2) a new best score shows within 5 seconds; (N3) \"my rank\" within 200 ms; (N4) only each player's best counts. Out of scope: friends' boards, cheating. These numbered lines are what the rest of the design must meet.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Players",
+            "x": 0,
+            "y": 8,
+            "note": "10 M a day"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 4,
+            "y": 2
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "functional",
+          "value": "submit, top 100, my rank"
+        },
+        {
+          "name": "players",
+          "value": "10 M a day, 50 M total"
+        },
+        {
+          "name": "freshness",
+          "value": "within 5 s"
+        },
+        {
+          "name": "my rank",
+          "value": "within 200 ms"
+        },
+        {
+          "name": "out of scope",
+          "value": "friends' boards, cheating"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Estimate the writes",
+    "body": "10 million players × 20 games = **200 million** scores a day. A day has 86,400 seconds; round it to 100,000 for quick sums: 200,000,000 ÷ 100,000 ≈ **2,000 writes per second** on average. Peaks are often a few times higher; plan for 5×, about **10,000 per second**. Round numbers are fine: the estimate only has to be right within a few times to guide the choices.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Players",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 4,
+            "y": 2,
+            "note": "writes per second?"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "scores a day",
+          "value": "200 million"
+        },
+        {
+          "name": "seconds a day",
+          "value": "about 100,000"
+        },
+        {
+          "name": "average writes",
+          "value": "about 2,000 per second"
+        },
+        {
+          "name": "peak (5×)",
+          "value": "about 10,000 per second"
+        }
+      ],
+      "predict": {
+        "question": "10 million players each submit about 20 scores a day. Using 100,000 seconds for a day, about how many score writes per second is that on average?",
+        "options": [
+          "About 200",
+          "About 2,000",
+          "About 20,000",
+          "About 200,000"
+        ],
+        "answer": 1,
+        "explanation": "10,000,000 × 20 = 200,000,000 scores a day, and 200,000,000 ÷ 100,000 = 2,000 per second. With a 5× peak, plan for about 10,000.",
+        "hides": [
+          "average writes",
+          "peak (5×)"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Storage, bandwidth, budget",
+    "body": "**Storage:** 50 million players × about 100 bytes = **5 GB**, small enough to keep in memory. **Bandwidth:** the top-100 list is about 10 KB; at 5,000 reads per second that is 50 MB per second, easy for a cache. **Latency budget** for \"my rank\" (200 ms): about 100 ms of network, 10 ms in the load balancer and server, 5 ms in the store, 85 ms to spare. **Cost:** about 10 servers and one in-memory store with a copy, a few thousand dollars a month at assumed prices.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Players",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3,
+            "note": "5 GB fits memory"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "storage",
+          "value": "5 GB"
+        },
+        {
+          "name": "top-100 reads",
+          "value": "50 MB per second"
+        },
+        {
+          "name": "budget for my rank",
+          "value": "100 + 10 + 5 ms, 85 spare"
+        },
+        {
+          "name": "cost",
+          "value": "a few thousand $ a month"
+        }
+      ]
+    }
+  },
+  {
+    "title": "API and data model",
+    "body": "**API:** `POST /scores {score}` answers 202 Accepted; `GET /leaderboard/top?n=100`; `GET /leaderboard/me` returns rank and score. The player comes from the login (SD 13), never from the request body. **Data model:** in the database, `best_scores(player_id, score, updated_at)` with `player_id` as the key; in an in-memory store, a **sorted set** of (score, player) that keeps players ordered by score, for ranks and the top 100.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Players",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Scores DB",
+            "x": 6,
+            "y": 7,
+            "note": "best_scores"
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3,
+            "note": "(score, player)"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "POST /scores",
+          "value": "202 Accepted"
+        },
+        {
+          "name": "GET /leaderboard/top",
+          "value": "top 100"
+        },
+        {
+          "name": "GET /leaderboard/me",
+          "value": "rank and score"
+        },
+        {
+          "name": "records",
+          "value": "best_scores; sorted set"
+        }
+      ]
+    }
+  },
+  {
+    "title": "High-level design",
+    "body": "Walk one request through the boxes. A new score goes phone → load balancer → app server, which updates `best_scores` **only if the score is higher** and, in the same transaction, writes an outbox row (SD 10); a relay copies it to the sorted set, again only if higher, so a crash loses nothing and a late lower score cannot win. \"Top 100\" is cached for 1 second in front of the servers, so 5,000 reads per second hit the cache, not the store. \"My rank\" reads the sorted set. Every box answers a requirement: if a box serves none, it is not needed.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Players",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Top-100 cache",
+            "x": 7,
+            "y": 0,
+            "note": "1 s"
+          },
+          {
+            "kind": "db",
+            "label": "Scores DB",
+            "x": 6,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              5
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "write",
+          "value": "DB if higher, then sorted set"
+        },
+        {
+          "name": "top 100",
+          "value": "cached for 1 s"
+        },
+        {
+          "name": "my rank",
+          "value": "from the sorted set"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Deep dive: the ranking",
+    "body": "The hardest requirements are N2 and N3 at 10,000 writes per second, so the deep dive goes there. A sorted set keeps its members in score order, like a balanced search tree (Level 8), so finding a player's rank takes about **log₂(50 million) ≈ 26 steps**, not a scan of 50 million rows. Assume one store node handles 100,000 updates per second and 25 GB: 10,000 updates and 5 GB fit easily, with a replica for failover. The relay copies each new best within about a second, so it shows well within 5 seconds.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Players",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Top-100 cache",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Scores DB",
+            "x": 6,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3,
+            "note": "50 M players"
+          },
+          {
+            "kind": "cache",
+            "label": "Replica",
+            "x": 10,
+            "y": 6
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          2,
+          5,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "players in the set",
+          "value": "50 million"
+        },
+        {
+          "name": "steps to find a rank",
+          "value": "about 26"
+        },
+        {
+          "name": "writes at peak",
+          "value": "10,000 per second"
+        }
+      ],
+      "predict": {
+        "question": "The sorted set keeps 50 million players in score order, like a balanced search tree. About how many steps does it take to find one player's rank?",
+        "options": [
+          "1",
+          "About 26",
+          "About 7,000",
+          "About 50 million"
+        ],
+        "answer": 1,
+        "explanation": "A balanced tree halves the search at each step, so it needs about log₂(50,000,000) ≈ 25.6 steps. Scanning a table sorted by score would mean counting up to 50 million rows.",
+        "hides": [
+          "steps to find a rank"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Failures, with conditions",
+    "body": "State each failure with its condition and what players see. **If the store's main copy fails**, the replica takes over within seconds, and outbox rows not yet confirmed are copied again; \"only if higher\" makes repeats harmless. **If both copies are lost**, the set is rebuilt from `best_scores`, 50 million rows, in minutes; meanwhile the last saved top 100 stays visible and \"my rank\" shows \"updating\". **If the relay stops**, new bests wait in the outbox and N2 is missed until it restarts.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Players",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Top-100 cache",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Scores DB",
+            "x": 6,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3,
+            "state": "down"
+          },
+          {
+            "kind": "cache",
+            "label": "Replica",
+            "x": 10,
+            "y": 6,
+            "note": "takes over"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            2,
+            6
+          ]
+        ],
+        "path": [
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "main copy fails",
+          "value": "replica in seconds"
+        },
+        {
+          "name": "both lost",
+          "value": "rebuild from the DB, minutes"
+        },
+        {
+          "name": "players see",
+          "value": "top 100 cached; rank updating"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Summary and time",
+    "body": "Close by checking each requirement: F1 to F3 by the API; N1 by one sorted set at 10,000 writes per second; N2 by the outbox relay; N3 by a 5 ms lookup inside a 200 ms budget; N4 by \"only if higher\". Say what you would do next, such as friends' boards. Over 45 minutes: about 5 clarify, 5 estimate, 7 API and data, 8 design, 10 deep dive, 5 failures, 3 summary, a few for questions. Think aloud the whole time.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Players",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App servers",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Top-100 cache",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Scores DB",
+            "x": 6,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3
+          },
+          {
+            "kind": "cache",
+            "label": "Replica",
+            "x": 10,
+            "y": 6
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "F1 to F3",
+          "value": "the API"
+        },
+        {
+          "name": "N1, N2",
+          "value": "sorted set, outbox relay"
+        },
+        {
+          "name": "N3",
+          "value": "5 ms in 200 ms"
+        },
+        {
+          "name": "N4",
+          "value": "only if higher"
+        },
+        {
+          "name": "time",
+          "value": "5/5/7/8/10/5/3 min"
+        }
+      ]
+    }
+  }
+]

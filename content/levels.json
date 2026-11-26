@@ -285,5 +285,19 @@
     "title": "Storage, Search and IDs",
     "summary": "Three short parts: files in object storage with direct uploads, full-text search with an inverted index, and unique IDs from many servers.",
     "phase": 4
+  },
+  {
+    "number": 42,
+    "slug": "the-design-interview-method",
+    "title": "The Design Interview Method",
+    "summary": "The full routine for any design question: clarify, estimate, API, data model, high-level design, deep dive, failures and summary, while thinking aloud and keeping to time.",
+    "phase": 4
+  },
+  {
+    "number": 43,
+    "slug": "url-shortener",
+    "title": "URL Shortener",
+    "summary": "The first case study: short codes that never collide, redirects that stay fast, and the choice between 301 and 302 for caching, click counts and changing a link.",
+    "phase": 4
   }
 ]

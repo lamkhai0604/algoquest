@@ -131,8 +131,11 @@ class ContentLoaderTest {
     assertThat(challenge.approach("nested").correct()).isTrue();
     assertThat(challenge.approach("pass").correct()).isFalse();
     assertThat(levels.get(2).available()).isFalse();
+    assertThat(levels.get(1).designs()).hasSize(2);
+    assertThat(levels.get(1).designs().get(1).sections()).hasSize(8).contains("deepdive");
+    assertThat(levels.get(1).designs().getFirst().formOrDefault()).isEqualTo("scaffold");
     assertThat(levels.get(1).designs())
-        .singleElement()
+        .first()
         .satisfies(
             d -> {
               assertThat(d.fullMarkDesigns()).hasSize(2);
@@ -309,8 +312,10 @@ class ContentLoaderTest {
         designs,
         "[\"Count in memory and write every second: fewer writes, may lose a second\"]",
         "[]");
+    replace(designs, "\"form\": \"routine\"", "\"form\": \"essay\"");
 
     assertThat(problemsAfterLoad())
+        .anyMatch(p -> p.contains("designs.json") && p.contains("form must be scaffold or routine"))
         .anyMatch(p -> p.contains("designs.json") && p.contains("D1-some-name"))
         .anyMatch(p -> p.contains("designs.json") && p.contains("criteria need"))
         .anyMatch(p -> p.contains("designs.json") && p.contains("two different full-mark"))

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "D43-campaign-links",
+    "level": 43,
+    "title": "Short Links for Private Campaigns",
+    "prompt": "An agency creates short links for its clients' campaigns. Some links go to private pages, so codes must not be guessable. Design the shortener using the full routine.",
+    "facts": [
+      "About 50 million new links a month, each opened about 50 times on average; peaks of 10,000 redirects per second",
+      "Links are kept for 3 years; a link record is about 500 bytes",
+      "Codes are 7 base62 characters (62⁷ ≈ 3.5 trillion); clients may also ask for a custom name of 8 to 30 characters, such as summer-sale-2027",
+      "Measured: a database shard answers a lookup by primary key within 5 ms and handles about 5,000 lookups per second; an in-memory cache answers within 1 ms and handles about 100,000 per second; a CDN in front of the servers can keep responses that allow shared caching",
+      "A library is available that maps every number from 0 to 62⁷ − 1 to a different 7-character code, one to one, in an order that looks random to anyone without its secret key",
+      "Requirement: no two links ever share a code, and codes cannot be guessed from other codes",
+      "Requirement: a change of destination takes effect within 10 minutes; click counts appear within 15 minutes; a redirect takes under 50 ms inside the system"
+    ],
+    "scope": [
+      "Creating links, redirecting, changing destinations and counting clicks",
+      "Billing clients and checking for harmful sites are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States no shared codes, codes not guessable, changes within 10 minutes, clicks within 15 minutes, redirects under 50 ms, 3 years of links"
+      ],
+      "estimation": [
+        "Traffic: 50 million ÷ 2.6 million ≈ 19 creations per second; 2.5 billion redirects a month ≈ 960 per second on average, 10,000 at peak",
+        "Storage: 50 million × 12 × 3 = 1.8 billion links × 500 bytes ≈ 900 GB; with random codes, a new code repeats an old one at most about 1.8 billion ÷ 3.5 trillion ≈ 1 in 1,900"
+      ],
+      "design": [
+        "API (create, change, redirect), a data model with the code as primary key, a high-level design with a CDN and a cache on the redirect path, and a deep dive on making codes without collisions and on the redirect status code"
+      ],
+      "data": [
+        "Codes: random with the unique key catching repeats, or numbers from ranges mapped through the one-to-one library; custom names in the same table under the same unique key",
+        "Redirect: 302, with headers that keep browsers from storing it and let the CDN keep it briefly, so changes and clicks are seen"
+      ],
+      "tradeoffs": [
+        "Names failures with conditions and a trade-off, such as: random codes need a retry on the rare repeat; ranges need a service that hands them out; a longer CDN time saves load but delays changes; a summary that checks each requirement"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, random codes: `POST /links {longUrl, name?}` inserts a row with 7 random base62 characters, or the custom name, as the primary key; the unique key rejects a repeat (at most about 1 in 1,900 near the end of 3 years), and the server retries with a new code; a taken custom name is refused. `GET /{code}` answers 302 with `Cache-Control: max-age=0, s-maxage=60`, so browsers always ask, and the CDN keeps it 60 seconds; the app's cache entries expire within 8 minutes, so a change shows within 10. About 900 GB in a few shards; cached lookups take about 1 ms, so most of the 10,000 per second at peak never reach a shard. Clicks go to a queue and are counted every few minutes, together with the CDN's logs, within 15 minutes. Failures: a shard's replica serves redirects if its main copy fails; if the cache is lost, the shards' replicas carry the load. Summary: each requirement is met. Trade-off: a retry on the rare repeat.",
+      "Design B, ranges and the one-to-one library: each app server asks a small range service for a block of 10,000 numbers at a time and turns each number into a code with the library. Numbers are never handed out twice, and the library is one to one, so codes never collide; without its key they look random, so they cannot be guessed. Custom names share the table, and its unique key refuses a taken name; generated codes are 7 characters and custom names 8 or more, so they never clash. Redirects, caching, click counts and failures as in Design A: 302 with `max-age=0, s-maxage=60`, app cache entries expiring within 8 minutes, clicks within 15 minutes. If the range service is down, servers keep creating from the block they hold. Summary: each requirement is met. Trade-off: one more service to run, and a server that crashes wastes the rest of its block."
+    ],
+    "reference": {
+      "assumptions": [
+        "Clicks per link are spread enough that the cache and CDN absorb peaks",
+        "The library's secret key is kept in a secret store (SD 13)"
+      ],
+      "design": "Requirements: create links with optional custom names, redirect under 50 ms, change destinations within 10 minutes, count clicks within 15 minutes, never share a code, codes not guessable, keep links 3 years.\nEstimates: about 19 creations and 960 redirects per second on average, 10,000 at peak; 1.8 billion links × 500 bytes ≈ 900 GB.\nAPI: POST /links {longUrl, name?} → {code}; PATCH /links/{code}; GET /{code} → 302. Data: links(code primary key, long_url, owner, created_at), sharded by code; clicks per link and day.\nDesign and deep dive: the server inserts 7 random base62 characters as the primary key; a repeat, at most about 1 in 1,900 near the end of 3 years, is rejected by the unique key, and the server tries again. Random codes cannot be guessed from others. Custom names share the table and the unique key. Redirects answer 302 with Cache-Control: max-age=0, s-maxage=60, so browsers never store the redirect and the CDN keeps it 60 seconds; app cache entries expire within 8 minutes, so a change shows within 10 minutes. A 301 would let browsers keep old destinations and hide clicks.\nFailures and summary: a shard's replica serves redirects if its main copy fails; the CDN and cache absorb hot links; clicks are counted every few minutes from a queue and the CDN's logs, within 15 minutes.",
+      "alternatives": [
+        "Numbers from ranges mapped through the one-to-one library: no collisions and not guessable, with a range service to run",
+        "Rejected: a plain counter in base62, because codes would be guessable and private pages could be found",
+        "Rejected: 301 redirects, because browsers would keep old destinations and clicks would not be seen"
+      ]
+    },
+    "form": "routine"
+  }
+]
