@@ -264,5 +264,12 @@
     "title": "Reliability, Overload and Autoscaling",
     "summary": "Keep a service up under failures and floods: availability in nines, redundancy, timeouts, careful retries, load shedding, graceful degradation and autoscaling.",
     "phase": 4
+  },
+  {
+    "number": 39,
+    "slug": "observability-and-slos",
+    "title": "Observability and SLOs",
+    "summary": "See what users feel: logs, metrics and traces, p50 to p99 latency, SLIs, SLOs and error budgets, and alerts that wake someone only when it matters.",
+    "phase": 4
   }
 ]

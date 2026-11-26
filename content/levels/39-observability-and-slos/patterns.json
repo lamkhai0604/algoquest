@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P39-first-signal",
+    "level": 39,
+    "title": "Checkout Got Slow at 14:00",
+    "statement": "Checkout's p99 jumped from 400 ms to 3 seconds at 14:00, while its p50 stayed at 90 ms. Checkout calls six services. Exercise assumptions: every call carries a request ID; every slow or failed trace is kept; logs from all services are searchable by time and request ID; CPU graphs exist for every server. The team wants to name the slow service in a few minutes. Which first step fits?",
+    "examples": [
+      "A trace shows each service's span with its duration, so the longest span stands out."
+    ],
+    "constraints": [
+      "Find which service is slow, not only that checkout is slow.",
+      "Use the signals that exist.",
+      "Prefer the quickest path to the answer."
+    ],
+    "approaches": [
+      {
+        "id": "open-slow-traces",
+        "name": "Open several kept traces of checkouts slower than 3 seconds since 14:00",
+        "hint": "Follow a slow request",
+        "label": "best",
+        "time": "A few traces, minutes",
+        "space": "Traces already kept",
+        "why": "Each trace shows every span with its time, so the service where the 3 seconds went stands out, and several traces confirm it is the same one. The request IDs then lead to that service's logs."
+      },
+      {
+        "id": "search-logs",
+        "name": "Search all services' logs from 14:00 for errors and timeouts",
+        "hint": "Read what happened around that time",
+        "label": "valid",
+        "time": "Longer: many lines from six services",
+        "space": "Logs already kept",
+        "why": "It can find the cause, especially if the slow service logs timeouts, but without starting from a slow request it means reading many lines from six services, and a slow service may log nothing at all."
+      },
+      {
+        "id": "cpu-graphs",
+        "name": "Look for the server with the highest CPU",
+        "hint": "Check how busy machines are",
+        "label": "unsuitable",
+        "time": "Quick to look at",
+        "space": "CPU graphs",
+        "why": "A service can be slow because it waits on something else, such as a card provider, while its CPU is low; and a busy server may be fine. CPU is a cause to check later, not a way to find the slow step."
+      }
+    ]
+  },
+  {
+    "id": "P39-photo-sli",
+    "level": 39,
+    "title": "An SLI for Photo Uploads",
+    "statement": "A photo app wants an SLI for uploads. Users complain when an upload fails or takes more than 5 seconds. Uploads pass through a load balancer to 8 servers. Exercise assumptions: the load balancer records the result and time of every upload, including those that never reached a server; each server records only the uploads it handled; the team wants one SLI that matches what users feel, measured as close to the users as the existing records allow. Which SLI fits?",
+    "examples": [
+      "An SLI is a share of good events, such as good uploads ÷ all uploads."
+    ],
+    "constraints": [
+      "Count both failures and uploads slower than 5 seconds.",
+      "Include uploads that never reached a server.",
+      "Prefer one SLI."
+    ],
+    "approaches": [
+      {
+        "id": "lb-success-within-5s",
+        "name": "The share of uploads that succeed within 5 seconds, from the load balancer's records",
+        "hint": "Good events seen nearest the user",
+        "label": "best",
+        "time": "One share per window",
+        "space": "Load balancer records",
+        "why": "It counts both things users complain about, failures and slow uploads, and the load balancer also sees uploads that failed before any server answered."
+      },
+      {
+        "id": "two-lb-slis",
+        "name": "Two SLIs from the load balancer's records: the share of uploads that succeed, and the share of successful uploads that finish within 5 seconds",
+        "hint": "Split errors from slowness",
+        "label": "valid",
+        "time": "Two shares per window",
+        "space": "Load balancer records",
+        "why": "Together they count failures and slow uploads, including uploads that never reached a server, and they show which kind of problem it is. It meets the requirements but gives two numbers to track, against the stated wish for one SLI."
+      },
+      {
+        "id": "average-upload-time",
+        "name": "The average upload time",
+        "hint": "One number for speed",
+        "label": "unsuitable",
+        "time": "One number per window",
+        "space": "Upload times",
+        "why": "An average hides the slow uploads in the tail and ignores failures completely, so it can stay flat while users suffer. It is not a share of good events."
+      }
+    ]
+  },
+  {
+    "id": "P39-page-rule",
+    "level": 39,
+    "title": "When to Wake Someone",
+    "statement": "An API has an SLO of 99.9% of requests good over 30 days and handles about 50 requests per second. Exercise assumptions: the requirement is to wake an engineer within an hour when a problem would use the whole month's budget within a day, and never for problems the budget can absorb; short blips of a few minutes happen several times a week and fix themselves; the team prefers as few pages as the requirement allows. Which rule fits?",
+    "examples": [
+      "Burn rate = bad share ÷ allowed share; at 30, a 30-day budget is gone in a day."
+    ],
+    "constraints": [
+      "Page within an hour when the budget would be gone within a day.",
+      "Do not page for problems the budget can absorb.",
+      "Prefer fewer pages."
+    ],
+    "approaches": [
+      {
+        "id": "hour-over-3pct",
+        "name": "Page when more than 3% of the last hour's requests are bad",
+        "hint": "Burn rate 30 over an hour",
+        "label": "best",
+        "time": "Pages within an hour of a fast burn",
+        "space": "A bad-request count per hour",
+        "why": "3% is 30 × the allowed 0.1%, the burn rate that empties the budget in a day. Looking at a full hour fires within an hour for a real problem, while a few-minute blip rarely lifts an hour's share above 3%."
+      },
+      {
+        "id": "five-min-over-3pct",
+        "name": "Page when more than 3% of the last 5 minutes' requests are bad",
+        "hint": "Burn rate 30 over 5 minutes",
+        "label": "valid",
+        "time": "Pages within minutes",
+        "space": "A bad-request count per 5 minutes",
+        "why": "It catches every fast burn within the hour, but the self-fixing blips several times a week also pass 3% for 5 minutes, so it wakes people more often than needed, against the stated preference."
+      },
+      {
+        "id": "every-failure",
+        "name": "Page on every failed request",
+        "hint": "Never miss an error",
+        "label": "unsuitable",
+        "time": "Pages all the time",
+        "space": "No counting",
+        "why": "The SLO allows 0.1% of about 130 million requests a month, roughly 130,000 failures, to happen without harm. Paging on each one breaks the rule not to page for what the budget can absorb."
+      }
+    ]
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "id": "D39-checkout-slo",
+    "level": 39,
+    "title": "How Reliable Must Checkout Be?",
+    "prompt": "A shop's checkout has no agreed target. Some weeks the team ships every day; other weeks customers complain and nobody knows whether things are worse than usual. Define how the team measures checkout, the target it commits to, and when someone is woken up.",
+    "facts": [
+      "About 40 checkouts per second on average over a 30-day month, up to 100 at peak",
+      "Users abandon a checkout that takes more than 2 seconds",
+      "Measured over the last three months: 99.95% of checkouts succeeded, and 99.85% succeeded within 2 seconds; the worst month had 99.8% succeed within 2 seconds",
+      "Checkout depends on a card provider whose own contract promises 99.9% of requests succeed",
+      "The load balancer records every request's result and time; servers record only the requests that reach them",
+      "Requirement: the target must be one the system meets today with some room, and must reflect what users feel",
+      "Requirement: an engineer is woken only when a problem would use up the month's error budget within a day; slower problems wait for working hours"
+    ],
+    "scope": [
+      "Measuring checkout and alerting on it",
+      "Fixing the slow requests is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States an SLI based on what users feel (success and time), an SLO the system meets today with room, the error budget, and the rule for waking someone"
+      ],
+      "estimation": [
+        "Error budget for the chosen SLO, such as: 40 × 2,592,000 ≈ 104 million checkouts a month; at 99.5%, 0.5% ≈ 518,000 bad checkouts",
+        "Page threshold: the budget is gone within a day at a burn rate of 30, that is, 30 × the allowed bad share, such as 30 × 0.5% = 15% of an hour's checkouts"
+      ],
+      "design": [
+        "SLI measured at the load balancer, which also sees requests that never reach a server; dashboards and alerts built on it"
+      ],
+      "data": [
+        "What counts as a good checkout: succeeded and answered within 2 seconds",
+        "The window (30 days) and how the budget used so far is shown"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: a tighter SLO than the system meets today would be missed at once; one combined SLI is simpler, two SLIs show whether the problem is errors or slowness; the card provider's 99.9% caps what checkout can promise without a fallback"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, one combined SLI: \"the share of checkouts that succeed within 2 seconds, measured at the load balancer\". The worst recent month was 99.8%, so the SLO is 99.5% over 30 days, below the card provider's 99.9%. Budget: 0.5% of about 104 million ≈ 518,000 bad checkouts a month; the worst month used 0.2 ÷ 0.5 = 40%. Page when more than 15% of an hour's checkouts are bad (burn rate 30, budget gone within a day); open a ticket when a day's bad share passes 0.5%. Trade-off: one number is easy to follow, but an alert does not say whether errors or slowness caused it.",
+      "Design B, two SLIs: success, \"the share of checkouts that succeed\", with an SLO of 99.9% (measured 99.95%), and speed, \"the share of successful checkouts that finish within 2 seconds\", with an SLO of 99.5% (the worst month was about 99.85%). Budgets: 0.1% ≈ 104,000 failed and 0.5% ≈ 518,000 slow checkouts a month, both measured at the load balancer. Page when an hour's failures pass 30 × 0.1% = 3%, or slow checkouts pass 30 × 0.5% = 15%; tickets at a burn rate above 1. Trade-off: alerts say what kind of problem it is, but there are two budgets to track, and a checkout that is both slow and failed counts only as failed."
+    ],
+    "reference": {
+      "assumptions": [
+        "Checkout traffic is spread evenly enough for hourly shares to be meaningful",
+        "The load balancer's records are complete"
+      ],
+      "design": "SLI: the share of checkout requests that succeed within 2 seconds, measured at the load balancer, which also counts requests that never reach a server.\nSLO: 99.5% over 30 days. The worst recent month reached 99.8%, so the target is met today with room, and it is below the card provider's 99.9%.\nError budget: 40 × 2,592,000 ≈ 104 million checkouts a month; 0.5% ≈ 518,000 bad checkouts. The worst month used 40% of it.\nAlerts: page when more than 15% of the last hour's checkouts are bad, a burn rate of 30 that would use the month's budget within a day; open a ticket when the last day's bad share passes 0.5%, which would use it before the month ends. CPU and disk are on dashboards, not pages.",
+      "alternatives": [
+        "Two SLIs, one for success and one for speed, each with its own budget",
+        "Rejected: an SLO of 99.99%, because the system reaches only about 99.8% to 99.85% today and the card provider promises 99.9%",
+        "Rejected: paging when CPU passes 80%, because it is a cause that may hurt no user"
+      ]
+    }
+  },
+  {
+    "id": "D39-slow-pages",
+    "level": 39,
+    "title": "Finding Out Why a Page Is Slow",
+    "prompt": "A product page calls 8 internal services for every view. A few times a day it becomes slow for some users, and the team cannot tell which service is at fault. Design what the team records so it can find the cause, within a storage budget.",
+    "facts": [
+      "About 3,000 page views per second; each view makes 8 internal calls",
+      "About 1% of page views take more than 1 second; about 0.2% fail",
+      "A log line is about 1 KB; a trace of one page view (9 spans) is about 5 KB; a metric is a few numbers per service every 10 seconds",
+      "Storage budget: about 300 GB of new logs and traces per day, kept for 14 days",
+      "Tracing can either decide at the start of a request whether to keep its trace (a fixed share), or keep every trace until the request ends and then keep it if it was slow or failed, plus a share of the rest",
+      "Requirement: for a slowdown that affects at least 0.1% of page views for an hour, the team can find which service was slow and see its error messages",
+      "Requirement: the team can see each service's request rate, error share and p50, p95 and p99 latency over the last 14 days"
+    ],
+    "scope": [
+      "Recording logs, metrics and traces for the product page",
+      "Fixing the slow service is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the 0.1%-for-an-hour slowdown that must be explainable, per-service metrics for 14 days, and the 300 GB per day budget"
+      ],
+      "estimation": [
+        "Storage for the chosen design, such as: keeping every slow or failed trace, (1% + 0.2%) × 3,000 = 36 per second × 5 KB × 86,400 ≈ 15.6 GB a day, plus 1% of the rest, about 13 GB a day",
+        "Logs: every call logged is 3,000 × 9 × 1 KB = 27 MB per second, about 2.3 TB a day, far over 300 GB; logging only warnings and errors is far less",
+        "Or how many sampled traces a 0.1% slowdown leaves: 3 per second × 3,600 s = 10,800 slow views in an hour; at 5%, about 540 traces"
+      ],
+      "design": [
+        "A request ID on every call and in every log line; metrics per service; traces with a sampling rule; logs limited to what fits"
+      ],
+      "data": [
+        "Which traces are kept and why",
+        "What each log line carries (time, service, request ID, message)"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: keeping traces after seeing the result catches every slow request but must hold every trace until the request ends; a fixed share is simpler but keeps only some slow requests; logging every call is far over budget"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, keep the interesting traces: every call carries a request ID. Each trace is held until the page view ends, then kept if it was slow or failed (1.2% of views, 36 per second × 5 KB ≈ 15.6 GB a day) plus 1% of the rest (about 13 GB a day). Services log warnings and errors with the request ID; at a few percent of calls that is tens of GB a day, not 2.3 TB. Metrics per service give rate, errors and p50, p95 and p99 for 14 days at a tiny cost. Total well under 300 GB a day. Trade-off: holding every trace until the view ends costs memory in the tracing system.",
+      "Design B, a fixed share of traces plus metrics: every call carries a request ID; 5% of page views are traced, decided at the start: 150 per second × 5 KB ≈ 65 GB a day. A 0.1% slowdown for an hour is 10,800 slow views, of which about 540 are traced, enough to see which service is slow. Logs as in Design A. Metrics per service show the slow service's p99 rising at the same time. Total under 300 GB a day. Trade-off: a single rare slow view is usually not traced, so one customer's complaint may have no trace."
+    ],
+    "reference": {
+      "assumptions": [
+        "Spans from all services can be joined by request ID",
+        "Warnings and errors are a small share of calls"
+      ],
+      "design": "Every call carries a request ID, and every log line includes it.\nMetrics: each service reports its request rate, error share and p50, p95 and p99 latency every 10 seconds; kept for 14 days, this is a tiny share of the budget.\nTraces: each trace is held until the page view ends; it is kept if the view was slow or failed, (1% + 0.2%) × 3,000 = 36 per second × 5 KB × 86,400 ≈ 15.6 GB a day, plus 1% of the other views, about 13 GB a day.\nLogs: services write warnings and errors only, with the request ID. Logging every call would be 3,000 × 9 × 1 KB = 27 MB per second, about 2.3 TB a day, far over the 300 GB budget.\nFor a slowdown, the metrics show which service's p99 rose; the kept traces show where the slow views spent their time; the logs for those request IDs show the errors.",
+      "alternatives": [
+        "Tracing a fixed 5% of views: simpler, about 540 traces for a 0.1% slowdown in an hour, but most single slow views are missed",
+        "Rejected: logging every call, because it needs about 2.3 TB a day against a budget of 300 GB"
+      ]
+    }
+  }
+]
