@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P44-burst-rule",
+    "level": 44,
+    "title": "Choosing the Counting Rule",
+    "statement": "A sync API's clients usually send about 2 requests per second, but after being offline they upload up to 20 changes at once. Exercise assumptions: such a batch of 20 must be accepted at once after a quiet time; in the long run a client may make at most 120 requests per minute plus that one burst; the team prefers the least memory per client, because there are 10 million clients.",
+    "examples": [
+      "A token bucket needs two numbers per client; a sliding log keeps one timestamp per request in the window."
+    ],
+    "constraints": [
+      "Accept a batch of 20 after a quiet time.",
+      "At most 120 per minute in the long run, plus one burst.",
+      "Prefer the least memory per client."
+    ],
+    "approaches": [
+      {
+        "id": "token-bucket",
+        "name": "A token bucket with room for 20, refilled at 2 per second",
+        "hint": "Room for the burst, refill for the rate",
+        "label": "best",
+        "time": "One check per request",
+        "space": "Two numbers per client, about 100 bytes",
+        "why": "A full bucket lets the batch of 20 through, and the refill of 2 per second keeps the long run at 120 per minute. Two numbers per client is about 1 GB for 10 million clients."
+      },
+      {
+        "id": "sliding-log",
+        "name": "A sliding log allowing 120 requests in any 60 seconds",
+        "hint": "Remember every request time",
+        "label": "valid",
+        "time": "One check per request",
+        "space": "Up to 120 timestamps per client, about 2 KB",
+        "why": "It accepts the batch and never allows more than 120 in any minute, so it meets both rules, but it keeps up to 120 timestamps per client, about 20 GB for 10 million, against the stated preference."
+      },
+      {
+        "id": "fixed-per-second",
+        "name": "A fixed window of 2 requests per calendar second",
+        "hint": "Match the usual rate exactly",
+        "label": "unsuitable",
+        "time": "One check per request",
+        "space": "One counter per client",
+        "why": "A batch of 20 would get 2 through and 18 refused, breaking the rule that a batch after a quiet time is accepted."
+      }
+    ]
+  },
+  {
+    "id": "P44-many-servers",
+    "level": 44,
+    "title": "Counting on Many Servers",
+    "statement": "Ten API servers enforce a limit of 600 requests per minute per API key. Some customers keep long-lived connections, so all their requests reach one server. A shared in-memory store is available and answers within 1 ms. Exercise assumptions: a key must never get more than 600 per minute; the team prefers that every customer can use its full 600, wherever its requests land; the extra 1 ms is acceptable.",
+    "examples": [
+      "A per-node share is 600 ÷ 10 = 60 per minute on each server."
+    ],
+    "constraints": [
+      "Never more than 600 per minute per key.",
+      "The extra 1 ms is acceptable.",
+      "Prefer that every customer can use its full limit."
+    ],
+    "approaches": [
+      {
+        "id": "global-atomic",
+        "name": "One count per key in the shared store, updated by one atomic increment or script",
+        "hint": "One count, one step",
+        "label": "best",
+        "time": "One 1 ms store call per request",
+        "space": "One entry per key in the store",
+        "why": "All servers update the same count in one step each, so the limit holds exactly, and a customer on one server still gets its full 600."
+      },
+      {
+        "id": "per-node",
+        "name": "Each server allows 60 per minute per key on its own",
+        "hint": "Split the limit",
+        "label": "valid",
+        "time": "No extra call",
+        "space": "One counter per key on each server",
+        "why": "Ten shares of 60 can never add up past 600, so the hard rule holds, but a customer whose requests all reach one server gets only 60, against the stated preference."
+      },
+      {
+        "id": "read-then-write",
+        "name": "Each server reads the shared count, checks it, then writes count + 1",
+        "hint": "Shared, in two steps",
+        "label": "unsuitable",
+        "time": "Two store calls per request",
+        "space": "One entry per key in the store",
+        "why": "Servers that read the same count at the same moment all allow a request, so a key can get more than 600, breaking the hard rule."
+      }
+    ]
+  },
+  {
+    "id": "P44-store-down",
+    "level": 44,
+    "title": "When the Limit Store Is Down",
+    "statement": "A shop's product search API is limited to 50 requests per second per client to stop scrapers. The limit store can be unreachable for up to 2 minutes during maintenance. Exercise assumptions: search must keep working for real users during such a time; the search servers can handle twice the normal load; measured over past outages, total traffic with no limit at all stayed under 1.5 times normal for 2 minutes; the team prefers to keep some protection against scrapers during the outage.",
+    "examples": [
+      "A per-node fallback with 8 servers: 50 ÷ 8 ≈ 6 per second per client on each server."
+    ],
+    "constraints": [
+      "Search keeps working for real users.",
+      "Servers are not flooded beyond their capacity.",
+      "Prefer some protection during the outage."
+    ],
+    "approaches": [
+      {
+        "id": "open-per-node",
+        "name": "Fail open to a per-node limit of about 6 per second per client on each server",
+        "hint": "Keep a rough limit locally",
+        "label": "best",
+        "time": "No store call during the outage",
+        "space": "One counter per client on each server",
+        "why": "Real users keep searching, and a scraper is still held to about 50 per second across 8 servers, so the servers stay within capacity and protection continues."
+      },
+      {
+        "id": "open-unlimited",
+        "name": "Fail open with no limit until the store returns",
+        "hint": "Let everything through",
+        "label": "valid",
+        "time": "No store call during the outage",
+        "space": "Nothing extra",
+        "why": "Search keeps working, and the measured 1.5 times normal load stays within the servers' twice-normal capacity, but scrapers are unchecked for those 2 minutes, against the stated preference."
+      },
+      {
+        "id": "closed",
+        "name": "Fail closed: refuse every search until the store returns",
+        "hint": "Safe for the servers",
+        "label": "unsuitable",
+        "time": "Every search refused for up to 2 minutes",
+        "space": "Nothing extra",
+        "why": "Real users cannot search during maintenance, breaking the first rule."
+      }
+    ]
+  }
+]

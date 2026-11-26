@@ -46,7 +46,7 @@
     "id": "P43-redirect-code",
     "level": 43,
     "title": "Choosing the Redirect",
-    "statement": "A company's printed manuals use short links that will never change, and nobody needs click counts. Up to 20,000 clicks per second arrive at peak, but the app servers handle about 5,000 redirects per second. A CDN in front can keep responses that allow it. Exercise assumptions: every click must reach the right page; the servers must stay within their capacity; the team prefers the fewest requests reaching the CDN and servers.",
+    "statement": "A company's printed manuals use short links that will never change, and nobody needs click counts. Up to 20,000 clicks per second arrive at peak, but the app servers handle about 5,000 redirects per second. A CDN in front can keep responses that allow it. Measured: when the CDN or browsers may keep a redirect for at least 5 minutes, fewer than 1 in 100 clicks at peak reach the servers. Exercise assumptions: every click must reach the right page; the servers must stay within their capacity; the team prefers the fewest requests reaching the CDN and servers.",
     "examples": [
       "Browsers may keep a 301 for as long as its cache time allows."
     ],
@@ -61,18 +61,18 @@
         "name": "301 with a long cache time, such as one year, for browsers and the CDN",
         "hint": "Permanent, and say so",
         "label": "best",
-        "time": "Repeat clicks answered by the browser",
+        "time": "Repeat clicks answered by the browser; under 200 per second reach the servers",
         "space": "Nothing extra",
-        "why": "The links never change and nobody counts clicks, so a permanent redirect is correct, and browsers and the CDN can answer repeats themselves: the fewest requests, far below the servers' limit."
+        "why": "The links never change and nobody counts clicks, so a permanent redirect is correct. Browsers answer their own repeats and the CDN most others; by the measurement, fewer than 1 in 100 clicks, under 200 per second, reach the servers, and the fewest requests travel at all."
       },
       {
         "id": "302-cdn",
         "name": "302 with `max-age=0, s-maxage=300`, so only the CDN keeps it",
         "hint": "Temporary, cached at the edge",
         "label": "valid",
-        "time": "Every click reaches the CDN; servers see about one per link every 5 minutes",
+        "time": "Every click reaches the CDN; under 200 per second reach the servers",
         "space": "Nothing extra",
-        "why": "It is correct and the CDN shields the servers, but every click still travels to the CDN, more requests than needed for links that never change, against the stated preference."
+        "why": "It is correct, and by the measurement fewer than 1 in 100 clicks, under 200 per second, reach the servers, but every click still travels to the CDN, more requests than needed for links that never change, against the stated preference."
       },
       {
         "id": "302-no-store",
@@ -89,7 +89,7 @@
     "id": "P43-hot-link",
     "level": 43,
     "title": "A Link Goes Viral",
-    "statement": "One short link in a viral post is clicked 50,000 times per second. The app servers can answer about 30,000 redirects per second in total, from their cache; a CDN in front of them can absorb any number of repeated clicks for a response it may keep. Exercise assumptions: the link's destination may change, and a change must take effect within 5 minutes; responses use 302 so browsers do not keep them; the team prefers changes to show as quickly as possible.",
+    "statement": "One short link in a viral post is clicked 50,000 times per second. The app servers can answer about 30,000 redirects per second in total, from their cache; a CDN in front of them can absorb any number of repeated clicks for a response it may keep. Exercise assumptions: the link's destination may change, and a change must take effect within 5 minutes; the app servers keep a destination in their cache for at most 30 seconds after a change; responses use 302 so browsers check again before reusing them; the team prefers changes to show as quickly as possible.",
     "examples": [
       "With s-maxage=60 the CDN asks the servers about once a minute per CDN location."
     ],
@@ -106,7 +106,7 @@
         "label": "best",
         "time": "Almost all clicks answered by the CDN",
         "space": "Nothing extra",
-        "why": "The CDN answers nearly all 50,000 clicks per second and asks the servers about once a minute per location, so the servers stay far below 30,000, and a change shows within about a minute plus the app cache's time."
+        "why": "The CDN answers nearly all 50,000 clicks per second and asks the servers about once a minute per location, so the servers stay far below 30,000, and a change shows within 60 + 30 = 90 seconds."
       },
       {
         "id": "cdn-240",
@@ -115,7 +115,7 @@
         "label": "valid",
         "time": "Almost all clicks answered by the CDN",
         "space": "Nothing extra",
-        "why": "It serves the load just as well and a change still shows within 5 minutes if the app cache is short, but changes take up to 4 minutes at the CDN, against the preference for quick changes."
+        "why": "It serves the load just as well, and a change shows within 240 + 30 = 270 seconds, inside 5 minutes, but up to three times later than with 60 seconds, against the preference for quick changes."
       },
       {
         "id": "servers-only",

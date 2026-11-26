@@ -299,5 +299,12 @@
     "title": "URL Shortener",
     "summary": "The first case study: short codes that never collide, redirects that stay fast, and the choice between 301 and 302 for caching, click counts and changing a link.",
     "phase": 4
+  },
+  {
+    "number": 44,
+    "slug": "rate-limiter-service",
+    "title": "Rate Limiter Service",
+    "summary": "A case study: token buckets and sliding windows, atomic counts in a shared store, per-node or global limits, and whether to fail open or closed when the store is down.",
+    "phase": 4
   }
 ]

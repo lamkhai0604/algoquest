@@ -1,0 +1,866 @@
+[
+  {
+    "title": "Requirements and estimates",
+    "body": "A public API has 1 million API keys and 20 servers, with up to 50,000 requests per second at peak. Requirements: (F1) each key may make **100 requests per minute** and send up to **20 at once** after a quiet time; (F2) refused requests get 429 with Retry-After; (N1) the limiter adds at most 2 ms; (N2) the limit holds however requests are spread. Estimates: one check per request, **50,000 store calls per second**; about 100 bytes per key, **100 MB** for a million keys.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8,
+            "note": "1 M API keys"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "limit",
+          "value": "100 per minute per key"
+        },
+        {
+          "name": "burst",
+          "value": "up to 20 at once"
+        },
+        {
+          "name": "checks",
+          "value": "50,000 per second"
+        },
+        {
+          "name": "memory",
+          "value": "about 100 MB"
+        },
+        {
+          "name": "added time",
+          "value": "at most 2 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Counting by the minute",
+    "body": "The simplest rule is a **fixed window**: one counter per key per minute, reset at the top of each minute. But a client can send 100 requests at 0:59.9 and 100 more at 1:00.0: **200 requests within about a second**, twice the limit. If the promise is \"at most 100 in any minute\", a fixed window breaks it at every window edge.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "counter per minute"
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "limit",
+          "value": "100 per minute"
+        },
+        {
+          "name": "at 0:59.9",
+          "value": "100 requests"
+        },
+        {
+          "name": "at 1:00.0",
+          "value": "100 requests"
+        },
+        {
+          "name": "in about a second",
+          "value": "200 requests"
+        }
+      ],
+      "predict": {
+        "question": "A fixed window allows 100 requests per key per calendar minute. What is the most requests one key can get through within about one second?",
+        "options": [
+          "100",
+          "101",
+          "200",
+          "6,000"
+        ],
+        "answer": 2,
+        "explanation": "The key sends 100 at the very end of one minute and 100 at the very start of the next. Each minute's counter allows its 100, so 200 pass within about a second. A sliding window or token bucket avoids this.",
+        "hides": [
+          "in about a second"
+        ]
+      }
+    }
+  },
+  {
+    "title": "A bucket of tokens",
+    "body": "A **token bucket** gives each key a bucket with room for **20 tokens** that refills at 100 per minute, about 1.67 per second. Each request takes a token; an empty bucket means 429. After a quiet time the bucket is full, so up to 20 requests pass at once, and after that about 1.67 per second. It needs only two numbers per key: tokens left and the last refill time.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "room for 20"
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "room",
+          "value": "20 tokens"
+        },
+        {
+          "name": "refill",
+          "value": "100 per minute"
+        },
+        {
+          "name": "idle for 10 minutes, then sends",
+          "value": "50 at once"
+        },
+        {
+          "name": "pass at once",
+          "value": "20"
+        }
+      ],
+      "predict": {
+        "question": "A key's bucket holds at most 20 tokens and refills at 100 per minute. The key is quiet for 10 minutes, then sends 50 requests at once. How many pass immediately?",
+        "options": [
+          "0",
+          "20",
+          "50",
+          "100"
+        ],
+        "answer": 1,
+        "explanation": "The bucket refills during the quiet time but never holds more than 20 tokens, so 20 requests pass and the other 30 get 429. After that, about 1.67 tokens arrive each second.",
+        "hides": [
+          "pass at once"
+        ]
+      }
+    }
+  },
+  {
+    "title": "API, data and the design",
+    "body": "**API:** each API server calls `allow(key)` before handling a request; refused requests get 429 and `Retry-After` with the seconds until the next token. **Data model:** per key in a shared in-memory store, tokens left and the last refill time, with an expiry a few minutes after the key's last request. **High-level design:** clients → load balancer → API servers, which all check the same **limit store**, with a replica.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7,
+            "note": "tokens, last refill"
+          },
+          {
+            "kind": "cache",
+            "label": "Store replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "check",
+          "value": "allow(key)"
+        },
+        {
+          "name": "refused",
+          "value": "429 + Retry-After"
+        },
+        {
+          "name": "per key",
+          "value": "tokens, last refill time"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Two servers, one token",
+    "body": "Suppose each server **reads** a key's tokens, decides, and then **writes** the new value. Two servers read \"1 token left\" at the same moment, both allow their request, and both write 0: **two** requests got through on one token, and nothing reports an error. The fix is one **atomic** step in the store: a small script that refills by the time passed, takes a token if there is one, and saves the result. No other request can run between those parts, so only one of the two gets the last token.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "reads 1 token"
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5,
+            "note": "reads 1 token"
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7,
+            "state": "hot"
+          },
+          {
+            "kind": "cache",
+            "label": "Store replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "tokens left",
+          "value": "1"
+        },
+        {
+          "name": "server 1",
+          "value": "reads 1, allows"
+        },
+        {
+          "name": "server 2",
+          "value": "reads 1, allows"
+        },
+        {
+          "name": "requests through",
+          "value": "2"
+        }
+      ],
+      "predict": {
+        "question": "A key has 1 token left. Two servers each read it at the same moment, see 1, allow their request, and write 0. How many requests got through?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "It depends on which server writes last"
+        ],
+        "answer": 2,
+        "explanation": "Both servers decided from the same old value, so both allowed a request, and the second write simply repeated the first. One token was spent twice. An atomic script in the store makes the read, the decision and the write one step.",
+        "hides": [
+          "requests through"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Per node or global?",
+    "body": "Without a shared store, each of 20 servers could allow **100 ÷ 20 = 5** per minute per key. That needs no extra call, but it is fair only if requests spread evenly: a client whose connections stay on one server gets 5, not 100, and a client spread over all 20 still gets 100. A **global** count in the shared store holds the limit exactly however requests spread, at the cost of one call, about **1 ms**, within the 2 ms budget, and 50,000 calls per second on a store that handles about 100,000.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "local: 5 per min"
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5,
+            "note": "local: 5 per min"
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Store replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "per node",
+          "value": "5 per minute per key on each server"
+        },
+        {
+          "name": "client on one server",
+          "value": "gets 5, not 100"
+        },
+        {
+          "name": "global",
+          "value": "exact, one 1 ms call"
+        },
+        {
+          "name": "store load",
+          "value": "50,000 of 100,000 per second"
+        }
+      ]
+    }
+  },
+  {
+    "title": "When the store is down",
+    "body": "If the store's main copy fails, its replica takes over within about 2 seconds; tokens taken in that moment may be lost, letting a few extra requests through. If the store is unreachable, the limiter must choose. **Fail-closed**, refusing everything, would turn a short store outage into a full API outage. **Fail-open**, allowing everything, leaves no protection. For a general API, the team **fails open to per-node limits**: each server allows 5 per minute per key until the store returns. For an action that costs money each time, such as sending paid text messages, failing closed can be the right choice.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "fallback: 5 per min"
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7,
+            "state": "down"
+          },
+          {
+            "kind": "cache",
+            "label": "Store replica",
+            "x": 10,
+            "y": 3,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "store fails",
+          "value": "replica in about 2 s"
+        },
+        {
+          "name": "both unreachable",
+          "value": "fail open to per-node limits"
+        },
+        {
+          "name": "paid actions",
+          "value": "may fail closed"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Summary",
+    "body": "Each requirement and how it is met: bursts of 20 and 100 per minute by the **token bucket**; 429 with Retry-After for refused requests; exact limits however requests spread by a **global, atomic** count in the shared store; at most 2 ms by one 1 ms call; 50,000 checks per second at half a store node; store outages by **failing open to per-node limits**, with the reason that refusing everyone would be worse for a general API.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Clients",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Store replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Services",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "rule",
+          "value": "token bucket, 20 and 100/min"
+        },
+        {
+          "name": "exact",
+          "value": "global and atomic"
+        },
+        {
+          "name": "cost",
+          "value": "1 ms, 50,000 calls/s"
+        },
+        {
+          "name": "store down",
+          "value": "fail open to 5/min/server"
+        }
+      ]
+    }
+  }
+]
