@@ -1,0 +1,759 @@
+[
+  {
+    "title": "Three nines",
+    "body": "The shop's server and its database are each up **99.9%** of the time, \"three nines\". A 30-day month has 43,200 minutes, so 0.1% down is about **43 minutes** a month. Each extra nine allows ten times less: 99.99% is about 4 minutes. Availability is a budget of downtime, and every part a request needs spends from it.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1,
+            "note": "up 99.9%"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4,
+            "note": "up 99.9%"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "minutes in 30 days",
+          "value": "43,200"
+        },
+        {
+          "name": "99.9% allows",
+          "value": "about 43 min down"
+        },
+        {
+          "name": "99.99% allows",
+          "value": "about 4 min down"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Both must be up",
+    "body": "A request needs the server **and** the database. If either is down, the request fails, so their availabilities **multiply**: 0.999 × 0.999 ≈ 0.998, or **99.8%**. That is about 86 minutes down a month, twice as much as either part alone. Every part that a request needs in a row makes the whole less available.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1,
+            "note": "up 99.9%"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4,
+            "note": "up 99.9%"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "server",
+          "value": "99.9%"
+        },
+        {
+          "name": "database",
+          "value": "99.9%"
+        },
+        {
+          "name": "whole app",
+          "value": "about 99.8%"
+        },
+        {
+          "name": "downtime",
+          "value": "about 86 min a month"
+        }
+      ],
+      "predict": {
+        "question": "Every request needs both the server (up 99.9%) and the database (up 99.9%), and their failures are independent. About how available is the whole app?",
+        "options": [
+          "99.9%, the same as each part",
+          "About 99.8%, because both must be up",
+          "About 99.99%, because there are two parts",
+          "100%, because one covers for the other"
+        ],
+        "answer": 1,
+        "explanation": "The request fails if either part is down. The chance both are up is 0.999 × 0.999 ≈ 0.998. Two parts in a row double the downtime; they do not cover for each other, because each does a different job.",
+        "hides": [
+          "whole app",
+          "downtime"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Two copies",
+    "body": "Now add a second server behind the load balancer. The server tier is down only if **both** copies are down at once: 0.001 × 0.001 = 0.000001, so the tier is up **99.9999%**. This is **redundancy**. It holds only if the copies fail independently and health checks move traffic within seconds. The whole app is now about 99.9%, limited by the **one database**, which is the next part to give a copy (SD 6).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 4,
+            "y": 7
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4,
+            "note": "the limit now"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "one server",
+          "value": "99.9%"
+        },
+        {
+          "name": "two servers",
+          "value": "99.9999%"
+        },
+        {
+          "name": "whole app",
+          "value": "about 99.9%"
+        },
+        {
+          "name": "limit",
+          "value": "the single database"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A slow card provider",
+    "body": "The card provider stops answering for 30 seconds. With no **timeout**, each payment request holds a worker the whole time: 50 payment requests per second × 30 seconds = **1,500 workers**, more than the servers' 1,200. Every worker is soon waiting, and even the home page, which never calls the provider, gets no answer. With a **300 ms timeout**, payments hold at most 50 × 0.3 = 15 workers, and the rest of the shop keeps working. A slow dependency is more dangerous than one that fails fast.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 8,
+            "y": 0,
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "payment requests",
+          "value": "50 per second"
+        },
+        {
+          "name": "no timeout",
+          "value": "50 × 30 s = 1,500 workers"
+        },
+        {
+          "name": "300 ms timeout",
+          "value": "50 × 0.3 s = 15 workers"
+        },
+        {
+          "name": "workers in total",
+          "value": "1,200"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Retries at every layer",
+    "body": "The inventory database is failing. The phone tries each tap up to 3 times; for each try, the server calls Inventory up to 3 times; for each call, Inventory tries its database up to 3 times. One tap can become 3 × 3 × 3 = **27** database calls, aimed at the one part that is already failing. This is a **retry storm**: retries meant to help turn a small failure into an overload.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 6,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 7,
+            "state": "down"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "vars": [
+        {
+          "name": "layers that retry",
+          "value": "3"
+        },
+        {
+          "name": "tries per layer",
+          "value": "3"
+        },
+        {
+          "name": "database calls per tap",
+          "value": "27"
+        }
+      ],
+      "predict": {
+        "question": "The phone tries each tap up to 3 times, the server tries Inventory up to 3 times for each, and Inventory tries its database up to 3 times for each. While the database is failing, how many database calls can one tap cause?",
+        "options": [
+          "3",
+          "9",
+          "27",
+          "81"
+        ],
+        "answer": 2,
+        "explanation": "Each layer multiplies the tries of the layer above: 3 at the phone, 3 × 3 = 9 calls to Inventory, and 9 × 3 = 27 calls to the database. All of them land on the database that is failing.",
+        "hides": [
+          "database calls per tap"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Backoff, jitter and a budget",
+    "body": "The fix has four parts. Retry at **one layer** only, here the phone, and let the others fail fast. Make **at most 3 attempts**. Wait longer each time, about 100 ms and then 200 ms (**backoff**), plus a random amount (**jitter**), so a thousand phones that failed together do not all retry at the same moment. And keep a **retry budget**: if retries pass 10% of requests, stop retrying, so a failing service sees at most about 1.1 times its normal load. Retry only requests that are safe to repeat (SD 7).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8,
+            "note": "retry here only"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 6,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Inventory DB",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "layers that retry",
+          "value": "1 (the phone)"
+        },
+        {
+          "name": "attempts",
+          "value": "at most 3"
+        },
+        {
+          "name": "waits",
+          "value": "about 100, 200 ms + random"
+        },
+        {
+          "name": "retry budget",
+          "value": "10% of requests"
+        }
+      ]
+    }
+  },
+  {
+    "title": "More arrive than leave",
+    "body": "The sale starts: **2,400** requests per second arrive, and the six servers can finish **1,800**. The line of waiting requests grows by 600 every second. After 10 seconds 6,000 are waiting, and a new request waits about 6,000 ÷ 1,800 ≈ **3.3 seconds** before it even starts. Phones give up after 2 seconds, so the servers spend their time on requests whose users have already left, and the phones' retries add more. This is **overload**: a queue cannot fix it, only hide it for a few seconds.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1,
+            "state": "hot"
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 4,
+            "y": 7,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "arriving",
+          "value": "2,400 per second"
+        },
+        {
+          "name": "finished",
+          "value": "1,800 per second"
+        },
+        {
+          "name": "line grows by",
+          "value": "600 per second"
+        },
+        {
+          "name": "waiting after 10 s",
+          "value": "6,000"
+        },
+        {
+          "name": "a new request waits",
+          "value": "about 3.3 s"
+        }
+      ],
+      "predict": {
+        "question": "2,400 requests per second arrive, and the servers finish 1,800 per second. After 10 seconds, about how long does a new request wait before it starts?",
+        "options": [
+          "Almost no time, because the servers are still running",
+          "About 0.3 seconds",
+          "About 3.3 seconds",
+          "About 33 seconds"
+        ],
+        "answer": 2,
+        "explanation": "The line grows by 2,400 − 1,800 = 600 a second, so after 10 seconds 6,000 requests are ahead. At 1,800 a second, they take 6,000 ÷ 1,800 ≈ 3.3 seconds to clear, and the line keeps growing.",
+        "hides": [
+          "waiting after 10 s",
+          "a new request waits"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Degrade, shed, then scale",
+    "body": "First **degrade**: turning off recommendations, a third of each request's work, raises each server's limit from 300 to about 450, so 6 × 450 = 2,700 per second, enough for 2,400. If that were not enough, **shed**: refuse the extra at the load balancer with \"try again shortly\", which is cheap and fast. A **rate limit** per client stops one client from taking the capacity others need. Meanwhile **autoscaling** adds servers, but they arrive about 5 minutes later, and the budget allows at most 10. With 10 servers, each takes 240 per second, 80% of 300, and recommendations come back.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Users",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1,
+            "note": "recs off: 450/s"
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 4,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "New server",
+            "x": 7,
+            "y": 1,
+            "note": "ready in ~5 min"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              5
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "degraded",
+          "value": "6 × 450 = 2,700 per second"
+        },
+        {
+          "name": "still too much",
+          "value": "shed at the load balancer"
+        },
+        {
+          "name": "scale-out delay",
+          "value": "about 5 minutes"
+        },
+        {
+          "name": "maximum",
+          "value": "10 servers, 240 per second each"
+        }
+      ]
+    }
+  }
+]

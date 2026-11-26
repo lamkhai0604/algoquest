@@ -257,5 +257,12 @@
     "title": "Transactions Across Services",
     "summary": "Keep services in step when one action changes several databases: sagas with compensations, the transactional outbox, and why two-phase commit is rare.",
     "phase": 4
+  },
+  {
+    "number": 38,
+    "slug": "reliability-overload-and-autoscaling",
+    "title": "Reliability, Overload and Autoscaling",
+    "summary": "Keep a service up under failures and floods: availability in nines, redundancy, timeouts, careful retries, load shedding, graceful degradation and autoscaling.",
+    "phase": 4
   }
 ]

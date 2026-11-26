@@ -985,6 +985,71 @@
           "term": "CRDT",
           "vi": "kiểu dữ liệu tự gộp được không mất thay đổi",
           "firstLevel": 36
+        },
+        {
+          "term": "nines",
+          "vi": "số chữ số 9 của độ sẵn sàng",
+          "firstLevel": 38
+        },
+        {
+          "term": "redundancy",
+          "vi": "dự phòng bằng nhiều bản sao",
+          "firstLevel": 38
+        },
+        {
+          "term": "retry storm",
+          "vi": "bão thử lại",
+          "firstLevel": 38
+        },
+        {
+          "term": "retry budget",
+          "vi": "ngân sách thử lại",
+          "firstLevel": 38
+        },
+        {
+          "term": "overload",
+          "vi": "quá tải",
+          "firstLevel": 38
+        },
+        {
+          "term": "load shedding",
+          "vi": "chủ động từ chối bớt tải",
+          "firstLevel": 38
+        },
+        {
+          "term": "graceful degradation",
+          "vi": "giảm chức năng có kiểm soát",
+          "firstLevel": 38
+        },
+        {
+          "term": "autoscaling",
+          "vi": "tự động thêm bớt server",
+          "firstLevel": 38
+        },
+        {
+          "term": "scale-out delay",
+          "vi": "độ trễ khi thêm server",
+          "firstLevel": 38
+        },
+        {
+          "term": "rate limiting",
+          "vi": "giới hạn số request",
+          "firstLevel": 38
+        },
+        {
+          "term": "fail fast",
+          "vi": "báo lỗi ngay",
+          "firstLevel": 38
+        },
+        {
+          "term": "circuit breaker",
+          "vi": "cầu dao ngắt cuộc gọi",
+          "firstLevel": 38
+        },
+        {
+          "term": "half-open",
+          "vi": "trạng thái nửa mở",
+          "firstLevel": 38
         }
       ]
     },
