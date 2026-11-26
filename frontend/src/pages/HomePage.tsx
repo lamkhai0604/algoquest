@@ -17,7 +17,7 @@ import game from "./Game.module.css";
 import { translate, useTranslation } from "../i18n";
 import type { Locale } from "../i18n";
 import styles from "./Pages.module.css";
-import { levelLabel } from "../game/levelLabel";
+import { FIRST_SYSTEM_DESIGN_LEVEL, levelLabel } from "../game/levelLabel";
 
 /** The three sections of the Learning Path, in order. */
 const PHASES = [
@@ -61,9 +61,17 @@ function stateLabel(
 
 const canEnter = (level: Level) => level.available && level.state !== "LOCKED";
 
-/** The level the player should continue: the furthest one they can enter. */
+/**
+ * The level the player should continue: the furthest algorithm level they can enter. System Design
+ * levels are open to every player (D-084), so they would otherwise always be the furthest; they are
+ * chosen only when no algorithm level can be entered.
+ */
 function currentLevel(levels: Level[]): Level | undefined {
-  return levels.filter(canEnter).at(-1);
+  const open = levels.filter(canEnter);
+  return (
+    open.filter((level) => level.number < FIRST_SYSTEM_DESIGN_LEVEL).at(-1) ??
+    open.at(-1)
+  );
 }
 
 function ContinueCard({ level }: { level: Level }) {

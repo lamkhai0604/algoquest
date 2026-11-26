@@ -118,7 +118,7 @@
         },
         {
           "term": "idempotent",
-          "vi": "gửi lại nhiều lần vẫn cho cùng kết quả",
+          "vi": "gửi lại nhiều lần vẫn giữ cùng trạng thái dự kiến",
           "firstLevel": 32
         },
         {
@@ -133,7 +133,7 @@
         },
         {
           "term": "offset",
-          "vi": "số mục bỏ qua",
+          "vi": "vị trí trong dãy dữ liệu (số mục đã đi qua)",
           "firstLevel": 32
         },
         {
@@ -480,6 +480,61 @@
           "term": "lost update",
           "vi": "mất cập nhật",
           "firstLevel": 31
+        },
+        {
+          "term": "replication",
+          "vi": "sao chép dữ liệu sang nhiều máy chủ",
+          "firstLevel": 33
+        },
+        {
+          "term": "leader",
+          "vi": "máy chủ chính nhận mọi lệnh ghi",
+          "firstLevel": 33
+        },
+        {
+          "term": "follower",
+          "vi": "máy chủ bản sao áp dụng thay đổi từ leader",
+          "firstLevel": 33
+        },
+        {
+          "term": "read replica",
+          "vi": "bản sao dùng để phục vụ lệnh đọc",
+          "firstLevel": 33
+        },
+        {
+          "term": "replication lag",
+          "vi": "độ trễ sao chép",
+          "firstLevel": 33
+        },
+        {
+          "term": "synchronous replication",
+          "vi": "sao chép đồng bộ",
+          "firstLevel": 33
+        },
+        {
+          "term": "asynchronous replication",
+          "vi": "sao chép bất đồng bộ",
+          "firstLevel": 33
+        },
+        {
+          "term": "read-your-writes",
+          "vi": "luôn thấy thay đổi của chính mình",
+          "firstLevel": 33
+        },
+        {
+          "term": "restore",
+          "vi": "khôi phục từ bản sao lưu",
+          "firstLevel": 33
+        },
+        {
+          "term": "point-in-time recovery",
+          "vi": "khôi phục về một thời điểm",
+          "firstLevel": 33
+        },
+        {
+          "term": "log archiving",
+          "vi": "lưu trữ nhật ký thay đổi",
+          "firstLevel": 33
         }
       ]
     },
@@ -575,6 +630,291 @@
           "term": "downtime",
           "vi": "thời gian ngừng hoạt động",
           "firstLevel": 29
+        },
+        {
+          "term": "failover",
+          "vi": "chuyển sang máy chủ dự phòng",
+          "firstLevel": 33
+        },
+        {
+          "term": "promotion",
+          "vi": "nâng follower thành leader",
+          "firstLevel": 33
+        },
+        {
+          "term": "RPO",
+          "vi": "lượng dữ liệu tối đa được phép mất",
+          "firstLevel": 33
+        },
+        {
+          "term": "RTO",
+          "vi": "thời gian tối đa để hệ thống hoạt động lại",
+          "firstLevel": 33
+        },
+        {
+          "term": "split brain",
+          "vi": "hai máy chủ cùng nghĩ mình là leader",
+          "firstLevel": 33
+        },
+        {
+          "term": "fencing",
+          "vi": "chặn leader cũ ghi dữ liệu",
+          "firstLevel": 33
+        },
+        {
+          "term": "asynchronous work",
+          "vi": "công việc làm sau khi đã trả lời request",
+          "firstLevel": 34
+        },
+        {
+          "term": "message broker",
+          "vi": "máy chủ lưu và chuyển message",
+          "firstLevel": 34
+        },
+        {
+          "term": "message",
+          "vi": "thông điệp",
+          "firstLevel": 34
+        },
+        {
+          "term": "producer",
+          "vi": "bên gửi message",
+          "firstLevel": 34
+        },
+        {
+          "term": "consumer",
+          "vi": "bên nhận và xử lý message",
+          "firstLevel": 34
+        },
+        {
+          "term": "worker",
+          "vi": "tiến trình xử lý công việc từ hàng đợi",
+          "firstLevel": 34
+        },
+        {
+          "term": "queue",
+          "vi": "hàng đợi",
+          "firstLevel": 34
+        },
+        {
+          "term": "acknowledgment (ack)",
+          "vi": "xác nhận đã xử lý xong",
+          "firstLevel": 34
+        },
+        {
+          "term": "visibility timeout",
+          "vi": "thời gian message bị ẩn khi đang xử lý",
+          "firstLevel": 34
+        },
+        {
+          "term": "at-least-once delivery",
+          "vi": "giao ít nhất một lần",
+          "firstLevel": 34
+        },
+        {
+          "term": "idempotency key",
+          "vi": "khoá để lặp lại thao tác mà không đổi kết quả",
+          "firstLevel": 34
+        },
+        {
+          "term": "backlog",
+          "vi": "lượng việc đang chờ",
+          "firstLevel": 34
+        },
+        {
+          "term": "exponential backoff",
+          "vi": "chờ lâu gấp đôi sau mỗi lần thử lại",
+          "firstLevel": 34
+        },
+        {
+          "term": "jitter",
+          "vi": "độ lệch ngẫu nhiên thêm vào thời gian chờ",
+          "firstLevel": 34
+        },
+        {
+          "term": "dead-letter queue",
+          "vi": "hàng đợi cho message lỗi nhiều lần",
+          "firstLevel": 34
+        },
+        {
+          "term": "poison message",
+          "vi": "message làm worker lỗi mỗi lần xử lý",
+          "firstLevel": 34
+        },
+        {
+          "term": "publish-subscribe (pub/sub)",
+          "vi": "xuất bản và đăng ký nhận",
+          "firstLevel": 34
+        },
+        {
+          "term": "subscriber",
+          "vi": "bên đăng ký nhận",
+          "firstLevel": 34
+        },
+        {
+          "term": "event log",
+          "vi": "nhật ký sự kiện",
+          "firstLevel": 34
+        },
+        {
+          "term": "back-pressure",
+          "vi": "giảm hoặc từ chối việc mới khi bị quá tải",
+          "firstLevel": 34
+        },
+        {
+          "term": "batch processing",
+          "vi": "xử lý theo lô",
+          "firstLevel": 34
+        },
+        {
+          "term": "stream processing",
+          "vi": "xử lý theo luồng",
+          "firstLevel": 34
+        },
+        {
+          "term": "partitioning",
+          "vi": "chia dữ liệu thành nhiều phần trên nhiều máy chủ",
+          "firstLevel": 35
+        },
+        {
+          "term": "sharding",
+          "vi": "chia dữ liệu theo shard",
+          "firstLevel": 35
+        },
+        {
+          "term": "partition",
+          "vi": "một phần dữ liệu",
+          "firstLevel": 35
+        },
+        {
+          "term": "shard",
+          "vi": "một phần dữ liệu nằm trên một máy chủ",
+          "firstLevel": 35
+        },
+        {
+          "term": "partition key",
+          "vi": "trường quyết định dữ liệu thuộc phần nào",
+          "firstLevel": 35
+        },
+        {
+          "term": "shard key",
+          "vi": "khoá quyết định shard",
+          "firstLevel": 35
+        },
+        {
+          "term": "range partitioning",
+          "vi": "chia theo khoảng giá trị",
+          "firstLevel": 35
+        },
+        {
+          "term": "hash partitioning",
+          "vi": "chia theo giá trị hash",
+          "firstLevel": 35
+        },
+        {
+          "term": "hot partition",
+          "vi": "phần dữ liệu bị dồn tải",
+          "firstLevel": 35
+        },
+        {
+          "term": "scatter-gather",
+          "vi": "hỏi mọi shard rồi gộp kết quả",
+          "firstLevel": 35
+        },
+        {
+          "term": "resharding",
+          "vi": "chia lại shard",
+          "firstLevel": 35
+        },
+        {
+          "term": "consistent hashing",
+          "vi": "hash nhất quán trên vòng",
+          "firstLevel": 35
+        },
+        {
+          "term": "hash ring",
+          "vi": "vòng giá trị hash",
+          "firstLevel": 35
+        },
+        {
+          "term": "virtual node",
+          "vi": "nút ảo",
+          "firstLevel": 35
+        },
+        {
+          "term": "local index",
+          "vi": "chỉ mục trong từng shard",
+          "firstLevel": 35
+        },
+        {
+          "term": "global index",
+          "vi": "chỉ mục chung được chia theo trường được đánh chỉ mục",
+          "firstLevel": 35
+        },
+        {
+          "term": "region",
+          "vi": "vùng địa lý gồm các trung tâm dữ liệu",
+          "firstLevel": 36
+        },
+        {
+          "term": "network partition",
+          "vi": "mạng bị chia cắt",
+          "firstLevel": 36
+        },
+        {
+          "term": "strong consistency",
+          "vi": "nhất quán mạnh",
+          "firstLevel": 36
+        },
+        {
+          "term": "linearizability",
+          "vi": "mọi lần đọc thấy lần ghi mới nhất",
+          "firstLevel": 36
+        },
+        {
+          "term": "eventual consistency",
+          "vi": "nhất quán sau cùng",
+          "firstLevel": 36
+        },
+        {
+          "term": "availability",
+          "vi": "luôn trả lời được request",
+          "firstLevel": 36
+        },
+        {
+          "term": "CAP",
+          "vi": "khi mạng bị chia cắt, chọn nhất quán hoặc sẵn sàng",
+          "firstLevel": 36
+        },
+        {
+          "term": "conflict",
+          "vi": "xung đột dữ liệu",
+          "firstLevel": 36
+        },
+        {
+          "term": "home region",
+          "vi": "vùng duy nhất nhận lệnh ghi cho một dữ liệu",
+          "firstLevel": 36
+        },
+        {
+          "term": "PACELC",
+          "vi": "mở rộng của CAP: lúc bình thường chọn độ trễ hoặc nhất quán",
+          "firstLevel": 36
+        },
+        {
+          "term": "quorum",
+          "vi": "số bản sao tối thiểu phải đồng ý",
+          "firstLevel": 36
+        },
+        {
+          "term": "last write wins",
+          "vi": "lần ghi sau cùng thắng",
+          "firstLevel": 36
+        },
+        {
+          "term": "CRDT",
+          "vi": "kiểu dữ liệu tự gộp được không mất thay đổi",
+          "firstLevel": 36
         }
       ]
     },

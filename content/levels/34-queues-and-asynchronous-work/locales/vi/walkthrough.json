@@ -1,0 +1,865 @@
+[
+  {
+    "title": "Mọi việc trong lúc khách chờ",
+    "body": "Sau “Đặt hàng”, app server lưu đơn (30 ms), gửi email xác nhận qua nhà cung cấp (400 ms), tạo hóa đơn PDF (800 ms) và gọi API kho (200 ms), rồi mới trả lời. Khách chờ 30 + 400 + 800 + 200 = **1,430 ms**; khi nhà cung cấp email chậm, cả trang chậm hoặc hết thời gian chờ.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5,
+            "note": "+ hóa đơn 800 ms"
+          },
+          {
+            "kind": "db",
+            "label": "DB đơn hàng",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi email",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API kho",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              1,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "save order",
+          "value": "30 ms"
+        },
+        {
+          "name": "email",
+          "value": "400 ms"
+        },
+        {
+          "name": "invoice",
+          "value": "800 ms"
+        },
+        {
+          "name": "warehouse",
+          "value": "200 ms"
+        },
+        {
+          "name": "customer waits",
+          "value": "1,430 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Message thay cho làm việc ngay",
+    "body": "App server nay lưu đơn, đưa một message “đơn 123 đã đặt” vào **queue** do **message broker** giữ (khoảng 5 ms), rồi trả lời. Khách chờ khoảng 30 + 5 = **35 ms**. Email, hóa đơn và lời gọi kho vẫn diễn ra, nhưng muộn hơn một chút, do **worker** lấy message từ queue làm: đó là **asynchronous work**. App server là **producer**; worker là **consumer**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "DB đơn hàng",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5,
+            "note": "đã đặt đơn 123"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "save order",
+          "value": "30 ms"
+        },
+        {
+          "name": "put message on queue",
+          "value": "5 ms"
+        },
+        {
+          "name": "customer waits",
+          "value": "khoảng 35 ms"
+        }
+      ],
+      "predict": {
+        "question": "App server lưu đơn (30 ms), đưa message vào queue (5 ms) rồi trả lời. Email, hóa đơn và lời gọi kho diễn ra sau. Khách chờ khoảng bao lâu?",
+        "options": [
+          "Khoảng 35 ms",
+          "Khoảng 1,430 ms",
+          "Khoảng 400 ms",
+          "Khoảng 5 ms"
+        ],
+        "answer": 0,
+        "explanation": "Khách chỉ chờ các bước trước câu trả lời: 30 ms để lưu và 5 ms đưa message vào queue, khoảng 35 ms. 1,400 ms cho email, hóa đơn và kho diễn ra sau câu trả lời nên không cộng vào thời gian chờ. Lưu đơn vẫn thuộc request.",
+        "hides": [
+          "customer waits"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Cần bao nhiêu worker?",
+    "body": "Một worker làm một việc tại một thời điểm. Tạo hóa đơn mất 0.8 giây, nên một worker xong 1 ÷ 0.8 = 1.25 hóa đơn mỗi giây. Trong đợt giảm giá, 50 đơn đến mỗi giây: 50 ÷ 1.25 = **40 worker** luôn bận, hoặc tính một bước 50 × 0.8 = 40. Để giữ mức bận không quá 70%, chạy 40 ÷ 0.7 ≈ 57.1, làm tròn lên 58.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "DB đơn hàng",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 8,
+            "y": 4,
+            "note": "1.25 hóa đơn/s mỗi"
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi email",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API kho",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              4,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "orders per second",
+          "value": "50"
+        },
+        {
+          "name": "time per invoice",
+          "value": "0.8 s"
+        },
+        {
+          "name": "workers busy",
+          "value": "40"
+        }
+      ],
+      "predict": {
+        "question": "50 đơn đến mỗi giây; tạo một hóa đơn mất 0.8 giây của worker. Cần bao nhiêu worker luôn bận chỉ để theo kịp?",
+        "options": [
+          "40",
+          "50",
+          "63",
+          "8"
+        ],
+        "answer": 0,
+        "explanation": "Mỗi giây có 50 hóa đơn, mỗi hóa đơn cần 0.8 giây của worker: 50 × 0.8 = 40 giây-worker mỗi giây, nên 40 worker bận cùng lúc. 63 xuất phát từ chia 50 cho 0.8 thay vì nhân.",
+        "hides": [
+          "workers busy"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Backlog tăng",
+    "body": "Chỉ có 30 worker thì năng lực là 30 × 1.25 = 37.5 hóa đơn mỗi giây. Với 50 đơn mỗi giây, **backlog** tăng 50 − 37.5 = 12.5 mỗi giây: sau đợt giảm giá 10 phút, 12.5 × 600 = **7,500** hóa đơn chờ. Trang đặt hàng vẫn nhanh vì queue giữ phần chênh lệch. Khi đơn giảm còn 10 mỗi giây, backlog giảm ở tốc độ 37.5 − 10 = 27.5 mỗi giây: 7,500 ÷ 27.5 ≈ 273 giây, khoảng 4.5 phút.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "DB đơn hàng",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5,
+            "note": "7,500 đang chờ",
+            "state": "hot"
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 8,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "arriving",
+          "value": "50/s"
+        },
+        {
+          "name": "done by 30 workers",
+          "value": "37.5/s"
+        },
+        {
+          "name": "backlog after 10 min",
+          "value": "7,500"
+        },
+        {
+          "name": "drain time",
+          "value": "khoảng 4.5 min"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Hỏng trước khi ack",
+    "body": "Worker lấy message của đơn 123, broker ẩn message khỏi worker khác trong 30 giây (**visibility timeout**). Worker gửi email rồi hỏng trước khi gửi **acknowledgment**. Không nhận ack, sau 30 giây broker giao message cho worker khác và email được gửi lại. Đó là **at-least-once delivery**: không mất việc nhưng có thể lặp. Ack trước khi gửi còn tệ hơn: hỏng sẽ làm mất email.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "DB đơn hàng",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 8,
+            "y": 4,
+            "note": "hỏng trước ack",
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi email",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API kho",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "email sent",
+          "value": "có"
+        },
+        {
+          "name": "ack sent",
+          "value": "không"
+        },
+        {
+          "name": "after 30 s",
+          "value": "giao lại message"
+        },
+        {
+          "name": "emails sent",
+          "value": "2"
+        }
+      ],
+      "predict": {
+        "question": "Worker gửi email xác nhận đơn 123 rồi hỏng trước khi ack message. Điều gì xảy ra tiếp?",
+        "options": [
+          "Message mất vì worker hỏng",
+          "Broker giao message cho worker khác và email được gửi lại",
+          "Broker xóa message vì email đã gửi",
+          "Broker hỏi nhà cung cấp email xem đã gửi chưa"
+        ],
+        "answer": 1,
+        "explanation": "Broker chỉ biết chưa nhận ack. Sau visibility timeout, nó giao message cho worker khác; công việc lặp lại thành email thứ hai. Broker không thấy worker đã làm gì, nên chọn giao lại thay vì làm mất việc.",
+        "hides": [
+          "emails sent",
+          "after 30 s"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Lặp lại mà không gây tác dụng thêm",
+    "body": "Cách khắc phục là **idempotency key**. Worker gửi order id kèm request email; nhà cung cấp bỏ qua request thứ hai cùng khóa, nên khách nhận một email bất kể message lặp bao nhiêu lần. Trong database của bạn, unique constraint bảo vệ lệnh ghi trong chính database đó, như một dòng hóa đơn cho mỗi đơn (SD 4): insert thứ hai thất bại. Nó không bảo vệ lời gọi riêng đến hệ thống khác, như email, nên vẫn cần khóa do nhà cung cấp hỗ trợ. Với at-least-once delivery, mọi consumer phải làm việc của mình lặp lại an toàn.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "DB đơn hàng",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 8,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi email",
+            "x": 10,
+            "y": 1,
+            "note": "khóa 123: đã thấy"
+          },
+          {
+            "kind": "server",
+            "label": "API kho",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "idempotency key",
+          "value": "đơn 123"
+        },
+        {
+          "name": "second request",
+          "value": "bỏ qua"
+        },
+        {
+          "name": "emails received",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Kho ngừng hoạt động",
+    "body": "API của kho ngừng trả lời. Retry ngay, liên tục sẽ thêm tải đúng lúc nó khó chịu tải nhất. Worker **retry với exponential backoff**: chờ 1, 2, 4, 8 và 16 giây, tổng 31 giây, cộng chút **jitter** ngẫu nhiên để hàng nghìn message không retry cùng lúc. Message còn lỗi sau lần retry cuối đến **dead-letter queue** để người xem xét, thay vì retry mãi.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "DB đơn hàng",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Queue",
+            "x": 5,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 8,
+            "y": 4,
+            "note": "chờ 1,2,4,8,16 s"
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi email",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API kho",
+            "x": 10,
+            "y": 7,
+            "state": "down"
+          },
+          {
+            "kind": "queue",
+            "label": "Message lỗi",
+            "x": 6,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          6
+        ],
+        "drop": true,
+        "flows": [
+          {
+            "path": [
+              4,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "retry waits",
+          "value": "1, 2, 4, 8, 16 s"
+        },
+        {
+          "name": "total wait",
+          "value": "31 s"
+        },
+        {
+          "name": "after the last retry",
+          "value": "dead-letter queue"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Một sự kiện, nhiều bên lắng nghe",
+    "body": "Với **publish-subscribe**, ứng dụng phát “đã đặt đơn” một lần, mỗi subscriber nhận bản riêng trong queue riêng: email, hóa đơn và kho đều có worker riêng, nên kho hỏng không trì hoãn email. **Event log**, như Kafka, còn giữ mọi message trong một thời gian, như 7 ngày; mỗi consumer giữ vị trí **offset** riêng và có thể đọc lại lịch sử. Nếu backlog vượt giới hạn, producer áp dụng **back-pressure**: làm chậm, từ chối việc mới hoặc bỏ việc tùy chọn như email tiếp thị.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách mua",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "DB đơn hàng",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Đã đặt đơn",
+            "x": 5,
+            "y": 4,
+            "note": "phát một lần"
+          },
+          {
+            "kind": "queue",
+            "label": "Queue email",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "queue",
+            "label": "Queue hóa đơn",
+            "x": 10,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Queue kho",
+            "x": 8,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              5
+            ]
+          },
+          {
+            "path": [
+              3,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "published",
+          "value": "một lần"
+        },
+        {
+          "name": "copies",
+          "value": "một bản/subscriber"
+        },
+        {
+          "name": "event log keeps",
+          "value": "7 ngày, đọc theo offset"
+        }
+      ]
+    }
+  }
+]

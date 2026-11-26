@@ -1,5 +1,6 @@
 package com.algoquest.content;
 
+import com.algoquest.content.model.DesignPrompt;
 import com.algoquest.content.model.Lesson;
 import com.algoquest.content.model.LevelContent;
 import com.algoquest.content.model.PatternChallenge;
@@ -27,6 +28,7 @@ public class ContentCatalog {
   private final Map<String, ProblemTranslation> vietnameseProblems;
   private final Map<String, Problem> problemsById = new HashMap<>();
   private final Map<String, PatternChallenge> patternsById = new HashMap<>();
+  private final Map<String, DesignPrompt> designsById = new HashMap<>();
 
   public ContentCatalog(
       ResourceLoader resourceLoader,
@@ -44,6 +46,11 @@ public class ContentCatalog {
       }
       for (PatternChallenge challenge : level.patterns()) {
         patternsById.putIfAbsent(challenge.id(), challenge);
+      }
+      for (DesignPrompt design : level.designs()) {
+        if (designsById.putIfAbsent(design.id(), design) != null) {
+          duplicates.add("design prompt id " + design.id() + " is used by more than one level");
+        }
       }
     }
     if (!duplicates.isEmpty()) {
@@ -77,6 +84,14 @@ public class ContentCatalog {
   /** The full challenge, including its labels. Send labels only after an answer (D-057). */
   public Optional<PatternChallenge> pattern(String id) {
     return Optional.ofNullable(patternsById.get(id));
+  }
+
+  /**
+   * The full design prompt, including its grading criteria. Send the criteria never, and the
+   * reference only after a graded answer (D-085).
+   */
+  public Optional<DesignPrompt> design(String id) {
+    return Optional.ofNullable(designsById.get(id));
   }
 
   /** The full problem, including its answer key and hidden tests. Never send it to a client. */

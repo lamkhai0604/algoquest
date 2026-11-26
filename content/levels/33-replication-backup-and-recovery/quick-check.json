@@ -1,0 +1,35 @@
+[
+  {
+    "question": "An administrator accidentally deletes valid orders on the leader and the deletion commits. What happens to ordinary synchronous and asynchronous replicas, and how can the team recover the orders?",
+    "options": [
+      "Synchronous replicas reject the deletion because their purpose is to keep an unchanged safety copy.",
+      "Asynchronous replicas keep yesterday's orders permanently because they do not wait for the leader.",
+      "Both kinds copy the deletion, although an asynchronous replica may lag; restore a separate backup and replay archived logs to a point before the mistake.",
+      "Promoting a replica after it applied the deletion reverses the deletion and restores the missing orders."
+    ],
+    "answer": 2,
+    "explanation": "Replication copies changes, including mistakes. A synchronous follower receives the change as part of confirming it; an asynchronous follower applies it later. A lagging replica is not a guaranteed historical backup. A separately retained full backup plus the required archived logs supports point-in-time recovery to before the mistaken delete. The effect on later legitimate changes needs its own recovery decision."
+  },
+  {
+    "question": "Read replicas must serve 7,600 reads per second. In this exercise's simplified equal-cost model, each replica's safe limit is 2,100 operations per second and every replica also applies all 800 writes per second. How many read replicas are needed with none failed and no spare requirement?",
+    "options": [
+      "4 replicas, from rounding 7,600 ÷ 2,100 up.",
+      "6 replicas, from rounding 7,600 ÷ (2,100 - 800) up.",
+      "3 replicas, because the leader applies the writes so followers only handle reads.",
+      "7 replicas, by adding one spare to the six needed for the read load."
+    ],
+    "answer": 1,
+    "explanation": "Each replica applies all 800 writes, leaving 2,100 - 800 = 1,300 reads per second. 7,600 ÷ 1,300 ≈ 5.85, so round up to 6. Five provide only 5 × 1,300 = 6,500 reads per second; six provide 7,800. Four incorrectly use the entire limit for reads. A seventh could provide a spare, but this question asks only for the no-failure requirement."
+  },
+  {
+    "question": "A customer saves a new address on the leader, then reloads from a replica that is still behind. Which routing rule ensures this reload shows the saved address under the stated assumptions?",
+    "options": [
+      "Read this customer's own address from the leader after saving, while the replica is behind; return to replica reads only when it has caught up.",
+      "Add more asynchronous replicas and keep choosing any of them at random.",
+      "Shorten the application's cache TTL while continuing to read a lagging replica on a cache miss.",
+      "Send the reload to the same application server, which still reads from a replica chosen at random."
+    ],
+    "answer": 0,
+    "explanation": "The saved change is already on the leader, so reading it there avoids the follower's lag. Alternatively use a replica known to have applied that change. A fixed short leader-routing period works only when the permitted lag is bounded below that period or catch-up is checked. More replicas, shorter cache TTLs and application-server affinity do not make a lagging database contain the new address."
+  }
+]

@@ -35,6 +35,30 @@ describe("learning path", () => {
     expect(screen.queryByText("Test access")).toBeNull();
   });
 
+  it("keeps the algorithm level to continue when System Design levels are open", async () => {
+    const sd = {
+      ...LEVELS[0]!,
+      number: 28,
+      slug: "how-a-request-travels",
+      title: "How a Request Travels",
+      phase: 4,
+      xp: 0,
+    };
+    fakeApi({
+      ...routes,
+      "GET /api/v1/levels": () => json(200, [...LEVELS, sd]),
+    });
+    renderSignedInAt("/");
+
+    expect(
+      await screen.findByRole("heading", { name: "Level 1 · Big-O & Basics" }),
+    ).toBeVisible();
+    expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute(
+      "href",
+      "/levels/1",
+    );
+  });
+
   it("tells an account with test access that every level is open", async () => {
     fakeApi({
       ...routes,

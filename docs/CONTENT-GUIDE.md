@@ -80,6 +80,32 @@ A JSON array of challenges. The learner picks an approach and explains why; the 
 
 Write 2–3 challenges per level. The backend validates the file with the rest of the content.
 
+### 4a. Design prompts (System Design levels, `content/levels/<n>-<slug>/designs.json`, D-085)
+
+A JSON array of prompts. The learner writes a short design under four headings (requirements, one estimate, components, one failure or trade-off); the AI grades it with the syllabus rubric: requirements and scope 20, estimation 15, high-level design 25, data and scaling 20, trade-offs and failures 20.
+
+| Field | Rule |
+| --- | --- |
+| `id` | `D<level>-<name>`, lowercase words joined by hyphens, unique across the content |
+| `level` | The level of the folder |
+| `title`, `prompt` | Plain text; an everyday scenario the level's lesson prepares for |
+| `facts` | At least one; every number a design decision depends on, labeled as approximate or measured where it matters |
+| `scope` | At least one; what is in and out of the exercise |
+| `criteria` | At least one task-specific point for each of `requirements`, `estimation`, `design`, `data` and `tradeoffs`; shown only to the grader |
+| `fullMarkDesigns` | At least two different designs that earn full marks; shown only to the grader, so it does not reward one shape only |
+| `reference` | `assumptions`, `design` and `alternatives`; shown after a graded answer, never called the correct answer |
+
+Rules from the first review of design prompts:
+
+- Every target the learner must meet (a time limit, an RPO, a capacity) is in `facts` or `scope`. Criteria explain how to recognize good answers and never add a requirement the learner cannot see; where several answers are acceptable they say "such as" or "or".
+- Every capacity or latency claim follows from a stated measurement, not from an average alone. Give peak or burst figures, measured limits and delivery times where a decision depends on them.
+- A full-mark answer needs only what the level and earlier levels teach. When a guarantee depends on later material, give it as a fact (for example, an atomic database operation) instead of expecting the learner to build it.
+- The two `fullMarkDesigns` are different choices, not two explanations of the same design, and each includes an estimate and a trade-off, so either would earn every category's points.
+- A rejected option in the reference's `alternatives` starts with "Rejected:".
+- A design that meets the scope with fewer components earns full marks; criteria must not reward extra components by themselves.
+
+Write two prompts per level in Stages 1 to 3. The backend validates the file with the rest of the content.
+
 ## 5. Grading rubric (FR-05)
 
 | Criterion | Values | Meaning |

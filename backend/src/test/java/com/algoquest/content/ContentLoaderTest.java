@@ -131,6 +131,14 @@ class ContentLoaderTest {
     assertThat(challenge.approach("nested").correct()).isTrue();
     assertThat(challenge.approach("pass").correct()).isFalse();
     assertThat(levels.get(2).available()).isFalse();
+    assertThat(levels.get(1).designs())
+        .singleElement()
+        .satisfies(
+            d -> {
+              assertThat(d.fullMarkDesigns()).hasSize(2);
+              assertThat(d.criteria().tradeoffs()).isNotEmpty();
+              assertThat(d.reference().alternatives()).isNotEmpty();
+            });
   }
 
   @Test
@@ -283,6 +291,30 @@ class ContentLoaderTest {
         .anyMatch(p -> p.contains("patterns.json") && p.contains("exactly one approach"))
         .anyMatch(p -> p.contains("patterns.json") && p.contains("P1-some-name"))
         .anyMatch(p -> p.contains("approach pass") && p.contains("required"));
+  }
+
+  @Test
+  void designPromptsNeedCriteriaTwoFullMarkDesignsAndAReference() throws IOException {
+    Path designs = level.resolve("designs.json");
+    replace(designs, "\"id\": \"D1-counter\"", "\"id\": \"D2-counter\"");
+    replace(
+        designs,
+        "\"tradeoffs\": [\"A lost server loses no counts once written\"]",
+        "\"tradeoffs\": []");
+    replace(
+        designs,
+        "\"One server counts in memory and writes the sum to the database every second.\"",
+        "\"\"");
+    replace(
+        designs,
+        "[\"Count in memory and write every second: fewer writes, may lose a second\"]",
+        "[]");
+
+    assertThat(problemsAfterLoad())
+        .anyMatch(p -> p.contains("designs.json") && p.contains("D1-some-name"))
+        .anyMatch(p -> p.contains("designs.json") && p.contains("criteria need"))
+        .anyMatch(p -> p.contains("designs.json") && p.contains("two different full-mark"))
+        .anyMatch(p -> p.contains("designs.json") && p.contains("reference needs"));
   }
 
   @Test

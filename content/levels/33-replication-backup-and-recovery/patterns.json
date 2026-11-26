@@ -1,0 +1,151 @@
+[
+  {
+    "id": "P33-sync-or-async",
+    "level": 33,
+    "title": "Confirming Payments Before Failover",
+    "statement": "A payment table has one leader, a nearby follower and a follower in another region. No confirmed payment may be lost if only the leader machine fails and its local data becomes unavailable. Failover must resume on a surviving follower that contains every confirmed payment. Region-wide loss and simultaneous failure of leader and nearby follower are outside this exercise. A successful write must be confirmed within 10 ms under the given healthy-system measurements. Exercise assumptions: the leader's work takes 2 ms; the nearby follower round trip is 0.5 ms, the distant round trip is 100 ms, and either follower needs another 1 ms to save a write durably. Synchronous acknowledgment waits for that durable save. If a required follower is unavailable, the system may stop confirming writes rather than silently weaken durability. Failover promotes only a follower known to contain all confirmed payments. How should replication acknowledgments work?",
+    "examples": [
+      "The leader fails immediately after the application receives a successful payment confirmation."
+    ],
+    "constraints": [
+      "Preserve every confirmed payment and resume on an eligible surviving follower after the stated leader-only failure.",
+      "Healthy-system confirmation must take at most 10 ms under the supplied timing model.",
+      "Never promote a follower missing confirmed payments; waiting without success confirmation is allowed during failure."
+    ],
+    "approaches": [
+      {
+        "id": "near-sync",
+        "name": "Wait for the nearby follower; send changes asynchronously to the distant follower",
+        "hint": "Acknowledge after the nearby durable copy",
+        "label": "best",
+        "time": "2 + 0.5 + 1 = 3.5 ms for healthy writes",
+        "space": "One leader and two follower copies",
+        "why": "The nearby follower has durably saved each confirmed payment and is the failover choice for the stated leader-only failure. Healthy confirmation takes 3.5 ms, within 10 ms. The distant copy can lag without weakening this specific guarantee. If the nearby follower is unavailable, confirmations wait; this trades write availability for the required durability."
+      },
+      {
+        "id": "all-async",
+        "name": "Confirm after the leader saves; copy to both followers asynchronously",
+        "hint": "Keep follower waits off the confirmation path",
+        "label": "unsuitable",
+        "time": "About 2 ms before confirmation",
+        "space": "One leader and two follower copies",
+        "why": "This meets the healthy timing target, but the leader may fail after confirmation and before either follower has the payment. There may then be no eligible failover copy with all confirmed payments. It breaks the no-loss requirement."
+      },
+      {
+        "id": "far-sync",
+        "name": "Wait for the distant follower; update the nearby follower asynchronously",
+        "hint": "Acknowledge after the remote durable copy",
+        "label": "unsuitable",
+        "time": "2 + 100 + 1 = 103 ms",
+        "space": "One leader and two follower copies",
+        "why": "The remote durable copy protects confirmed data for the stated failure, but the 103 ms healthy confirmation time exceeds 10 ms. Distance, rather than the number of stored copies, breaks the latency requirement."
+      },
+      {
+        "id": "both-sync",
+        "name": "Wait for both followers, sending to them at the same time",
+        "hint": "Require two follower acknowledgments",
+        "label": "unsuitable",
+        "time": "2 + max(0.5 + 1, 100 + 1) = 103 ms",
+        "space": "One leader and two follower copies",
+        "why": "Even parallel replication waits for the distant acknowledgment: max(1.5, 101) = 101 ms after the leader's 2 ms, totaling 103 ms. It preserves data but violates the 10 ms confirmation limit."
+      }
+    ]
+  },
+  {
+    "id": "P33-scale-writes",
+    "level": 33,
+    "title": "The Leader Is Busy Writing",
+    "statement": "A database receives 2,400 required writes and 120 reads per second at peak. Every write must still be saved; dropping or delaying a growing backlog is not acceptable. Exercise load tests use a simplified equal-cost model: the current server's safe limit is 2,100 operations per second, and an available larger server's safe limit is 3,600. Followers on the current machine type must apply every write. The schema and queries stay unchanged, and the larger server is within the approved budget. Design only for this peak workload; failover and the migration procedure are outside scope. Which change fits?",
+    "examples": [
+      "Even if every read leaves the leader, it still receives 2,400 writes per second."
+    ],
+    "constraints": [
+      "Process all 2,400 writes and 120 reads per second without exceeding each server's measured safe limit.",
+      "Do not discard required writes or accumulate an ever-growing write backlog.",
+      "Use techniques taught through SD 6; no partitioning design is required."
+    ],
+    "approaches": [
+      {
+        "id": "larger-leader",
+        "name": "Move the leader to the measured larger server and keep these reads there",
+        "hint": "Increase capacity at the write destination",
+        "label": "best",
+        "time": "2,400 + 120 = 2,520 operations per second against 3,600 safe capacity",
+        "space": "One larger database server",
+        "why": "The larger leader processes all writes and reads: 2,520 ≤ 3,600, leaving 3,600 - 2,520 = 1,080 operations per second of safe capacity. It meets the stated workload and budget without adding untaught partitioning. Vertical scaling still has a ceiling and does not itself provide failover."
+      },
+      {
+        "id": "more-read-replicas",
+        "name": "Keep the current leader and add more current-size read replicas",
+        "hint": "Spread the reads across followers",
+        "label": "unsuitable",
+        "time": "The leader still receives 2,400 writes per second; every new follower also applies 2,400",
+        "space": "More complete database copies",
+        "why": "Moving all 120 reads away still leaves 2,400 writes on a leader whose safe limit is 2,100. Each follower also needs 2,400 operations per second for writes alone, above 2,100, so replicas cannot repair this write-capacity limit."
+      },
+      {
+        "id": "cache-reads",
+        "name": "Keep the current leader and cache every read result",
+        "hint": "Remove database work from repeated reads",
+        "label": "unsuitable",
+        "time": "Even a 100% read hit rate leaves 2,400 database writes per second",
+        "space": "An application cache in addition to the database",
+        "why": "In the most favorable read-cache case, all 120 reads disappear from database load. The required 2,400 writes still exceed the leader's safe limit of 2,100, violating the capacity requirement. A read cache does not remove the writes."
+      }
+    ]
+  },
+  {
+    "id": "P33-recovery-plan",
+    "level": 33,
+    "title": "Recovering a Mistake Found Three Days Later",
+    "statement": "A database contains 100 GB. A mistaken delete can be discovered up to 3 days later. The team needs a clean backup and continuous archived logs that can reconstruct a chosen point just before the delete. For complete loss of the live database without a logical mistake, RPO is at most 2 minutes of recent changes. For either incident, a usable restored database must be ready within 30 minutes after recovery begins. For a mistaken delete, restoring to the chosen earlier point is acceptable in this exercise; preserving or merging later legitimate changes is outside scope. Exercise restore tests: 1 GB = 1,000 MB; copying the backup runs at 200 MB/s; replaying the needed logs takes at most 10 minutes for either proposed full-backup schedule; checks and reopening take at most 5 minutes. An archived change is safely stored off-site within the stated archive interval. Backups and logs are kept with separate access in another region. The team prefers fewer full-backup runs if all requirements are met. Which plan fits best?",
+    "examples": [
+      "A deletion on Monday is discovered on Thursday; recovery selects a point immediately before it.",
+      "The live server is completely lost; recovery needs changes as close as possible to the loss."
+    ],
+    "constraints": [
+      "Keep enough full backups and an unbroken log chain to reach a clean point for mistakes detected up to 3 days later.",
+      "For physical database loss, lose at most 2 minutes of recent changes.",
+      "Have the restored database ready within 30 minutes under the stated tested speeds.",
+      "Keep recovery data separate from the live database's region and access."
+    ],
+    "approaches": [
+      {
+        "id": "nightly-frequent-logs",
+        "name": "Nightly full backups plus log archiving every 30 seconds; keep both for 14 days",
+        "hint": "A daily base with a continuous change history",
+        "label": "best",
+        "time": "100,000 ÷ 200 = 500 s; 500 + 600 + 300 = 1,400 s ≈ 23.3 minutes",
+        "space": "14 days of full backups and continuous logs off-site",
+        "why": "Fourteen days is longer than the 3-day detection window and includes the full backup preceding the chosen clean point plus the continuous logs. The 30-second archive bound is within the 2-minute RPO for physical loss. Restore takes about 23.3 minutes, below 30. Point-in-time replay stops before the bad delete; later legitimate changes are deliberately outside this exercise. Nightly full backups meet the team's preference for fewer full-backup runs."
+      },
+      {
+        "id": "six-hour-fulls",
+        "name": "Full backups every 6 hours plus log archiving every 60 seconds; keep both for 14 days",
+        "hint": "More frequent full copies with archived changes",
+        "label": "valid",
+        "time": "Same tested upper bound: 500 + 600 + 300 = 1,400 s ≈ 23.3 minutes",
+        "space": "More full copies across the same 14 days, plus continuous logs off-site",
+        "why": "This also keeps a clean base and all logs for delayed discovery. Sixty seconds is within the 2-minute physical-loss RPO, and the stated restore bound is under 30 minutes. It meets every fixed requirement, but runs 24 ÷ 6 = 4 full backups per day instead of 1, increasing backup work without being needed for these targets."
+      },
+      {
+        "id": "daily-only",
+        "name": "Keep daily full snapshots for 14 days off-site, without archived logs",
+        "hint": "Recover from the latest full copy",
+        "label": "unsuitable",
+        "time": "A physical loss can discard almost 24 hours of changes",
+        "space": "14 days of off-site snapshots",
+        "why": "Daily copies can lose almost 24 × 60 = 1,440 minutes of recent changes, far above the 2-minute RPO. Without logs they also cannot reconstruct a chosen moment between snapshots, so retention alone does not supply the required recovery granularity."
+      },
+      {
+        "id": "replicas-only",
+        "name": "Keep synchronous live replicas in both regions, with no historical backups or log archive",
+        "hint": "Maintain up-to-date live copies",
+        "label": "unsuitable",
+        "time": "Failover may be quick after a machine failure",
+        "space": "Live database copies only",
+        "why": "The mistaken delete is replicated too. After 3 days the live copies do not provide a clean historical base or retained log chain, breaking recovery of the chosen point before the mistake. Replication is not a replacement for the required historical recovery data."
+      }
+    ]
+  }
+]

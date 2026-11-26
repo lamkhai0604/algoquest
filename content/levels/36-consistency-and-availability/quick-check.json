@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Exercise assumption: the US and Europe regions both keep running and answer their local users, but messages between the regions cannot get through. What has happened?",
+    "options": [
+      "The Europe server has crashed and stopped processing requests.",
+      "The stored data in both regions has been deleted.",
+      "A network partition separates two running groups of servers.",
+      "Ordinary replication lag on a working link: the regions can still exchange messages."
+    ],
+    "answer": 2,
+    "explanation": "A network partition means the groups cannot reach each other even though both are alive. A crash would stop a server from working; a partition alone does not mean stored data was deleted. Because both groups still receive requests, they can accept conflicting changes unless the design restricts who decides."
+  },
+  {
+    "question": "Exercise assumptions: one concert seat remains. Two disconnected, running regions both show it as free and receive a purchase attempt. The rule forbids selling a seat twice, and a request may be refused while its deciding region is unreachable. Which policy fits?",
+    "options": [
+      "Let each region confirm against its local copy, then reconcile sales after the link returns.",
+      "Let one fixed home region atomically decide the sale; refuse attempts that cannot reach it.",
+      "Confirm both purchases: replication guarantees that the final copies will agree without canceling a sale.",
+      "Let each region confirm locally, then use last write wins to choose the final reservation after reconnection."
+    ],
+    "answer": 1,
+    "explanation": "The single deciding home can atomically reserve the seat once. A disconnected region must refuse rather than promise a second sale. Replication or last-write-wins reconciliation after healing can reveal or choose between conflicting reservations, but cannot make two confirmed buyers fit one seat without breaking the no-double-sale rule."
+  },
+  {
+    "question": "Which feature best fits eventual consistency under these exercise requirements?",
+    "options": [
+      "A payment balance that must reject every withdrawal that would overdraw the account.",
+      "A username registry that must never assign the same name to two users.",
+      "A permission check that must enforce a completed access revocation on the next request.",
+      "A post's like count that must answer locally and may temporarily omit likes from another region."
+    ],
+    "answer": 3,
+    "explanation": "A temporarily old like count is explicitly acceptable, so regions can keep counting locally and merge later. The balance, globally unique name and immediate revocation rules cannot accept the stated stale or conflicting answers. Choose consistency per feature rather than giving the entire app one policy."
+  }
+]

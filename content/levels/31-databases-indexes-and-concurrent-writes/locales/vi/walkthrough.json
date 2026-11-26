@@ -1,0 +1,490 @@
+[
+  {
+    "title": "Tìm một người trong 10 triệu",
+    "body": "Đăng nhập tra người dùng theo email: `SELECT * FROM users WHERE email = 'an@example.com'`. Table `users` có 10 triệu row, không có index trên `email`, nên database kiểm tra mọi row: **full table scan**. Ngay cả khi table ở trong bộ nhớ cũng mất hàng trăm mili giây; từ đĩa có thể mất vài giây.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "state": "hot",
+            "note": "email chưa có index"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "query",
+          "value": "WHERE email = ?"
+        },
+        {
+          "name": "rows checked",
+          "value": "10,000,000"
+        },
+        {
+          "name": "time",
+          "value": "≈0.1–5 s"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Index đọc bao nhiêu trang?",
+    "body": "Nhóm thêm **index** trên `email`: B-tree mà mỗi node giữ hàng trăm khóa có thứ tự. Tra cứu bắt đầu ở gốc và chọn một nhánh mỗi tầng. Với khoảng 300 khóa mỗi node, ba tầng đã bao phủ 300 × 300 × 300 = 27 triệu mục, nên tra cứu đọc khoảng 3 hoặc 4 trang rồi đến một row. Mất khoảng 1 ms thay vì một giây.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "note": "email có index"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "index",
+          "value": "B-tree trên email"
+        },
+        {
+          "name": "pages read",
+          "value": "khoảng 3 hoặc 4"
+        },
+        {
+          "name": "time",
+          "value": "≈0.1–5 ms"
+        }
+      ],
+      "predict": {
+        "question": "B-tree index trên email bao phủ 10 triệu row, mỗi index node giữ khoảng 300 khóa. Một lần tra đọc khoảng bao nhiêu trang index?",
+        "options": [
+          "Khoảng 10 triệu, một trang mỗi row",
+          "Khoảng 23, như tìm kiếm nhị phân",
+          "Khoảng 3 hoặc 4",
+          "Đúng 1, vì index là hash map"
+        ],
+        "answer": 2,
+        "explanation": "Mỗi tầng chọn trong khoảng 300 nhánh: 300, rồi 90,000, rồi 27 triệu mục. Ba hoặc bốn tầng bao phủ 10 triệu row. Tìm kiếm nhị phân cần khoảng 23 bước vì mỗi bước chỉ chọn giữa hai; B-tree node rộng hơn nhiều.",
+        "hides": [
+          "pages read",
+          "time"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Mỗi index đều thêm chi phí ghi",
+    "body": "Index không miễn phí. Khi người mới đăng ký, database ghi row và thêm mục vào mỗi index trên table. Với index trên `id` (primary key) và `email`, một lần chèn làm ba phần việc. Index còn tốn lưu trữ. Thêm index cho query thường chạy trên table lớn, không phải cho mọi column.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "note": "2 index"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "insert",
+          "value": "1 row + 2 mục index"
+        },
+        {
+          "name": "rule",
+          "value": "index thứ bạn thường tìm"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Transaction: tất cả hoặc không gì",
+    "body": "Chuyển 50 đô la từ tài khoản A sang B cần hai cập nhật. Nếu server hỏng sau lần đầu, tiền biến mất. **Transaction** nhóm chúng: `BEGIN; UPDATE … A − 50; UPDATE … B + 50; COMMIT;`. Hoặc cả hai thay đổi được lưu hoặc không thay đổi nào (**atomicity**); khi đã commit, chúng tồn tại sau sự cố (**durability**).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 2,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "note": "BEGIN … COMMIT"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "step 1",
+          "value": "A − 50"
+        },
+        {
+          "name": "step 2",
+          "value": "B + 50"
+        },
+        {
+          "name": "saved",
+          "value": "cả hai hoặc không gì"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Hai người mua, một ghế",
+    "body": "Còn một ghế. Request của người mua A đọc `seats_left = 1`. Trước khi nó ghi, request của B cũng đọc `seats_left = 1`. Cả hai sau đó ghi `seats_left = 0` và xác nhận vé. Từng bước riêng có vẻ đúng, nhưng kiểm tra và ghi tách rời nên người thứ hai xen vào: **race condition**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua A",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "client",
+            "label": "Người mua B",
+            "x": 4,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "note": "seats_left = 1"
+          }
+        ],
+        "links": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "A reads",
+          "value": "1"
+        },
+        {
+          "name": "B reads",
+          "value": "1"
+        },
+        {
+          "name": "tickets sold",
+          "value": "2 vé cho 1 ghế"
+        }
+      ],
+      "predict": {
+        "question": "Cả hai request đọc seats_left = 1, rồi cả hai ghi seats_left = 0 và xác nhận vé. Đã bán bao nhiêu vé cho ghế cuối?",
+        "options": [
+          "1, vì lần ghi thứ hai thấy 0",
+          "2",
+          "0, vì các lần ghi triệt tiêu nhau",
+          "1, vì database xếp request vào hàng"
+        ],
+        "answer": 1,
+        "explanation": "Mỗi request kiểm tra trước và ghi sau bằng các bước riêng. Cả hai kiểm tra thấy 1 trước bất kỳ lần ghi nào, nên đều xác nhận vé. Ghi 0 hai lần cho cùng giá trị row, che giấu vấn đề: hai người trả tiền cho một ghế.",
+        "hides": [
+          "tickets sold"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Đặt kiểm tra vào lần ghi",
+    "body": "Cách sửa là **conditional update**: `UPDATE concerts SET seats_left = seats_left - 1 WHERE id = 42 AND seats_left > 0`. Database áp dụng hai cập nhật lần lượt trên row; lần thứ hai kiểm tra lại điều kiện trên giá trị mới. Cập nhật của A thay đổi 1 row; B thấy `seats_left = 0`, thay đổi 0 row nên được báo hết ghế. **Unique constraint** trên số ghế cho cùng bảo vệ khi mỗi lần bán là row mới.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua A",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "client",
+            "label": "Người mua B",
+            "x": 4,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "note": "seats_left > 0 ?"
+          }
+        ],
+        "links": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2,
+              3
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "A",
+          "value": "1 row cập nhật: có vé"
+        },
+        {
+          "name": "B",
+          "value": "0 row cập nhật: hết vé"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Khóa trước hoặc kiểm tra version",
+    "body": "Khi thay đổi cần hơn một câu lệnh, có hai cách chung. **Pessimistic**: trong cùng transaction, `BEGIN`, đọc row với `SELECT … FOR UPDATE` (khóa row), kiểm tra `seats_left > 0`, giảm số ghế, rồi `COMMIT`. Lock giữ đến commit nên lần đọc có khóa của B chờ, rồi thấy 0 và nhận \"hết ghế\". Lần đọc có khóa đứng riêng, ngoài transaction, giải phóng lock ngay và không bảo vệ gì. Cách này phù hợp row nhiều người tranh nhau. **Optimistic**: đọc row không khóa, chẳng hạn với `version = 7`, kiểm tra `seats_left > 0`, rồi ghi `SET seats_left = seats_left - 1, version = 8 WHERE id = 42 AND version = 7`. Đổi version trong cùng update ngăn người thứ hai cũng đọc 7. Nếu có 0 row cập nhật, người khác đã sửa trước: đọc lại và thử lại hoặc báo xung đột. Mọi lần ghi vào row phải đổi version. Cách này phù hợp row hiếm khi đổi cùng lúc. Cả hai chỉ xác nhận bán sau commit.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người mua A",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "client",
+            "label": "Người mua B",
+            "x": 4,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Máy chủ",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "CSDL",
+            "x": 9,
+            "y": 4,
+            "note": "A đang giữ lock"
+          }
+        ],
+        "links": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "pessimistic",
+          "value": "B chờ rồi thấy 0"
+        },
+        {
+          "name": "optimistic",
+          "value": "version 7 của B không còn khớp"
+        }
+      ]
+    }
+  }
+]

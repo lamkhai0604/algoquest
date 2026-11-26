@@ -1,0 +1,11 @@
+{
+  "question": "Thư viện chia sách cho các chi nhánh theo chữ đầu nhan đề: A–E, F–J, v.v. Một bộ sách mới cực kỳ nổi tiếng bắt đầu bằng “H” xuất hiện. Điều gì xảy ra?",
+  "options": [
+    "Chi nhánh F–J nhận phần lớn khách trong khi các chi nhánh khác yên ắng",
+    "Khách chia đều vì mỗi chi nhánh có nhiều sách",
+    "Sách của bộ được chia cho mọi chi nhánh",
+    "Không đổi vì bộ chỉ có vài cuốn"
+  ],
+  "answer": 0,
+  "explanation": "Chia theo khoảng khóa giữ các khóa giống nhau gần nhau, nên mọi nhan đề bắt đầu bằng “H” đến một chi nhánh, cùng khách của chúng. Đó là hot partition. Chia theo số đã xáo trộn từ nhan đề (hash) sẽ phân tán khách của bộ sách; đổi lại, tìm “mọi nhan đề từ A đến C” phải ghé mọi chi nhánh."
+}

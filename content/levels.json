@@ -222,5 +222,33 @@
     "title": "APIs and Service Boundaries",
     "summary": "Design REST APIs with the right methods and status codes, page through long lists, push live updates, and split one service into several.",
     "phase": 4
+  },
+  {
+    "number": 33,
+    "slug": "replication-backup-and-recovery",
+    "title": "Replication, Backup and Recovery",
+    "summary": "Copy a database to serve more reads and survive a failed server, keep users seeing their own changes, and plan backups that survive mistakes.",
+    "phase": 4
+  },
+  {
+    "number": 34,
+    "slug": "queues-and-asynchronous-work",
+    "title": "Queues and Asynchronous Work",
+    "summary": "Move slow work out of the request with queues and workers, keep up with the load, and make repeated and failed work safe.",
+    "phase": 4
+  },
+  {
+    "number": 35,
+    "slug": "partitioning-and-consistent-hashing",
+    "title": "Partitioning and Consistent Hashing",
+    "summary": "Split data across servers when one cannot hold it or take its writes, choose a partition key, and add servers without moving everything.",
+    "phase": 4
+  },
+  {
+    "number": 36,
+    "slug": "consistency-and-availability",
+    "title": "Consistency and Availability",
+    "summary": "Decide what copies in different regions do when the network between them breaks, and choose consistency or availability for each feature.",
+    "phase": 4
   }
 ]

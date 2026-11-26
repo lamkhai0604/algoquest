@@ -1,0 +1,105 @@
+[
+  {
+    "id": "D36-game-wallet",
+    "level": 36,
+    "title": "Coins in a Game Played on Two Continents",
+    "prompt": "A mobile game runs in two regions, Asia and the United States. Players spend coins on items, and see which friends are online. Design how coin balances and online status behave, normally and when the link between the regions breaks.",
+    "facts": [
+      "About 5,000 coin spends per second at peak; 60% of them come from players in Asia",
+      "About 95% of spends come from players in their home country's region; 5% come from players travelling abroad",
+      "A round trip between the regions takes about 150 ms; local work takes about 5 ms",
+      "A balance must never let a player spend the same coins twice; a spend must be confirmed within 300 ms; during a partition, a spend may be refused with \"try again later\" but never counted twice",
+      "Online status may be up to 30 seconds old",
+      "Partitions between the regions happen a few times a year and last up to 15 minutes"
+    ],
+    "scope": [
+      "Coin spends and online status",
+      "Buying coins with real money is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States that coins need one consistent truth (no double spend), that spends may be refused during a partition, and that status can be 30 seconds old"
+      ],
+      "estimation": [
+        "Spend time across regions: 5 + 150 = 155 ms, within 300 ms",
+        "Refused spends in a 15-minute partition, for the chosen design: for example 5% × 5,000 = 250 per second × 900 s = 225,000 with a home region per player, or 40% × 5,000 = 2,000 per second × 900 s = 1.8 million with one global home in Asia"
+      ],
+      "design": [
+        "One place decides each player's balance (a home region per player or one global leader); status is copied between regions without waiting"
+      ],
+      "data": [
+        "Balance writes go through the deciding region, which checks the balance and subtracts in one step (SD 4)",
+        "Online status counted in each region and sent to the other every few seconds"
+      ],
+      "tradeoffs": [
+        "Names the trade-off with its condition, such as: during a partition, players whose balance lives across the break cannot spend; a single global home is simpler but refuses far more spends; choosing availability for coins would allow double spends"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, a home region per player: each player's balance lives in their home region, which checks and subtracts in one step. Travelling players (5%) wait 5 + 150 = 155 ms, within 300 ms. During a 15-minute partition only they are refused: 250 per second × 900 s = 225,000 spends, with \"try again later\". Online status is kept in each region and sent across every few seconds, so it is at most a few seconds old normally. Trade-off: moving a player's home when they move country needs a careful handover.",
+      "Design B, one global home in Asia: all balances live in the Asian region. US players wait 5 + 150 = 155 ms per spend, within 300 ms. During a 15-minute partition all US spends are refused: 2,000 per second × 900 s = 1.8 million. Online status is eventually consistent as in Design A. Trade-off: simpler, with no handover between homes, but eight times as many refused spends during a partition."
+    ],
+    "reference": {
+      "assumptions": [
+        "Each player has one home region",
+        "The game shows \"try again later\" when a spend is refused"
+      ],
+      "design": "Coin balances choose consistency. Each player's balance has a home region, where a spend checks the balance and subtracts in one step, so the same coins can never be spent twice.\nPlayers at home spend in about 5 ms; the 5% travelling abroad wait about 5 + 150 = 155 ms, within 300 ms.\nDuring a 15-minute partition, travelling players cannot reach their home region and are asked to try again later: about 250 per second × 900 s = 225,000 refused spends, and none counted twice.\nOnline status chooses availability: each region records its own players' status and sends it to the other region every few seconds; during a partition it may be stale, which the 30-second rule tolerates normally and players forgive during a rare break.",
+      "alternatives": [
+        "One global home in Asia: simpler, but about 1.8 million refused spends per partition",
+        "Rejected: letting both regions accept spends from their own copy, because a player could spend the same coins on both sides during a partition"
+      ]
+    }
+  },
+  {
+    "id": "D36-family-lists",
+    "level": 36,
+    "title": "A Shopping List Shared by a Family",
+    "prompt": "A shopping-list app lets family members add and tick items on a shared list from their phones. Families are often spread across countries, and the app runs in two regions. Design how lists stay usable and correct, normally and during a partition.",
+    "facts": [
+      "About 2 million families, each making about 10 list changes a day",
+      "Requirement: adding an item must always succeed, even during a partition between the regions, and no added item may be lost",
+      "Other family members may see a change up to 1 minute late",
+      "Ticking off an item is rare compared with adding; if one person ticks an item while another adds the same item again on the other side of a partition, keeping the item on the list is acceptable",
+      "A round trip between the regions takes about 120 ms; partitions last up to 15 minutes"
+    ],
+    "scope": [
+      "Adding and ticking items",
+      "Accounts and sharing invitations are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States that adding must always succeed (availability), that no addition may be lost, and that a minute's delay is fine"
+      ],
+      "estimation": [
+        "Changes per second: 2 × 10⁶ × 10 = 2 × 10⁷ a day ÷ 10⁵ = 200 per second on average",
+        "During a 15-minute partition: up to 200 × 900 = 180,000 changes are made on one side or the other and must be exchanged when the link returns"
+      ],
+      "design": [
+        "Each region accepts changes to any list from its own users and sends them to the other region without waiting; or phones keep a local copy and send changes when they can reach a region"
+      ],
+      "data": [
+        "How two copies are merged without losing additions, such as keeping every added item (a union of both sides) and applying ticks only to the items they saw",
+        "Why last write wins for the whole list would lose items"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: a ticked item can come back if someone re-added it during a partition, which the requirement accepts; family members on opposite sides see different lists for up to 15 minutes; storing every change costs more space than storing the list"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, both regions accept changes: each region applies its users' adds and ticks at once and sends each change to the other region within seconds. Merging keeps every added item from both sides and applies a tick only to the item it ticked, so no addition is lost. About 200 changes per second normally; after a 15-minute partition, up to 180,000 changes are exchanged. Trade-off: a ticked item re-added on the other side stays on the list.",
+      "Design B, a home region per list with phones that work offline: each list has a home region, and each phone keeps its own copy and a queue of its changes. A phone adds items to its copy at once and sends the queue to the home region whenever it can reach it, so adding always succeeds on the phone. The home region merges changes the same way, keeping every added item. Same 200 changes per second; during a partition, phones across the break queue their changes for up to 15 minutes. Trade-off: other members see those changes only after the link returns."
+    ],
+    "reference": {
+      "assumptions": [
+        "Each change is small",
+        "Phones may be offline for a while"
+      ],
+      "design": "Lists choose availability. Each region accepts adds and ticks from its own users at once and sends every change to the other region within a few seconds, well inside the 1-minute delay allowed.\nA list is stored as the set of added items plus the set of ticked items. Merging two copies keeps every added item from both and every tick from both, so no addition is ever lost; an item re-added on the other side of a partition stays on the list, which the requirement accepts.\nLoad: 2 × 10⁶ × 10 ÷ 10⁵ = 200 changes per second; after a 15-minute partition, up to 180,000 changes are exchanged in both directions.",
+      "alternatives": [
+        "A home region per list with an offline queue on each phone: adds always succeed on the phone, synced later",
+        "Rejected: last write wins for the whole list, because two people adding different items at once would lose one of them"
+      ]
+    }
+  }
+]

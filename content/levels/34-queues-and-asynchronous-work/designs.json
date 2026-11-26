@@ -1,0 +1,108 @@
+[
+  {
+    "id": "D34-video-processing",
+    "level": 34,
+    "title": "Processing Uploaded Videos",
+    "prompt": "A video app lets users upload short videos. Each video must be converted to several sizes and given a thumbnail before others can watch it. Design how uploads are processed.",
+    "facts": [
+      "Target: the upload request answers within 1 second; saving the uploaded file takes about 300 ms and putting a message on the queue about 5 ms",
+      "Uploads arrive at about 3 per second during a one-hour evening peak, and about 0.5 per second at other times",
+      "Processing one video takes one worker about 2 minutes, and a worker handles one video at a time",
+      "Target: during the peak, every video is ready to watch within 35 minutes of its upload when no worker crashes; a video whose worker crashed may take up to one visibility timeout plus one more processing time longer, and a video that fails 3 times is parked for a person (not counted as ready)",
+      "A worker can crash in the middle of a job; processing writes its output under the video's id, so doing a job again replaces the same files",
+      "Workers cost money per hour; the team wants to run no more than the targets need"
+    ],
+    "scope": [
+      "Processing after upload",
+      "Playback and storage of the files are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the 1-second upload answer, the 35-minute ready time at peak without crashes, and that no upload may be skipped after a crash"
+      ],
+      "estimation": [
+        "Workers to keep up with the peak: 3 × 120 s = 360 busy at once",
+        "Or with a backlog: W workers finish W ÷ 120 videos per second; after the hour the backlog is (3 − W ÷ 120) × 3,600, and the last video waits backlog ÷ (W ÷ 120) plus 2 minutes; 240 workers give a backlog of 3,600 at the end of the hour; the last peak video waits 3,600 ÷ 2 = 1,800 s = 30 minutes, ready in about 32 minutes"
+      ],
+      "design": [
+        "The upload request saves the file and puts one message per video on a queue, then answers; workers take messages and process them"
+      ],
+      "data": [
+        "Acknowledge a message only after processing finishes, with a visibility timeout longer than a job (such as 5 minutes)",
+        "Explains why a repeated job is harmless here (output written under the video id)"
+      ],
+      "tradeoffs": [
+        "Names a trade-off or failure with its condition, such as: more workers cost more but make videos ready sooner; a video that keeps failing goes to a dead-letter queue instead of being retried forever; a visibility timeout shorter than 2 minutes would start the same job twice"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, enough workers for the peak: the upload saves the file (300 ms) and queues one message (5 ms), answering in about 0.3 s. 3 × 120 = 360 workers during the evening hour keep the backlog near zero, so each video is ready in about 2 minutes; 0.5 × 120 = 60 workers at other times. Ack after processing, visibility timeout 5 minutes; a crashed job is taken again after 5 minutes and redone harmlessly, because the output is written under the video id. Trade-off: 360 workers cost more than the 35-minute target needs.",
+      "Design B, allow a backlog: the same upload path, with 240 workers during the peak. They finish 2 videos per second, so the backlog grows by 1 per second to 3,600 after the hour; the last peak video waits 3,600 ÷ 2 = 1,800 s = 30 minutes and is ready in about 32 minutes, within 35. The 240 workers stay until the backlog clears, about 3,600 ÷ (2 − 0.5) = 2,400 s = 40 minutes, then drop to 60. Ack after processing, visibility timeout 5 minutes; a repeated job rewrites the same files under the video id, and a video that fails 3 times goes to a dead-letter queue. Trade-off: cheaper, but evening videos wait up to half an hour, and a crash adds up to 7 minutes to that video."
+    ],
+    "reference": {
+      "assumptions": [
+        "Uploads are spread evenly over the peak hour",
+        "Workers can be added or removed between hours"
+      ],
+      "design": "The upload request saves the file (about 300 ms), puts one message with the video id on a queue (about 5 ms), and answers well within 1 second.\nWorkers take one message at a time and process the video for about 2 minutes, then acknowledge. The visibility timeout is 5 minutes, longer than a job, so a second worker only starts a job if the first one crashed; that repeat is harmless because the output is written under the video id.\nDuring the evening hour, 240 workers finish 240 ÷ 120 = 2 videos per second against 3 arriving: the backlog grows by 1 per second to 3,600, and the last peak video waits 3,600 ÷ 2 = 1,800 s, so every video is ready within about 32 minutes. The workers stay at 240 until the backlog clears, about 40 minutes later because 0.5 per second still arrive; then 60 workers keep up. If a worker crashes, its video is taken again after the 5-minute timeout and finishes up to about 7 minutes later, which the target allows. A video that fails 3 times goes to a dead-letter queue and a person is alerted; it is not ready until someone fixes it.",
+      "alternatives": [
+        "360 workers at peak: videos ready in about 2 minutes, at a higher cost",
+        "Rejected: processing inside the upload request, because the upload would take over 2 minutes against a 1-second target"
+      ]
+    }
+  },
+  {
+    "id": "D34-partner-notifications",
+    "level": 34,
+    "title": "Telling a Delivery Partner About Paid Orders",
+    "prompt": "When an order is paid, the shop must tell a delivery partner through the partner's API. The partner is sometimes down. Design how notifications reach the partner.",
+    "facts": [
+      "About 20 paid orders per second at peak; each needs one notification to the partner",
+      "The partner's API is sometimes down, for at most 15 minutes at a time, with at least 45 minutes of normal service between outages",
+      "The partner accepts at most 100 requests per second from the shop; measured: when the partner is up, the shop's senders complete 100 successful notifications per second",
+      "Every notification must reach the partner at least once, within 1 hour of payment, under the outage pattern above; a notification still failing after 1 hour is an exception, kept for a person and not counted as delivered",
+      "The partner ignores a second notification with the same order id",
+      "The payment page must not wait for the partner",
+      "The shop has a mechanism that sends the work to the queue or table after the payment is saved, even if a server crashes in between (taught in SD 10); designs may rely on it"
+    ],
+    "scope": [
+      "Sending notifications after payment",
+      "Payment itself and the partner's side are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States at-least-once delivery within 1 hour, the 100 requests-per-second limit, and that the payment page does not wait"
+      ],
+      "estimation": [
+        "During a 15-minute outage, 20 × 900 = 18,000 notifications wait",
+        "After the outage, sending at the 100-per-second limit while 20 per second keep arriving clears the backlog at 80 per second: 18,000 ÷ 80 = 225 s, about 4 minutes",
+        "Age budget for the oldest notification: 15 minutes of outage + at most 60 s until its next retry + about 4 minutes of backlog ≈ 20 minutes, within 1 hour"
+      ],
+      "design": [
+        "Payment publishes the work (a message on a queue or a row in a table) and answers; a sender delivers notifications to the partner and retries failures"
+      ],
+      "data": [
+        "Retries with exponential backoff and jitter, capped so that retries keep within 100 requests per second; after 1 hour, a failed notification is parked for a person (a dead-letter queue or a marked row)",
+        "Explains why repeats are safe: the partner ignores a repeated order id"
+      ],
+      "tradeoffs": [
+        "Names a trade-off or failure with its condition, such as: immediate retries during an outage would far exceed 100 requests per second; the work must be stored before payment answers, or a crash loses it; a dead-letter item needs an alert or nobody sees it"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, queue and workers: after payment is saved, the app puts a message with the order id on a queue and answers. Workers send it to the partner and ack on success. Failures retry with exponential backoff and jitter, capped at 60 s per wait, and the workers together send at most 100 requests per second. An outage leaves 20 × 900 = 18,000 waiting, cleared at 80 per second in about 4 minutes; the oldest is delivered after about 15 + 1 + 4 = 20 minutes, within 1 hour. A message still failing after 1 hour is an exception: it goes to a dead-letter queue and alerts a person. Repeats are harmless because the partner ignores a known order id.",
+      "Design B, a table of pending notifications: payment inserts a row (order id, next_attempt_at) in the same database as the order. A job every second sends up to 100 due rows, marks successes done, and on failure doubles the wait in next_attempt_at, up to 60 s, with jitter. Same outage estimate: 18,000 rows, about 4 minutes to clear at 80 per second, the oldest delivered after about 20 minutes; the job sends the oldest due rows first. Rows still failing after 1 hour are an exception, marked for a person and alerted. Trade-off: no broker to run, but the database does the queue's work."
+    ],
+    "reference": {
+      "assumptions": [
+        "Outages follow the stated pattern",
+        "The shop's own database and broker stay up"
+      ],
+      "design": "After a payment is saved, the app puts a message with the order id on a queue and answers at once; the payment page never waits for the partner.\nWorkers send each notification and acknowledge only after the partner accepts it. Because delivery is at least once, a repeat can happen; the partner ignores a repeated order id.\nFailures are retried with exponential backoff and jitter, starting at 1 second and capped at 60 seconds per wait, and the workers together send at most 100 requests per second.\nA 15-minute outage leaves 20 × 900 = 18,000 notifications waiting; afterwards they are sent at 100 per second while 20 per second keep arriving, so the backlog clears at 80 per second in about 225 seconds. The oldest notification is delivered about 15 minutes + up to 60 s + about 4 minutes ≈ 20 minutes after payment, within 1 hour.\nA notification still failing after 1 hour is outside the outage pattern: it goes to a dead-letter queue and alerts a person, and it does not count as delivered.",
+      "alternatives": [
+        "A table of pending notifications with a sending job: no broker, but more load on the database",
+        "Rejected: calling the partner inside the payment request, because the page would wait and fail during outages"
+      ]
+    }
+  }
+]

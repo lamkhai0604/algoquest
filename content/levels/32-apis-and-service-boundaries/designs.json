@@ -1,0 +1,107 @@
+[
+  {
+    "id": "D32-notes-api",
+    "level": 32,
+    "title": "An API for a Notes App",
+    "prompt": "A notes app runs on phones and the web. Users create, edit and delete notes, and scroll through their notes, newest created first; some users have thousands. Phone users often keep an old version of the app for months. Design the API.",
+    "facts": [
+      "1 million users, each making about 20 requests a day; peak traffic is about 5 times the average",
+      "Some users have more than 5,000 notes; the list is ordered by creation time, which never changes, and edits do not move a note",
+      "Phones lose their connection often, so requests are sent again when no answer arrives",
+      "If a lost answer makes the app send a create again, a rare duplicate note is acceptable but a lost or wrongly changed note is not",
+      "The app may choose a note's id itself before sending it"
+    ],
+    "scope": [
+      "The notes API only",
+      "Sharing notes and sign-in are out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "Lists the operations: list, create, read, edit, delete",
+        "States that old app versions must keep working and what a repeated request may and may not do"
+      ],
+      "estimation": [
+        "Average load: 10⁶ × 20 = 2 × 10⁷ requests a day ÷ 10⁵ ≈ 200 per second; peak about 1,000 per second",
+        "Or paging cost: offset pages near note 5,000 step past 5,000 rows, a cursor reads about 20"
+      ],
+      "design": [
+        "REST resources such as GET /notes?limit=20&after=<cursor>, creation with POST /notes or with PUT /notes/{id} using an id the app chose, and GET/PUT/PATCH/DELETE /notes/{id}",
+        "Fitting status codes, such as 201 or 200 on create, 404 for a missing note, 400 for invalid input, 403 for another user's note"
+      ],
+      "data": [
+        "Cursor pagination on (created_at, id) with a matching index such as (user_id, created_at, id)",
+        "Versioning: add optional fields freely; breaking changes go to a new version such as /v2/"
+      ],
+      "tradeoffs": [
+        "Explains which requests are safe to send again: PUT and DELETE are idempotent; a repeated POST may create a duplicate, which this prompt accepts as rare, or which creation with PUT at an app-chosen id avoids",
+        "Or another trade-off with its condition, such as keeping /v1 running while old apps remain"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, POST creation: REST API under /v1; POST /notes creates (201), GET, PUT and DELETE /notes/{id} read, replace and remove; the list uses a cursor on (created_at, id) over an index on (user_id, created_at, id). About 200 requests per second on average, 1,000 at peak. Retries: PUT and DELETE are safe; a repeated POST can create a rare duplicate, which the prompt accepts and the user can delete. New fields are optional; breaking changes would go to /v2.",
+      "Design B, creation at an app-chosen id: the app picks an id and sends PUT /notes/{id}, so a repeated create replaces the same note instead of adding one; edits use PATCH for the title or text, which is not idempotent, so the app sends the whole text with PUT when it must retry. Same cursor paging and load estimate (about 1,000 per second at peak). Trade-off: the server must reject an id that already belongs to another user."
+    ],
+    "reference": {
+      "assumptions": [
+        "Notes are private to one user",
+        "One region"
+      ],
+      "design": "Resources: GET /v1/notes?limit=20&after=<cursor> lists notes newest created first; POST /v1/notes creates (201 with the new note's address); GET, PUT and DELETE /v1/notes/{id} read, replace and remove one note. A missing note returns 404, another user's note 403, invalid input 400.\nPaging uses a cursor of the last note's creation time and id, over an index on (user_id, created_at, id). Creation time never changes, so edits do not move notes between pages, and a user with 5,000 notes scrolls as fast at the end as at the start.\nLoad: 10⁶ × 20 ÷ 10⁵ ≈ 200 requests per second, about 1,000 at peak.\nRetries: PUT and DELETE can be sent again safely; a repeated POST may create a rare duplicate, which the requirements accept. New optional fields keep /v1 working for old apps.",
+      "alternatives": [
+        "Creation with PUT at an app-chosen id: no duplicates on retry, but ids must be checked",
+        "Offset pagination: simpler, but slow for deep pages and repeats notes when new ones arrive"
+      ]
+    }
+  },
+  {
+    "id": "D32-sports-day",
+    "level": 32,
+    "title": "Live Scores for Sports Day",
+    "prompt": "A school holds a sports day, and parents follow the scores live on their phones. Design how the scores reach the phones.",
+    "facts": [
+      "About 3,000 parents keep the score page open for 4 hours; scores change about 120 times during the day",
+      "A new score must appear on phones within 5 seconds",
+      "One server handles about 250 requests per second, or about 5,000 open connections; it can send one message to all its open connections within about 1 second",
+      "A poll request, from phone to server and back, takes under 0.5 seconds",
+      "Parents only watch; they do not send anything; phones sometimes lose signal and reconnect"
+    ],
+    "scope": [
+      "Delivering scores to phones",
+      "Entering scores is out of scope"
+    ],
+    "criteria": {
+      "requirements": [
+        "States the 5-second update requirement and that data flows only from server to phones"
+      ],
+      "estimation": [
+        "Server push: 3,000 open connections (under 5,000) and 120 × 3,000 = 360,000 messages over 4 hours = 14,400 s, about 25 per second; each change reaches every phone within about 1 s",
+        "Or polling: every N seconds costs 3,000 ÷ N requests per second, and a change can wait up to N + 0.5 s, so N ≤ 4.5; every 4 s is 750 per second, 3 or more servers"
+      ],
+      "design": [
+        "A delivery method chosen with a reason: server-sent events, WebSocket, long polling, or polling with enough servers",
+        "The path from the score store to the phones"
+      ],
+      "data": [
+        "Where the current scores live (one small table or a cache) and how many servers the chosen method needs, from the estimate"
+      ],
+      "tradeoffs": [
+        "Names a trade-off with its condition, such as: phones that reconnect must not miss a score, so they start listening first and then load the current scores; or polling wastes most requests because scores change about once every 2 minutes; or one server is a single point of failure for the day"
+      ]
+    },
+    "fullMarkDesigns": [
+      "Design A, server-sent events: each phone keeps one connection; when a score is entered, the server sends it to every connection within about 1 s. Load: 3,000 connections on one server (limit about 5,000) and about 25 messages per second on average. A phone that reconnects starts listening first, then loads the current scores; each score carries the time it was entered, and the phone keeps the newest one per event, so neither a gap nor an older snapshot can hide a change. Trade-off: one server is a single point of failure for the day.",
+      "Design B, polling: phones ask every 4 s for the current scores, which a cache holds; a change waits at most 4 + 0.5 = 4.5 s. Load: 3,000 ÷ 4 = 750 requests per second, so 4 servers behind a load balancer at 75% of their limit (5 for room if one fails). Trade-off: about 3,600 polls per phone over the day for about 120 changes, almost all answering \"no change\", affordable at this size."
+    ],
+    "reference": {
+      "assumptions": [
+        "Scores change about once every 2 minutes on average",
+        "Parents are on mobile networks that drop sometimes"
+      ],
+      "design": "Phones open the score page and keep one server-sent events connection. When a score is entered, the server sends it to every open connection, within about 1 second.\nLoad: 3,000 open connections, under one server's 5,000; 120 changes × 3,000 phones = 360,000 messages over 14,400 seconds, about 25 per second.\nPolling every 5 seconds instead would cost 3,000 ÷ 5 = 600 requests per second, more than two servers at their limit, and could take 5.5 seconds, over the 5-second target.\nWhen a phone reconnects after losing signal, it starts listening first and then loads the current scores, so no score is missed.",
+      "alternatives": [
+        "Polling every 4 seconds with 4 or 5 servers: simpler and works on any network, at the cost of many empty answers",
+        "WebSocket: works, but parents never send anything, so two-way messaging is unused"
+      ]
+    }
+  }
+]

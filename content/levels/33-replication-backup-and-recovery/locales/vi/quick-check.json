@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Quản trị viên vô tình xóa các đơn hàng hợp lệ trên leader và lệnh xóa đã commit. Điều gì xảy ra với các synchronous và asynchronous replica thông thường, và nhóm lấy lại đơn hàng bằng cách nào?",
+    "options": [
+      "Synchronous replica từ chối lệnh xóa vì mục đích của chúng là giữ một bản an toàn không thay đổi.",
+      "Asynchronous replica giữ mãi đơn hàng hôm qua vì chúng không chờ leader.",
+      "Cả hai loại đều sao chép lệnh xóa, dù asynchronous replica có thể chậm hơn; restore backup riêng và phát lại nhật ký đã lưu đến trước thao tác nhầm.",
+      "Nâng replica lên sau khi nó đã áp dụng lệnh xóa sẽ đảo ngược thao tác và lấy lại đơn hàng."
+    ],
+    "answer": 2,
+    "explanation": "Replication sao chép mọi thay đổi, kể cả sai sót. Synchronous follower nhận thay đổi trong quá trình xác nhận; asynchronous follower áp dụng sau. Replica còn chậm không phải backup lịch sử được bảo đảm. Full backup giữ riêng cùng các nhật ký cần thiết hỗ trợ point-in-time recovery về trước lệnh xóa nhầm. Ảnh hưởng đến thay đổi hợp lệ về sau cần một quyết định khôi phục riêng."
+  },
+  {
+    "question": "Read replica phải phục vụ 7,600 lệnh đọc mỗi giây. Trong mô hình chi phí ngang nhau đơn giản của bài tập, giới hạn an toàn của mỗi replica là 2,100 thao tác mỗi giây và mỗi replica cũng áp dụng cả 800 lệnh ghi mỗi giây. Cần bao nhiêu read replica khi không có replica hỏng và không yêu cầu dự phòng?",
+    "options": [
+      "4 replica, do làm tròn 7,600 ÷ 2,100 lên.",
+      "6 replica, do làm tròn 7,600 ÷ (2,100 - 800) lên.",
+      "3 replica, vì leader áp dụng lệnh ghi nên follower chỉ xử lý đọc.",
+      "7 replica, do thêm một bản dự phòng vào sáu replica cần cho tải đọc."
+    ],
+    "answer": 1,
+    "explanation": "Mỗi replica áp dụng cả 800 lệnh ghi, còn 2,100 - 800 = 1,300 lệnh đọc mỗi giây. 7,600 ÷ 1,300 ≈ 5.85, nên làm tròn lên 6. Năm replica chỉ cung cấp 5 × 1,300 = 6,500 lệnh đọc mỗi giây; sáu cung cấp 7,800. Đáp án bốn dùng sai toàn bộ giới hạn cho đọc. Replica thứ bảy có thể làm dự phòng, nhưng câu hỏi chỉ yêu cầu trường hợp không có sự cố."
+  },
+  {
+    "question": "Khách lưu địa chỉ mới trên leader, rồi tải lại từ replica vẫn còn chậm. Quy tắc định tuyến nào bảo đảm lần tải lại hiện địa chỉ đã lưu theo các giả định đã nêu?",
+    "options": [
+      "Đọc địa chỉ của chính khách từ leader sau khi lưu trong lúc replica còn chậm; chỉ quay lại đọc từ replica khi nó đã theo kịp.",
+      "Thêm asynchronous replica rồi tiếp tục chọn ngẫu nhiên bất kỳ bản nào.",
+      "Rút ngắn cache TTL của ứng dụng nhưng vẫn đọc replica còn chậm khi cache miss.",
+      "Gửi lần tải lại đến cùng app server, nơi vẫn chọn ngẫu nhiên một replica để đọc."
+    ],
+    "answer": 0,
+    "explanation": "Thay đổi đã lưu có trên leader, nên đọc tại đó tránh độ trễ của follower. Cũng có thể dùng replica đã biết chắc áp dụng thay đổi ấy. Một khoảng ngắn cố định đọc từ leader chỉ hiệu quả khi độ trễ được giới hạn dưới khoảng đó hoặc đã kiểm tra bắt kịp. Thêm replica, rút ngắn cache TTL và gắn với một app server không làm database còn chậm chứa địa chỉ mới."
+  }
+]

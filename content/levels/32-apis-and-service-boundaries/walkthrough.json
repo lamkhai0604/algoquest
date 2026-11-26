@@ -59,7 +59,7 @@
   },
   {
     "title": "An order with no address",
-    "body": "The app sends `POST /orders` to place an order, but the delivery address is missing. The server checks the input and rejects it before touching the database, with **400 Bad Request** and a message saying which field is missing. A 4xx code tells the app the request itself must change; sending it again unchanged will fail again. A 5xx code would say the server failed, which is not true here.",
+    "body": "The app sends `POST /orders` to place an order, but the delivery address is missing. The server checks the input and rejects it before touching the database, with **400 Bad Request** and a message saying which field is missing. This 400 tells the app the request itself must change: sending it again without an address will fail again. Not every 4xx works this way; after a 429, the same request may succeed once the rate limit resets. A 5xx code would say the server failed, which is not true here.",
     "visual": {
       "cells": [],
       "arch": {
@@ -208,7 +208,7 @@
   },
   {
     "title": "Page with a cursor",
-    "body": "A **cursor** names where the last page ended instead of counting positions: `?after=<cursor>`, where the cursor holds the time and id of the last order shown. The server asks for orders older than that one: `WHERE customer_id = 7 AND created_at < <last> ORDER BY created_at DESC LIMIT 20`. New orders at the top do not change what is older than the last one shown, so nothing repeats. With the index on `(customer_id, created_at)` from SD 4, each page reads a few index pages and 20 rows, however deep the customer scrolls.",
+    "body": "A **cursor** names where the last page ended instead of counting positions: `?after=<cursor>`, where the cursor holds the time and id of the last order shown. The server asks for orders that come after that one in time-then-id order: `WHERE customer_id = 7 AND (created_at, id) < (<last time>, <last id>) ORDER BY created_at DESC, id DESC LIMIT 20`. The id breaks ties between orders with the same time, so none is skipped. New orders at the top do not change what comes after the last one shown, so nothing repeats; they appear on refresh. With the index on `(customer_id, created_at, id)` from SD 4, each page reads a few index pages and 20 rows, however deep the customer scrolls.",
     "visual": {
       "cells": [],
       "arch": {
@@ -230,7 +230,7 @@
             "label": "Database",
             "x": 9,
             "y": 4,
-            "note": "index cust+time"
+            "note": "index cust+time+id"
           }
         ],
         "links": [

@@ -1,0 +1,934 @@
+[
+  {
+    "title": "One database is not enough",
+    "body": "The marketplace's database holds 5 TB and takes 30,000 order writes per second at peak. One server holds about 1 TB comfortably and takes about 5,000 writes per second safely. Read replicas (SD 6) do not help: every replica applies every write, and the leader alone cannot take 30,000 per second. The data itself must be split: **partitioning**, also called **sharding**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 7,
+            "y": 4,
+            "note": "5 TB, 30,000 w/s",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "data",
+          "value": "5 TB"
+        },
+        {
+          "name": "writes per second",
+          "value": "30,000"
+        },
+        {
+          "name": "one server holds",
+          "value": "1 TB"
+        },
+        {
+          "name": "one server writes",
+          "value": "5,000/s"
+        }
+      ]
+    }
+  },
+  {
+    "title": "How many shards?",
+    "body": "Each **shard** holds part of the data on its own server. Storage needs 5 TB ÷ 1 TB = 5 shards; writes need 30,000 ÷ 5,000 = 6. The larger number wins: **6 shards**, plus room to grow. Each shard holds about 5 ÷ 6 ≈ 0.8 TB and takes about 5,000 writes per second.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 7,
+            "y": 4,
+            "note": "split into ? shards"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "shards for storage",
+          "value": "5"
+        },
+        {
+          "name": "shards for writes",
+          "value": "6"
+        },
+        {
+          "name": "shards needed",
+          "value": "6"
+        }
+      ],
+      "predict": {
+        "question": "The data is 5 TB and one shard holds 1 TB. Writes are 30,000 per second and one shard takes 5,000 per second. How many shards are needed?",
+        "options": [
+          "5",
+          "6",
+          "11",
+          "30"
+        ],
+        "answer": 1,
+        "explanation": "Storage needs 5 ÷ 1 = 5 shards and writes need 30,000 ÷ 5,000 = 6. Both limits must hold, so the larger, 6, wins. Adding them (11) double-counts: each shard provides both storage and write capacity.",
+        "hides": [
+          "shards for storage",
+          "shards for writes",
+          "shards needed"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Split by date",
+    "body": "The first idea is **range partitioning** by order date: January's orders on shard 1, February's on shard 2, and so on. Reports for one month read one shard. But every new order has today's date, so all 30,000 new writes per second go to the newest shard, six times what it can take, while the other five sit idle. This is a **hot partition**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          7
+        ]
+      },
+      "vars": [
+        {
+          "name": "partition key",
+          "value": "order date (range)"
+        },
+        {
+          "name": "new writes go to",
+          "value": "the newest shard only"
+        },
+        {
+          "name": "load on that shard",
+          "value": "30,000 w/s, limit 5,000"
+        }
+      ],
+      "predict": {
+        "question": "Orders are split into shards by month of the order date. Where do today's 30,000 new orders per second go?",
+        "options": [
+          "Spread evenly over the six shards",
+          "All to the shard for the current month",
+          "To the shard with the most free space",
+          "Half to the newest shard, half to the oldest"
+        ],
+        "answer": 1,
+        "explanation": "A new order's date is always today, so its month is always the current one, and range partitioning sends it to that month's shard. The other shards only receive reads for older orders. A key that all new writes share makes one partition hot.",
+        "hides": [
+          "new writes go to",
+          "load on that shard"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Split by a hash of the customer",
+    "body": "With **hash partitioning** by `customer_id`, the key goes through a hash function (Level 3) and the hash picks the shard, so customers spread evenly: about 5,000 writes per second each. \"My orders\" includes the customer id, so it reads one shard. A query without the key, such as \"all orders placed today\", must ask all six shards and combine the answers: **scatter-gather**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0,
+            "note": "customer 42"
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              1,
+              4
+            ]
+          },
+          {
+            "path": [
+              1,
+              5
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "partition key",
+          "value": "hash of customer_id"
+        },
+        {
+          "name": "writes per shard",
+          "value": "about 5,000/s"
+        },
+        {
+          "name": "\"my orders\"",
+          "value": "one shard"
+        },
+        {
+          "name": "\"all of today\"",
+          "value": "every shard"
+        }
+      ]
+    }
+  },
+  {
+    "title": "One seller, too many orders",
+    "body": "A large business account places 20% of all orders: 0.2 × 30,000 = 6,000 writes per second for one `customer_id`. All of them hash to the same shard, which also serves its other customers, so it is overloaded: a **hot key**. More shards cannot help, because one key always goes to one shard. Splitting the key into 4 sub-keys, `seller42#0` to `seller42#3`, spreads it as about 1,500 writes per second each; reading that account's orders then reads 4 sub-keys.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6,
+            "note": "seller42: 6,000 w/s",
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "one key's share",
+          "value": "20%"
+        },
+        {
+          "name": "writes for that key",
+          "value": "6,000/s"
+        },
+        {
+          "name": "after splitting into 4",
+          "value": "about 1,500/s each"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Adding a seventh shard",
+    "body": "With \"hash mod 6\", a key's shard is its hash's remainder when divided by 6. Adding a seventh shard changes the rule to \"mod 7\", and a key stays only if both remainders are the same, which happens for about 1 key in 7. So about 6 in 7, **86%** of all orders, would have to move to another shard, while the system keeps serving traffic.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 7",
+            "x": 7,
+            "y": 4,
+            "note": "new"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            1,
+            8
+          ]
+        ],
+        "path": [
+          1,
+          8
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              1,
+              3
+            ]
+          },
+          {
+            "path": [
+              1,
+              4
+            ]
+          },
+          {
+            "path": [
+              1,
+              5
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "rule before",
+          "value": "hash mod 6"
+        },
+        {
+          "name": "rule after",
+          "value": "hash mod 7"
+        },
+        {
+          "name": "keys that stay",
+          "value": "about 1 in 7"
+        },
+        {
+          "name": "keys that move",
+          "value": "about 86%"
+        }
+      ],
+      "predict": {
+        "question": "Keys are placed with hash mod 6. A seventh shard is added and the rule becomes hash mod 7. About what share of keys must move to a different shard?",
+        "options": [
+          "About 14%, one seventh",
+          "About 86%",
+          "None, existing keys stay",
+          "All of them"
+        ],
+        "answer": 1,
+        "explanation": "A key stays only if its hash has the same remainder for 6 and for 7, which holds for about 1 key in 7 (for example, hashes 0 to 5 out of every 42). The other 6 in 7, about 86%, move. One seventh is what consistent hashing moves.",
+        "hides": [
+          "keys that stay",
+          "keys that move"
+        ]
+      }
+    }
+  },
+  {
+    "title": "A ring instead of mod",
+    "body": "With **consistent hashing**, servers and keys are both placed on a ring of hash values, and each key belongs to the next server clockwise. A new server takes over only the keys between it and the server before it: about 1 ÷ 7 ≈ **14%** of keys. Every other key keeps its shard, so adding a server is a small, gradual move.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 7",
+            "x": 7,
+            "y": 4,
+            "note": "takes ≈14%"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            1,
+            8
+          ]
+        ],
+        "path": [
+          1,
+          8
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "rule",
+          "value": "next server clockwise"
+        },
+        {
+          "name": "keys that move",
+          "value": "about 1/7, 14%"
+        },
+        {
+          "name": "other keys",
+          "value": "stay"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Many points per server",
+    "body": "With one point per server, the gaps on the ring are uneven: one server can own a much larger slice than another, and a new server takes keys from only one neighbor. With **virtual nodes**, each server gets many points, for example 100, scattered around the ring. Each server's share comes out close to even, and a new server takes small slices from every other server. Each shard still keeps its own replicas and backups (SD 6).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Buyers",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 9,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Shard 3",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 4",
+            "x": 10,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Shard 5",
+            "x": 8,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 6",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Shard 7",
+            "x": 7,
+            "y": 4,
+            "note": "100 points"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            1,
+            8
+          ]
+        ],
+        "path": [
+          1,
+          8
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              1
+            ]
+          },
+          {
+            "path": [
+              4,
+              1
+            ]
+          },
+          {
+            "path": [
+              6,
+              1
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "points per server",
+          "value": "100"
+        },
+        {
+          "name": "share per server",
+          "value": "close to even"
+        },
+        {
+          "name": "new server takes from",
+          "value": "every server, a little"
+        }
+      ]
+    }
+  }
+]

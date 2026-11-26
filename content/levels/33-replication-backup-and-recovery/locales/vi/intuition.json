@@ -1,0 +1,11 @@
+{
+  "question": "Các trợ giảng chép từng chữ giáo viên viết trên bảng chính sang ba bảng khác. Giáo viên vô tình xóa nửa bảng chính. Điều gì xảy ra với các bản sao?",
+  "options": [
+    "Trợ giảng chép cả thao tác xóa, nên các bản sao mất cùng nội dung",
+    "Các bản sao giữ nội dung cũ vì chúng được viết từ trước",
+    "Chỉ bản sao gần giáo viên nhất mất nội dung",
+    "Các bản sao tự động khôi phục bảng chính"
+  ],
+  "answer": 0,
+  "explanation": "Trợ giảng chép mọi thay đổi, và xóa cũng là thay đổi. Bản sao bám sát bản gốc giúp đối phó khi mất một bảng, không giúp tránh thao tác nhầm trên bảng. Muốn lấy lại nội dung cần ảnh chụp từ trước và giữ ở nơi khác: đó là backup."
+}

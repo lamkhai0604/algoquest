@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P36-inventory",
+    "level": 36,
+    "title": "Limited Stock in Two Regions",
+    "statement": "A shop sells limited items in the US and Europe. Exercise assumptions: each item has a sales region that can be used as its home. Every server supplies an atomic local reservation that cannot reserve its own last unit twice. In a home-based layout, all stock changes for an item go through its one fixed authority. No server fails or home moves during this exercise. Local reservation work takes 5 ms, including relevant processing overhead; a cross-region round trip adds 90 ms. Successful confirmations must take at most 120 ms. A link partition can last 10 minutes while both regions keep running. An attempt that cannot reach its home may be refused, with the timeout reply returned within 100 ms. At a steady 200 attempts/s, 40% originate in Europe and 90% overall concern items whose home is in the buyer's own region. Capacity and storage are sufficient in each proposed layout. Refusing up to 50% of attempts during a partition is acceptable; among feasible layouts, the team prefers fewer refusals. Every limited item must remain within its actual stock, including one-unit items. A proposed global-home layout instead assigns every item to the US, with the same atomic reservation and capacity.",
+    "examples": [
+      "If both disconnected regions each confirm a sale from a local copy showing one unit, two buyers receive promises for one unit."
+    ],
+    "constraints": [
+      "Never confirm more sales of an item than its stock.",
+      "Confirm a successful purchase within 120 ms under the supplied timings; return unreachable-home refusals within 100 ms.",
+      "During a partition, refuse no more than 50% of the steady attempts; prefer fewer refusals among feasible layouts."
+    ],
+    "approaches": [
+      {
+        "id": "independent-regional-copies",
+        "name": "Let each region reserve from its own asynchronously replicated stock copy",
+        "hint": "Decide using the nearest copy",
+        "label": "unsuitable",
+        "time": "5 ms locally, including during a partition",
+        "space": "A stock copy in each region",
+        "why": "The response is fast, but each disconnected region can reserve the same last unit from its own copy. That confirms two sales for stock of one, violating the no-overselling rule. Later reconciliation can choose a winner only by withdrawing a promise already made."
+      },
+      {
+        "id": "item-home",
+        "name": "Route each reservation to the item's fixed home region",
+        "hint": "Keep one deciding place for each item",
+        "label": "best",
+        "time": "5 ms local or 5 + 90 = 95 ms remote; unreachable-home reply within 100 ms",
+        "space": "One authoritative stock record per item, plus replicated copies",
+        "why": "Only the fixed home performs the atomic reservation, so a disconnected copy cannot sell the same unit. Both successful timings fit 120 ms. During a partition the 10% of attempts crossing to the item's home are refused: 0.1 × 200 = 20/s, or 12,000 over 600 seconds. This is below the 50% limit and fewer refusals than putting every home in the US."
+      },
+      {
+        "id": "global-us-home",
+        "name": "Put every item's reservation authority in the US",
+        "hint": "Use one region for all stock decisions",
+        "label": "valid",
+        "time": "5 ms for US buyers, 95 ms for Europe; unreachable-home reply within 100 ms",
+        "space": "Authoritative stock in the US, with a copy in Europe",
+        "why": "One atomic authority per item still prevents overselling. Both 5 ms and 95 ms meet the confirmation deadline. During a partition Europe accounts for 40% × 200 = 80 refused attempts/s, or 48,000 over 600 seconds. Forty percent is within the allowed 50%, so the option is valid, but gives more refusals and more remote confirmations than the per-item homes."
+      }
+    ]
+  },
+  {
+    "id": "P36-like-counter",
+    "level": 36,
+    "title": "Likes While the Link Is Down",
+    "statement": "Posts show a like count in the US and Europe. Exercise assumptions: there are only new like events, with no unlikes; each unique event is accepted in exactly one region and counted once there; retransmissions are not new events. Both regions and their local storage stay running. Local counting and a page response together take at most 3 ms at this workload; a cross-region round trip takes 90 ms. Every request reaching a running region must receive a successful local answer within 20 ms, including during a link partition of up to 10 minutes. With a healthy link, a displayed count may omit remote likes for at most 30 seconds. During a partition, missing remote likes are explicitly allowed; after healing, the display must include all accepted likes within 30 seconds if no further likes arrive. The supplied replication service has enough capacity to exchange the newest state within that time. It can keep a separate cumulative count per region and replace an older copy with that region's newer total without counting the same state twice. Every accepted like must survive the merge. Which counter representation fits?",
+    "examples": [
+      "Exercise example: the regional contributions start at 60 and 40, so the combined count is 100. During a partition each region accepts one new like. The contributions become 61 and 41, and the converged count must be 102."
+    ],
+    "constraints": [
+      "Answer every local request successfully within 20 ms, even during the specified partition.",
+      "Allow remote-count staleness up to 30 seconds when connected, with the explicit partition exception and 30-second post-healing convergence bound.",
+      "Retain every accepted unique like when merging; there are no decrement events."
+    ],
+    "approaches": [
+      {
+        "id": "last-write-total",
+        "name": "Increment a full local total and keep whichever region's total has the latest timestamp",
+        "hint": "Resolve two copies by choosing one value",
+        "label": "unsuitable",
+        "time": "At most 3 ms locally",
+        "space": "A full total and timestamp in each region",
+        "why": "Both regions can start at 100 and independently write 101. Last write wins selects one 101, while two accepted likes require 102. It answers locally but loses an increment, violating the retention requirement; different timestamps do not turn one chosen total into the sum of both changes."
+      },
+      {
+        "id": "regional-components",
+        "name": "Keep each region's cumulative contribution separately and show their sum",
+        "hint": "Preserve the two sources of increments",
+        "label": "best",
+        "time": "At most 3 ms locally; exchange newest components within the supplied 30-second bound",
+        "space": "Two regional count components per post and their replicated state",
+        "why": "A request increments only its receiving region's contribution and returns the sum of locally known components, so it never waits for the remote link and fits 20 ms. During a partition the other component may be old, as allowed. The supplied replication replaces older copies of each regional total rather than adding the same copied state repeatedly. On healing, sum the two newest contributions once: a shared starting total of 100 plus one new contribution per side becomes 102. No accepted like is discarded."
+      },
+      {
+        "id": "cross-region-counter",
+        "name": "Require both regions to confirm each increment and latest-count read",
+        "hint": "Coordinate the count before answering",
+        "label": "unsuitable",
+        "time": "At least 90 ms of cross-region waiting, before local work",
+        "space": "Coordinated copies of the same counter",
+        "why": "Even with a healthy link, the 90 ms round trip alone exceeds the 20 ms response limit. During a partition the regions cannot obtain each other's confirmation, so this policy cannot return a successful answer to every local request. Its stronger freshness does not satisfy the stated availability requirement."
+      }
+    ]
+  },
+  {
+    "id": "P36-username",
+    "level": 36,
+    "title": "One Owner for Each Username",
+    "statement": "An app accepts lowercase ASCII usernames beginning with a letter a–z. A name must never belong to two different users. Exercise assumptions: a name authority supports an atomic unique insert, so concurrent requests for the same name can produce at most one successful assignment. Existing assignments are never overwritten. A reservation uses at most 5 ms of local work, including relevant overhead; the US–Europe round trip adds 90 ms. At peak there are 100 reservation attempts/s in total; each authority safely handles 1,000/s and has enough storage. Successful assignments must complete within 150 ms while the link is healthy. Partitions last up to 10 minutes, with both regions running; a region may refuse a reservation if it cannot reach that name's fixed authority, replying within 100 ms. Homes do not change and there is no failover during the partition. There are two feasible ownership maps to consider: every name belongs to a US authority, or a–m names belong to a US authority and n–z names to a Europe authority. After meeting uniqueness, capacity and response limits, the team prefers fewer name authorities to operate.",
+    "examples": [
+      "Two users in different regions ask for 'mira'. Both requests must reach the same authority, which can assign it to at most one user."
+    ],
+    "constraints": [
+      "Assign each exact username to at most one user, including during a partition.",
+      "Meet the 150 ms healthy-link success limit and stated capacity; unreachable-authority refusals within 100 ms are allowed during the partition.",
+      "Keep the chosen ownership map fixed; prefer fewer authorities among feasible layouts."
+    ],
+    "approaches": [
+      {
+        "id": "prefix-homes",
+        "name": "Route a–m names to the US authority and n–z names to the Europe authority",
+        "hint": "Partition ownership by a fixed name range",
+        "label": "valid",
+        "time": "5 ms local or 5 + 90 = 95 ms remote",
+        "space": "Two authorities, each storing its assigned name range",
+        "why": "The first letter deterministically selects one authority for each exact name. Both callers for 'mira' reach the US authority, where atomic uniqueness admits at most one. At most 100 attempts/s can reach either authority, below 1,000/s; 95 ms is below 150 ms. Disconnected callers whose authority is remote may refuse within 100 ms, as allowed. It meets every fixed requirement but operates two authorities when one has sufficient capacity."
+      },
+      {
+        "id": "regional-name-checks",
+        "name": "Let each region check and assign names against its own asynchronous copy",
+        "hint": "Complete assignments using a nearby registry",
+        "label": "unsuitable",
+        "time": "5 ms locally",
+        "space": "A writable name registry copy in each region",
+        "why": "During a partition both copies can show 'mira' as free and assign it to different users. Atomic uniqueness within each local database does not create uniqueness across two independent writers. The two assignments violate the explicit global uniqueness rule."
+      },
+      {
+        "id": "single-us-authority",
+        "name": "Send every username reservation to one US authority",
+        "hint": "Serialize name ownership in one place",
+        "label": "best",
+        "time": "5 ms in the US or 95 ms from Europe",
+        "space": "One authoritative username registry, with optional read-only copies",
+        "why": "Every attempt reaches the same atomic unique-insert authority, which never replaces an existing owner. Its worst-case 100 attempts/s fit the measured 1,000/s, and the remote 5 + 90 = 95 ms fit 150 ms. During a partition a caller unable to reach it refuses within the supplied 100 ms bound. This meets the fixed requirements while operating fewer authorities than the range-partitioned alternative."
+      }
+    ]
+  }
+]
