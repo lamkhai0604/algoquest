@@ -68,7 +68,8 @@ export function checkRecords(root) {
   const files = listMarkdown(root);
 
   const definitions = new Map();
-  for (const file of DEFINITION_FILES) {
+  const definitionFiles = [...DEFINITION_FILES, ...files.filter((file) => /^docs\/archive\/[^/]+\.md$/.test(file))];
+  for (const file of definitionFiles) {
     const full = path.join(root, file);
     if (!fs.existsSync(full)) continue;
     fs.readFileSync(full, "utf8")
@@ -136,6 +137,8 @@ function selfTest() {
   const cases = [
     { rule: null, extra: {} },
     { rule: "link", extra: { "docs/a.md": "See [missing](nowhere.md).\n" } },
+    { rule: null, extra: { "docs/archive/sprint.md": "| T-404 | Archived task |\n", "README.md": "See T-404.\n" } },
+    { rule: "id-dup", extra: { "docs/archive/sprint.md": "| T-001 | Duplicate archived task |\n" } },
     { rule: "id-undef", extra: { "docs/a.md": "Depends on T-404.\n" } },
     { rule: "id-dup", extra: { "docs/DECISIONS.md": "| D-001 | One |\n| D-001 | Two |\n" } },
     { rule: "language", extra: { "docs/a.md": "Ghi chú tiếng Việt.\n" } },

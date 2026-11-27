@@ -1,0 +1,9 @@
+## Sprint 15 — Levels 16 and 17 ([plan](../sprints/sprint-15.md), closed 2026-11-20)
+
+| ID    | Title                                 | Req                 | Priority | Status                                                                                                                                                                    |
+| ----- | ------------------------------------- | ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T-561 | Level 16 Fast & Slow Pointers content | FR-03, FR-04, D-048 | P1       | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-562 | Level 16 pattern challenges           | D-057               | P2       | Done 2026-11-20 (content check); PO review OK                                                                                                                             |
+| T-563 | Level 17 Monotonic Stack content      | FR-03, FR-04, D-048 | P1       | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-564 | Level 17 pattern challenges           | D-057               | P2       | Done 2026-11-20 (content check); PO review OK                                                                                                                             |
+| T-565 | Sprint 15 report                      | D-007               | P2       | Done 2026-11-20: [report](../reports/sprint-15-report.md)                                                                                                                 |

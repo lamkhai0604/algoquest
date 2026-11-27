@@ -1,0 +1,9 @@
+## Sprint 14 — Levels 14 and 15 ([plan](../sprints/sprint-14.md), closed 2026-11-20)
+
+| ID    | Title                                       | Req                 | Priority | Status                                                                                                                                                                    |
+| ----- | ------------------------------------------- | ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T-556 | Level 14 Prefix Sum & Range Queries content | FR-03, FR-04, D-048 | P1       | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-557 | Level 14 pattern challenges                 | D-057               | P2       | Done 2026-11-20 (content check); PO review OK                                                                                                                             |
+| T-558 | Level 15 Binary Search content              | FR-03, FR-04, D-048 | P1       | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-559 | Level 15 pattern challenges                 | D-057               | P2       | Done 2026-11-20 (content check); PO review OK                                                                                                                             |
+| T-560 | Sprint 14 report                            | D-007               | P2       | Done 2026-11-20: [report](../reports/sprint-14-report.md)                                                                                                                 |

@@ -1,0 +1,9 @@
+## Sprint 9 — Level 8 Trees & Binary Search Trees ([plan](../sprints/sprint-9.md), closed 2026-11-20)
+
+| ID    | Title                                    | Req                 | Priority | Status                                                                                                                                                                    |
+| ----- | ---------------------------------------- | ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T-528 | Visualizer: binary tree                  | FR-03, D-049        | P1       | Done 2026-11-20 (content check; tree view test; Level 8 replay test; screenshots on desktop and phone)                                                                    |
+| T-529 | Tree arguments in code runs (`TreeNode`) | FR-07, D-059        | P1       | Done 2026-11-20 (worker helper tests; harness test compiles and runs tree code)                                                                                           |
+| T-530 | Level 8 Trees & BST content              | FR-03, FR-04, D-048 | P1       | Done 2026-11-20: hidden test answers computed by JavaScript and Java reference solutions; lesson Java compiles and JavaScript runs; walkthrough replay test; PO review OK |
+| T-531 | Level 8 pattern challenges               | D-057               | P2       | Done 2026-11-20 (content check; PO review OK)                                                                                                                             |
+| T-532 | Sprint 9 report                          | D-007               | P2       | Done 2026-11-20: [report](../reports/sprint-9-report.md)                                                                                                                  |
