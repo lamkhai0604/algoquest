@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Người đã đăng nhập đổi số đơn trong request và thấy đơn của khách khác. Thiếu điều gì?",
+    "options": [
+      "Server kiểm tra đơn thuộc người đã đăng nhập",
+      "HTTPS giữa app và load balancer",
+      "Password hash chậm hơn",
+      "Giới hạn đăng nhập thất bại"
+    ],
+    "answer": 0,
+    "explanation": "Người dùng đã authenticated nên đăng nhập không phải vấn đề. Server chưa hỏi người này được đọc đơn này không. Authorization check phải chạy trên server cho mọi object; HTTPS, hashing và giới hạn đăng nhập bảo vệ việc khác."
+  },
+  {
+    "question": "Server kiểm tra signed access token mà không tra cứu. Người bị chặn phải mất quyền trong 1 phút. Thiết kế nào đạt?",
+    "options": [
+      "Access token hiệu lực 24 giờ",
+      "Access token hiệu lực 1 phút, gia hạn bằng refresh token được server kiểm tra và xóa khi chặn người dùng",
+      "Access token không bao giờ hết hạn",
+      "Access token hiệu lực 15 phút"
+    ],
+    "answer": 1,
+    "explanation": "Token không thu hồi được nên người bị chặn còn quyền đến khi token hết hạn. Chỉ thời hạn 1 phút hoặc ít hơn đạt quy tắc, kèm refresh token kiểm tra trên server để việc chặn ngăn lần gia hạn tiếp."
+  },
+  {
+    "question": "Password database của order service nên lưu ở đâu?",
+    "options": [
+      "Trong source code để mọi bản service có nó",
+      "Trong app điện thoại để app nói chuyện với database",
+      "Trong secret store chỉ order service đọc được, cho user database chỉ có quyền order service cần",
+      "Trong file config chung với password quản trị để mọi service dùng chung"
+    ],
+    "answer": 2,
+    "explanation": "Secret store giữ password khỏi code có thể bị sao chép hoặc công bố, chỉ cho đúng service đọc. Cấp user database riêng chỉ có quyền cần thiết cho service giới hạn thiệt hại khi lộ (least privilege)."
+  }
+]
