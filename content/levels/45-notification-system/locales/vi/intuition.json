@@ -1,0 +1,11 @@
+{
+  "question": "Xe bưu điện tới sân bay chở 1,000 thư mỗi giờ. Cửa hàng gửi 50,000 thư quảng cáo, thư khẩn bệnh viện tới ngay sau. Bưu điện nên làm gì?",
+  "options": [
+    "Xếp thư khẩn trước, giữ chỗ mỗi chuyến cho chúng, quảng cáo vào phần còn lại",
+    "Gửi thư đúng thứ tự đến",
+    "Gửi tất cả cùng lúc bằng nhiều xe hơn sân bay chấp nhận",
+    "Vứt thư quảng cáo"
+  ],
+  "answer": 0,
+  "explanation": "Đúng thứ tự đến làm thư khẩn chờ khoảng 50 giờ sau quảng cáo. Quá tải sân bay vi phạm giới hạn. Giữ chỗ thư khẩn, quảng cáo lấp phần còn lại đáp ứng hai nhu cầu, giống priority lane và phần quota dự trữ."
+}

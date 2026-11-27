@@ -1480,6 +1480,26 @@
           "term": "design scope",
           "vi": "phạm vi thiết kế",
           "firstLevel": 42
+        },
+        {
+          "term": "notification ID",
+          "vi": "mã định danh thông báo",
+          "firstLevel": 45
+        },
+        {
+          "term": "attempt",
+          "vi": "lượt gửi",
+          "firstLevel": 45
+        },
+        {
+          "term": "pacer",
+          "vi": "bộ điều tiết nhịp gửi",
+          "firstLevel": 45
+        },
+        {
+          "term": "sender",
+          "vi": "bên gửi thông báo",
+          "firstLevel": 45
         }
       ]
     },

@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Mã đăng nhập của cửa hàng dùng chung email queue với campaign 10 triệu email, mã đến trễ nhiều giờ. Điều gì sửa được?",
+    "options": [
+      "Tách priority, luôn gửi mã đăng nhập trước, giữ một phần quota email cho chúng",
+      "Queue lớn hơn",
+      "Gửi campaign nhanh hơn quota provider",
+      "Retry mã đăng nhập thường hơn"
+    ],
+    "answer": 0,
+    "explanation": "Provider gửi tốc độ cố định nên mã sau 10 triệu email chờ hàng giờ bất kể queue lớn đến đâu. Gửi message khẩn trước và giữ quota giúp đi ngay; vượt quota hoặc retry nhiều chỉ tăng tải."
+  },
+  {
+    "question": "Notification system nên kiểm tra người dùng còn muốn email quảng cáo vào lúc nào?",
+    "options": [
+      "Ngay trước mỗi lần gửi, kể cả mọi retry",
+      "Một lần khi campaign vào queue",
+      "Mỗi ngày một lần trong job ban đêm",
+      "Không bao giờ: người dùng hủy trong email được"
+    ],
+    "answer": 0,
+    "explanation": "Campaign có thể chờ hàng giờ trong queue, người dùng hủy trong lúc đó. Kiểm tra ngay trước gửi, rồi trên retry, tôn trọng lựa chọn mới nhất."
+  },
+  {
+    "question": "Push cập nhật đơn không được giao, hệ thống fallback email. Làm sao bảo đảm người dùng không nhận hai notification cho cùng cập nhật?",
+    "options": [
+      "Giữ notification ID chung với một attempt mỗi channel; chỉ nhận quyền email attempt sau khi push được báo chưa giao và người dùng cho phép email",
+      "Gửi push, email cùng lúc cho chắc",
+      "Cho email key không liên quan push để không bị chặn",
+      "Bỏ preference check cho fallback"
+    ],
+    "answer": 0,
+    "explanation": "Notification ID gắn push, email vào một cập nhật; mỗi channel có attempt riêng. Chỉ nhận quyền email attempt khi báo chắc chắn “chưa giao”, nên push đã giao hoặc chưa có báo cáo thì không email; unique key khiến fallback check lặp không gửi thêm gì. Fallback vẫn tôn trọng preference."
+  }
+]
