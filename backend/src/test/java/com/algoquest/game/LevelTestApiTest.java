@@ -146,21 +146,14 @@ class LevelTestApiTest {
     UUID blockingId = UUID.randomUUID();
     tests.insert(
         new TestStore.StoredTest(
-            blockingId,
-            playerId,
-            2,
-            PROBLEMS,
-            START,
-            START.plus(Duration.ofHours(2)),
-            null,
-            null));
+            blockingId, playerId, 2, PROBLEMS, START, START.plus(Duration.ofHours(2)), null, null));
 
     mvc.perform(post("/api/v1/levels/1/tests").with(player))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.detail").value("Finish your Level 2 test first."))
         .andExpect(jsonPath("$.blockingTestId").value(blockingId.toString()))
         .andExpect(jsonPath("$.blockingLevel").value(2))
-        .andExpect(jsonPath("$.blockingLevelName").value("Level 2"));
+        .andExpect(jsonPath("$.blockingLevelName").value("Later"));
   }
 
   @Test
