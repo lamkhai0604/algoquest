@@ -90,11 +90,19 @@ public class TestService {
     this.transaction = new TransactionTemplate(transactionManager);
   }
 
-  /** Starts a test, or returns the running test of the same level. */
+  /**
+   * Starts a test, or returns the running test of the same level.
+   *
+   * <p>An expired attempt still occupies the database's one-unsubmitted-test slot. Finalize it
+   * before starting a new transaction so its saved answers receive the normal submit grading
+   * and the unique index no longer blocks a new attempt. Grading is deliberately outside the
+   * insert transaction, as in {@link #submit(UUID, UUID)}.
+   */
   public TestView start(UUID userId, int level) {
+    tests.expired(userId, clock.instant()).ifPresent(expired -> submit(userId, expired.id()));
     return transaction.execute(
         status -> {
-          StoredTest running = tests.running(userId).orElse(null);
+          StoredTest running = tests.running(userId, clock.instant()).orElse(null);
           if (running != null) {
             if (running.level() != level) {
               throw conflict("Finish your Level " + running.level() + " test first.");
