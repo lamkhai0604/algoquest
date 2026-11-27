@@ -18,4 +18,8 @@ COPY --from=build /app/backend/target/algoquest-backend.jar app.jar
 USER app
 EXPOSE 8080
 # Fits the 512 MB free instance (D-037): serial GC, smaller thread stacks, heap at 70% of memory.
+# -XX:TieredStopAtLevel=1 stops JIT compilation at C1.
+# This lowers memory use and speeds startup on the 512 MB tier.
+# The trade-off is lower peak throughput.
+# Remove the flag when moving to a larger server tier (BACKLOG T-721).
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=70", "-XX:+UseSerialGC", "-Xss512k", "-XX:TieredStopAtLevel=1", "-jar", "/app/app.jar"]

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useTranslation } from "../i18n";
-import { useNavigate } from "react-router";
-import { api } from "../api";
+import { Link, useNavigate } from "react-router";
+import { ApiError, api } from "../api";
 import { Badge, Button, Card } from "../components";
 import { useGame } from "../game/gameContext";
+import { levelLabel } from "../game/levelLabel";
 import type { Level } from "../game/types";
 import type { LevelTest } from "./types";
 import styles from "./LevelTest.module.css";
@@ -15,17 +16,45 @@ export function TestStartCard({ level }: { level: Level }) {
   const navigate = useNavigate();
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [blocking, setBlocking] = useState<{
+    testId: string;
+    level: number;
+    name: string;
+  } | null>(null);
 
   const start = () => {
     setStarting(true);
     setError(null);
+    setBlocking(null);
     api
       .post<LevelTest>(`/api/v1/levels/${level.number}/tests?lang=${locale}`)
       .then((test) => navigate(`/tests/${test.id}`))
       .catch((failure: unknown) => {
-        setError(
-          failure instanceof Error ? failure.message : t("common.retry"),
-        );
+        const detail =
+          failure instanceof ApiError && failure.status === 409
+            ? failure.problem
+            : null;
+        if (
+          detail &&
+          typeof detail.blockingTestId === "string" &&
+          /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(detail.blockingTestId) &&
+          typeof detail.blockingLevel === "number" &&
+          Number.isInteger(detail.blockingLevel) &&
+          detail.blockingLevel > 0
+        ) {
+          setBlocking({
+            testId: detail.blockingTestId,
+            level: detail.blockingLevel,
+            name:
+              typeof detail.blockingLevelName === "string"
+                ? detail.blockingLevelName
+                : "",
+          });
+        } else {
+          setError(
+            failure instanceof Error ? failure.message : t("common.retry"),
+          );
+        }
         setStarting(false);
       });
   };
@@ -39,6 +68,17 @@ export function TestStartCard({ level }: { level: Level }) {
         <p className={styles.muted}>
           {t("testMore.bestScore")} <strong>{level.bestTestScore}</strong> / 100
         </p>
+      )}
+      {blocking && (
+        <div className={styles.error} role="alert">
+          <p>
+            {t("testMore.blockedBy")} {levelLabel(blocking.level)}
+            {blocking.name ? ` — ${blocking.name}` : ""}.
+          </p>
+          <Link to={`/tests/${blocking.testId}`}>
+            {t("testMore.resumeBlocked")}
+          </Link>
+        </div>
       )}
       {error && (
         <p className={styles.error} role="alert">

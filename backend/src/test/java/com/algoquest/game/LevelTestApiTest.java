@@ -65,6 +65,7 @@ class LevelTestApiTest {
   @Autowired private WebApplicationContext context;
   @Autowired private AccessService access;
   @Autowired private ProgressStore progress;
+  @Autowired private TestStore tests;
   @Autowired private MutableClock clock;
 
   private MockMvc mvc;
@@ -140,6 +141,22 @@ class LevelTestApiTest {
   }
 
   @Test
+  void aDifferentRunningTestReturnsItsIdLevelAndName() throws Exception {
+    fillTheBar();
+    UUID blockingId = UUID.randomUUID();
+    tests.insert(
+        new TestStore.StoredTest(
+            blockingId, playerId, 2, PROBLEMS, START, START.plus(Duration.ofHours(2)), null, null));
+
+    mvc.perform(post("/api/v1/levels/1/tests").with(player))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.detail").value("Finish your Level 2 test first."))
+        .andExpect(jsonPath("$.blockingTestId").value(blockingId.toString()))
+        .andExpect(jsonPath("$.blockingLevel").value(2))
+        .andExpect(jsonPath("$.blockingLevelName").value("Later"));
+  }
+
+  @Test
   void aPerfectScoreOpensTheNextLevel() throws Exception {
     fillTheBar();
     String test = start();
@@ -191,6 +208,29 @@ class LevelTestApiTest {
         .andExpect(jsonPath("$.status").value("timeUp"));
     answer(test, PROBLEMS.get(1), GOOD).andExpect(status().isConflict());
     submit(test).andExpect(jsonPath("$.score").value(31));
+  }
+
+  @Test
+  void expiredTestIsGradedBeforeAnotherTestStartsWithoutReopeningItsPage() throws Exception {
+    fillTheBar();
+    String expired = start();
+    answer(expired, PROBLEMS.get(0), GOOD).andExpect(status().isOk());
+
+    // The player leaves without submitting, then returns after the exact deadline.
+    clock.advance(Duration.ofHours(2));
+
+    // The expired attempt must not be returned as running, but it still occupies the
+    // database's one-unsubmitted-test slot until the server finalizes it.
+    String next = start();
+    org.junit.jupiter.api.Assertions.assertNotEquals(expired, next);
+
+    mvc.perform(get("/api/v1/tests/" + expired).with(player))
+        .andExpect(jsonPath("$.status").value("submitted"))
+        .andExpect(jsonPath("$.score").value(31));
+    mvc.perform(get("/api/v1/tests/" + next).with(player))
+        .andExpect(jsonPath("$.status").value("running"));
+    mvc.perform(post("/api/v1/levels/1/tests").with(player))
+        .andExpect(jsonPath("$.id").value(next));
   }
 
   @Test

@@ -50,8 +50,16 @@ public class TestStore {
     return best;
   }
 
-  public Optional<StoredTest> running(UUID userId) {
-    return one("where user_id = ? and submitted_at is null", userId);
+  /** Only an unsubmitted test whose deadline has not passed can block another test. */
+  public Optional<StoredTest> running(UUID userId, Instant now) {
+    return one(
+        "where user_id = ? and submitted_at is null and ends_at > ?", userId, Timestamp.from(now));
+  }
+
+  /** Expired tests must be finalized before a new insert (see the one-running unique index). */
+  public Optional<StoredTest> expired(UUID userId, Instant now) {
+    return one(
+        "where user_id = ? and submitted_at is null and ends_at <= ?", userId, Timestamp.from(now));
   }
 
   public Optional<StoredTest> find(UUID userId, UUID testId) {
