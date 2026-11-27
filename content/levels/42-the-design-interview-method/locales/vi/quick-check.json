@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Người phỏng vấn nói “Thiết kế app chat cho nhân viên bệnh viện.” Đầu tiên nên làm gì?",
+    "options": [
+      "Hỏi số người dùng, tính năng chính, chất lượng quan trọng nhất và nói phần ngoài phạm vi",
+      "Vẽ load balancer, server và database",
+      "Chọn sản phẩm database",
+      "Bắt đầu deep dive thứ tự message"
+    ],
+    "answer": 0,
+    "explanation": "Mọi lựa chọn sau phụ thuộc yêu cầu và số liệu: 500 nhân viên, 5 triệu người dùng cần thiết kế rất khác. Vài phút hỏi, kết thúc bằng yêu cầu đánh số và phạm vi, giúp phần thời gian còn lại có ích."
+  },
+  {
+    "question": "5 triệu người dùng, mỗi người mở app khoảng 8 lần mỗi ngày, mỗi lần mở tạo 2 request. Dùng 100,000 giây một ngày, trung bình khoảng bao nhiêu request mỗi giây?",
+    "options": [
+      "Khoảng 80",
+      "Khoảng 800",
+      "Khoảng 8,000",
+      "Khoảng 80,000"
+    ],
+    "answer": 1,
+    "explanation": "5,000,000 × 8 × 2 = 80,000,000 request mỗi ngày, 80,000,000 ÷ 100,000 = 800 mỗi giây trung bình. Cao điểm thường gấp vài lần nên thiết kế dự trù vài nghìn."
+  },
+  {
+    "question": "Có 10 phút deep dive. Nên chọn phần nào?",
+    "options": [
+      "Phần có yêu cầu khó nhất hoặc con số lớn nhất, trừ khi người phỏng vấn chỉ nơi khác",
+      "Trang đăng nhập vì app nào cũng có",
+      "Lướt mọi bộ phận để không bỏ sót",
+      "Phần biết rõ nhất dù không thuộc thiết kế"
+    ],
+    "answer": 0,
+    "explanation": "Deep dive cho thấy cách xử lý khó khăn thật nên nằm nơi thiết kế có thể thất bại: tải lớn nhất, latency khắt khe nhất hoặc consistency khó nhất. Làm tốt một phần thể hiện nhiều hơn lướt nhiều phần; người phỏng vấn hỏi phần khác thì theo họ."
+  }
+]

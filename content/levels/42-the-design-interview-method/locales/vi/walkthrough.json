@@ -1,0 +1,771 @@
+[
+  {
+    "title": "Làm rõ",
+    "body": "“Thiết kế leaderboard cho game điện thoại.” Trước khi vẽ, hỏi và ghi: (F1) nộp điểm sau mỗi trận, (F2) xem global top 100, (F3) xem hạng mình. Kèm số: (N1) 10 triệu người chơi mỗi ngày, khoảng 20 trận mỗi người, tổng 50 triệu; (N2) điểm tốt nhất mới hiện trong 5 giây; (N3) “hạng của tôi” trong 200 ms; (N4) chỉ tính điểm tốt nhất từng người. Ngoài phạm vi: bảng bạn bè, gian lận. Các dòng đánh số là điều phần thiết kế còn lại phải đạt.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người chơi",
+            "x": 0,
+            "y": 8,
+            "note": "10 M mỗi ngày"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "functional",
+          "value": "nộp điểm, top 100, hạng tôi"
+        },
+        {
+          "name": "players",
+          "value": "10 M mỗi ngày, tổng 50 M"
+        },
+        {
+          "name": "freshness",
+          "value": "trong 5 s"
+        },
+        {
+          "name": "my rank",
+          "value": "trong 200 ms"
+        },
+        {
+          "name": "out of scope",
+          "value": "bảng bạn bè, gian lận"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Ước lượng lần ghi",
+    "body": "10 triệu người chơi × 20 trận = **200 triệu** điểm mỗi ngày. Ngày có 86,400 giây; làm tròn 100,000 để tính nhanh: 200,000,000 ÷ 100,000 ≈ **2,000 lần ghi mỗi giây** trung bình. Cao điểm thường gấp vài lần; dự trù 5×, khoảng **10,000 mỗi giây**. Số tròn được: ước lượng chỉ cần đúng trong phạm vi chênh vài lần để dẫn lựa chọn.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người chơi",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2,
+            "note": "lần ghi mỗi giây?"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "scores a day",
+          "value": "200 triệu"
+        },
+        {
+          "name": "seconds a day",
+          "value": "khoảng 100,000"
+        },
+        {
+          "name": "average writes",
+          "value": "khoảng 2,000 mỗi giây"
+        },
+        {
+          "name": "peak (5×)",
+          "value": "khoảng 10,000 mỗi giây"
+        }
+      ],
+      "predict": {
+        "question": "10 triệu người chơi mỗi người nộp khoảng 20 điểm mỗi ngày. Dùng 100,000 giây một ngày, trung bình khoảng bao nhiêu lần ghi điểm mỗi giây?",
+        "options": [
+          "Khoảng 200",
+          "Khoảng 2,000",
+          "Khoảng 20,000",
+          "Khoảng 200,000"
+        ],
+        "answer": 1,
+        "explanation": "10,000,000 × 20 = 200,000,000 điểm mỗi ngày, 200,000,000 ÷ 100,000 = 2,000 mỗi giây. Cao điểm 5× thì dự trù khoảng 10,000.",
+        "hides": [
+          "average writes",
+          "peak (5×)"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Storage, bandwidth, ngân sách",
+    "body": "**Storage:** 50 triệu người chơi × khoảng 100 byte = **5 GB**, đủ nhỏ giữ trong bộ nhớ. **Bandwidth:** top-100 khoảng 10 KB; 5,000 lần đọc mỗi giây là 50 MB mỗi giây, dễ cho cache. **Latency budget** “hạng của tôi” (200 ms): khoảng 100 ms mạng, 10 ms ở load balancer và server, 5 ms store, dư 85 ms. **Chi phí:** khoảng 10 server và in-memory store kèm bản sao, vài nghìn đô mỗi tháng theo giá giả định.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người chơi",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3,
+            "note": "5 GB vừa bộ nhớ"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "storage",
+          "value": "5 GB"
+        },
+        {
+          "name": "top-100 reads",
+          "value": "50 MB mỗi giây"
+        },
+        {
+          "name": "budget for my rank",
+          "value": "100 + 10 + 5 ms, dư 85"
+        },
+        {
+          "name": "cost",
+          "value": "vài nghìn $ mỗi tháng"
+        }
+      ]
+    }
+  },
+  {
+    "title": "API và data model",
+    "body": "**API:** `POST /scores {score}` trả 202 Accepted; `GET /leaderboard/top?n=100`; `GET /leaderboard/me` trả hạng và điểm. Người chơi từ đăng nhập (SD 13), không từ request body. **Data model:** database có `best_scores(player_id, score, updated_at)` với key `player_id`; in-memory store có **sorted set** (score, player), giữ người chơi theo điểm để trả hạng và top 100.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người chơi",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database điểm",
+            "x": 6,
+            "y": 7,
+            "note": "best_scores"
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3,
+            "note": "(score, player)"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "POST /scores",
+          "value": "202 Accepted"
+        },
+        {
+          "name": "GET /leaderboard/top",
+          "value": "top 100"
+        },
+        {
+          "name": "GET /leaderboard/me",
+          "value": "hạng và điểm"
+        },
+        {
+          "name": "records",
+          "value": "best_scores; sorted set"
+        }
+      ]
+    }
+  },
+  {
+    "title": "High-level design",
+    "body": "Theo một request qua các hộp. Điểm mới đi điện thoại → load balancer → app server, cập nhật `best_scores` **chỉ nếu điểm cao hơn**, ghi dòng outbox trong cùng transaction (SD 10); relay sao chép tới sorted set, cũng chỉ nếu cao hơn, để crash không làm mất gì và điểm thấp đến muộn không thắng. “Top 100” cache 1 giây trước server nên 5,000 lần đọc mỗi giây tới cache, không tới store. “Hạng của tôi” đọc sorted set. Mỗi hộp đáp ứng một yêu cầu: không phục vụ gì thì không cần.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người chơi",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Cache top-100",
+            "x": 7,
+            "y": 0,
+            "note": "1 s"
+          },
+          {
+            "kind": "db",
+            "label": "Database điểm",
+            "x": 6,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              5
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "write",
+          "value": "DB nếu cao hơn, rồi sorted set"
+        },
+        {
+          "name": "top 100",
+          "value": "cache 1 s"
+        },
+        {
+          "name": "my rank",
+          "value": "từ sorted set"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Deep dive: xếp hạng",
+    "body": "Yêu cầu khó nhất là N2, N3 với 10,000 lần ghi mỗi giây nên deep dive ở đó. Sorted set giữ thành viên theo điểm, như balanced search tree (Level 8), tìm hạng mất khoảng **log₂(50 triệu) ≈ 26 bước**, không quét 50 triệu dòng. Giả định node store xử lý 100,000 update mỗi giây và 25 GB: 10,000 update, 5 GB vừa dễ dàng, có replica failover. Relay sao chép điểm tốt nhất mới trong khoảng một giây nên hiện trong giới hạn 5 giây.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người chơi",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Cache top-100",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database điểm",
+            "x": 6,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3,
+            "note": "50 M người chơi"
+          },
+          {
+            "kind": "cache",
+            "label": "Replica",
+            "x": 10,
+            "y": 6
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          2,
+          5,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "players in the set",
+          "value": "50 triệu"
+        },
+        {
+          "name": "steps to find a rank",
+          "value": "khoảng 26"
+        },
+        {
+          "name": "writes at peak",
+          "value": "10,000 mỗi giây"
+        }
+      ],
+      "predict": {
+        "question": "Sorted set giữ 50 triệu người chơi theo điểm như balanced search tree. Tìm hạng một người cần khoảng bao nhiêu bước?",
+        "options": [
+          "1",
+          "Khoảng 26",
+          "Khoảng 7,000",
+          "Khoảng 50 triệu"
+        ],
+        "answer": 1,
+        "explanation": "Balanced tree chia đôi tìm kiếm mỗi bước nên cần khoảng log₂(50,000,000) ≈ 25.6 bước. Quét bảng sắp theo điểm phải đếm tới 50 triệu dòng.",
+        "hides": [
+          "steps to find a rank"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Lỗi kèm điều kiện",
+    "body": "Nêu từng lỗi kèm điều kiện và điều người chơi thấy. **Bản chính store lỗi**, replica tiếp quản trong vài giây, dòng outbox chưa xác nhận được sao chép lại; “chỉ nếu cao hơn” làm bản lặp vô hại. **Mất cả hai bản**, set dựng từ `best_scores`, 50 triệu dòng, trong nhiều phút; lúc đó top 100 lưu cuối vẫn hiện, “hạng của tôi” hiện “đang cập nhật”. **Relay ngừng**, điểm tốt nhất mới chờ trong outbox, N2 không đạt đến khi relay trở lại.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người chơi",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Cache top-100",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database điểm",
+            "x": 6,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3,
+            "state": "down"
+          },
+          {
+            "kind": "cache",
+            "label": "Replica",
+            "x": 10,
+            "y": 6,
+            "note": "tiếp quản"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            2,
+            6
+          ]
+        ],
+        "path": [
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "main copy fails",
+          "value": "replica trong vài giây"
+        },
+        {
+          "name": "both lost",
+          "value": "dựng lại từ DB, nhiều phút"
+        },
+        {
+          "name": "players see",
+          "value": "top 100 cache; hạng đang cập nhật"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Tổng kết và thời gian",
+    "body": "Kết thúc bằng kiểm tra từng yêu cầu: F1 đến F3 qua API; N1 bằng sorted set ở 10,000 lần ghi mỗi giây; N2 qua outbox relay; N3 bằng lookup 5 ms trong budget 200 ms; N4 bằng “chỉ nếu cao hơn”. Nói bước tiếp theo như bảng bạn bè. Trong 45 phút: khoảng 5 làm rõ, 5 ước lượng, 7 API và dữ liệu, 8 thiết kế, 10 deep dive, 5 lỗi, 3 tổng kết, vài phút hỏi đáp. Thinking aloud suốt quá trình.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người chơi",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "cache",
+            "label": "Cache top-100",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database điểm",
+            "x": 6,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Sorted set",
+            "x": 8,
+            "y": 3
+          },
+          {
+            "kind": "cache",
+            "label": "Replica",
+            "x": 10,
+            "y": 6
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "F1 to F3",
+          "value": "API"
+        },
+        {
+          "name": "N1, N2",
+          "value": "sorted set, outbox relay"
+        },
+        {
+          "name": "N3",
+          "value": "5 ms trong 200 ms"
+        },
+        {
+          "name": "N4",
+          "value": "chỉ nếu cao hơn"
+        },
+        {
+          "name": "time",
+          "value": "5/5/7/8/10/5/3 min"
+        }
+      ]
+    }
+  }
+]
