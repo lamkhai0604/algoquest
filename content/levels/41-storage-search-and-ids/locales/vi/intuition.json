@@ -1,0 +1,11 @@
+{
+  "question": "Quán đồ ăn có ba quầy, mỗi quầy một máy phát vé, máy nào cũng bắt đầu từ 1. Hai khách cùng nhận vé 57. Thay đổi nào giữ vé duy nhất mà không bắt mọi người xếp hàng ở một máy?",
+  "options": [
+    "In số quầy và thời gian trên mỗi vé, cạnh số đếm",
+    "Bắt mọi khách lấy vé từ máy của quầy đầu",
+    "Yêu cầu khách nhớ ai tới trước",
+    "Khởi động lại mọi máy từ 1 mỗi giờ"
+  ],
+  "answer": 0,
+  "explanation": "Thêm số quầy làm vé từ các máy khác nhau khác nhau, thời gian giữ thứ tự, mỗi máy vẫn làm việc độc lập. Một máy chung cũng được, nhưng mọi người phải xếp hàng, như một bộ đếm auto-increment cho mọi server."
+}

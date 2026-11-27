@@ -1,0 +1,702 @@
+[
+  {
+    "title": "A. Byte và thông tin mô tả",
+    "body": "**Phần A: object storage.** Một ảnh gồm 3 MB byte và khoảng 500 byte thông tin: chủ sở hữu, chú thích, kích thước. Byte vào **object storage** theo key như `photos/9f3c.jpg`; database giữ thông tin cùng key, tức **metadata**. Với 1 triệu ảnh mỗi ngày, storage tăng 3 TB mỗi ngày, database chỉ 500 MB, nên database nhỏ, nhanh và backup nhanh.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database ảnh",
+            "x": 5,
+            "y": 8,
+            "note": "mỗi ảnh 500 byte"
+          },
+          {
+            "kind": "db",
+            "label": "Object storage",
+            "x": 9,
+            "y": 3,
+            "note": "mỗi ảnh 3 MB"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "per photo",
+          "value": "3 MB byte, 500 byte mô tả"
+        },
+        {
+          "name": "storage grows",
+          "value": "3 TB mỗi ngày"
+        },
+        {
+          "name": "database grows",
+          "value": "500 MB mỗi ngày"
+        }
+      ]
+    }
+  },
+  {
+    "title": "A. Ai gánh byte?",
+    "body": "Lúc cao điểm có 400 ảnh mỗi giây. Nếu app server chuyển tiếp, **400 × 3 MB = 1.2 GB mỗi giây** đi qua server chỉ gánh khoảng 1 GB mỗi giây cho mọi việc. Thay vào đó app kiểm tra quyền, lưu ảnh pending, trả **signed upload URL** cho một key, hiệu lực 10 phút. Điện thoại gửi byte thẳng tới storage; app đánh dấu ảnh ready khi storage xác nhận.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3,
+            "note": "tổng 1 GB/s"
+          },
+          {
+            "kind": "db",
+            "label": "Database ảnh",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Object storage",
+            "x": 9,
+            "y": 3
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "uploads at peak",
+          "value": "400 mỗi giây"
+        },
+        {
+          "name": "photo size",
+          "value": "3 MB"
+        },
+        {
+          "name": "through the servers",
+          "value": "1.2 GB mỗi giây"
+        },
+        {
+          "name": "with signed URLs",
+          "value": "request nhỏ mỗi upload"
+        }
+      ],
+      "predict": {
+        "question": "Cao điểm, 400 ảnh mỗi ảnh 3 MB được upload mỗi giây. Nếu app server chuyển tiếp mọi ảnh tới storage, bao nhiêu dữ liệu đi qua mỗi giây?",
+        "options": [
+          "Khoảng 120 MB",
+          "Khoảng 400 MB",
+          "Khoảng 1.2 GB",
+          "Khoảng 12 GB"
+        ],
+        "answer": 2,
+        "explanation": "400 × 3 MB = 1,200 MB, khoảng 1.2 GB mỗi giây, hơn mức 1 GB mỗi giây cho mọi việc của server. Signed upload URL giúp byte đi từ điện thoại thẳng tới storage.",
+        "hides": [
+          "through the servers"
+        ]
+      }
+    }
+  },
+  {
+    "title": "A. File lớn chia thành phần",
+    "body": "Video 2 GB gửi một khối phải bắt đầu lại từ đầu nếu kết nối đứt gần cuối. Với **multipart upload**, điện thoại gửi 20 phần 100 MB lần lượt; sau khi đứt, hỏi storage đã có phần nào và chỉ gửi phần còn lại, nên mất tối đa phần 100 MB đang truyền. Đủ các phần, storage ghép thành một object. File phổ biến được tải xuống qua **CDN** (SD 3).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database ảnh",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Object storage",
+            "x": 9,
+            "y": 3,
+            "note": "20 phần 100 MB"
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 7,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            0,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              4,
+              0
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "video",
+          "value": "2 GB"
+        },
+        {
+          "name": "parts",
+          "value": "20 × 100 MB"
+        },
+        {
+          "name": "a broken connection costs",
+          "value": "tối đa một phần"
+        }
+      ]
+    }
+  },
+  {
+    "title": "B. Tìm kiếm bằng quét",
+    "body": "**Phần B: full-text search.** Cửa hàng có 10 triệu sản phẩm, mô tả khoảng 1 KB mỗi sản phẩm. `WHERE description LIKE '%red%'` không dùng index thông thường (SD 4) vì từ có thể nằm bất kỳ đâu trong văn bản. Database phải đọc cả **10 GB** mô tả mỗi tìm kiếm. Mất nhiều giây, vài tìm kiếm cùng lúc giữ database bận.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database hàng",
+            "x": 5,
+            "y": 8,
+            "note": "đọc cả 10 GB",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "products",
+          "value": "10 triệu"
+        },
+        {
+          "name": "description",
+          "value": "khoảng 1 KB"
+        },
+        {
+          "name": "read per search",
+          "value": "10 GB"
+        }
+      ]
+    }
+  },
+  {
+    "title": "B. Inverted index",
+    "body": "**Inverted index** giữ danh sách sản phẩm đã sắp cho mỗi từ xuất hiện. Mô tả được **tokenizing** trước, nên “Red”, “red,” và “RED” thành `red`. Tìm “red shoes” đọc hai danh sách, `red → [3, 8, 15, 21]` và `shoes → [8, 9, 21, 40]`, duyệt chung, giữ ID có trong cả hai: **8 và 21**. Danh sách thực có 200,000 và 50,000 ID mất khoảng 250,000 bước, vài mili giây. Index là bản sao, cập nhật từ database trong vài giây.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database hàng",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Search index",
+            "x": 8,
+            "y": 6,
+            "note": "từ → product ID"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "red",
+          "value": "[3, 8, 15, 21]"
+        },
+        {
+          "name": "shoes",
+          "value": "[8, 9, 21, 40]"
+        },
+        {
+          "name": "red shoes",
+          "value": "[8, 21]"
+        }
+      ],
+      "predict": {
+        "question": "Index có red → [3, 8, 15, 21] và shoes → [8, 9, 21, 40]. Sản phẩm nào khớp tìm kiếm cả hai từ?",
+        "options": [
+          "8 và 21",
+          "3, 8, 9, 15, 21 và 40",
+          "Chỉ 8",
+          "Không có"
+        ],
+        "answer": 0,
+        "explanation": "Sản phẩm khớp cả hai từ khi ID nằm trong cả hai danh sách. Duyệt chung hai danh sách đã sắp tìm được 8 và 21. Cả sáu ID là sản phẩm chứa một trong hai từ.",
+        "hides": [
+          "red shoes"
+        ]
+      }
+    }
+  },
+  {
+    "title": "C. Đếm tăng qua các shard",
+    "body": "**Phần C: unique ID.** Với một database, **auto-increment** đơn giản: 1, 2, 3, theo thứ tự, 8 byte. Sau khi ảnh tách thành hai shard (SD 8), mỗi shard đếm riêng: shard 1 và shard 2 cùng tạo ảnh **1001**. Cấp khoảng riêng cho từng shard hoặc hỏi bộ đếm trung tâm sửa được, nhưng mỗi ID mới phụ thuộc cách ấy. Auto-increment ID còn cho mọi người biết số dòng tạo mỗi ngày.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 7,
+            "y": 4,
+            "note": "ID tiếp: 1001"
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 10,
+            "y": 7,
+            "note": "ID tiếp: 1001",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "shard 1 creates",
+          "value": "ảnh 1001"
+        },
+        {
+          "name": "shard 2 creates",
+          "value": "ảnh 1001"
+        },
+        {
+          "name": "result",
+          "value": "hai ảnh chung một ID"
+        }
+      ]
+    }
+  },
+  {
+    "title": "C. ID ngẫu nhiên",
+    "body": "**UUID ngẫu nhiên** (version 4) có 122 bit ngẫu nhiên, nên mọi server hoặc điện thoại offline tự tạo mà không hỏi ai. Sau một tỷ ID, xác suất hai ID bằng nhau khoảng 1 trong 10¹⁹. Nhưng ID ngẫu nhiên không sắp theo thời gian; mỗi dòng mới vào chỗ ngẫu nhiên trong index database, chạm trang khắp nơi thay vì chỉ trang cuối. Chúng còn tốn 16 byte thay vì 8.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3,
+            "note": "tự tạo UUID"
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 7,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "random bits",
+          "value": "122"
+        },
+        {
+          "name": "repeat after a billion",
+          "value": "khoảng 1 trong 10¹⁹"
+        },
+        {
+          "name": "sorts by time",
+          "value": "không"
+        },
+        {
+          "name": "size",
+          "value": "16 byte"
+        }
+      ]
+    }
+  },
+  {
+    "title": "C. ID sắp theo thời gian",
+    "body": "**Time-ordered ID** gói ba phần vào 64 bit: **41 bit** mili giây từ ngày bắt đầu (khoảng 69 năm), **10 bit** số máy (tối đa 1,024 máy), **12 bit** bộ đếm (4,096 mỗi mili giây). Mỗi máy tự tạo ID, không trùng vì số máy khác; ID mới lớn hơn trong phạm vi đồng hồ các máy thống nhất, nên dòng mới vào gần cuối index, “mới nhất trước” chỉ là sắp đơn giản. UUID version 7 theo cùng ý tưởng trong 128 bit.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 3,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Shard 1",
+            "x": 7,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Shard 2",
+            "x": 10,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Bộ tạo ID",
+            "x": 3,
+            "y": 0,
+            "note": "giờ|máy|đếm"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "path": [
+          1,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              1,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "time",
+          "value": "41 bit, mili giây"
+        },
+        {
+          "name": "machine",
+          "value": "10 bit"
+        },
+        {
+          "name": "counter",
+          "value": "12 bit, 4,096 mỗi ms"
+        },
+        {
+          "name": "per machine per second",
+          "value": "khoảng 4.1 triệu"
+        }
+      ],
+      "predict": {
+        "question": "ID 64-bit cấp mỗi máy bộ đếm 12-bit mỗi mili giây (4,096 giá trị). Một máy tạo được bao nhiêu ID mỗi giây?",
+        "options": [
+          "4,096",
+          "Khoảng 410,000",
+          "Khoảng 4.1 triệu",
+          "Khoảng 4.1 tỷ"
+        ],
+        "answer": 2,
+        "explanation": "4,096 ID mỗi mili giây × 1,000 mili giây = 4,096,000, khoảng 4.1 triệu mỗi giây mỗi máy. Bộ đếm hết trong một mili giây thì máy chờ mili giây kế tiếp.",
+        "hides": [
+          "per machine per second"
+        ]
+      }
+    }
+  }
+]
