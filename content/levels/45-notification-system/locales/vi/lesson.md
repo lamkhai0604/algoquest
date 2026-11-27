@@ -11,18 +11,18 @@
 ### Thuật ngữ chính
 
 - **Channel.** Cách tới người dùng: push notification tới điện thoại, email hoặc SMS.
-- **Provider.** Service ngoài chuyển phát một channel, như service email, SMS hoặc push của hãng điện thoại. Mỗi bên có **quota**: số message mỗi giây hoặc ngày chấp nhận từ bạn.
+- **Provider.** Service (dịch vụ) ngoài chuyển phát một channel, như service email, SMS hoặc push của hãng điện thoại. Mỗi bên có **quota**: số message mỗi giây hoặc ngày chấp nhận từ bạn.
 - **Transactional notification (thông báo giao dịch).** Thông báo người dùng chờ do hành động của họ, như “đơn đã giao đi” hoặc mã đăng nhập. Notification **promotional**, như giảm giá, gửi cho nhiều người cùng lúc trong **campaign**.
 - **Deduplication (chống gửi trùng).** Bảo đảm cùng notification không được giao hai lần. **Notification ID (mã định danh thông báo)** như (event, user) định danh một notification; mỗi channel có một **attempt (lượt gửi)** bên dưới, key (notification ID, channel), được nhận quyền bằng unique constraint (ràng buộc duy nhất) trước hoặc cùng lúc gửi.
 - **Preference.** Lựa chọn về nhận gì, bằng cách nào: không nhận quảng cáo, chỉ email, không message ban đêm (**quiet hours (giờ yên lặng)**).
 - **Fallback channel (kênh dự phòng).** Channel thứ hai khi channel đầu thất bại, như email khi không giao được push.
-- **Dead-letter queue (hàng đợi) (hàng đợi cho message lỗi nhiều lần).** Nơi giữ message lỗi quá nhiều lần để người xem xét (SD 7).
+- **Dead-letter queue (hàng đợi cho message lỗi nhiều lần).** Nơi giữ message lỗi quá nhiều lần để người xem xét (SD 7).
 
 ## [problem-hook] Vấn đề mở đầu
 
-App mua sắm gửi email “giảm giá bắt đầu” tới 10 triệu người. Ba giờ tiếp theo không ai nhận “đơn đã giao đi”: campaign dùng hết quota email provider. Trong campaign ấy, worker (tiến trình xử lý công việc từ hàng đợi) crash rồi khởi động lại, 40,000 người nhận email giảm giá hai lần. Người hủy đăng ký lúc trưa vẫn nhận lúc 2 p.m. vì preference được kiểm tra khi campaign vào queue lúc 11 a.m.
+App mua sắm gửi email “giảm giá bắt đầu” tới 10 triệu người. Ba giờ tiếp theo không ai nhận “đơn đã giao đi”: campaign dùng hết quota email provider. Trong campaign ấy, worker (tiến trình xử lý công việc từ hàng đợi) crash rồi khởi động lại, 40,000 người nhận email giảm giá hai lần. Người hủy đăng ký lúc trưa vẫn nhận lúc 2 p.m. vì preference được kiểm tra khi campaign vào queue (hàng đợi) lúc 11 a.m.
 
-Gửi message là một API call. Gửi hàng triệu message qua provider có giới hạn, không trùng và chỉ tới người còn muốn nhận, là bài toán thiết kế.
+Gửi message là một API (giao diện lập trình ứng dụng) call. Gửi hàng triệu message qua provider có giới hạn, không trùng và chỉ tới người còn muốn nhận, là bài toán thiết kế.
 
 ## [intuition] Cách hiểu trực quan
 
