@@ -179,11 +179,9 @@ function LevelTile({ level }: { level: Level }) {
 function PhaseSection({
   phase,
   levels,
-  open,
 }: {
   phase: (typeof PHASES)[number];
   levels: Level[];
-  open: boolean;
 }) {
   const { rules } = useGame();
   const { t } = useTranslation();
@@ -209,7 +207,7 @@ function PhaseSection({
     );
   }
   return (
-    <details className={game.phase} open={open}>
+    <details className={game.phase}>
       <summary className={game.phaseSummary}>
         <span className={game.chevron} aria-hidden="true">
           ▶
@@ -239,11 +237,6 @@ function LearningPath({ levels }: { levels: Level[] }) {
   const byPhase = PHASES.map((phase) =>
     levels.filter((level) => level.phase === phase.number),
   );
-  // A phase starts open when it has playable levels, and so does the next one,
-  // as a preview of what comes after.
-  const playable = byPhase.map((list) => list.some((level) => level.available));
-  const firstPlayable = playable.indexOf(true);
-  const lastPlayable = playable.lastIndexOf(true);
   return (
     <>
       {current && <ContinueCard level={current} />}
@@ -252,9 +245,6 @@ function LearningPath({ levels }: { levels: Level[] }) {
           key={phase.number}
           phase={phase}
           levels={byPhase[i] ?? []}
-          open={
-            firstPlayable >= 0 && i >= firstPlayable && i <= lastPlayable + 1
-          }
         />
       ))}
       {ELECTIVES.map((elective) => (
