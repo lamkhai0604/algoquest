@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Checkout trung bình 150 ms, p50 là 90 ms và p99 là 3 giây. Nhận định nào đúng?",
+    "options": [
+      "Đa số checkout mất khoảng 150 ms",
+      "Khoảng 1 trong 100 checkout mất từ 3 giây trở lên, trung bình che giấu chúng",
+      "Không checkout nào mất hơn 150 ms",
+      "Một nửa checkout mất khoảng 3 giây"
+    ],
+    "answer": 1,
+    "explanation": "p50 nói một nửa checkout mất 90 ms hoặc ít hơn, nên phần lớn nhanh hơn trung bình. p99 nói 1 trong 100 chậm nhất mất từ 3 giây trở lên. Trung bình riêng không mô tả nhóm nào: giấu nhóm chậm và cao hơn điều phần lớn người dùng thấy."
+  },
+  {
+    "question": "SLO checkout là 99.9% request tốt trong 30 ngày. Tháng này có 10 triệu request checkout. Tháng hấp thụ được bao nhiêu request xấu?",
+    "options": [
+      "Khoảng 1,000",
+      "Khoảng 10,000",
+      "Khoảng 100,000",
+      "Khoảng 9,990,000"
+    ],
+    "answer": 1,
+    "explanation": "Error budget là tỷ lệ SLO cho phép xấu: 100% − 99.9% = 0.1%. Và 0.1% của 10,000,000 là 10,000 request xấu."
+  },
+  {
+    "question": "Alert nào nên đánh thức kỹ sư vào ban đêm?",
+    "options": [
+      "CPU của server trên 80% trong 10 phút",
+      "Đĩa backup đầy 70%",
+      "Nhiều checkout thất bại đến mức ngân sách lỗi tháng sẽ hết trong một ngày",
+      "Xuất hiện một dòng log có từ ERROR"
+    ],
+    "answer": 2,
+    "explanation": "Page dành cho triệu chứng người dùng cảm nhận không thể chờ: checkout thất bại ở tốc độ tiêu hết ngân sách trong một ngày. CPU cao có thể nằm trong kế hoạch và không hại ai, đĩa 70% có thể chờ giờ làm, lỗi đơn lẻ nằm trong dự kiến của ngân sách."
+  }
+]
