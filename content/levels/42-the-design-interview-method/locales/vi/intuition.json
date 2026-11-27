@@ -1,0 +1,11 @@
+{
+  "question": "Thợ xây được yêu cầu “xây nhà”. Việc gì nên làm trước?",
+  "options": [
+    "Hỏi bao nhiêu người ở, mấy tầng, ngân sách và khí hậu",
+    "Đặt gạch vì nhà nào cũng cần",
+    "Vẽ mái chi tiết vì mái khó nhất",
+    "Bắt đầu đào, chủ nhà phàn nàn thì đổi kế hoạch"
+  ],
+  "answer": 0,
+  "explanation": "Thiếu yêu cầu và số liệu, mọi lựa chọn sau đều là đoán: gạch, mái, đào đều phụ thuộc kích thước, ngân sách, khí hậu. Phỏng vấn system design cũng vậy: làm rõ trước, rồi ước lượng, thiết kế, sau đó đi sâu phần khó nhất."
+}
