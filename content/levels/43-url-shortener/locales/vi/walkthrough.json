@@ -1,0 +1,787 @@
+[
+  {
+    "title": "Yêu cầu",
+    "body": "Nhóm marketing muốn short link cho bài đăng, email và tờ rơi. Viết thành yêu cầu: (F1) tạo short link; (F2) redirect tới long link; (F3) đổi đích có hiệu lực trong 5 phút; (F4) đếm lượt bấm trong vài phút. Kèm số: (N1) 100 triệu link mới mỗi tháng, mở khoảng 100 lần mỗi link, cao điểm 20,000 redirect mỗi giây; (N2) redirect trong 50 ms bên trong hệ thống; (N3) hai link không bao giờ chung code. Giữ link 5 năm.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8,
+            "note": "bài đăng, tờ rơi"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database link",
+            "x": 9,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "new links",
+          "value": "100 triệu mỗi tháng"
+        },
+        {
+          "name": "clicks per link",
+          "value": "khoảng 100"
+        },
+        {
+          "name": "peak redirects",
+          "value": "20,000 mỗi giây"
+        },
+        {
+          "name": "change takes effect",
+          "value": "trong 5 phút"
+        },
+        {
+          "name": "kept",
+          "value": "5 năm"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Ước lượng lưu lượng",
+    "body": "Tháng có khoảng 2.6 triệu giây. Tạo link: 100,000,000 ÷ 2,600,000 ≈ **40 mỗi giây**. Redirect: 100 triệu link × 100 lượt bấm = 10 tỷ mỗi tháng, 10,000,000,000 ÷ 2,600,000 ≈ **3,900 mỗi giây** trung bình, cao điểm 20,000. Đọc nhiều hơn ghi khoảng 100 so với 1 nên ưu tiên redirect ít tốn kém.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3,
+            "note": "lần đọc mỗi giây?"
+          },
+          {
+            "kind": "db",
+            "label": "Database link",
+            "x": 9,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "seconds in a month",
+          "value": "khoảng 2.6 triệu"
+        },
+        {
+          "name": "creations",
+          "value": "khoảng 40 mỗi giây"
+        },
+        {
+          "name": "redirects a month",
+          "value": "10 tỷ"
+        },
+        {
+          "name": "average redirects",
+          "value": "khoảng 3,900 mỗi giây"
+        }
+      ],
+      "predict": {
+        "question": "100 triệu link mỗi tháng, mỗi link mở khoảng 100 lần. Khoảng 2.6 triệu giây một tháng, trung bình có khoảng bao nhiêu redirect mỗi giây?",
+        "options": [
+          "Khoảng 40",
+          "Khoảng 390",
+          "Khoảng 3,900",
+          "Khoảng 39,000"
+        ],
+        "answer": 2,
+        "explanation": "100,000,000 × 100 = 10,000,000,000 redirect mỗi tháng, 10,000,000,000 ÷ 2,600,000 ≈ 3,850. Khoảng 40 mỗi giây là tốc độ tạo, nhỏ hơn một trăm lần.",
+        "hides": [
+          "average redirects"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Code dài bao nhiêu?",
+    "body": "Qua 5 năm: 100 triệu × 12 × 5 = **6 tỷ** link, khoảng 3 TB ở mức 500 byte mỗi link. Code dùng **base62**: số, chữ thường, chữ hoa. Sáu ký tự cho 62⁶ ≈ 57 tỷ code; bảy cho 62⁷ ≈ **3.5 nghìn tỷ**. Bảy ký tự giữ 6 tỷ link dưới 0.2% không gian, nên không hết code và code ngẫu nhiên hiếm trùng.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database link",
+            "x": 9,
+            "y": 7,
+            "note": "6 tỷ link"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "links in 5 years",
+          "value": "6 tỷ"
+        },
+        {
+          "name": "6 characters",
+          "value": "khoảng 57 tỷ code"
+        },
+        {
+          "name": "7 characters",
+          "value": "khoảng 3.5 nghìn tỷ code"
+        },
+        {
+          "name": "storage",
+          "value": "khoảng 3 TB"
+        }
+      ]
+    }
+  },
+  {
+    "title": "API, dữ liệu và hai đường đi",
+    "body": "**API:** `POST /links {longUrl}` trả `{code}`; `PATCH /links/{code}` đổi đích; `GET /{code}` trả redirect có header `Location` chứa long link. **Data model:** `links(code primary key, long_url, owner, created_at)`, shard theo code (SD 8), số lượt bấm mỗi link mỗi ngày. **High-level design:** tạo link đi người dùng → load balancer → app server → database; redirect đi người dùng → CDN → load balancer → app server → link cache, chỉ tới database khi cache miss.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 1,
+            "y": 4
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "cache",
+            "label": "Link cache",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Database link",
+            "x": 9,
+            "y": 7,
+            "note": "primary key: code"
+          },
+          {
+            "kind": "db",
+            "label": "Replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "queue",
+            "label": "Click queue",
+            "x": 8,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              5
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "create",
+          "value": "POST /links"
+        },
+        {
+          "name": "change",
+          "value": "PATCH /links/{code}"
+        },
+        {
+          "name": "redirect",
+          "value": "GET /{code}"
+        },
+        {
+          "name": "table",
+          "value": "links(code, long_url, …)"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Bắt collision",
+    "body": "Server chọn 7 ký tự base62 ngẫu nhiên như `aZ3kQ9x`, insert dòng. Gần cuối 5 năm, đã dùng 6 tỷ trong 3.5 nghìn tỷ code nên code mới trùng code cũ khoảng **1 lần trong 580**. Qua 6 tỷ lần tạo, xảy ra hàng triệu lần nên phải bắt. **Unique primary key** khiến database từ chối insert thứ hai, server chỉ thử code mới. Kiểm tra “còn trống không?” trước rồi insert sau cho hai server lấy cùng code giữa các bước.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3,
+            "note": "thử code mới"
+          },
+          {
+            "kind": "db",
+            "label": "Database link",
+            "x": 9,
+            "y": 7,
+            "note": "insert aZ3kQ9x",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "codes taken",
+          "value": "6 tỷ trong 3.5 nghìn tỷ"
+        },
+        {
+          "name": "chance of a repeat",
+          "value": "khoảng 1 trong 580"
+        },
+        {
+          "name": "caught by",
+          "value": "unique primary key"
+        },
+        {
+          "name": "then",
+          "value": "thử code mới"
+        }
+      ]
+    }
+  },
+  {
+    "title": "301 hay 302?",
+    "body": "**301** nói link đã chuyển hẳn nên browser có thể giữ phản hồi, tới thẳng long link lần sau. Nhóm không thấy lượt bấm đó; đổi đích thì khách quay lại vẫn tới **trang cũ**. **302** là tạm thời: browser hỏi mỗi lần. Nhóm cần lượt bấm và thay đổi nên redirect dùng 302 với `Cache-Control: max-age=0, s-maxage=60`: browser hỏi mỗi lần, chỉ CDN được giữ phản hồi 60 giây.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8,
+            "note": "đã bấm trước đây"
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 1,
+            "y": 4
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "db",
+            "label": "Database link",
+            "x": 9,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "first answer",
+          "value": "301 tới trang cũ"
+        },
+        {
+          "name": "destination changed to",
+          "value": "trang mới"
+        },
+        {
+          "name": "returning visitor goes to",
+          "value": "trang cũ"
+        },
+        {
+          "name": "chosen",
+          "value": "302, max-age=0, s-maxage=60"
+        }
+      ],
+      "predict": {
+        "question": "Link trả 301 với cache time dài. Sau đó chủ đổi đích. Khách từng bấm sẽ tới đâu khi bấm lại?",
+        "options": [
+          "Trang mới vì server đã đổi",
+          "Trang cũ vì browser giữ 301",
+          "Trang lỗi",
+          "Chính short link, thành vòng lặp"
+        ],
+        "answer": 1,
+        "explanation": "301 nói chuyển vĩnh viễn nên browser có thể dùng lại mà không hỏi server. Browser tới thẳng long link cũ, server không thấy lượt bấm. 302 làm browser hỏi mỗi lần.",
+        "hides": [
+          "returning visitor goes to"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Redirect nhanh",
+    "body": "Đường redirect từ bước 4, kèm số liệu. CDN được giữ redirect 60 giây; entry **link cache** của app hết hạn trong 4 phút nên thay đổi hiện trong 5 phút. Đo trên cấu hình thử, CDN trả khoảng 90% trong 20,000 redirect mỗi giây cao điểm, server nhận khoảng 2,000, mỗi lần tối đa 30 ms dù link cache miss, trong 50 ms. Redirect tới server gửi click event vào queue, đếm theo batch; log CDN cộng lượt nó trả.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 1,
+            "y": 4,
+            "note": "giữ 60 s"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "cache",
+            "label": "Link cache",
+            "x": 5,
+            "y": 8,
+            "note": "entry ≤ 4 min"
+          },
+          {
+            "kind": "db",
+            "label": "Database link",
+            "x": 9,
+            "y": 7
+          },
+          {
+            "kind": "db",
+            "label": "Replica",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "queue",
+            "label": "Click queue",
+            "x": 8,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "CDN",
+          "value": "giữ redirect 60 s"
+        },
+        {
+          "name": "link cache",
+          "value": "entry hết hạn trong 4 min"
+        },
+        {
+          "name": "change visible",
+          "value": "trong 5 phút"
+        },
+        {
+          "name": "clicks",
+          "value": "queue + log CDN, theo batch"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Lỗi và tổng kết",
+    "body": "**Bản chính database lỗi**, redirect tiếp từ cache và read replica (SD 6), tạo link chờ failover. **Mất link cache**, 2,000 redirect mỗi giây của server tới database, khoảng 500 mỗi shard, trong mức 5,000 đã đo mỗi bản. **Hot link** chủ yếu CDN trả. **Tổng kết:** F1 bằng code ngẫu nhiên; N3 bằng unique key; F2, N2 bằng cached key lookup; F3 bằng 302 với cache time ngắn; F4 bằng click event đếm theo batch.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "cdn",
+            "label": "CDN",
+            "x": 1,
+            "y": 4
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 6,
+            "y": 3
+          },
+          {
+            "kind": "cache",
+            "label": "Link cache",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "Database link",
+            "x": 9,
+            "y": 7,
+            "state": "down"
+          },
+          {
+            "kind": "db",
+            "label": "Replica",
+            "x": 10,
+            "y": 3,
+            "note": "trả redirect"
+          },
+          {
+            "kind": "queue",
+            "label": "Click queue",
+            "x": 8,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ]
+        ],
+        "path": [
+          3,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "main DB fails",
+          "value": "redirect từ cache và replica"
+        },
+        {
+          "name": "cache lost",
+          "value": "khoảng 500 mỗi shard"
+        },
+        {
+          "name": "hot link",
+          "value": "chủ yếu CDN"
+        }
+      ]
+    }
+  }
+]

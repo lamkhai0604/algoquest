@@ -1,0 +1,11 @@
+{
+  "question": "Quầy giữ áo phát mỗi áo vé đánh số. Hai nhân viên chọn số ngẫu nhiên từ 1 đến 1,000,000 cho buổi tối đông khách. Phải làm gì để hai khách không bao giờ nhận cùng số?",
+  "options": [
+    "Ghi mỗi số lên bảng chung khi phát, chọn lại nếu đã có",
+    "Tin số ngẫu nhiên không lặp",
+    "Mỗi nhân viên chỉ kiểm tra danh sách riêng",
+    "Dùng số ngắn hơn cho dễ đọc"
+  ],
+  "answer": 0,
+  "explanation": "Số ngẫu nhiên có thể trùng; hai nhân viên chỉ xem danh sách riêng đều có thể phát cùng số. Bảng chung từ chối số đã có, như unique key database, bắt mọi lần trùng; nhân viên chỉ chọn lại."
+}
