@@ -35,6 +35,20 @@ describe("learning path", () => {
     expect(screen.queryByText("Test access")).toBeNull();
   });
 
+  it("starts every phase collapsed", async () => {
+    fakeApi(routes);
+    renderSignedInAt("/");
+
+    expect(
+      await screen.findByRole("heading", { name: "Level 1 · Big-O & Basics" }),
+    ).toBeVisible();
+    const phases = Array.from(document.querySelectorAll("details"));
+    expect(phases.length).toBeGreaterThan(0);
+    for (const phase of phases) {
+      expect(phase.open).toBe(false);
+    }
+  });
+
   it("keeps the algorithm level to continue when System Design levels are open", async () => {
     const sd = {
       ...LEVELS[0]!,
@@ -84,7 +98,8 @@ describe("learning path", () => {
       within(core).getByRole("link", { name: "Level 1: Big-O & Basics" }),
     ).toHaveAttribute("href", "/levels/1");
     expect(within(core).getAllByRole("link")).toHaveLength(1);
-    expect(within(core).getByText("Locked")).toBeVisible();
+    // Phases start collapsed, so the rows are in the DOM but hidden until the phase is expanded.
+    expect(within(core).getByText("Locked")).toBeInTheDocument();
 
     // A phase with no open level shows only its header: no expand, no level names.
     expect(screen.queryByRole("list", { name: "Phase 2 levels" })).toBeNull();
@@ -108,7 +123,7 @@ describe("learning path", () => {
 
     const phases = screen.getAllByRole("group");
     expect(phases).toHaveLength(1);
-    expect(phases[0]).toHaveAttribute("open");
+    expect(phases[0]).not.toHaveAttribute("open");
     expect(phases[0]).toHaveTextContent("Phase 1 · Core Foundations");
   });
 
