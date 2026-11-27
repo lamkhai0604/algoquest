@@ -1,0 +1,11 @@
+{
+  "question": "Bếp nhà hàng nấu được 60 món mỗi giờ, tối nay có 90 khách mỗi giờ tới. Có thể gọi thêm đầu bếp nhưng cần 45 phút họ mới tới. Cách nào giữ buổi tối hoạt động tốt nhất?",
+  "options": [
+    "Đưa thực đơn ngắn hơn để nấu nhanh hơn, báo đúng thời gian chờ cho khách đến sau và gọi đầu bếp ngay",
+    "Xếp chỗ cho mọi người, để thời gian chờ món tăng lên",
+    "Cho phục vụ hỏi bếp mỗi phút xem món xong chưa",
+    "Chờ hàng dài rồi mới gọi thêm đầu bếp"
+  ],
+  "answer": 0,
+  "explanation": "Khách đến nhiều hơn bếp phục vụ được, nên chờ tăng từng phút. Thực đơn ngắn giảm công việc mỗi khách (graceful degradation), báo đúng thời gian hoặc “quay lại sau” giới hạn ai được xếp chỗ (load shedding), gọi đầu bếp sớm bù độ trễ 45 phút (scale trước khi quá muộn). Hỏi bếp liên tục chỉ tăng công việc, giống retry."
+}

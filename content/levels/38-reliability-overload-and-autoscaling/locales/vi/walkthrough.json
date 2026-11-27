@@ -1,0 +1,759 @@
+[
+  {
+    "title": "Ba số chín",
+    "body": "Server và database của cửa hàng mỗi bên hoạt động **99.9%** thời gian, “ba số chín”. Tháng 30 ngày có 43,200 phút nên ngừng 0.1% là khoảng **43 phút** mỗi tháng. Mỗi số chín thêm giảm mười lần: 99.99% khoảng 4 phút. Availability là ngân sách downtime, mọi bộ phận request cần đều tiêu từ đó.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1,
+            "note": "chạy 99.9%"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4,
+            "note": "chạy 99.9%"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "minutes in 30 days",
+          "value": "43,200"
+        },
+        {
+          "name": "99.9% allows",
+          "value": "ngừng khoảng 43 min"
+        },
+        {
+          "name": "99.99% allows",
+          "value": "ngừng khoảng 4 min"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cả hai phải hoạt động",
+    "body": "Request cần server **và** database. Một bên ngừng thì request thất bại, nên availability **nhân** với nhau: 0.999 × 0.999 ≈ 0.998, hay **99.8%**. Đó là khoảng 86 phút ngừng mỗi tháng, gấp đôi từng phần. Mỗi bộ phận nối tiếp request cần đều làm toàn hệ thống ít available hơn.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1,
+            "note": "chạy 99.9%"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4,
+            "note": "chạy 99.9%"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "server",
+          "value": "99.9%"
+        },
+        {
+          "name": "database",
+          "value": "99.9%"
+        },
+        {
+          "name": "whole app",
+          "value": "khoảng 99.8%"
+        },
+        {
+          "name": "downtime",
+          "value": "khoảng 86 min mỗi tháng"
+        }
+      ],
+      "predict": {
+        "question": "Mọi request đều cần cả server (hoạt động 99.9%) và database (hoạt động 99.9%), các lỗi độc lập. Availability của toàn ứng dụng xấp xỉ bao nhiêu?",
+        "options": [
+          "99.9%, giống từng bộ phận",
+          "Khoảng 99.8%, vì cả hai phải hoạt động",
+          "Khoảng 99.99%, vì có hai bộ phận",
+          "100%, vì một bên dự phòng bên kia"
+        ],
+        "answer": 1,
+        "explanation": "Request thất bại nếu một bên ngừng. Xác suất cả hai hoạt động là 0.999 × 0.999 ≈ 0.998. Hai bộ phận nối tiếp tăng gấp đôi downtime; chúng không dự phòng cho nhau vì mỗi bên làm việc khác nhau.",
+        "hides": [
+          "whole app",
+          "downtime"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Hai bản sao",
+    "body": "Thêm server thứ hai sau load balancer. Tầng server chỉ ngừng khi **cả hai** bản sao cùng ngừng: 0.001 × 0.001 = 0.000001 nên tầng hoạt động **99.9999%**. Đây là **redundancy**. Chỉ đúng khi các bản sao lỗi độc lập và health check chuyển lưu lượng trong vài giây. Toàn ứng dụng giờ khoảng 99.9%, bị giới hạn bởi **một database**, bộ phận tiếp theo cần thêm bản sao (SD 6).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 4,
+            "y": 7
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4,
+            "note": "giới hạn hiện tại"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "one server",
+          "value": "99.9%"
+        },
+        {
+          "name": "two servers",
+          "value": "99.9999%"
+        },
+        {
+          "name": "whole app",
+          "value": "khoảng 99.9%"
+        },
+        {
+          "name": "limit",
+          "value": "database duy nhất"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Card provider chậm",
+    "body": "Card provider ngừng trả lời trong 30 giây. Không có **timeout**, mỗi request thanh toán giữ một worker suốt thời gian đó: 50 request thanh toán mỗi giây × 30 giây = **1,500 worker**, nhiều hơn 1,200 của các server. Mọi worker sớm phải chờ, ngay cả trang chủ không gọi provider cũng không trả lời. Với **timeout 300 ms**, thanh toán giữ tối đa 50 × 0.3 = 15 worker, phần còn lại của cửa hàng vẫn chạy. Dependency chậm nguy hiểm hơn dependency fail fast.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 8,
+            "y": 0,
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "payment requests",
+          "value": "50 mỗi giây"
+        },
+        {
+          "name": "no timeout",
+          "value": "50 × 30 s = 1,500 worker"
+        },
+        {
+          "name": "300 ms timeout",
+          "value": "50 × 0.3 s = 15 worker"
+        },
+        {
+          "name": "workers in total",
+          "value": "1,200"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Retry ở mọi tầng",
+    "body": "Database kho đang lỗi. Điện thoại thử mỗi lần nhấn tối đa 3 lần; mỗi lần đó server gọi Inventory tối đa 3 lần; mỗi lời gọi, Inventory thử database tối đa 3 lần. Một lần nhấn có thể thành 3 × 3 × 3 = **27** lời gọi database, nhằm đúng phần vốn đang lỗi. Đây là **retry storm**: retry định giúp đỡ lại biến lỗi nhỏ thành overload.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 6,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 7,
+            "state": "down"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "vars": [
+        {
+          "name": "layers that retry",
+          "value": "3"
+        },
+        {
+          "name": "tries per layer",
+          "value": "3"
+        },
+        {
+          "name": "database calls per tap",
+          "value": "27"
+        }
+      ],
+      "predict": {
+        "question": "Điện thoại thử mỗi lần nhấn tối đa 3 lần, server thử Inventory tối đa 3 lần cho mỗi lần đó, Inventory thử database tối đa 3 lần cho mỗi lời gọi. Khi database lỗi, một lần nhấn có thể tạo bao nhiêu lời gọi database?",
+        "options": [
+          "3",
+          "9",
+          "27",
+          "81"
+        ],
+        "answer": 2,
+        "explanation": "Mỗi tầng nhân số lần thử của tầng trên: 3 ở điện thoại, 3 × 3 = 9 lời gọi tới Inventory, 9 × 3 = 27 lời gọi database. Tất cả đến đúng database đang lỗi.",
+        "hides": [
+          "database calls per tap"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Backoff, jitter và ngân sách",
+    "body": "Cách sửa có bốn phần. Chỉ retry ở **một tầng**, ở đây là điện thoại, các tầng khác fail fast. Thử **tối đa 3 lần**. Chờ lâu dần, khoảng 100 ms rồi 200 ms (**backoff**), cộng khoảng ngẫu nhiên (**jitter**), để một nghìn điện thoại lỗi cùng lúc không cùng retry. Giữ **retry budget**: nếu retry vượt 10% request thì dừng retry, để service lỗi thấy tối đa khoảng 1.1 lần tải bình thường. Chỉ retry request lặp lại an toàn (SD 7).",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8,
+            "note": "chỉ retry ở đây"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 6,
+            "y": 6
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "layers that retry",
+          "value": "1 (điện thoại)"
+        },
+        {
+          "name": "attempts",
+          "value": "tối đa 3"
+        },
+        {
+          "name": "waits",
+          "value": "khoảng 100, 200 ms + ngẫu nhiên"
+        },
+        {
+          "name": "retry budget",
+          "value": "10% request"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Đến nhiều hơn xử lý xong",
+    "body": "Giảm giá bắt đầu: **2,400** request mỗi giây đến, sáu server xử lý xong **1,800**. Hàng chờ tăng 600 mỗi giây. Sau 10 giây có 6,000 đang chờ, request mới chờ khoảng 6,000 ÷ 1,800 ≈ **3.3 giây** trước khi bắt đầu. Điện thoại bỏ cuộc sau 2 giây nên server tốn thời gian cho request có người dùng đã rời đi; retry của điện thoại lại tăng tải. Đây là **overload**: queue không sửa được, chỉ giấu trong vài giây.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1,
+            "state": "hot"
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 4,
+            "y": 7,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "arriving",
+          "value": "2,400 mỗi giây"
+        },
+        {
+          "name": "finished",
+          "value": "1,800 mỗi giây"
+        },
+        {
+          "name": "line grows by",
+          "value": "600 mỗi giây"
+        },
+        {
+          "name": "waiting after 10 s",
+          "value": "6,000"
+        },
+        {
+          "name": "a new request waits",
+          "value": "khoảng 3.3 s"
+        }
+      ],
+      "predict": {
+        "question": "2,400 request mỗi giây đến và server xử lý xong 1,800 mỗi giây. Sau 10 giây, request mới chờ khoảng bao lâu trước khi bắt đầu?",
+        "options": [
+          "Gần như không chờ, vì server vẫn chạy",
+          "Khoảng 0.3 giây",
+          "Khoảng 3.3 giây",
+          "Khoảng 33 giây"
+        ],
+        "answer": 2,
+        "explanation": "Hàng chờ tăng 2,400 − 1,800 = 600 mỗi giây nên sau 10 giây có 6,000 request ở trước. Với 1,800 mỗi giây, cần 6,000 ÷ 1,800 ≈ 3.3 giây để xử lý chúng, và hàng chờ vẫn tăng.",
+        "hides": [
+          "waiting after 10 s",
+          "a new request waits"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Giảm chức năng, bớt tải, rồi scale",
+    "body": "Trước tiên **degrade**: tắt gợi ý, chiếm một phần ba công việc request, tăng giới hạn server từ 300 lên khoảng 450, nên 6 × 450 = 2,700 mỗi giây, đủ cho 2,400. Nếu chưa đủ, **shed**: từ chối phần dư ở load balancer bằng “thử lại sau ít phút”, ít tốn kém và nhanh. **Rate limit** theo client ngăn một client lấy tài nguyên người khác cần. Trong lúc đó **autoscaling** thêm server, nhưng tới sau khoảng 5 phút và ngân sách cho tối đa 10. Với 10 server, mỗi cái nhận 240 mỗi giây, 80% của 300, và bật gợi ý lại.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Server 1",
+            "x": 4,
+            "y": 1,
+            "note": "tắt gợi ý: 450/s"
+          },
+          {
+            "kind": "server",
+            "label": "Server 2",
+            "x": 4,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Server mới",
+            "x": 7,
+            "y": 1,
+            "note": "sẵn sàng sau ~5 min"
+          },
+          {
+            "kind": "db",
+            "label": "Database",
+            "x": 8,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              5
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "degraded",
+          "value": "6 × 450 = 2,700 mỗi giây"
+        },
+        {
+          "name": "still too much",
+          "value": "shed ở load balancer"
+        },
+        {
+          "name": "scale-out delay",
+          "value": "khoảng 5 phút"
+        },
+        {
+          "name": "maximum",
+          "value": "10 server, mỗi cái 240 mỗi giây"
+        }
+      ]
+    }
+  }
+]
