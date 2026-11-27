@@ -1,0 +1,131 @@
+[
+  {
+    "id": "P46-threshold",
+    "level": 46,
+    "title": "Choosing the Follower Threshold",
+    "statement": "A feed must show a new post to every follower within 20 seconds. Fan-out workers add at most 50,000 feed entries per second for one post. A feed read may merge the cached feed with at most 20 pulled accounts. Exercise assumptions: every user follows at most 18 accounts with more than 200,000 followers and at most 6 with more than 1,000,000; the team prefers as few lookups per read as possible.",
+    "examples": [
+      "A post by an account with 500,000 followers takes 500,000 ÷ 50,000 = 10 seconds to push."
+    ],
+    "constraints": [
+      "Every post reaches every follower within 20 seconds.",
+      "At most 20 pulled accounts per read.",
+      "Prefer the fewest lookups per read."
+    ],
+    "approaches": [
+      {
+        "id": "t-1m",
+        "name": "Pull accounts above 1,000,000 followers; push the rest",
+        "hint": "As high as the time budget allows",
+        "label": "best",
+        "time": "Push at most 20 seconds; reads pull at most 6 accounts",
+        "space": "Feeds hold posts of accounts up to 1,000,000 followers",
+        "why": "1,000,000 ÷ 50,000 = 20 seconds, just within the target, and a user follows at most 6 accounts above it, the fewest pulls of any threshold that meets the time limit."
+      },
+      {
+        "id": "t-200k",
+        "name": "Pull accounts above 200,000 followers; push the rest",
+        "hint": "A lower line",
+        "label": "valid",
+        "time": "Push at most 4 seconds; reads pull at most 18 accounts",
+        "space": "Feeds hold posts of accounts up to 200,000 followers",
+        "why": "Pushes finish in 200,000 ÷ 50,000 = 4 seconds and reads pull at most 18 accounts, within 20, so both limits hold, but reads do up to three times the pulls of the 1,000,000 line, against the stated preference."
+      },
+      {
+        "id": "t-5m",
+        "name": "Pull accounts above 5,000,000 followers; push the rest",
+        "hint": "Push almost everyone",
+        "label": "unsuitable",
+        "time": "Push up to 100 seconds",
+        "space": "Feeds hold posts of accounts up to 5,000,000 followers",
+        "why": "An account with 5,000,000 followers needs 5,000,000 ÷ 50,000 = 100 seconds, far beyond 20."
+      }
+    ]
+  },
+  {
+    "id": "P46-inactive",
+    "level": 46,
+    "title": "Followers Who Stopped Using the App",
+    "statement": "40% of all follow relationships point to users who have not opened the app in 30 days. A returning user's first feed page must still show the posts of the last 7 days, and may take up to 2 seconds; later pages and active users' feeds must load within 200 ms. Exercise assumptions: pulling a returning user's feed from the posts store takes about 1 second; the team prefers fewer fan-out writes.",
+    "examples": [
+      "Out of 1,000 followers of an account, about 400 have not opened the app in 30 days."
+    ],
+    "constraints": [
+      "A returning user sees the last 7 days of posts, first page within 2 seconds.",
+      "Active users' feeds within 200 ms.",
+      "Prefer fewer fan-out writes."
+    ],
+    "approaches": [
+      {
+        "id": "skip-and-pull",
+        "name": "Skip inactive followers when pushing; when one returns, build the feed by pulling the last 7 days, then push to them again",
+        "hint": "Do the work only if they come back",
+        "label": "best",
+        "time": "About 40% fewer writes; first page about 1 second",
+        "space": "No feeds kept for inactive users",
+        "why": "Writes for inactive users are skipped, and a returning user's feed is rebuilt by pulling in about 1 second, within the 2 allowed; active users are unaffected."
+      },
+      {
+        "id": "push-all",
+        "name": "Push to every follower, active or not",
+        "hint": "Treat everyone the same",
+        "label": "valid",
+        "time": "Every follower's feed ready at once",
+        "space": "Feeds kept for inactive users too",
+        "why": "Every requirement holds, and returning users get an instant feed, but about 40% of the fan-out writes go to users who may never come back, against the stated preference."
+      },
+      {
+        "id": "skip-only",
+        "name": "Skip inactive followers when pushing, and show a returning user only posts pushed after they return",
+        "hint": "Skip and forget",
+        "label": "unsuitable",
+        "time": "Fewest writes",
+        "space": "No feeds kept for inactive users",
+        "why": "A returning user's feed starts empty, missing the last 7 days of posts, which breaks the requirement."
+      }
+    ]
+  },
+  {
+    "id": "P46-cache-loss",
+    "level": 46,
+    "title": "Losing a Feed Cache Node",
+    "statement": "Feeds are cached on 10 nodes, split by user ID; each node holds the feeds of about 2 million users. Requirement: when a node fails, its users' feeds are never empty and still load within 200 ms. Exercise assumptions: rebuilding one user's feed by pulling takes about 1 second; a copy of a node can be kept either in step with it or refreshed once a minute; the team prefers that feeds are not out of date after a failure.",
+    "examples": [
+      "A copy refreshed once a minute can miss up to one minute of new posts."
+    ],
+    "constraints": [
+      "Feeds never empty after a node fails.",
+      "Feeds load within 200 ms.",
+      "Prefer feeds that are not out of date after a failure."
+    ],
+    "approaches": [
+      {
+        "id": "replica",
+        "name": "Keep a replica of each cache node, updated with every fan-out write; when a node fails, its replica serves its users",
+        "hint": "A second copy in step",
+        "label": "best",
+        "time": "Feeds served at once, up to date",
+        "space": "Twice the cache memory",
+        "why": "Users of the failed node keep complete feeds, loaded from the replica within 200 ms, with no posts missing."
+      },
+      {
+        "id": "minute-copy",
+        "name": "Keep a copy of each node refreshed once a minute; when a node fails, the copy serves its users",
+        "hint": "A copy a little behind",
+        "label": "valid",
+        "time": "Feeds served at once, up to 1 minute old",
+        "space": "Twice the cache memory",
+        "why": "Feeds are never empty and load within 200 ms, so the requirements hold, but posts from the last minute before the failure are missing, against the stated preference."
+      },
+      {
+        "id": "wait-for-posts",
+        "name": "No copy; a new node starts empty and fills as new posts are pushed",
+        "hint": "Let it refill",
+        "label": "unsuitable",
+        "time": "No extra work",
+        "space": "No extra memory",
+        "why": "Users on the failed node see empty feeds until new posts arrive, which breaks the requirement."
+      }
+    ]
+  }
+]
