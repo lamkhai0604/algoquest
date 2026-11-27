@@ -313,5 +313,12 @@
     "title": "Notification System",
     "summary": "A case study: push, email and text messages within provider quotas, with no duplicates across retries and fallbacks, and user preferences checked at the moment of sending.",
     "phase": 4
+  },
+  {
+    "number": 46,
+    "slug": "news-feed",
+    "title": "News Feed",
+    "summary": "A case study: a home feed built by pushing posts of ordinary accounts and pulling posts of very large ones, with the follower threshold derived from a freshness target and a read budget.",
+    "phase": 4
   }
 ]

@@ -1,0 +1,11 @@
+{
+  "question": "A delivery service brings a club's newsletter to its 200 members, and a national paper to its 50 million readers. It can fill about 100,000 mailboxes an hour. How should it deliver each?",
+  "options": [
+    "Put the club's newsletter in each member's mailbox, and let the paper's readers pick it up at a kiosk",
+    "Put both into every reader's mailbox",
+    "Make everyone pick up both at kiosks",
+    "Deliver the paper first, then the newsletter"
+  ],
+  "answer": 0,
+  "explanation": "Filling 50 million mailboxes would take 500 hours, so the paper goes to kiosks. Making the club's members visit a kiosk for a 200-copy newsletter adds a trip for nothing. Push the small one and pull the big one, as a hybrid feed does."
+}

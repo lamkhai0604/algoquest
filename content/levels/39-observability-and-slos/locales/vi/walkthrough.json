@@ -1,0 +1,986 @@
+[
+  {
+    "title": "Trung bình có vẻ ổn",
+    "body": "Khách nói checkout đôi lúc rất chậm nhưng dashboard hiện **trung bình** 194 ms và CPU ở 60%. Trung bình cộng mọi request nên vài request rất chậm chỉ làm nó đổi ít khi phần lớn nhanh. **Metric** như vậy ít tốn kém và tốt để xem xu hướng, nhưng có thể giấu đúng những người dùng không hài lòng.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5,
+            "note": "trung bình 194 ms"
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "average checkout",
+          "value": "194 ms"
+        },
+        {
+          "name": "CPU",
+          "value": "60%"
+        },
+        {
+          "name": "customers",
+          "value": "“đôi lúc rất chậm”"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sắp xếp thời gian",
+    "body": "Lấy 100 checkout và sắp theo thời gian: 90 mất 100 ms, 8 mất 300 ms và 2 mất 4,000 ms. Request giữa, thứ 50, mất 100 ms: đó là **p50**. Thứ 95 mất 300 ms (**p95**), thứ 99 mất **4,000 ms (p99)**. Trung bình 194 ms không khớp request thật nào. Percentile cho thấy cả trải nghiệm thường gặp và nhóm chậm.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5,
+            "note": "100 checkout"
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "90 requests",
+          "value": "100 ms"
+        },
+        {
+          "name": "8 requests",
+          "value": "300 ms"
+        },
+        {
+          "name": "2 requests",
+          "value": "4,000 ms"
+        },
+        {
+          "name": "average",
+          "value": "194 ms"
+        },
+        {
+          "name": "p99",
+          "value": "4,000 ms"
+        }
+      ],
+      "predict": {
+        "question": "Trong 100 checkout, 90 mất 100 ms, 8 mất 300 ms và 2 mất 4,000 ms. Sắp từ nhanh nhất đến chậm nhất, p99, thời gian request thứ 99, là bao nhiêu?",
+        "options": [
+          "100 ms",
+          "194 ms",
+          "300 ms",
+          "4,000 ms"
+        ],
+        "answer": 3,
+        "explanation": "Vị trí 1 đến 90 mất 100 ms, 91 đến 98 mất 300 ms, 99 và 100 mất 4,000 ms. Request thứ 99 là một trong hai request chậm. 194 ms là trung bình, không request nào thực sự mất thời gian ấy.",
+        "hides": [
+          "p99"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Một trang, nhiều lời gọi",
+    "body": "Checkout gọi nhiều service, trang chậm nếu **bất kỳ** service nào chậm. Trang chờ 10 lời gọi, mỗi lời gọi chậm 1% thời gian, chỉ nhanh khi cả 10 nhanh: 0.99¹⁰ ≈ 0.90. Vậy khoảng **10%** trang chậm, gấp mười lần 1% của từng service. Vì vậy **tail latency** quan trọng: p99 từng bộ phận thành trải nghiệm thường gặp của cả hệ thống.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2,
+            "note": "chờ 10 lời gọi"
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              5,
+              6
+            ]
+          },
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "calls per page",
+          "value": "10"
+        },
+        {
+          "name": "each call slow",
+          "value": "1% thời gian"
+        },
+        {
+          "name": "pages slow",
+          "value": "khoảng 10%"
+        }
+      ],
+      "predict": {
+        "question": "Trang chờ 10 lời gọi. Mỗi lời gọi chậm 1% thời gian, độc lập nhau. Khoảng bao nhiêu phần trang chậm?",
+        "options": [
+          "Khoảng 0.1%",
+          "Khoảng 1%",
+          "Khoảng 10%",
+          "Khoảng 50%"
+        ],
+        "answer": 2,
+        "explanation": "Trang chỉ nhanh khi cả 10 lời gọi nhanh: 0.99 nhân 10 lần khoảng 0.904. Vậy khoảng 1 − 0.904 ≈ 9.6% trang chậm, gần gấp mười 1% của một lời gọi.",
+        "hides": [
+          "pages slow"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Ba loại tín hiệu",
+    "body": "**Metric** trả lời “có gì sai, từ khi nào?”: p99 checkout tăng lúc 14:00. **Trace** trả lời “request này tốn thời gian ở đâu?”. **Log** trả lời “chính xác điều gì xảy ra ở bước này?”, như thông báo lỗi. Mỗi service gửi cả ba tới hệ thống **monitoring**. Metric nhỏ; trace và log tăng theo lưu lượng nên được giữ có chọn lọc.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Monitoring",
+            "x": 10,
+            "y": 4,
+            "note": "metric/trace/log"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              4,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "metrics",
+          "value": "có sai không, từ khi nào?"
+        },
+        {
+          "name": "traces",
+          "value": "thời gian nằm ở đâu?"
+        },
+        {
+          "name": "logs",
+          "value": "điều gì xảy ra ở đây?"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Theo dõi một request",
+    "body": "Load balancer gán **request ID** cho từng request, mọi service chuyển tiếp và ghi vào log. **Trace** của một checkout chậm cho thấy các **span**: Checkout 20 ms, Inventory 15 ms, Payment **3,850 ms**, trong đó 3,800 ms chờ card provider. Log cùng request ID cho biết vì sao: timeout rồi retry. Trace biến “checkout chậm” thành “Payment chờ card provider”.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2,
+            "note": "span: 20 ms"
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6,
+            "note": "span: 15 ms"
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2,
+            "note": "span: 3,850 ms"
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0,
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "request ID",
+          "value": "req-8f31"
+        },
+        {
+          "name": "Checkout",
+          "value": "20 ms"
+        },
+        {
+          "name": "Inventory",
+          "value": "15 ms"
+        },
+        {
+          "name": "Payment",
+          "value": "3,850 ms (3,800 chờ)"
+        },
+        {
+          "name": "logs for req-8f31",
+          "value": "timeout, rồi retry"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Tốt đến đâu là đủ?",
+    "body": "Nhóm viết điều người dùng cảm nhận thành **SLI**: tỷ lệ checkout thành công trong 2 giây, đo ở load balancer. **SLO** là mục tiêu: 99.9% trong 30 ngày. Còn **error budget** 0.1%: khoảng 104 triệu checkout mỗi tháng thì khoảng 104,000 có thể xấu. Còn ngân sách, nhóm phát hành thay đổi; hết thì ưu tiên reliability.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5,
+            "note": "đo SLI tại đây"
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Monitoring",
+            "x": 10,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          7
+        ]
+      },
+      "vars": [
+        {
+          "name": "SLI",
+          "value": "checkout tốt trong 2 s"
+        },
+        {
+          "name": "SLO",
+          "value": "99.9% trong 30 ngày"
+        },
+        {
+          "name": "checkouts a month",
+          "value": "khoảng 104 triệu"
+        },
+        {
+          "name": "error budget",
+          "value": "khoảng 104,000 xấu"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Tiêu ngân sách",
+    "body": "Bản phát hành lỗi làm 5% checkout thất bại. SLO cho phép 0.1% nên ngân sách đang tiêu ở **burn rate** 5% ÷ 0.1% = 50, nhanh gấp năm mươi lần tiêu đều. Ngân sách 30 ngày khi đó tồn tại 30 ÷ 50 = 0.6 ngày, khoảng **14 giờ**. Cùng 5% trong mười phút chỉ dùng phần nhỏ; điều quan trọng là tốc độ tiêu ngân sách.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Monitoring",
+            "x": 10,
+            "y": 4
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "bad checkouts",
+          "value": "5%"
+        },
+        {
+          "name": "SLO allows",
+          "value": "0.1%"
+        },
+        {
+          "name": "burn rate",
+          "value": "50"
+        },
+        {
+          "name": "budget lasts",
+          "value": "khoảng 14 giờ"
+        }
+      ],
+      "predict": {
+        "question": "SLO cho phép 0.1% checkout xấu trong 30 ngày. Đột nhiên 5% xấu và tiếp tục như vậy. Khoảng bao lâu thì dùng hết ngân sách cả tháng?",
+        "options": [
+          "Khoảng 30 ngày",
+          "Khoảng 3 ngày",
+          "Khoảng 14 giờ",
+          "Khoảng 36 phút"
+        ],
+        "answer": 2,
+        "explanation": "Checkout xấu đến nhanh hơn 5% ÷ 0.1% = 50 lần so với mức trung bình SLO cho phép. Ngân sách định dùng 30 ngày chỉ tồn tại 30 ÷ 50 = 0.6 ngày, khoảng 14.4 giờ.",
+        "hides": [
+          "burn rate",
+          "budget lasts"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Alert theo điều người dùng cảm nhận",
+    "body": "Đánh thức người trực (**page**) khi người dùng bị ảnh hưởng và ngân sách sắp hết: ở đây là hơn 3% checkout trong một giờ xấu, burn rate 30 làm ngân sách hết trong một ngày. Tạo **ticket** để xử lý giờ làm khi ngân sách sẽ hết trước cuối tháng. Không page theo nguyên nhân như CPU 90%: SD 11 đã lên kế hoạch cho mức ấy, có thể không hại ai. Dashboard hiện nguyên nhân giải thích triệu chứng.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Checkout",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 6
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Card provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Monitoring",
+            "x": 10,
+            "y": 4,
+            "note": "page nếu >3% xấu/hr"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "path": [
+          1,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              4,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "page",
+          "value": "hết ngân sách trong một ngày"
+        },
+        {
+          "name": "ticket",
+          "value": "hết ngân sách trước cuối tháng"
+        },
+        {
+          "name": "no page",
+          "value": "CPU, đĩa, một dòng lỗi"
+        }
+      ]
+    }
+  }
+]

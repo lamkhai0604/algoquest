@@ -1,0 +1,742 @@
+[
+  {
+    "title": "Bạn là ai, được làm gì?",
+    "body": "Alice đăng nhập bằng password. Login service kiểm tra và cấp cho app bằng chứng dùng cho request sau: đó là **authentication**, “bạn là ai?”. Mỗi request sau hỏi câu thứ hai: “Alice được làm **việc này**, với **object này** không?”. Đó là **authorization**. Đã đăng nhập chỉ trả lời câu đầu.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2,
+            "note": "được làm việc này?"
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Login service",
+            "x": 8,
+            "y": 6,
+            "note": "bạn là ai?"
+          },
+          {
+            "kind": "db",
+            "label": "Session store",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "authentication",
+          "value": "bạn là ai?"
+        },
+        {
+          "name": "authorization",
+          "value": "được làm việc này, với cái này?"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Đổi một con số",
+    "body": "App gọi `GET /orders/123`, đơn của Alice. Alice sửa request thành `/orders/124`, thuộc Bob. Server chỉ kiểm tra request từ người đã đăng nhập nên trả **đơn Bob** với tên và địa chỉ. Cách sửa là **authorization check trên server cho mọi object**: đơn 124 thuộc Alice không? Nếu không, trả 403 hoặc 404. Ẩn đơn trong app không giúp được: người dùng gửi được bất kỳ request nào.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8,
+            "note": "GET /orders/124"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 7,
+            "y": 2
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "logged in as",
+          "value": "Alice"
+        },
+        {
+          "name": "her order",
+          "value": "123"
+        },
+        {
+          "name": "asks for",
+          "value": "124 (của Bob)"
+        },
+        {
+          "name": "server checks",
+          "value": "chỉ đã đăng nhập"
+        },
+        {
+          "name": "result",
+          "value": "hiện đơn Bob"
+        }
+      ],
+      "predict": {
+        "question": "Alice đã đăng nhập, sở hữu đơn 123. Cô ấy sửa request để hỏi đơn 124 của Bob. Server chỉ kiểm tra request từ người đã đăng nhập. Điều gì xảy ra?",
+        "options": [
+          "Server trả 401 vì Alice chưa đăng nhập",
+          "Server trả đơn của Bob",
+          "Server lặng lẽ trả đơn 123 thay thế",
+          "App từ chối gửi request đã sửa"
+        ],
+        "answer": 1,
+        "explanation": "Alice đã đăng nhập nên vượt kiểm tra duy nhất; không có gì hỏi đơn 124 có thuộc cô ấy không. App không ngăn được vì cô ấy gửi được bất kỳ request nào. Chỉ server kiểm tra đơn thuộc người đã đăng nhập mới chặn được.",
+        "hides": [
+          "result"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Session",
+    "body": "Với **session**, server lưu “session 7f2c… là Alice, đến tháng sau” trong shared store, app chỉ gửi session ID ngẫu nhiên. Mỗi request tốn một lần tra: 5,000 request mỗi giây, khoảng 5% store xử lý 100,000. Đổi lại, logout hoặc chặn Alice xóa session, và **request tiếp theo thất bại ngay**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Session store",
+            "x": 5,
+            "y": 8,
+            "note": "7f2c… = Alice"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "app sends",
+          "value": "session ID ngẫu nhiên"
+        },
+        {
+          "name": "per request",
+          "value": "một lần tra, khoảng 1 ms"
+        },
+        {
+          "name": "5,000 requests/s",
+          "value": "5% store"
+        },
+        {
+          "name": "logout or block",
+          "value": "có hiệu lực ngay"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Token có chữ ký",
+    "body": "Với **token**, server cấp Alice mẩu dữ liệu có chữ ký: “Alice, có hiệu lực đến 10:15”. Mọi server tự kiểm tra chữ ký và thời gian, **không tra cứu**. Nhưng không thu hồi được: Alice bị chặn lúc 10:00, token vẫn hoạt động đến **10:15**. Vì thế access token ngắn, **refresh token** dài hạn được kiểm tra trên server để lấy token mới. Chặn sẽ ngăn lần làm mới tiếp theo.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2,
+            "note": "kiểm tra chữ ký"
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 7,
+            "y": 2
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "token says",
+          "value": "Alice, hiệu lực đến 10:15"
+        },
+        {
+          "name": "blocked at",
+          "value": "10:00"
+        },
+        {
+          "name": "servers check",
+          "value": "chữ ký và thời hạn"
+        },
+        {
+          "name": "still works until",
+          "value": "10:15"
+        }
+      ],
+      "predict": {
+        "question": "Access token Alice ghi “hiệu lực đến 10:15”. Cô ấy bị chặn lúc 10:00. Server chỉ kiểm tra chữ ký và thời hạn token. Cô ấy dùng token gửi request tiếp đến khi nào?",
+        "options": [
+          "Đến 10:00, khi bị chặn",
+          "Đến 10:15, khi token hết hạn",
+          "Đến khi tự logout",
+          "Miễn là còn mở app"
+        ],
+        "answer": 1,
+        "explanation": "Không phần nào kiểm tra Alice bị chặn chưa; chữ ký còn hợp lệ và chưa qua 10:15. Đó là giá của việc bỏ tra cứu. Access token ngắn hoặc danh sách token bị chặn được tra cứu sẽ khép khoảng trống.",
+        "hides": [
+          "still works until"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Đăng nhập qua trang khác",
+    "body": "“Đăng nhập với Google” dùng **OAuth**. App gửi Alice tới **identity provider**, nơi cô ấy đăng nhập và đồng ý chia sẻ, ví dụ địa chỉ email (**scope**). Provider gửi cô ấy trở lại với code ngắn dùng một lần, server của app đổi code lấy token. App không bao giờ thấy password Google của Alice, token chỉ cho phép việc scope nêu.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "ID provider",
+            "x": 9,
+            "y": 8,
+            "note": "scope: email"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "Alice logs in at",
+          "value": "identity provider"
+        },
+        {
+          "name": "app receives",
+          "value": "code dùng một lần, rồi token"
+        },
+        {
+          "name": "app never sees",
+          "value": "password của cô ấy"
+        },
+        {
+          "name": "token allows",
+          "value": "chỉ scope đã đồng ý"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Password, secret và HTTPS",
+    "body": "Password lưu thành **slow hash có salt**, chỉnh khoảng 100 ms: 50 đăng nhập mỗi giây tốn 5 CPU core, nhưng bảng bị lấy cắp chỉ cho khoảng 10 lần đoán mỗi giây mỗi core. Password database nằm trong **secret store**, không trong code, chỉ service cần mới đọc được. Mọi kết nối dùng **HTTPS**, cả giữa service nội bộ, để không ai trên mạng đọc hoặc đổi request.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5,
+            "note": "HTTPS"
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Secret store",
+            "x": 10,
+            "y": 0,
+            "note": "password database"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "path": [
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "password hash",
+          "value": "chậm, có salt, khoảng 100 ms"
+        },
+        {
+          "name": "50 logins/s",
+          "value": "5 CPU core"
+        },
+        {
+          "name": "secrets",
+          "value": "trong secret store"
+        },
+        {
+          "name": "connections",
+          "value": "HTTPS mọi nơi"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Least privilege",
+    "body": "Service báo cáo nhỏ đọc đơn để tổng kết ngày. Nếu kết nối bằng quyền quản trị database, lỗi trong nó có thể **xóa mọi đơn hàng**. Với **least privilege**, nó có user database riêng chỉ đọc bảng đơn. Nếu kẻ tấn công chiếm service báo cáo, thiệt hại giới hạn ở đọc đơn. Quy tắc tương tự cho người, key và token: chỉ cấp thứ cần.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Báo cáo",
+            "x": 10,
+            "y": 3,
+            "note": "user chỉ đọc",
+            "state": "hot"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            4,
+            3
+          ]
+        ],
+        "path": [
+          4,
+          3
+        ],
+        "flows": [
+          {
+            "path": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "reports needs",
+          "value": "đọc đơn hàng"
+        },
+        {
+          "name": "as administrator",
+          "value": "có thể xóa mọi thứ"
+        },
+        {
+          "name": "with least privilege",
+          "value": "chỉ đọc đơn hàng"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Giới hạn đoán password",
+    "body": "Người đoán thử password phổ biến vào tài khoản Alice. Login service cho **5 lần thất bại mỗi tài khoản mỗi 15 phút**: ngày có 96 khoảng, nên 5 × 96 = **480** lượt một ngày, danh sách một triệu password phổ biến cần hơn 2,000 ngày. Chờ tự kết thúc nên không ai khóa Alice vĩnh viễn. Giới hạn theo địa chỉ mạng cũng giúp, nhưng riêng nó thất bại khi người đoán có nhiều địa chỉ.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Người dùng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "App server",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 7,
+            "y": 2
+          },
+          {
+            "kind": "server",
+            "label": "Login service",
+            "x": 8,
+            "y": 6,
+            "note": "5 lỗi / 15 min",
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Session store",
+            "x": 5,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          4
+        ]
+      },
+      "vars": [
+        {
+          "name": "limit",
+          "value": "5 lần lỗi mỗi 15 phút"
+        },
+        {
+          "name": "periods in a day",
+          "value": "96"
+        },
+        {
+          "name": "guesses a day",
+          "value": "480"
+        }
+      ],
+      "predict": {
+        "question": "Đăng nhập cho 5 lần thất bại mỗi tài khoản mỗi 15 phút, thời gian chờ tự hết. Một người đoán được bao nhiêu lần vào một tài khoản mỗi ngày?",
+        "options": [
+          "5",
+          "96",
+          "480",
+          "1,440"
+        ],
+        "answer": 2,
+        "explanation": "Một ngày có 24 × 60 ÷ 15 = 96 khoảng 15 phút, mỗi khoảng 5 lần: 5 × 96 = 480. Chậm đến mức một triệu password phổ biến cần hơn 2,000 ngày.",
+        "hides": [
+          "guesses a day"
+        ]
+      }
+    }
+  }
+]

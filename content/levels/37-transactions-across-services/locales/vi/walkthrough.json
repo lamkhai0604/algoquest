@@ -1,0 +1,955 @@
+[
+  {
+    "title": "Một database, một transaction",
+    "body": "Khi cửa hàng còn là một chương trình với một database, đặt hàng sẽ lưu đơn, lấy hàng và ghi nhận thanh toán trong một **local transaction** (SD 4). Nếu hết hàng, database hoàn tác mọi thứ: không đơn hàng, không thanh toán. Tự nhiên có tất cả hoặc không có gì.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách hàng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Ứng dụng shop",
+            "x": 3,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Database shop",
+            "x": 6,
+            "y": 4,
+            "note": "một transaction"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "steps",
+          "value": "đơn hàng, hàng, thanh toán"
+        },
+        {
+          "name": "databases",
+          "value": "1"
+        },
+        {
+          "name": "if stock is gone",
+          "value": "mọi thứ được hoàn tác"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Ba service, ba database",
+    "body": "Giờ Order service, Inventory service và Payment service có database riêng. Đặt hàng thay đổi cả ba, nhưng không transaction nào bao trùm chúng: mỗi service chỉ commit phần của mình. Đây là **distributed transaction**, và cửa hàng không còn tự nhiên có tất cả hoặc không có gì.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách hàng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Event đơn hàng",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "DB thanh toán",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              3,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "services",
+          "value": "3"
+        },
+        {
+          "name": "databases",
+          "value": "3"
+        },
+        {
+          "name": "one transaction for all",
+          "value": "không thể"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Dừng giữa chừng",
+    "body": "Các service được gọi lần lượt: Order service lưu đơn, Payment service thu tiền thẻ, rồi Inventory service thấy món cuối đã hết. Hai bước đã commit, một bước thất bại: **partial failure**. Khách **đã trả tiền cho món hàng sẽ không nhận được**, còn đơn kẹt ở trạng thái pending vì không có gì hoàn tác hai bước đầu.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách hàng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Event đơn hàng",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 0,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "DB thanh toán",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ],
+        "drop": true,
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          },
+          {
+            "path": [
+              3,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "order",
+          "value": "đã lưu"
+        },
+        {
+          "name": "card",
+          "value": "đã thu tiền"
+        },
+        {
+          "name": "stock",
+          "value": "thất bại"
+        },
+        {
+          "name": "result",
+          "value": "đã trả tiền, không có hàng"
+        }
+      ],
+      "predict": {
+        "question": "Đơn đã lưu, rồi thẻ bị thu tiền, sau đó giữ hàng thất bại. Không có gì khác xảy ra. Cửa hàng ở trạng thái nào?",
+        "options": [
+          "Mọi thứ được hoàn tác vì giữ hàng thất bại",
+          "Khách bị thu tiền cho món hàng sẽ không nhận được",
+          "Đơn đã xác nhận và món hàng được đặt chờ",
+          "Chưa thu tiền vì thu tiền thẻ là bước cuối"
+        ],
+        "answer": 1,
+        "explanation": "Mỗi service đã commit bước của mình. Lỗi giữ hàng chỉ ảnh hưởng database của Inventory; khoản thu và đơn pending vẫn còn. Hoàn tác chúng cần hành động mới vì không có transaction bao trùm ba database.",
+        "hides": [
+          "result"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Hoàn tác bằng bù trừ",
+    "body": "**Saga** xem workflow là chuỗi local transaction, mỗi bước có **compensating transaction** bù lại tác động nghiệp vụ. Ở đây Order service là **orchestrator**: khi giữ hàng thất bại, nó bù trừ các bước đã thành công theo thứ tự ngược: trước tiên **hoàn tiền**, sau đó **hủy đơn**. Hoàn tiền là hành động mới, không phải rollback: đã thu tiền và khách có thể đã thấy.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách hàng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Event đơn hàng",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "DB thanh toán",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          6,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "failed step",
+          "value": "hàng (bước 3)"
+        },
+        {
+          "name": "compensations",
+          "value": "hoàn tiền, rồi hủy đơn"
+        },
+        {
+          "name": "order",
+          "value": "ngược"
+        }
+      ],
+      "predict": {
+        "question": "Các bước là: 1 lưu đơn, 2 thu tiền thẻ, 3 giữ hàng. Bước 3 thất bại. Những bước bù trừ nào chạy, theo thứ tự nào?",
+        "options": [
+          "Hoàn tiền, rồi hủy đơn",
+          "Hủy đơn, rồi hoàn tiền",
+          "Giải phóng hàng, rồi hoàn tiền",
+          "Chỉ hủy đơn; ngân hàng sẽ trả lại tiền"
+        ],
+        "answer": 0,
+        "explanation": "Chỉ bước 1 và 2 thành công nên chỉ cần bù trừ chúng, theo thứ tự ngược: hoàn tác bước 2 (hoàn tiền), rồi bước 1 (hủy đơn). Bước 3 thất bại, chưa lấy hàng nên không có gì cần giải phóng.",
+        "hides": [
+          "compensations",
+          "order"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Thứ tự các bước tốt hơn",
+    "body": "Sắp lại saga: lưu đơn, **giữ hàng trước**, rồi thu tiền thẻ, sau đó xác nhận. Giờ lỗi giữ hàng chỉ cần một bước bù trừ là hủy đơn, và khách chưa bị thu tiền. Đặt bước dễ thất bại hoặc dễ hoàn tác ở đầu. Gửi email xác nhận **cuối cùng**: không thể thu hồi nên phải chờ mọi bước có rủi ro thành công.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách hàng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Event đơn hàng",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0,
+            "note": "bước 2"
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8,
+            "note": "bước 3"
+          },
+          {
+            "kind": "db",
+            "label": "DB thanh toán",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "new order",
+          "value": "đơn, hàng, thẻ, xác nhận, email"
+        },
+        {
+          "name": "stock fails",
+          "value": "1 bước bù trừ, không hoàn tiền"
+        },
+        {
+          "name": "email",
+          "value": "cuối cùng, không thể hoàn tác"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Crash giữa hai bước",
+    "body": "Order service lưu đơn rồi publish “giữ hàng cho đơn 123” trong một bước riêng. Nếu crash giữa hai bước, đơn đã lưu nhưng chưa gửi message: đơn pending mãi. Với **transactional outbox**, service ghi đơn và dòng outbox chứa message trong **một local transaction**; relay đọc outbox rồi publish. Hoặc cả hai được lưu, hoặc không lưu gì.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách hàng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Event đơn hàng",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "DB thanh toán",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3
+            ],
+            "drop": true
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "order saved",
+          "value": "có"
+        },
+        {
+          "name": "message sent",
+          "value": "không (crash)"
+        },
+        {
+          "name": "without an outbox",
+          "value": "pending mãi"
+        },
+        {
+          "name": "with an outbox",
+          "value": "relay gửi sau"
+        }
+      ],
+      "predict": {
+        "question": "Không có outbox, Order service lưu đơn rồi crash trước khi publish message “giữ hàng”. Điều gì xảy ra với đơn?",
+        "options": [
+          "Nó pending mãi vì không service nào biết đến",
+          "Database publish message khi service khởi động lại",
+          "Đơn bị xóa vì message thất bại",
+          "Inventory service thấy dòng mới và giữ hàng"
+        ],
+        "answer": 0,
+        "explanation": "Lần lưu đã commit nhưng message chưa được publish, và không service khác nào đọc database của Orders. Không có gì đưa saga tiến tiếp. Outbox đặt message trong cùng transaction với đơn, nên relay luôn có thể publish sau crash.",
+        "hides": [
+          "without an outbox",
+          "with an outbox"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Cùng message hai lần",
+    "body": "Relay publish message rồi crash trước khi đánh dấu dòng outbox đã gửi. Khi khởi động lại, nó publish lại cùng message. Outbox không làm mất message, nhưng có thể lặp: delivery là at least once (SD 7). Mỗi hành động có **idempotency key** riêng tạo từ order id, như `order123-authorize`; bước bù trừ như `order123-void` có key khác. Payment service ủy quyền cho đơn 123 một lần, dù được yêu cầu bao nhiêu lần. At-least-once delivery cộng bước idempotent tạo exactly-once **effect**.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách hàng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Event đơn hàng",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8,
+            "note": "đã thấy auth key"
+          },
+          {
+            "kind": "db",
+            "label": "DB thanh toán",
+            "x": 10,
+            "y": 8
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          3,
+          6,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "message delivered",
+          "value": "hai lần"
+        },
+        {
+          "name": "idempotency key",
+          "value": "order123-authorize"
+        },
+        {
+          "name": "card authorized",
+          "value": "một lần"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Vì sao không khóa tất cả?",
+    "body": "**Two-phase commit** cung cấp tất cả hoặc không có gì qua nhiều database: coordinator yêu cầu mỗi bên chuẩn bị và khóa, rồi yêu cầu tất cả commit. Nhưng các bên giữ lock đến khi nhận quyết định, qua mọi round trip; nếu coordinator crash sau “prepare”, chúng bị chặn. Card provider hoàn toàn không tham gia giao thức này. Vì vậy giữa các service, nhóm dùng saga: local transaction ngắn, bước bù trừ, outbox và idempotency key.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Khách hàng",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 2,
+            "y": 5,
+            "state": "down"
+          },
+          {
+            "kind": "db",
+            "label": "Database đơn",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Event đơn hàng",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Inventory",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Database kho",
+            "x": 10,
+            "y": 0,
+            "note": "đang khóa, chờ"
+          },
+          {
+            "kind": "server",
+            "label": "Payment",
+            "x": 7,
+            "y": 8
+          },
+          {
+            "kind": "db",
+            "label": "DB thanh toán",
+            "x": 10,
+            "y": 8,
+            "note": "đang khóa, chờ"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            7
+          ]
+        ],
+        "path": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "2PC",
+          "value": "giữ lock đến khi có quyết định"
+        },
+        {
+          "name": "coordinator crash",
+          "value": "các bên bị chặn"
+        },
+        {
+          "name": "between services",
+          "value": "dùng saga thay thế"
+        }
+      ]
+    }
+  }
+]

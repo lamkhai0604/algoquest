@@ -1435,6 +1435,46 @@
           "term": "delivery receipt",
           "vi": "báo nhận từ nhà cung cấp",
           "firstLevel": 45
+        },
+        {
+          "term": "home feed",
+          "vi": "bảng tin chính của người dùng",
+          "firstLevel": 46
+        },
+        {
+          "term": "fan-out on write",
+          "vi": "đẩy bài vào bảng tin của từng người theo dõi khi đăng",
+          "firstLevel": 46
+        },
+        {
+          "term": "fan-out on read",
+          "vi": "gom bài khi người dùng mở bảng tin",
+          "firstLevel": 46
+        },
+        {
+          "term": "follow graph",
+          "vi": "đồ thị ai theo dõi ai",
+          "firstLevel": 46
+        },
+        {
+          "term": "feed cache",
+          "vi": "bộ nhớ đệm bảng tin",
+          "firstLevel": 46
+        },
+        {
+          "term": "large account",
+          "vi": "tài khoản rất nhiều người theo dõi",
+          "firstLevel": 46
+        },
+        {
+          "term": "follower threshold",
+          "vi": "ngưỡng số người theo dõi",
+          "firstLevel": 46
+        },
+        {
+          "term": "hybrid fan-out",
+          "vi": "kết hợp đẩy và gom bài",
+          "firstLevel": 46
         }
       ]
     },
