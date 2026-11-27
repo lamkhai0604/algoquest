@@ -24,12 +24,12 @@
   {
     "question": "A push for an order update is not delivered, and the system falls back to email. How does it make sure the user is not notified twice for the same update?",
     "options": [
-      "Use the same notification key for the push and its fallback, and send the email only after the push is known not to have been delivered, if the user allows email",
+      "Keep one notification ID with one attempt per channel; claim the email attempt only after the push is reported not delivered, and only if the user allows email",
       "Send push and email at the same time to be safe",
-      "Give the email a new key so it is never blocked",
+      "Give the email a key unrelated to the push so it is never blocked",
       "Skip the preference check for fallbacks"
     ],
     "answer": 0,
-    "explanation": "One key for the whole notification lets the system see that this update was already handled, and waiting for the push report means a delivered push never gets an email. The fallback still has to respect the user's preferences."
+    "explanation": "The notification ID ties the push and the email to one update, and each channel has its own attempt under it. The email attempt is claimed only on a definite \"not delivered\" report, so a delivered push, or one whose report is not back, gets no email; claiming it under a unique key means a repeated fallback check sends nothing more. The fallback still has to respect the user's preferences."
   }
 ]
