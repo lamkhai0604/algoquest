@@ -1,0 +1,11 @@
+{
+  "question": "Bạn đặt chuyến bay, rồi khách sạn, sau đó thấy không còn xe thuê nên hủy chuyến đi. Làm sao trở lại trạng thái ban đầu?",
+  "options": [
+    "Hủy khách sạn, rồi chuyến bay: các hành động mới có thể mất phí",
+    "Nhấn hoàn tác, cả hai đặt chỗ biến mất như chưa từng xảy ra",
+    "Không làm gì vì không đặt được xe sẽ hủy các đặt chỗ khác",
+    "Cứ đặt xe rồi hủy sau"
+  ],
+  "answer": 0,
+  "explanation": "Mỗi đặt chỗ là hành động riêng đã hoàn tất với một công ty khác nhau. Không có gì bao trùm cả ba nên bạn hoàn tác những phần đã xong bằng hành động mới là hủy, theo thứ tự ngược. Đó là bù trừ, không phải một lần hoàn tác: mất thời gian và hãng bay có thể giữ lại phí. Đặt thứ khó kiếm nhất trước sẽ tránh được phiền phức."
+}

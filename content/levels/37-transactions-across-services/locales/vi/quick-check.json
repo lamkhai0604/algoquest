@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Giả định bài tập: saga chạy (1) lưu đơn pending, (2) ủy quyền thẻ, (3) giữ hàng, rồi (4) gửi email xác nhận. Bước 1 và 2 thành công. Bước 3 báo thất bại chắc chắn, local transaction không để lại reservation. Bước 4 chưa chạy. Chuỗi khôi phục nào phù hợp?",
+    "options": [
+      "Hủy ủy quyền ở bước 2, rồi hủy đơn pending ở bước 1.",
+      "Hủy đơn pending ở bước 1, rồi hủy ủy quyền ở bước 2.",
+      "Giải phóng reservation từ bước 3 thất bại, hủy ủy quyền bước 2, rồi hủy đơn bước 1.",
+      "Tự động rollback mọi database của các service mà không phát hành động mới."
+    ],
+    "answer": 0,
+    "explanation": "Chỉ bù trừ các bước đã hoàn tất, theo thứ tự ngược: hoàn tác bước 2 rồi bước 1. Transaction giữ hàng thất bại được nói rõ là không để lại reservation nên không có tác động bước 3 cần hoàn tác. Email chưa gửi. Đây là hành động bù trừ mới, không phải một rollback tự động cho các transaction đã commit. Dùng key ổn định để retry bù trừ không lặp tác động nghiệp vụ."
+  },
+  {
+    "question": "Service phải lưu đơn và thông báo cho broker. Publish sau một lần lưu riêng có thể làm mất thông báo khi crash; publish trước khi lưu có thể thông báo đơn mà sau đó lưu thất bại. Transactional outbox thay đổi điều gì?",
+    "options": [
+      "Nó publish trước rồi lưu, nên bản của broker bảo đảm dòng đơn hàng sẽ commit.",
+      "Nó lưu đơn và message riêng rồi dựa vào relay nhanh hơn để khoảng trống không gây hại.",
+      "Nó lưu đơn và message outbox trong một local transaction; relay publish các dòng đã commit, consumer vẫn xử lý an toàn các lần publish trùng.",
+      "Nó lưu đơn và message trong một local transaction, cũng bảo đảm broker giao message đúng một lần."
+    ],
+    "answer": 2,
+    "explanation": "Thay đổi đơn và dòng message đi ra cùng commit hoặc cùng không commit. Relay publish các dòng outbox đã commit sau đó. Nếu crash sau publish nhưng trước khi ghi nhận dòng đã gửi, nó có thể publish lại, nên consumer vẫn cần key ổn định và xử lý idempotent. Outbox bỏ khoảng trống giữa lưu và publish; nó không bỏ bản trùng hay biến commit database và delivery của broker thành một transaction."
+  },
+  {
+    "question": "Giả định bài tập: chỉ có ba bước cần sắp thứ tự. Giữ hàng có tỷ lệ thất bại chắc chắn 30%; ủy quyền thẻ có tỷ lệ thất bại chắc chắn 2%. Các lỗi độc lập, không để lại tác động, và mỗi bước thành công đều có thể bù trừ với cùng chi phí. Email xác nhận không thể thu hồi và chỉ được gửi sau khi cả hai thành công. Email là hành động cuối được cho sẵn, có thể retry và cuối cùng thành công mà không kích hoạt bù trừ. Trong các thứ tự đáp ứng quy tắc email, thứ tự nào có số hành động bù trừ kỳ vọng ít nhất?",
+    "options": [
+      "Ủy quyền thẻ, giữ hàng, gửi email.",
+      "Giữ hàng, ủy quyền thẻ, gửi email.",
+      "Giữ hàng, gửi email, ủy quyền thẻ.",
+      "Gửi email, giữ hàng, ủy quyền thẻ."
+    ],
+    "answer": 1,
+    "explanation": "Đặt bước có thể đảo ngược dễ thất bại hơn trước, email cuối cùng. Giữ hàng trước chỉ cần bù trừ khi giữ hàng thành công và thẻ thất bại: 0.70 × 0.02 = 0.014 hành động kỳ vọng mỗi lần thử. Thẻ trước cần một bước khi thẻ thành công và giữ hàng thất bại: 0.98 × 0.30 = 0.294. Gửi email trước một trong hai bước có rủi ro có thể đòi thu hồi message, điều bài tập cấm. Chi phí bù trừ bằng nhau và mô hình lỗi đã nêu làm phép so sánh hợp lệ."
+  }
+]
