@@ -40,7 +40,7 @@ describe("learning path", () => {
     renderSignedInAt("/");
 
     expect(
-      await screen.findByRole("heading", { name: "Learning Path" }),
+      await screen.findByRole("heading", { name: "Level 1 · Big-O & Basics" }),
     ).toBeVisible();
     const phases = Array.from(document.querySelectorAll("details"));
     expect(phases.length).toBeGreaterThan(0);
@@ -98,7 +98,8 @@ describe("learning path", () => {
       within(core).getByRole("link", { name: "Level 1: Big-O & Basics" }),
     ).toHaveAttribute("href", "/levels/1");
     expect(within(core).getAllByRole("link")).toHaveLength(1);
-    expect(within(core).getByText("Locked")).toBeVisible();
+    // Phases start collapsed, so the rows are in the DOM but hidden until the phase is expanded.
+    expect(within(core).getByText("Locked")).toBeInTheDocument();
 
     // A phase with no open level shows only its header: no expand, no level names.
     expect(screen.queryByRole("list", { name: "Phase 2 levels" })).toBeNull();
