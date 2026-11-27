@@ -98,7 +98,8 @@ public class TestService {
           if (running != null) {
             if (running.level() != level) {
               String blockingTitle =
-                  catalog.level(running.level())
+                  catalog
+                      .level(running.level())
                       .map(levelContent -> levelContent.info().title())
                       .orElse("Level " + running.level());
               throw new ApiException(
