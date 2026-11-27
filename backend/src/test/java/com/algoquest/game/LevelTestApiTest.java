@@ -65,6 +65,7 @@ class LevelTestApiTest {
   @Autowired private WebApplicationContext context;
   @Autowired private AccessService access;
   @Autowired private ProgressStore progress;
+  @Autowired private TestStore tests;
   @Autowired private MutableClock clock;
 
   private MockMvc mvc;
@@ -137,6 +138,22 @@ class LevelTestApiTest {
     // Starting again returns the same running test.
     mvc.perform(post("/api/v1/levels/1/tests").with(player))
         .andExpect(jsonPath("$.id").value(test));
+  }
+
+  @Test
+  void aDifferentRunningTestReturnsItsIdLevelAndName() throws Exception {
+    fillTheBar();
+    UUID blockingId = UUID.randomUUID();
+    tests.insert(
+        new TestStore.StoredTest(
+            blockingId, playerId, 2, PROBLEMS, START, START.plus(Duration.ofHours(2)), null, null));
+
+    mvc.perform(post("/api/v1/levels/1/tests").with(player))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.detail").value("Finish your Level 2 test first."))
+        .andExpect(jsonPath("$.blockingTestId").value(blockingId.toString()))
+        .andExpect(jsonPath("$.blockingLevel").value(2))
+        .andExpect(jsonPath("$.blockingLevelName").value("Later"));
   }
 
   @Test

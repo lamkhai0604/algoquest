@@ -375,6 +375,8 @@
     "earnedBonus": "2× XP earned"
   },
   "testMore": {
+    "blockedBy": "Finish your existing test first:",
+    "resumeBlocked": "Open the unfinished test",
     "levelTest": "Level-up test",
     "summary": "3 new problems, about 2 hours. A score of",
     "summaryTail": "to 99 opens the next level's Easy problems; 100 opens the whole level. Retakes are always allowed.",

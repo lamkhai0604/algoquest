@@ -375,6 +375,8 @@
     "earnedBonus": "Đã nhận XP gấp đôi"
   },
   "testMore": {
+    "blockedBy": "Bạn cần hoàn thành bài kiểm tra đang làm trước:",
+    "resumeBlocked": "Mở bài kiểm tra chưa hoàn thành",
     "levelTest": "Bài kiểm tra lên cấp",
     "summary": "Ba bài toán mới, khoảng hai giờ. Điểm từ",
     "summaryTail": "đến 99 mở các bài dễ ở cấp độ tiếp theo; 100 mở cả cấp độ. Có thể thi lại.",
