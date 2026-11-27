@@ -92,7 +92,11 @@ describe("level-up test", () => {
 
   it.each([
     ["en", "Open the unfinished test", "Finish your existing test first:"],
-    ["vi", "Mở bài kiểm tra chưa hoàn thành", "Bạn cần hoàn thành bài kiểm tra đang làm trước:"],
+    [
+      "vi",
+      "Mở bài kiểm tra chưa hoàn thành",
+      "Bạn cần hoàn thành bài kiểm tra đang làm trước:",
+    ],
   ] as const)(
     "links to the blocking test using server metadata (%s)",
     async (locale, linkText, message) => {
@@ -145,7 +149,9 @@ describe("level-up test", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "This level is locked.",
     );
-    expect(screen.queryByRole("link", { name: "Open the unfinished test" })).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "Open the unfinished test" }),
+    ).toBeNull();
   });
 
   it("is closed below a full bar", async () => {
