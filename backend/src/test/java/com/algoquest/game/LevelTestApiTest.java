@@ -194,6 +194,29 @@ class LevelTestApiTest {
   }
 
   @Test
+  void expiredTestIsGradedBeforeAnotherTestStartsWithoutReopeningItsPage() throws Exception {
+    fillTheBar();
+    String expired = start();
+    answer(expired, PROBLEMS.get(0), GOOD).andExpect(status().isOk());
+
+    // The player leaves without submitting, then returns after the exact deadline.
+    clock.advance(Duration.ofHours(2));
+
+    // The expired attempt must not be returned as running, but it still occupies the
+    // database's one-unsubmitted-test slot until the server finalizes it.
+    String next = start();
+    org.junit.jupiter.api.Assertions.assertNotEquals(expired, next);
+
+    mvc.perform(get("/api/v1/tests/" + expired).with(player))
+        .andExpect(jsonPath("$.status").value("submitted"))
+        .andExpect(jsonPath("$.score").value(31));
+    mvc.perform(get("/api/v1/tests/" + next).with(player))
+        .andExpect(jsonPath("$.status").value("running"));
+    mvc.perform(post("/api/v1/levels/1/tests").with(player))
+        .andExpect(jsonPath("$.id").value(next));
+  }
+
+  @Test
   void aGraderFailureKeepsTheTestOpenAndGradesAreKept() throws Exception {
     fillTheBar();
     String test = start();
