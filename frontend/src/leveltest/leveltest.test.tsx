@@ -90,6 +90,64 @@ describe("level-up test", () => {
     );
   });
 
+  it.each([
+    ["en", "Open the unfinished test", "Finish your existing test first:"],
+    ["vi", "Mở bài kiểm tra chưa hoàn thành", "Bạn cần hoàn thành bài kiểm tra đang làm trước:"],
+  ] as const)(
+    "links to the blocking test using server metadata (%s)",
+    async (locale, linkText, message) => {
+      setLocale(locale);
+      const full = [
+        { ...LEVELS[0], xp: 100, testOpen: true, practiceOpen: true },
+      ];
+      const blockingId = "f1f2f3f4-0000-4000-8000-000000000001";
+      fakeApi({
+        "GET /api/v1/me": () => json(200, ME),
+        "GET /api/v1/levels": () => json(200, full),
+        "GET /api/v1/levels/1/problems": () => json(200, PROBLEMS),
+        "POST /api/v1/levels/1/tests": () =>
+          json(409, {
+            title: "Conflict",
+            detail: "Finish your Level 2 test first.",
+            blockingTestId: blockingId,
+            blockingLevel: 2,
+            blockingLevelName: "Arrays & Hashing",
+          }),
+      });
+      renderSignedInAt("/levels/1");
+      await userEvent.click(
+        await screen.findByRole("button", {
+          name: locale === "vi" ? "Bắt đầu kiểm tra" : "Start the test",
+        }),
+      );
+      const link = await screen.findByRole("link", { name: linkText });
+      expect(link).toHaveAttribute("href", `/tests/${blockingId}`);
+      expect(screen.getByRole("alert")).toHaveTextContent(message);
+      expect(screen.getByRole("alert")).toHaveTextContent("Arrays & Hashing");
+    },
+  );
+
+  it("keeps unrelated API errors visible without a blocking-test link", async () => {
+    const full = [
+      { ...LEVELS[0], xp: 100, testOpen: true, practiceOpen: true },
+    ];
+    fakeApi({
+      "GET /api/v1/me": () => json(200, ME),
+      "GET /api/v1/levels": () => json(200, full),
+      "GET /api/v1/levels/1/problems": () => json(200, PROBLEMS),
+      "POST /api/v1/levels/1/tests": () =>
+        json(403, { detail: "This level is locked." }),
+    });
+    renderSignedInAt("/levels/1");
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Start the test" }),
+    );
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "This level is locked.",
+    );
+    expect(screen.queryByRole("link", { name: "Open the unfinished test" })).toBeNull();
+  });
+
   it("is closed below a full bar", async () => {
     fakeApi({
       "GET /api/v1/me": () => json(200, ME),
