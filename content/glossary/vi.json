@@ -1475,6 +1475,11 @@
           "term": "hybrid fan-out",
           "vi": "kết hợp đẩy và gom bài",
           "firstLevel": 46
+        },
+        {
+          "term": "design scope",
+          "vi": "phạm vi thiết kế",
+          "firstLevel": 42
         }
       ]
     },
