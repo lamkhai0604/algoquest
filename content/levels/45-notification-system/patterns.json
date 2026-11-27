@@ -3,13 +3,13 @@
     "id": "P45-campaign-quota",
     "level": 45,
     "title": "Sharing an Email Quota",
-    "statement": "An email provider accepts 1,000 emails per second, counting retries. Transactional emails such as receipts peak at 150 per second and must arrive within 1 minute. A campaign of 5 million emails must finish within 3 hours. Exercise assumptions: the pacer can keep separate queues and always take one first; the team prefers the campaign to finish as early as possible.",
+    "statement": "An email provider accepts 1,000 emails per second, counting retries. Transactional emails such as receipts peak at 150 per second, retries included, and each must be handed to the provider within 1 minute. A campaign of 5 million emails must be handed over within 3 hours. Exercise assumptions: retries add at most 5% to the campaign's requests; the pacer can keep separate queues and always take one first; a message waits in its queue only while its share of the quota is full; the team prefers the campaign to finish as early as possible.",
     "examples": [
-      "5,000,000 ÷ 800 per second = 6,250 seconds, about 1.7 hours."
+      "5,000,000 × 1.05 = 5,250,000 requests; at 800 per second that is about 6,560 seconds, about 1.8 hours."
     ],
     "constraints": [
-      "Transactional email within 1 minute.",
-      "The campaign within 3 hours.",
+      "Transactional email handed to the provider within 1 minute.",
+      "The campaign within 3 hours, retries included.",
       "Never more than 1,000 per second; prefer the campaign to finish early."
     ],
     "approaches": [
@@ -18,27 +18,27 @@
         "name": "Two queues; transactional always first; the campaign uses whatever room is left, at least 850 per second",
         "hint": "Urgent first, campaign fills the rest",
         "label": "best",
-        "time": "Campaign at least 850 per second: under 1.7 hours",
+        "time": "Campaign at least 850 per second: under 1.8 hours",
         "space": "Two queues",
-        "why": "Transactional email never waits behind the campaign, so it arrives within the minute; the campaign always has at least 1,000 − 150 = 850 per second, finishing within 5,000,000 ÷ 850 ≈ 5,900 seconds, about 1.6 hours, and the pacer never passes 1,000."
+        "why": "Transactional email at up to 150 per second is always taken first, so its queue never fills and each receipt is handed over within seconds; the campaign always has at least 1,000 − 150 = 850 per second, so its 5,250,000 requests take at most about 6,200 seconds, about 1.7 hours, and the pacer never passes 1,000."
       },
       {
         "id": "fixed-split",
         "name": "Two queues with a fixed split: 400 per second for transactional, 600 for the campaign",
         "hint": "Reserve a generous share",
         "label": "valid",
-        "time": "Campaign 600 per second: about 2.3 hours",
+        "time": "Campaign 600 per second: about 2.4 hours",
         "space": "Two queues",
-        "why": "Transactional email has more room than its 150 peak and the campaign finishes in 5,000,000 ÷ 600 ≈ 2.3 hours, within 3, but unused transactional room is wasted, so the campaign ends later than it could, against the stated preference."
+        "why": "Transactional email has more room than its 150 peak, so it is handed over within seconds, and the campaign's 5,250,000 requests take 5,250,000 ÷ 600 = 8,750 seconds, about 2.4 hours, within 3; but unused transactional room is wasted, so the campaign ends later than it could, against the stated preference."
       },
       {
         "id": "one-queue",
         "name": "One queue in arrival order",
         "hint": "First come, first served",
         "label": "unsuitable",
-        "time": "A receipt behind the campaign waits up to about 1.4 hours",
+        "time": "A receipt behind the campaign waits up to about 1.5 hours",
         "space": "One queue",
-        "why": "Once the campaign is queued, a receipt waits behind up to 5 million emails at 1,000 per second, about 1.4 hours, far beyond 1 minute."
+        "why": "Once the campaign is queued, a receipt waits behind up to 5,250,000 requests at 1,000 per second, about 1.5 hours, far beyond 1 minute."
       }
     ]
   },
@@ -46,7 +46,7 @@
     "id": "P45-crash-order",
     "level": 45,
     "title": "A Crash Around a Send",
-    "statement": "Workers send promotional emails. A worker can crash at any moment, and its message is then delivered to another worker. The email provider accepts an idempotency key and drops a repeated request with the same key. Exercise assumptions: a user must never get the same promotion twice; the team prefers that no promotion is missed either.",
+    "statement": "Workers send promotional emails. A worker can crash at any moment, and its message is then delivered to another worker. The email provider accepts an idempotency key and drops a repeated request with the same key for 24 hours; a crashed worker's message is redelivered within 1 hour. Exercise assumptions: a user must never get the same promotion twice; the team prefers that no promotion is missed either.",
     "examples": ["The notification key is (campaign, user)."],
     "constraints": [
       "Never the same promotion twice.",

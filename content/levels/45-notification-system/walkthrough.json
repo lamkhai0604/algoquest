@@ -1,7 +1,7 @@
 [
   {
     "title": "Requirements",
-    "body": "A shopping app with 50 million users sends push, email and SMS. Requirements: (F1) notify users about events such as \"order shipped\" and login codes; (F2) send promotional campaigns of up to 10 million emails; (F3) respect opt-outs and quiet hours at the moment of sending, also on retries and fallbacks. (N1) Order updates within 1 minute and login codes within 30 seconds, even during a campaign; (N2) never exceed a provider's quota; (N3) one event notifies a user at most once.",
+    "body": "A shopping app with 50 million users sends push, email and SMS. Requirements: (F1) notify users about events such as \"order shipped\" and login codes; (F2) send promotional campaigns of up to 10 million emails; (F3) respect opt-outs and quiet hours at the moment of sending, also on retries and fallbacks. (N1) Order updates handed to the provider within 1 minute and login codes within 30 seconds, even during a campaign; (N2) never exceed a provider's quota; (N3) a notification reaches a user at most once per channel, and through a fallback channel only after the first channel definitely failed. Login codes are the stated exception: a rare duplicate code is better than a missing one.",
     "visual": {
       "cells": [],
       "arch": {
@@ -32,6 +32,12 @@
           },
           {
             "kind": "server",
+            "label": "Senders",
+            "x": 8,
+            "y": 5
+          },
+          {
+            "kind": "server",
             "label": "Email provider",
             "x": 10,
             "y": 0,
@@ -42,9 +48,10 @@
           [0, 1],
           [1, 2],
           [2, 3],
-          [3, 4]
+          [3, 4],
+          [4, 5]
         ],
-        "path": [0, 1, 2, 3, 4]
+        "path": [0, 1, 2, 3, 4, 5]
       },
       "vars": [
         {
@@ -105,6 +112,12 @@
           },
           {
             "kind": "server",
+            "label": "Senders",
+            "x": 8,
+            "y": 5
+          },
+          {
+            "kind": "server",
             "label": "Email provider",
             "x": 10,
             "y": 0
@@ -114,9 +127,10 @@
           [0, 1],
           [1, 2],
           [2, 3],
-          [3, 4]
+          [3, 4],
+          [4, 5]
         ],
-        "path": [2, 3, 4]
+        "path": [2, 3, 4, 5]
       },
       "vars": [
         {
@@ -152,7 +166,7 @@
   },
   {
     "title": "API, data and design",
-    "body": "**API:** services call `notify(eventId, userId, type)`; users change settings through a preferences API. **Data:** preferences per user, channel and category, with quiet hours; `sent(notification key, status)` with the key as primary key; device tokens and addresses. **High-level design:** events arrive on a queue with at-least-once delivery; notification workers read preferences, record the key, and put each message on a queue per channel and priority; a pacer per provider sends to the provider.",
+    "body": "**API:** services call `notify(eventId, userId, type)`; users change settings through a preferences API. **Data:** preferences per user, channel and category, with quiet hours and time zone; a **notification ID** (event, user), and `attempts(notification ID, channel)` as primary key with a state: claimed, sent, delivered or failed; device tokens and addresses. **High-level design:** events arrive on a queue with at-least-once delivery; workers turn each event into a message on a queue per channel and priority; **senders**, with one pacer per provider, take each message after its wait in the queue, claim its attempt, read preferences, and send.",
     "visual": {
       "cells": [],
       "arch": {
@@ -176,18 +190,6 @@
             "y": 4
           },
           {
-            "kind": "db",
-            "label": "Preferences",
-            "x": 3,
-            "y": 0
-          },
-          {
-            "kind": "db",
-            "label": "Sent keys",
-            "x": 5,
-            "y": 8
-          },
-          {
             "kind": "queue",
             "label": "Email queue",
             "x": 7,
@@ -196,7 +198,25 @@
           {
             "kind": "queue",
             "label": "Push queue",
-            "x": 9,
+            "x": 6,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Senders",
+            "x": 8,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Attempts",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Preferences",
+            "x": 3,
             "y": 8
           },
           {
@@ -209,7 +229,7 @@
             "kind": "server",
             "label": "Push service",
             "x": 10,
-            "y": 5
+            "y": 7
           }
         ],
         "links": [
@@ -217,21 +237,23 @@
           [1, 2],
           [2, 3],
           [2, 4],
-          [2, 5],
-          [2, 6],
+          [3, 5],
+          [4, 5],
+          [5, 6],
           [5, 7],
-          [6, 8]
+          [5, 8],
+          [5, 9]
         ],
-        "path": [0, 1, 2, 5, 7],
+        "path": [0, 1, 2, 3, 5, 8],
         "flows": [
           {
-            "path": [2, 6, 8]
+            "path": [2, 4, 5, 9]
           },
           {
-            "path": [2, 3]
+            "path": [5, 7]
           },
           {
-            "path": [2, 4]
+            "path": [5, 6]
           }
         ]
       },
@@ -241,19 +263,23 @@
           "value": "notify(eventId, userId, type)"
         },
         {
-          "name": "sent",
-          "value": "notification key, status"
+          "name": "attempts",
+          "value": "notification ID, channel, state"
         },
         {
           "name": "queues",
           "value": "per channel and priority"
+        },
+        {
+          "name": "senders",
+          "value": "pacer, claim, preferences, send"
         }
       ]
     }
   },
   {
     "title": "Quotas and priority",
-    "body": "The email pacer sends at most **1,000 per second**, counting retries (SD 17). It always takes transactional messages first and keeps **200 per second** for them; the campaign uses the other 800, about 10,000,000 ÷ 800 = 12,500 seconds, about 3.5 hours. An order update never waits behind the campaign, so it arrives within the minute. When transactional traffic is low, the campaign may use the spare room.",
+    "body": "The email pacer sends at most **1,000 per second**, counting retries (SD 17). It always takes transactional messages first and keeps **200 per second** for them; the campaign uses the other 800, about 10,000,000 ÷ 800 = 12,500 seconds, about 3.5 hours, a little longer with its retries. Transactional email peaks at about **150 per second**, retries included, below the 200 kept, so its queue never builds up and each message is handed to the provider within seconds. When transactional traffic is low, the campaign may use the spare room.",
     "visual": {
       "cells": [],
       "arch": {
@@ -285,19 +311,26 @@
           },
           {
             "kind": "server",
+            "label": "Senders",
+            "x": 8,
+            "y": 5,
+            "note": "≤ 1,000 per second"
+          },
+          {
+            "kind": "server",
             "label": "Email provider",
             "x": 10,
-            "y": 0,
-            "note": "≤ 1,000 per second"
+            "y": 0
           }
         ],
         "links": [
           [0, 1],
           [1, 2],
           [2, 3],
-          [3, 4]
+          [3, 4],
+          [4, 5]
         ],
-        "path": [2, 3, 4]
+        "path": [2, 3, 4, 5]
       },
       "vars": [
         {
@@ -309,6 +342,10 @@
           "value": "200 per second"
         },
         {
+          "name": "transactional peak",
+          "value": "about 150 per second"
+        },
+        {
           "name": "campaign",
           "value": "800 per second, about 3.5 hours"
         }
@@ -317,7 +354,7 @@
   },
   {
     "title": "The same event twice",
-    "body": "The event queue delivers at least once, so \"order 123 shipped\" can reach two workers, or the same worker twice after a crash. Without a check, each delivery sends an email: the user gets **two**. Instead, each worker first inserts the **notification key** (event, user) into `sent`. The unique key accepts the first insert and rejects the second, so only one worker sends. Records are kept 7 days, longer than any redelivery: about 3 GB a day.",
+    "body": "The event queue delivers at least once, so \"order 123 shipped\" can reach two workers, and two copies of the email land on the email queue. Without a check, each copy is sent: the user gets **two**. Instead, the sender first inserts the attempt (order123:u42, email) into `attempts` as claimed. The primary key accepts the first insert and rejects the second, so only one copy is sent. Attempts are kept 7 days; the event queue redelivers an event for at most 2 days and workers skip older events, so a key is never needed after it expires. That is about 3 GB of attempts a day.",
     "visual": {
       "cells": [],
       "arch": {
@@ -342,19 +379,6 @@
             "y": 4
           },
           {
-            "kind": "db",
-            "label": "Preferences",
-            "x": 3,
-            "y": 0
-          },
-          {
-            "kind": "db",
-            "label": "Sent keys",
-            "x": 5,
-            "y": 8,
-            "note": "key: order123:u42"
-          },
-          {
             "kind": "queue",
             "label": "Email queue",
             "x": 7,
@@ -363,7 +387,26 @@
           {
             "kind": "queue",
             "label": "Push queue",
-            "x": 9,
+            "x": 6,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Senders",
+            "x": 8,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Attempts",
+            "x": 3,
+            "y": 0,
+            "note": "order123:u42:email"
+          },
+          {
+            "kind": "db",
+            "label": "Preferences",
+            "x": 3,
             "y": 8
           },
           {
@@ -376,7 +419,7 @@
             "kind": "server",
             "label": "Push service",
             "x": 10,
-            "y": 5
+            "y": 7
           }
         ],
         "links": [
@@ -384,15 +427,17 @@
           [1, 2],
           [2, 3],
           [2, 4],
-          [2, 5],
-          [2, 6],
+          [3, 5],
+          [4, 5],
+          [5, 6],
           [5, 7],
-          [6, 8]
+          [5, 8],
+          [5, 9]
         ],
-        "path": [1, 2, 4],
+        "path": [1, 2, 3, 5, 6],
         "flows": [
           {
-            "path": [2, 5]
+            "path": [5, 8]
           }
         ]
       },
@@ -415,17 +460,17 @@
         }
       ],
       "predict": {
-        "question": "\"Order 123 shipped\" is delivered twice by the event queue, and the workers have no deduplication. How many emails does the customer get?",
+        "question": "\"Order 123 shipped\" is delivered twice by the event queue, and nothing deduplicates the messages. How many emails does the customer get?",
         "options": ["0", "1", "2", "It depends on the email provider's quota"],
         "answer": 2,
-        "explanation": "Each delivery looks like a new event to the worker that gets it, so each one sends an email. Recording a notification key under a unique constraint before sending lets only the first delivery through.",
+        "explanation": "Each delivery looks like a new event to the worker that gets it, so each one queues an email and each email is sent. Claiming the attempt under a primary key before sending lets only the first copy through.",
         "hides": ["emails without a key", "with the key"]
       }
     }
   },
   {
     "title": "A crash after sending",
-    "body": "A worker sends an email and crashes before recording \"sent\". After restart, it finds the key in status \"sending\" and cannot tell whether the provider got the email. **Send again**, and the user may get two; **don't**, and the user may get none. The email provider accepts an **idempotency key**: the retry uses the same notification key, and the provider drops the repeat. Push has no such key, so push errs on a rare miss; SMS login codes are sent before recording, so they err on a rare duplicate, because a missing code locks the user out.",
+    "body": "A sender claims an email attempt, sends it, and crashes before marking it sent. When the message is redelivered, the attempt is still \"claimed\", and nobody knows whether the provider got the email. **Send again**, and the user may get two; **don't**, and the user may get none. The email provider accepts an **idempotency key** and drops a repeat with the same key for 24 hours: the retry passes the attempt key, so the provider drops the repeat. Push has no such key, so a claimed push is never sent again: a rare miss. SMS login codes are sent first and recorded after, so they err on a rare duplicate, the stated exception, because a missing code locks the user out.",
     "visual": {
       "cells": [],
       "arch": {
@@ -446,14 +491,20 @@
             "kind": "server",
             "label": "Workers",
             "x": 5,
-            "y": 4,
-            "state": "down"
+            "y": 4
           },
           {
             "kind": "queue",
             "label": "Email queue",
             "x": 7,
             "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Senders",
+            "x": 8,
+            "y": 5,
+            "state": "down"
           },
           {
             "kind": "server",
@@ -464,10 +515,10 @@
           },
           {
             "kind": "db",
-            "label": "Sent keys",
-            "x": 5,
-            "y": 8,
-            "note": "status: sending"
+            "label": "Attempts",
+            "x": 3,
+            "y": 0,
+            "note": "state: claimed"
           }
         ],
         "links": [
@@ -475,9 +526,10 @@
           [1, 2],
           [2, 3],
           [3, 4],
-          [2, 5]
+          [4, 5],
+          [4, 6]
         ],
-        "path": [2, 3, 4]
+        "path": [3, 4, 5]
       },
       "vars": [
         {
@@ -497,7 +549,7 @@
   },
   {
     "title": "Preferences at send time",
-    "body": "A campaign is queued at 11 a.m. and reaches a user's message at 2 p.m. The user unsubscribed from promotions at noon. If preferences were checked when the campaign was **queued**, the email still goes out at 2 p.m. Checking them just **before sending** respects the change. The same check runs on every retry. Quiet hours do not drop a promotion: it waits in a delay queue until the user's morning, in the user's time zone.",
+    "body": "A campaign is queued at 11 a.m. and reaches a user's message at 2 p.m. The user unsubscribed from promotions at noon. If preferences were checked when the campaign was **queued**, the email still goes out at 2 p.m. The check that counts is in the **sender**, after the message's wait in the queue, just before each attempt and each retry; a worker may filter earlier, but only to save work. Quiet hours do not drop a promotion: the sender puts it on a delay queue until the user's morning, in the user's time zone, and checks again then.",
     "visual": {
       "cells": [],
       "arch": {
@@ -518,21 +570,7 @@
             "kind": "server",
             "label": "Workers",
             "x": 5,
-            "y": 4,
-            "note": "checks at 2 p.m."
-          },
-          {
-            "kind": "db",
-            "label": "Preferences",
-            "x": 3,
-            "y": 0,
-            "note": "opted out at noon"
-          },
-          {
-            "kind": "db",
-            "label": "Sent keys",
-            "x": 5,
-            "y": 8
+            "y": 4
           },
           {
             "kind": "queue",
@@ -543,8 +581,28 @@
           {
             "kind": "queue",
             "label": "Push queue",
-            "x": 9,
+            "x": 6,
             "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Senders",
+            "x": 8,
+            "y": 5,
+            "note": "checks at 2 p.m."
+          },
+          {
+            "kind": "db",
+            "label": "Attempts",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Preferences",
+            "x": 3,
+            "y": 8,
+            "note": "opted out at noon"
           },
           {
             "kind": "server",
@@ -556,7 +614,7 @@
             "kind": "server",
             "label": "Push service",
             "x": 10,
-            "y": 5
+            "y": 7
           }
         ],
         "links": [
@@ -564,15 +622,17 @@
           [1, 2],
           [2, 3],
           [2, 4],
-          [2, 5],
-          [2, 6],
+          [3, 5],
+          [4, 5],
+          [5, 6],
           [5, 7],
-          [6, 8]
+          [5, 8],
+          [5, 9]
         ],
-        "path": [2, 3],
+        "path": [3, 5, 7],
         "flows": [
           {
-            "path": [2, 5, 7]
+            "path": [5, 8]
           }
         ]
       },
@@ -607,14 +667,14 @@
           "Only on retries"
         ],
         "answer": 1,
-        "explanation": "At 11 a.m. the user was still subscribed, so the message passed the check and waited in the queue. Nothing looked again at 2 p.m. Checking preferences just before sending, and on every retry, respects the noon unsubscribe.",
+        "explanation": "At 11 a.m. the user was still subscribed, so the message passed the check and waited in the queue. Nothing looked again at 2 p.m. Checking preferences in the sender, just before each attempt, respects the noon unsubscribe.",
         "hides": ["checked when queued", "checked when sending"]
       }
     }
   },
   {
     "title": "Fallbacks, failures, summary",
-    "body": "If a push for an order update fails and the user allows email for order updates, the email uses the **same notification key**: the user gets one notification, not both, and only through a channel they allow. If the email provider is down, messages back off with jitter for up to an hour, then go to a dead-letter queue. **Summary:** priority and reserved quota for N1; pacers that count retries for N2; the notification key, shared by fallbacks and passed to the email provider, for N3; preferences checked at send time for F3.",
+    "body": "A push for an order update is reported failed, because the phone's device token is no longer valid, and the user allows email for order updates. The notification ID stays the same: the fallback claims the attempt (ID, email) once and sends it. A second fallback job fails that claim and sends nothing. A push that was delivered, or whose report has not come back, gets no email. If the email provider is down, messages back off with jitter for up to an hour, then go to a dead-letter queue. **Summary:** priority and reserved quota for N1; pacers that count retries for N2; one attempt per channel under one notification ID, a fallback only on a definite failure, and the provider's key for email, for N3; preferences checked by the sender at each attempt for F3.",
     "visual": {
       "cells": [],
       "arch": {
@@ -638,28 +698,34 @@
             "y": 4
           },
           {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 6,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Senders",
+            "x": 8,
+            "y": 5,
+            "note": "claim email once"
+          },
+          {
             "kind": "db",
-            "label": "Preferences",
+            "label": "Attempts",
             "x": 3,
             "y": 0
           },
           {
             "kind": "db",
-            "label": "Sent keys",
-            "x": 5,
-            "y": 8
-          },
-          {
-            "kind": "queue",
-            "label": "Email queue",
-            "x": 7,
-            "y": 1,
-            "note": "fallback, same key"
-          },
-          {
-            "kind": "queue",
-            "label": "Push queue",
-            "x": 9,
+            "label": "Preferences",
+            "x": 3,
             "y": 8
           },
           {
@@ -672,7 +738,7 @@
             "kind": "server",
             "label": "Push service",
             "x": 10,
-            "y": 5,
+            "y": 7,
             "state": "down"
           }
         ],
@@ -681,22 +747,31 @@
           [1, 2],
           [2, 3],
           [2, 4],
-          [2, 5],
-          [2, 6],
+          [3, 5],
+          [4, 5],
+          [5, 6],
           [5, 7],
-          [6, 8]
+          [5, 8],
+          [5, 9]
         ],
-        "path": [2, 6, 8],
+        "path": [2, 4, 5, 9],
         "flows": [
           {
-            "path": [2, 5, 7]
+            "path": [5, 8]
+          },
+          {
+            "path": [5, 6]
           }
         ]
       },
       "vars": [
         {
-          "name": "push fails",
-          "value": "email, if allowed, same key"
+          "name": "push failed",
+          "value": "email, if allowed, claimed once"
+        },
+        {
+          "name": "push delivered",
+          "value": "no email"
         },
         {
           "name": "provider down",
@@ -708,7 +783,7 @@
         },
         {
           "name": "N3",
-          "value": "one key per notification"
+          "value": "one attempt per channel"
         }
       ]
     }
