@@ -1,0 +1,35 @@
+[
+  {
+    "question": "A shop's login codes and a 10-million-email campaign share one email queue, and login codes now arrive hours late. What fixes it?",
+    "options": [
+      "Separate priorities, with login codes always sent first and part of the email quota kept for them",
+      "A bigger queue",
+      "Sending the campaign faster than the provider's quota",
+      "Retrying the login codes more often"
+    ],
+    "answer": 0,
+    "explanation": "The provider sends at a fixed rate, so a code behind 10 million emails waits hours whatever the queue's size. Sending urgent messages first, with some quota kept for them, lets them through at once; going over the quota or retrying more only adds load."
+  },
+  {
+    "question": "When should a notification system check whether a user still wants a promotional email?",
+    "options": [
+      "Just before each send, including every retry",
+      "Once, when the campaign is queued",
+      "Once a day, in a nightly job",
+      "Never: users can unsubscribe from the email itself"
+    ],
+    "answer": 0,
+    "explanation": "Campaign messages can wait hours in a queue, and users can opt out in the meantime. Checking just before each send, and again on retries, respects the latest choice."
+  },
+  {
+    "question": "A push for an order update is not delivered, and the system falls back to email. How does it make sure the user is not notified twice for the same update?",
+    "options": [
+      "Use the same notification key for the push and its fallback, and send the email only after the push is known not to have been delivered, if the user allows email",
+      "Send push and email at the same time to be safe",
+      "Give the email a new key so it is never blocked",
+      "Skip the preference check for fallbacks"
+    ],
+    "answer": 0,
+    "explanation": "One key for the whole notification lets the system see that this update was already handled, and waiting for the push report means a delivered push never gets an email. The fallback still has to respect the user's preferences."
+  }
+]

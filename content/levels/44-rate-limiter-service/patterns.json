@@ -46,12 +46,12 @@
     "id": "P44-many-servers",
     "level": 44,
     "title": "Counting on Many Servers",
-    "statement": "Ten API servers enforce a limit of 600 requests per minute per API key. Some customers keep long-lived connections, so all their requests reach one server. A shared in-memory store is available and answers within 1 ms. Exercise assumptions: a key must never get more than 600 per minute; the team prefers that every customer can use its full 600, wherever its requests land; the extra 1 ms is acceptable.",
+    "statement": "Ten API servers enforce a limit of 600 requests per API key in each calendar minute. Some customers keep long-lived connections, so all their requests reach one server. A shared in-memory store is available and answers within 1 ms. Exercise assumptions: a key must never get more than 600 in a calendar minute; the team prefers that every customer can use its full 600, wherever its requests land; the extra 1 ms is acceptable.",
     "examples": [
       "A per-node share is 600 ÷ 10 = 60 per minute on each server."
     ],
     "constraints": [
-      "Never more than 600 per minute per key.",
+      "Never more than 600 per key in a calendar minute.",
       "The extra 1 ms is acceptable.",
       "Prefer that every customer can use its full limit."
     ],
@@ -63,7 +63,7 @@
         "label": "best",
         "time": "One 1 ms store call per request",
         "space": "One entry per key in the store",
-        "why": "All servers update the same count in one step each, so the limit holds exactly, and a customer on one server still gets its full 600."
+        "why": "All servers increment the same count for the current calendar minute in one step each, so the limit holds exactly, and a customer on one server still gets its full 600."
       },
       {
         "id": "per-node",
@@ -72,7 +72,7 @@
         "label": "valid",
         "time": "No extra call",
         "space": "One counter per key on each server",
-        "why": "Ten shares of 60 can never add up past 600, so the hard rule holds, but a customer whose requests all reach one server gets only 60, against the stated preference."
+        "why": "Ten shares of 60 per calendar minute can never add up past 600, so the hard rule holds however requests spread, but a customer whose requests all reach one server can use only 60, against the stated preference."
       },
       {
         "id": "read-then-write",
@@ -89,7 +89,7 @@
     "id": "P44-store-down",
     "level": 44,
     "title": "When the Limit Store Is Down",
-    "statement": "A shop's product search API is limited to 50 requests per second per client to stop scrapers. The limit store can be unreachable for up to 2 minutes during maintenance. Exercise assumptions: search must keep working for real users during such a time; the search servers can handle twice the normal load; measured over past outages, total traffic with no limit at all stayed under 1.5 times normal for 2 minutes; the team prefers to keep some protection against scrapers during the outage.",
+    "statement": "A shop's product search API is limited to 50 requests per second per client to stop scrapers. The limit store can be unreachable for up to 2 minutes during maintenance. Exercise assumptions: search must keep working for real users during such a time; a real user makes at most 3 searches per second, even if all reach one server; the search servers can handle twice the normal load; measured over past outages, total traffic with no limit at all stayed under 1.5 times normal for 2 minutes; the team prefers to keep some protection against scrapers during the outage.",
     "examples": [
       "A per-node fallback with 8 servers: 50 ÷ 8 ≈ 6 per second per client on each server."
     ],
@@ -106,7 +106,7 @@
         "label": "best",
         "time": "No store call during the outage",
         "space": "One counter per client on each server",
-        "why": "Real users keep searching, and a scraper is still held to about 50 per second across 8 servers, so the servers stay within capacity and protection continues."
+        "why": "Real users, at most 3 per second, stay under 6 per second even on one server, so they keep searching. A scraper is held to about 50 per second across 8 servers, the total stays within the measured 1.5 times normal, and protection continues."
       },
       {
         "id": "open-unlimited",

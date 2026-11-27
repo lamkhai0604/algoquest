@@ -1385,6 +1385,56 @@
           "term": "fail-closed",
           "vi": "lỗi thì chặn lại",
           "firstLevel": 44
+        },
+        {
+          "term": "channel",
+          "vi": "kênh gửi (push, email, SMS)",
+          "firstLevel": 45
+        },
+        {
+          "term": "provider quota",
+          "vi": "hạn mức của nhà cung cấp",
+          "firstLevel": 45
+        },
+        {
+          "term": "transactional notification",
+          "vi": "thông báo giao dịch",
+          "firstLevel": 45
+        },
+        {
+          "term": "campaign",
+          "vi": "chiến dịch gửi hàng loạt",
+          "firstLevel": 45
+        },
+        {
+          "term": "deduplication",
+          "vi": "chống gửi trùng",
+          "firstLevel": 45
+        },
+        {
+          "term": "notification key",
+          "vi": "khóa của một thông báo",
+          "firstLevel": 45
+        },
+        {
+          "term": "preference",
+          "vi": "tùy chọn của người dùng",
+          "firstLevel": 45
+        },
+        {
+          "term": "quiet hours",
+          "vi": "giờ yên lặng",
+          "firstLevel": 45
+        },
+        {
+          "term": "fallback channel",
+          "vi": "kênh dự phòng",
+          "firstLevel": 45
+        },
+        {
+          "term": "delivery receipt",
+          "vi": "báo nhận từ nhà cung cấp",
+          "firstLevel": 45
         }
       ]
     },
