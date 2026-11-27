@@ -1,0 +1,35 @@
+[
+  {
+    "question": "API cần tầng server và một database cho mọi request. Tầng server có hai bản sao sau load balancer, mỗi bản hoạt động 99.9% thời gian, lỗi độc lập và failover nhanh; database hoạt động 99.9%. Bỏ qua load balancer. Availability của API khoảng bao nhiêu?",
+    "options": [
+      "Khoảng 99.9999%, vì server có bản sao",
+      "Khoảng 99.9%, giới hạn bởi database duy nhất",
+      "Khoảng 99.8%, vì cần hai bộ phận",
+      "Khoảng 99.7%, vì có ba bộ phận"
+    ],
+    "answer": 1,
+    "explanation": "Hai server chỉ cùng ngừng 0.001 × 0.001 = 0.000001 thời gian, nên tầng hoạt động 99.9999%. Database không có bản sao, toàn hệ thống là 0.999999 × 0.999 ≈ 0.999, hay 99.9%. Bản sao chỉ giúp phần nó sao chép; database duy nhất giờ đặt giới hạn."
+  },
+  {
+    "question": "Service được nhiều bên gọi bắt đầu lỗi. Chính sách retry nào bảo vệ nó tốt nhất mà vẫn cứu được một số request?",
+    "options": [
+      "Mọi tầng retry ngay đến khi lời gọi thành công",
+      "Mọi tầng retry tối đa 3 lần, mỗi lần sau đúng 100 ms",
+      "Chỉ bên gọi ngoài cùng retry, thêm tối đa 2 lần, chờ ngẫu nhiên tăng dần và dừng khi retry vượt 10% request",
+      "Không bên gọi nào đặt timeout, nên không bao giờ cần retry"
+    ],
+    "answer": 2,
+    "explanation": "Retry ở một tầng tránh nhân số lần thử: ba tầng, mỗi tầng thử ba lần, cho 3 × 3 × 3 = 27 lời gọi. Chờ tăng dần (backoff) với phần ngẫu nhiên (jitter) dàn retry ra thay vì gửi thành đợt, và ngân sách 10% giữ service lỗi gần tải bình thường. Retry ngay hoặc vào lúc cố định tăng tải đúng khi service khó gánh nhất."
+  },
+  {
+    "question": "Server xử lý xong 1,800 request mỗi giây nhưng 2,400 đến trong năm phút tiếp theo, đến khi server mới chạy. Người dùng bỏ cuộc sau 2 giây chờ. Phản ứng nào phục vụ nhiều người dùng đúng hạn nhất?",
+    "options": [
+      "Đưa mọi request vào queue; cuối cùng từng request đều được phục vụ",
+      "Từ chối ngay khoảng 600 request mỗi giây bằng “thử lại sau ít phút”",
+      "Không làm gì đến khi server mới tới",
+      "Cho server retry request mất quá lâu"
+    ],
+    "answer": 1,
+    "explanation": "Đưa tất cả vào queue làm hàng chờ tăng 600 mỗi giây; sau khoảng 6 giây, mọi request mới chờ hơn 2 giây nên gần hết người dùng bỏ cuộc dù server vẫn bận. Từ chối nhanh phần dư giữ hàng chờ ngắn, nên 1,800 request mỗi giây được phục vụ đúng hạn và người bị từ chối có thể thử lại. Nếu tắt được công việc không bắt buộc, giảm chức năng trước có thể tránh từ chối bất cứ ai."
+  }
+]
