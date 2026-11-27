@@ -123,7 +123,7 @@ describe("learning path", () => {
 
     const phases = screen.getAllByRole("group");
     expect(phases).toHaveLength(1);
-    expect(phases[0]).toHaveAttribute("open");
+    expect(phases[0]).not.toHaveAttribute("open");
     expect(phases[0]).toHaveTextContent("Phase 1 · Core Foundations");
   });
 
