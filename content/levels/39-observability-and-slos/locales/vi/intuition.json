@@ -1,0 +1,11 @@
+{
+  "question": "Công ty giao hàng báo “98% kiện đúng giờ”, nhưng một thị trấn liên tục phàn nàn. Bước đầu tốt nhất để hiểu phản ánh là gì?",
+  "options": [
+    "Mở lịch sử theo dõi vài kiện trễ tới thị trấn đó",
+    "Thay vào đó báo thời gian giao trung bình",
+    "Kiểm tra động cơ xe tải bận đến đâu",
+    "Chờ tỷ lệ đúng giờ xuống dưới 98%"
+  ],
+  "answer": 0,
+  "explanation": "98% tổng hợp mọi kiện; các kiện trễ có thể cùng tới một thị trấn mà con số ấy ít đổi. Lịch sử theo dõi kiện trễ hiện từng điểm dừng kèm thời gian, giúp thấy chờ ở đâu, giống trace. Tải động cơ là nguyên nhân có thể không quan trọng, trung bình còn giấu kiện trễ hơn."
+}
