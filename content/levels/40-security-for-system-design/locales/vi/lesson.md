@@ -6,7 +6,7 @@
 - Chọn giữa session (phiên đăng nhập) phía server (máy chủ) và token (mã thông báo) có chữ ký, kể cả tốc độ thu hồi từng loại.
 - Giải thích “đăng nhập qua trang khác” (OAuth (chuẩn đăng nhập/ủy quyền qua bên thứ ba)) ở mức ai nhìn thấy gì.
 - Dùng HTTPS (kết nối mã hóa) ở mọi nơi, lưu password và secret cẩn thận, áp dụng least privilege (quyền tối thiểu).
-- Hạn chế lạm dụng như đoán password bằng rate limit (giới hạn) theo tài khoản và client (máy khách (chương trình gửi yêu cầu)).
+- Hạn chế lạm dụng như đoán password bằng rate limiting (giới hạn số request) theo tài khoản và client (máy khách (chương trình gửi yêu cầu)).
 
 ### Thuật ngữ chính
 
@@ -37,7 +37,7 @@ Thẻ có thể là số bảo vệ tra trong sổ mỗi lần (**session**), ho
 
 ## [when-to-use] Khi nào nên dùng
 
-- **Authentication và authorization trên mọi request:** luôn cần. Nút bị ẩn trong app không phải quyền; server phải kiểm tra người dùng được làm việc này với object (đối tượng (một file trong kho)) này.
+- **Authentication và authorization trên mọi request:** luôn cần. Nút bị ẩn trong app không phải quyền; server phải kiểm tra người dùng được làm việc này với đối tượng này.
 - **Session:** khi người dùng phải mất quyền ngay, như logout hoặc bị chặn, và có shared store nhanh để tra cứu.
 - **Access token ngắn hạn với refresh token:** khi nhiều server hoặc service cần kiểm tra người dùng mà không tra mỗi lần, và chấp nhận vài phút trước khi việc chặn có hiệu lực.
 - **OAuth:** cho “đăng nhập qua trang khác”, hoặc khi app phải dùng service khác thay người dùng mà không giữ password của họ.
@@ -79,7 +79,7 @@ Bài này không có code. Dùng **khung thiết kế** sau để bảo vệ m�
 
 ## [common-mistakes] Lỗi thường gặp
 
-- **Chỉ kiểm tra đã đăng nhập.** Mọi người đã đăng nhập có thể đọc mọi đơn bằng cách đổi số. Kiểm tra người này được truy cập object này.
+- **Chỉ kiểm tra đã đăng nhập.** Mọi người đã đăng nhập có thể đọc mọi đơn bằng cách đổi số. Kiểm tra người này được truy cập đối tượng này.
 - **Tin app.** Ẩn nút không chặn request; người dùng có thể gửi bất kỳ request nào. Mọi kiểm tra quan trọng chạy trên server.
 - **Token dài hạn không có cách thu hồi.** Access token 30 ngày bị đánh cắp dùng được 30 ngày. Giữ access token ngắn hạn, refresh token kiểm tra được trên server.
 - **Secret trong code hoặc file config.** Code được sao chép, chia sẻ và đôi khi công bố. Giữ secret trong secret store, đổi mọi secret đã lộ.
