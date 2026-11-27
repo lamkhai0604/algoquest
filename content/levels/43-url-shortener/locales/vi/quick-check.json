@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Hai app server cùng lúc tạo short link, mỗi bên dùng code ngẫu nhiên 7 ký tự. Làm sao bảo đảm hai link không bao giờ chung code?",
+    "options": [
+      "Insert mỗi code dưới unique primary key, thử code mới nếu insert bị từ chối",
+      "Hỏi database code còn trống không rồi insert trong bước riêng",
+      "Tin rằng 3.5 nghìn tỷ code đủ để không bao giờ trùng",
+      "Mỗi server tự giữ danh sách code đã dùng"
+    ],
+    "answer": 0,
+    "explanation": "Chỉ database thấy mọi code; unique key khiến nó từ chối insert thứ hai một cách atomic. Kiểm tra trước rồi insert sau để khoảng trống cho hai server cùng thấy code trống; danh sách từng server không thấy server khác; hàng tỷ link làm trùng hiếm vẫn xảy ra."
+  },
+  {
+    "question": "Nhóm muốn đếm mọi lượt bấm short link và đôi khi đổi đích. Redirect nào phù hợp?",
+    "options": [
+      "301 với cache time một năm",
+      "302 với header ngăn browser giữ phản hồi",
+      "200 với long link trong body trang",
+      "404 để browser tìm trang"
+    ],
+    "answer": 1,
+    "explanation": "302 tạm thời; không browser caching thì mỗi lượt bấm trở lại service để đếm và gửi tới đích hiện tại. 301 với cache time dài cho browser bỏ qua service và tiếp tục tới trang cũ."
+  },
+  {
+    "question": "Shortener sẽ giữ khoảng 2 tỷ link. Sáu ký tự base62 cho khoảng 57 tỷ code, bảy cho khoảng 3.5 nghìn tỷ. Với code ngẫu nhiên, code 6 ký tự mới trùng code cũ thường xuyên khoảng bao nhiêu gần cuối?",
+    "options": [
+      "Khoảng 1 trong 30,000",
+      "Khoảng 1 trong 1,750",
+      "Khoảng 1 trong 28",
+      "Khoảng 1 trong 2"
+    ],
+    "answer": 2,
+    "explanation": "Đã dùng 2 tỷ trong 57 tỷ code, code ngẫu nhiên mới trùng với xác suất 2 ÷ 57 ≈ 3.5%, khoảng 1 trong 28, nên nhiều lần tạo cần retry và không gian tiếp tục đầy. Bảy ký tự giảm xuống khoảng 2 ÷ 3,500, 1 trong 1,750."
+  }
+]
