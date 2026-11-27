@@ -1,0 +1,30 @@
+[
+  {
+    "question": "Why is pure fan-out on write a problem for an account with 40 million followers?",
+    "options": [
+      "One post needs 40 million feed writes, which takes minutes and delays other posts",
+      "Its followers cannot read their feeds",
+      "It needs 40 million reads every time a follower opens the feed",
+      "Posts by large accounts cannot be cached"
+    ],
+    "answer": 0,
+    "explanation": "Pushing copies the post's ID into every follower's feed, so the cost grows with the number of followers. At 100,000 writes per second, 40 million writes take 400 seconds, and other posts queue behind them."
+  },
+  {
+    "question": "Why not use fan-out on read for every account?",
+    "options": [
+      "Each feed open would read the recent posts of every followed account, hundreds of reads, and feed opens are far more frequent than posts",
+      "Posts would be stored twice",
+      "Large accounts could not post",
+      "The follow graph would be too large to store"
+    ],
+    "answer": 0,
+    "explanation": "Pulling moves the work to the read path. A user who follows 500 accounts needs 500 reads per open, and with tens of thousands of opens per second that is millions of reads per second."
+  },
+  {
+    "question": "A post must reach every follower within 20 seconds, and fan-out workers add 50,000 feed entries per second for one post. Above how many followers should an account's posts be pulled instead of pushed?",
+    "options": ["1,000,000", "50,000", "20,000,000", "2,500"],
+    "answer": 0,
+    "explanation": "Pushing one post to F followers takes F ÷ 50,000 seconds, which must be at most 20, so F ≤ 20 × 50,000 = 1,000,000. Accounts above that are pulled at read time."
+  }
+]

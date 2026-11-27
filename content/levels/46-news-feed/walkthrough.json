@@ -1,0 +1,751 @@
+[
+  {
+    "title": "Requirements",
+    "body": "A photo app has **100 million daily users**, each opening the feed about **10 times a day**; 10 million posts are made a day, by accounts with 200 followers on average. Requirements: (F1) show posts from followed accounts, newest first, in pages; (F2) users post. (N1) A post reaches every follower's feed within **10 seconds**. (N2) A feed page loads within 200 ms. (N3) Losing one cache node loses no feeds. Fan-out workers can add **100,000 feed entries per second** for one post.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "App",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Post service",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Fan-out queue",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Fan-out workers",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Follow graph",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Feed cache",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [3, 4],
+          [3, 5]
+        ],
+        "path": [0, 1, 2, 3, 5]
+      },
+      "vars": [
+        {
+          "name": "daily users",
+          "value": "100 million"
+        },
+        {
+          "name": "feed opens",
+          "value": "10 per user a day"
+        },
+        {
+          "name": "posts",
+          "value": "10 million a day"
+        },
+        {
+          "name": "freshness",
+          "value": "within 10 seconds"
+        },
+        {
+          "name": "fan-out speed",
+          "value": "100,000 per second for one post"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Push for everyone?",
+    "body": "With **fan-out on write**, each post's ID is added to every follower's cached feed. On average that is 10,000,000 × 200 = 2 billion writes a day, about 20,000 per second: affordable. Then a singer with **50 million followers** posts a photo. At 100,000 writes per second for one post, how long until the last follower sees it?",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "App",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Post service",
+            "x": 2,
+            "y": 4,
+            "note": "50 M followers"
+          },
+          {
+            "kind": "queue",
+            "label": "Fan-out queue",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Fan-out workers",
+            "x": 7,
+            "y": 1,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Follow graph",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Feed cache",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [3, 4],
+          [3, 5]
+        ],
+        "path": [1, 2, 3, 5]
+      },
+      "vars": [
+        {
+          "name": "followers",
+          "value": "50 million"
+        },
+        {
+          "name": "writes per second",
+          "value": "100,000"
+        },
+        {
+          "name": "last follower waits",
+          "value": "500 s, about 8 minutes"
+        }
+      ],
+      "predict": {
+        "question": "An account with 50 million followers posts. Fan-out workers add 100,000 feed entries per second for one post. About how long until the last follower's feed has it?",
+        "options": [
+          "About 50 seconds",
+          "About 8 minutes",
+          "About 80 minutes",
+          "Under a second"
+        ],
+        "answer": 1,
+        "explanation": "50,000,000 ÷ 100,000 = 500 seconds, about 8 minutes, far beyond the 10-second target, and other posts wait behind it.",
+        "hides": ["last follower waits"]
+      }
+    }
+  },
+  {
+    "title": "Pull for everyone?",
+    "body": "With **fan-out on read**, nothing is copied when posting; opening a feed reads the latest posts of every followed account and merges them. Feed opens: 100,000,000 × 10 = 1 billion a day, about 10,000 per second, and about **50,000 per second at a 5× peak**. A user who follows **500 accounts** needs 500 reads per open. If every open looked like that, how many reads per second would the store receive at peak?",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "App",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Feed service",
+            "x": 5,
+            "y": 8,
+            "note": "500 accounts"
+          },
+          {
+            "kind": "db",
+            "label": "Posts store",
+            "x": 3,
+            "y": 0,
+            "state": "hot"
+          },
+          {
+            "kind": "db",
+            "label": "Follow graph",
+            "x": 10,
+            "y": 5
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [1, 3]
+        ],
+        "path": [0, 1, 2],
+        "flows": [
+          {
+            "path": [1, 3]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "feed opens at peak",
+          "value": "50,000 per second"
+        },
+        {
+          "name": "accounts followed",
+          "value": "500"
+        },
+        {
+          "name": "reads per second",
+          "value": "25 million"
+        }
+      ],
+      "predict": {
+        "question": "At peak there are 50,000 feed opens per second, and each user follows 500 accounts. With fan-out on read, how many reads per second does the store receive?",
+        "options": ["50,000", "500", "25 million", "2.5 billion"],
+        "answer": 2,
+        "explanation": "50,000 × 500 = 25,000,000 reads per second. Reads are far more frequent than posts, so pulling for every account moves a huge cost onto the busiest path.",
+        "hides": ["reads per second"]
+      }
+    }
+  },
+  {
+    "title": "API, data and design",
+    "body": "**API:** `post(content)` and `getFeed(cursor)`, which returns a page of posts and the next cursor. **Data:** posts by ID; the follow graph both ways; a **feed cache** with the latest 500 post IDs per user, 8 bytes each: 4,000 bytes × 100 million users = 400 GB, split across nodes by user ID, each with a replica; and the recent post IDs of each large account. **Design:** the post service stores the post and queues it; fan-out workers read the follower list and append the ID to each follower's feed. The feed service reads the cached feed, merges in large accounts' posts, and fetches the content in one batch.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "App",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Post service",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Posts store",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "queue",
+            "label": "Fan-out queue",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Fan-out workers",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Follow graph",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Feed cache",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Feed service",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "cache",
+            "label": "Large posts",
+            "x": 9,
+            "y": 8
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [1, 3],
+          [3, 4],
+          [4, 5],
+          [4, 6],
+          [0, 7],
+          [7, 6],
+          [7, 8],
+          [7, 2]
+        ],
+        "path": [0, 7, 6],
+        "flows": [
+          {
+            "path": [0, 1, 3, 4, 6]
+          },
+          {
+            "path": [7, 8]
+          },
+          {
+            "path": [7, 2]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "API",
+          "value": "post, getFeed(cursor)"
+        },
+        {
+          "name": "feed cache",
+          "value": "500 IDs per user"
+        },
+        {
+          "name": "cache size",
+          "value": "400 GB"
+        },
+        {
+          "name": "large accounts",
+          "value": "recent post IDs"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Where to draw the line",
+    "body": "**Hybrid fan-out** pushes for ordinary accounts and pulls for large ones. The line comes from N1: a post must reach every follower within 10 seconds, at 100,000 writes per second, so pushing works up to 10 × 100,000 = **1,000,000 followers**. That is the threshold T. Accounts above it are not pushed: their recent posts sit in the large-posts cache, and followers read them when opening the feed. To avoid switching back and forth, an account moves to pull above 1,000,000 and back to push only below 800,000.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "App",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Post service",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Posts store",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "queue",
+            "label": "Fan-out queue",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Fan-out workers",
+            "x": 7,
+            "y": 1,
+            "note": "≤ 1 M followers"
+          },
+          {
+            "kind": "db",
+            "label": "Follow graph",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Feed cache",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Feed service",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "cache",
+            "label": "Large posts",
+            "x": 9,
+            "y": 8,
+            "note": "> 1 M followers"
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [1, 3],
+          [3, 4],
+          [4, 5],
+          [4, 6],
+          [0, 7],
+          [7, 6],
+          [7, 8],
+          [7, 2]
+        ],
+        "path": [1, 3, 4, 6],
+        "flows": [
+          {
+            "path": [7, 8]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "freshness",
+          "value": "10 seconds"
+        },
+        {
+          "name": "writes per second",
+          "value": "100,000"
+        },
+        {
+          "name": "threshold",
+          "value": "1,000,000 followers"
+        },
+        {
+          "name": "back to push",
+          "value": "below 800,000"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Reading a hybrid feed",
+    "body": "A user follows **300 accounts**; **6** of them have more than 1,000,000 followers. Opening the feed reads the user's cached feed, which already holds the posts of the 294 ordinary accounts, plus the recent posts of each of the 6 large accounts. The feed service merges them by time, drops duplicates and unfollowed accounts, and fetches the newest 20 posts in one batch. The lookups run in parallel, so the page stays within 200 ms. How many lookups does this feed open need?",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "App",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Post service",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Posts store",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "queue",
+            "label": "Fan-out queue",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Fan-out workers",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Follow graph",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Feed cache",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Feed service",
+            "x": 5,
+            "y": 8,
+            "note": "merge by time"
+          },
+          {
+            "kind": "cache",
+            "label": "Large posts",
+            "x": 9,
+            "y": 8,
+            "note": "6 accounts"
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [1, 3],
+          [3, 4],
+          [4, 5],
+          [4, 6],
+          [0, 7],
+          [7, 6],
+          [7, 8],
+          [7, 2]
+        ],
+        "path": [0, 7, 6],
+        "flows": [
+          {
+            "path": [7, 8]
+          },
+          {
+            "path": [7, 2]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "accounts followed",
+          "value": "300"
+        },
+        {
+          "name": "large accounts",
+          "value": "6"
+        },
+        {
+          "name": "lookups",
+          "value": "7"
+        }
+      ],
+      "predict": {
+        "question": "With the hybrid design, a user follows 300 accounts, 6 of them above the threshold. How many feed lookups does one feed open need, before fetching the posts' content?",
+        "options": ["1", "7", "300", "306"],
+        "answer": 1,
+        "explanation": "One lookup for the cached feed, which already holds the 294 ordinary accounts' posts, plus one for each of the 6 large accounts: 7 in total, instead of 300 with pure pull.",
+        "hides": ["lookups"]
+      }
+    }
+  },
+  {
+    "title": "Edge cases",
+    "body": "**Inactive followers:** pushing to users who have not opened the app in 30 days wastes writes; skip them and build their feed by pulling when they return, at the cost of a slower first load. **A new follow:** copy the followed account's latest few post IDs into the feed at once, so the next open shows them. **Unfollows and deleted posts:** the feed service filters them out when reading, so the cache can be cleaned later. **An account crossing the threshold:** posts already pushed stay; the merge drops duplicates by post ID.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "App",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Post service",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Posts store",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "queue",
+            "label": "Fan-out queue",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Fan-out workers",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Follow graph",
+            "x": 10,
+            "y": 5,
+            "note": "skip inactive users"
+          },
+          {
+            "kind": "cache",
+            "label": "Feed cache",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Feed service",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "cache",
+            "label": "Large posts",
+            "x": 9,
+            "y": 8
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [1, 3],
+          [3, 4],
+          [4, 5],
+          [4, 6],
+          [0, 7],
+          [7, 6],
+          [7, 8],
+          [7, 2]
+        ],
+        "path": [4, 5],
+        "flows": [
+          {
+            "path": [4, 6]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "inactive",
+          "value": "skip, pull on return"
+        },
+        {
+          "name": "new follow",
+          "value": "copy a few recent IDs"
+        },
+        {
+          "name": "unfollow, delete",
+          "value": "filter when reading"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Failures and summary",
+    "body": "**Fan-out backlog:** if workers fall behind, posts wait in the queue and feeds are older, but reading still works; alert when the oldest queued post is close to the 10-second target. **A cache node fails:** its replica takes over (N3); if both copies are lost, affected feeds are rebuilt by pulling from the posts store at each user's next open. **Summary:** F1 and F2 by the post and feed services; N1 by pushing only below 1,000,000 followers, at most 10 seconds per post; N2 by one cached feed plus a few large accounts, read in parallel; N3 by cache replicas and rebuilding by pull.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "App",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "server",
+            "label": "Post service",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "db",
+            "label": "Posts store",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "queue",
+            "label": "Fan-out queue",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Fan-out workers",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "db",
+            "label": "Follow graph",
+            "x": 10,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Feed cache",
+            "x": 10,
+            "y": 0,
+            "note": "replica takes over",
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Feed service",
+            "x": 5,
+            "y": 8
+          },
+          {
+            "kind": "cache",
+            "label": "Large posts",
+            "x": 9,
+            "y": 8
+          }
+        ],
+        "links": [
+          [0, 1],
+          [1, 2],
+          [1, 3],
+          [3, 4],
+          [4, 5],
+          [4, 6],
+          [0, 7],
+          [7, 6],
+          [7, 8],
+          [7, 2]
+        ],
+        "path": [0, 7, 6],
+        "flows": [
+          {
+            "path": [7, 2]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "backlog",
+          "value": "older feeds, reads work"
+        },
+        {
+          "name": "cache node lost",
+          "value": "replica, then rebuild by pull"
+        },
+        {
+          "name": "N1",
+          "value": "push only up to 1 M followers"
+        },
+        {
+          "name": "N2",
+          "value": "1 + large accounts, in parallel"
+        }
+      ]
+    }
+  }
+]
