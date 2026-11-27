@@ -1,0 +1,866 @@
+[
+  {
+    "title": "Yêu cầu và ước lượng",
+    "body": "Public API có 1 triệu API key và 20 server, tối đa 50,000 request mỗi giây cao điểm. Yêu cầu: (F1) mỗi key được **100 request mỗi phút**, gửi tối đa **20 cùng lúc** sau lúc yên; (F2) từ chối trả 429 với Retry-After; (N1) limiter thêm tối đa 2 ms; (N2) giới hạn giữ bất kể phân bố request. Ước lượng: một kiểm tra mỗi request, **50,000 lời gọi store mỗi giây**; khoảng 100 byte mỗi key, **100 MB** cho một triệu key.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Client",
+            "x": 0,
+            "y": 8,
+            "note": "1 M API key"
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Service",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "vars": [
+        {
+          "name": "limit",
+          "value": "100 mỗi phút mỗi key"
+        },
+        {
+          "name": "burst",
+          "value": "tối đa 20 cùng lúc"
+        },
+        {
+          "name": "checks",
+          "value": "50,000 mỗi giây"
+        },
+        {
+          "name": "memory",
+          "value": "khoảng 100 MB"
+        },
+        {
+          "name": "added time",
+          "value": "tối đa 2 ms"
+        }
+      ]
+    }
+  },
+  {
+    "title": "API, dữ liệu và thiết kế",
+    "body": "**API:** mỗi API server gọi `allow(key)` trước khi xử lý; từ chối trả 429 và `Retry-After` với số giây tới token tiếp. **Data model:** mỗi key trong shared in-memory store có token còn, thời điểm nạp cuối, hết hạn vài phút sau request cuối của key. **High-level design:** client → load balancer → API server, tất cả kiểm tra chung **limit store**, có replica.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Client",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7,
+            "note": "token, lần nạp cuối"
+          },
+          {
+            "kind": "cache",
+            "label": "Replica store",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Service",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "check",
+          "value": "allow(key)"
+        },
+        {
+          "name": "refused",
+          "value": "429 + Retry-After"
+        },
+        {
+          "name": "per key",
+          "value": "token, thời điểm nạp cuối"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Đếm theo phút",
+    "body": "Cách đơn giản nhất là **fixed window**: counter mỗi key mỗi phút, đặt lại đầu phút. Nhưng client gửi 100 request lúc 0:59.9, thêm 100 lúc 1:00.0: **200 request trong khoảng một giây**, gấp đôi giới hạn. Cam kết “tối đa 100 trong bất kỳ phút nào” thì fixed window vi phạm mỗi ranh giới.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Client",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "counter mỗi phút"
+          },
+          {
+            "kind": "server",
+            "label": "Service",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "limit",
+          "value": "100 mỗi phút"
+        },
+        {
+          "name": "at 0:59.9",
+          "value": "100 request"
+        },
+        {
+          "name": "at 1:00.0",
+          "value": "100 request"
+        },
+        {
+          "name": "in about a second",
+          "value": "200 request"
+        }
+      ],
+      "predict": {
+        "question": "Fixed window cho 100 request mỗi key mỗi phút theo đồng hồ. Tối đa bao nhiêu request một key lọt qua trong khoảng một giây?",
+        "options": [
+          "100",
+          "101",
+          "200",
+          "6,000"
+        ],
+        "answer": 2,
+        "explanation": "Key gửi 100 cuối phút, 100 ngay đầu phút sau. Counter mỗi phút cho 100 nên 200 qua trong khoảng một giây. Sliding window hoặc token bucket tránh điều này.",
+        "hides": [
+          "in about a second"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Thùng token",
+    "body": "**Token bucket** cho mỗi key thùng chứa **20 token**, nạp 100 mỗi phút, khoảng 1.67 mỗi giây. Mỗi request lấy token; thùng rỗng trả 429. Sau lúc yên thùng đầy, tối đa 20 request qua cùng lúc, sau đó khoảng 1.67 mỗi giây. Chỉ cần hai số mỗi key: token còn, thời điểm nạp cuối.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Client",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "chứa 20"
+          },
+          {
+            "kind": "server",
+            "label": "Service",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2
+        ]
+      },
+      "vars": [
+        {
+          "name": "room",
+          "value": "20 token"
+        },
+        {
+          "name": "refill",
+          "value": "100 mỗi phút"
+        },
+        {
+          "name": "idle for 10 minutes, then sends",
+          "value": "50 cùng lúc"
+        },
+        {
+          "name": "pass at once",
+          "value": "20"
+        }
+      ],
+      "predict": {
+        "question": "Thùng của key chứa tối đa 20 token, nạp 100 mỗi phút. Key yên 10 phút rồi gửi 50 request cùng lúc. Bao nhiêu qua ngay?",
+        "options": [
+          "0",
+          "20",
+          "50",
+          "100"
+        ],
+        "answer": 1,
+        "explanation": "Thùng nạp khi yên nhưng không chứa hơn 20 token, nên 20 request qua, 30 còn lại nhận 429. Sau đó khoảng 1.67 token tới mỗi giây.",
+        "hides": [
+          "pass at once"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Hai server, một token",
+    "body": "Giả sử mỗi server **đọc** token của key, quyết định rồi **ghi** giá trị mới. Hai server cùng đọc “còn 1 token”, cùng cho request qua, cùng ghi 0: **hai** request qua bằng một token, không có lỗi báo. Cách sửa là một bước **atomic** trong store: script nhỏ nạp theo thời gian đã qua, lấy token nếu có, lưu kết quả. Không request nào chen giữa nên chỉ một trong hai nhận token cuối.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Client",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "đọc 1 token"
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5,
+            "note": "đọc 1 token"
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7,
+            "state": "hot"
+          },
+          {
+            "kind": "cache",
+            "label": "Replica store",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Service",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          2,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "tokens left",
+          "value": "1"
+        },
+        {
+          "name": "server 1",
+          "value": "đọc 1, cho qua"
+        },
+        {
+          "name": "server 2",
+          "value": "đọc 1, cho qua"
+        },
+        {
+          "name": "requests through",
+          "value": "2"
+        }
+      ],
+      "predict": {
+        "question": "Key còn 1 token. Hai server cùng đọc, thấy 1, cho request qua rồi ghi 0. Bao nhiêu request đã qua?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "Tùy server nào ghi cuối"
+        ],
+        "answer": 2,
+        "explanation": "Cả hai quyết định từ cùng giá trị cũ, cùng cho request qua, lần ghi thứ hai chỉ lặp lần đầu. Một token dùng hai lần. Atomic script trong store biến đọc, quyết định và ghi thành một bước.",
+        "hides": [
+          "requests through"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Per-node hay global?",
+    "body": "Không shared store, mỗi server trong 20 server cho **100 ÷ 20 = 5** mỗi phút mỗi key. Không cần lời gọi thêm nhưng chỉ công bằng nếu request phân bố đều: client có kết nối ở một server được 5 thay vì 100; client trải cả 20 vẫn được 100. Số đếm **global** trong shared store giữ chính xác bất kể phân bố, tốn một lời gọi khoảng **1 ms**, trong budget 2 ms, 50,000 lời gọi mỗi giây trên store xử lý khoảng 100,000.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Client",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "cục bộ: 5 mỗi min"
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5,
+            "note": "cục bộ: 5 mỗi min"
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Replica store",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Service",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          3,
+          4
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "per node",
+          "value": "5 mỗi phút mỗi key trên mỗi server"
+        },
+        {
+          "name": "client on one server",
+          "value": "được 5, không phải 100"
+        },
+        {
+          "name": "global",
+          "value": "chính xác, một lời gọi 1 ms"
+        },
+        {
+          "name": "store load",
+          "value": "50,000 trong 100,000 mỗi giây"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Khi store ngừng hoạt động",
+    "body": "Bản chính store lỗi, replica tiếp quản khoảng 2 giây; token vừa lấy có thể mất, cho thêm vài request qua. Store không trả trong 5 ms, server coi không kết nối được, limiter phải chọn. **Fail-closed**, từ chối tất cả, biến sự cố store ngắn thành ngừng cả API. **Fail-open**, cho tất cả qua, không còn bảo vệ. Với API chung cho phép vài request dư khi sự cố, nhóm **fail open về per-node limit**: mỗi server cho 5 mỗi phút mỗi key đến khi store trở lại. Hành động tốn tiền mỗi lần như SMS trả phí có thể nên fail closed.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Client",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1,
+            "note": "fallback: 5 mỗi min"
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7,
+            "state": "down"
+          },
+          {
+            "kind": "cache",
+            "label": "Replica store",
+            "x": 10,
+            "y": 3,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Service",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              1,
+              3,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "store fails",
+          "value": "replica trong khoảng 2 s"
+        },
+        {
+          "name": "both unreachable",
+          "value": "fail open về per-node limit"
+        },
+        {
+          "name": "paid actions",
+          "value": "có thể fail closed"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Tổng kết",
+    "body": "Từng yêu cầu và cách đạt: burst 20 và 100 mỗi phút bằng **token bucket**; 429 với Retry-After cho request từ chối; giới hạn chính xác bất kể phân bố bằng số đếm **global, atomic** trong shared store; tối đa 2 ms bằng một lời gọi 1 ms; 50,000 kiểm tra mỗi giây ở nửa node store; sự cố bằng **fail open về per-node limit**, vì từ chối tất cả tệ hơn cho API chung.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "client",
+            "label": "Client",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "kind": "lb",
+            "label": "Load balancer",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "API server 1",
+            "x": 5,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "API server 2",
+            "x": 6,
+            "y": 5
+          },
+          {
+            "kind": "cache",
+            "label": "Limit store",
+            "x": 9,
+            "y": 7
+          },
+          {
+            "kind": "cache",
+            "label": "Replica store",
+            "x": 10,
+            "y": 3
+          },
+          {
+            "kind": "server",
+            "label": "Service",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            3,
+            6
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          4,
+          5
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "rule",
+          "value": "token bucket, 20 và 100/min"
+        },
+        {
+          "name": "exact",
+          "value": "global và atomic"
+        },
+        {
+          "name": "cost",
+          "value": "1 ms, 50,000 calls/s"
+        },
+        {
+          "name": "store down",
+          "value": "fail open về 5/min/server"
+        }
+      ]
+    }
+  }
+]
