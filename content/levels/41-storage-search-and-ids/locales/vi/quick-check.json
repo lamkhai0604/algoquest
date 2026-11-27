@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Phần A. App mạng xã hội lưu ảnh hồ sơ 3 MB cùng chủ sở hữu và thời gian upload của từng ảnh. Mỗi phần nên nằm ở đâu?",
+    "options": [
+      "Byte ảnh trong object storage theo key; chủ sở hữu, thời gian upload và key trong database",
+      "Tất cả, cả byte, trong một dòng database",
+      "Tất cả trong object storage, không có dòng database",
+      "Byte trên đĩa riêng của từng app server"
+    ],
+    "answer": 0,
+    "explanation": "Object storage dành cho file lớn ghi toàn bộ, giữ bản sao với chi phí thấp; database dành cho thông tin nhỏ cần query, như mọi ảnh của một chủ sở hữu. Byte trong database làm nó lớn và backup chậm, file trên đĩa một server biến mất cùng server ấy."
+  },
+  {
+    "question": "Phần B. Vì sao database index thông thường trên cột description không tăng tốc WHERE description LIKE '%shoe%'?",
+    "options": [
+      "Vì từ có thể ở bất kỳ đâu trong văn bản, còn index thường sắp theo phần đầu của cả văn bản",
+      "Vì LIKE không thuộc SQL",
+      "Vì bảng quá ít dòng để index có tác dụng",
+      "Vì index chỉ hoạt động với số"
+    ],
+    "answer": 0,
+    "explanation": "Index thường (SD 4) sắp theo đầu giá trị nên giúp tìm “bắt đầu bằng shoe”, không giúp “chứa shoe ở đâu đó”. Database phải đọc mọi mô tả. Inverted index liệt kê các dòng chứa mỗi từ."
+  },
+  {
+    "question": "Phần C. Đơn được tạo trên 6 database shard mà không hỏi bộ đếm trung tâm; danh sách phải hiện mới nhất trước chỉ bằng sắp theo order ID, không có cột thời gian riêng. Loại ID nào phù hợp?",
+    "options": [
+      "Số auto-increment trên mỗi shard",
+      "UUID ngẫu nhiên (version 4)",
+      "Time-ordered ID gồm thời gian, số máy và bộ đếm",
+      "Địa chỉ email khách hàng"
+    ],
+    "answer": 2,
+    "explanation": "Mỗi server tự tạo time-ordered ID, số máy tránh trùng, ID mới lớn hơn nên mới nhất trước chỉ là sắp đơn giản. Auto-increment trùng qua shard, chỉ sắp UUID ngẫu nhiên không cho thứ tự thời gian, email không duy nhất cho mỗi đơn."
+  }
+]
