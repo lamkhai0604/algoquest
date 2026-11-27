@@ -1,0 +1,1053 @@
+[
+  {
+    "title": "Yêu cầu",
+    "body": "App mua sắm 50 triệu người dùng gửi push, email, SMS. Yêu cầu: (F1) thông báo event như “đơn đã giao đi”, mã đăng nhập; (F2) campaign quảng cáo tới 10 triệu email; (F3) tôn trọng opt-out, quiet hours lúc gửi, cả retry, fallback. (N1) Cập nhật đơn bàn giao provider trong 1 phút, mã đăng nhập trong 30 giây, kể cả khi campaign chạy; (N2) không vượt quota provider; (N3) notification tới người dùng tối đa một lần mỗi channel, fallback chỉ sau channel đầu chắc chắn thất bại. Mã đăng nhập là ngoại lệ đã nêu: mã trùng hiếm tốt hơn thiếu mã.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi",
+            "x": 8,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0,
+            "note": "1,000 mỗi giây"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "users",
+          "value": "50 triệu"
+        },
+        {
+          "name": "transactional",
+          "value": "20 triệu mỗi ngày"
+        },
+        {
+          "name": "campaign",
+          "value": "tối đa 10 triệu email"
+        },
+        {
+          "name": "order updates",
+          "value": "trong 1 phút"
+        },
+        {
+          "name": "login codes",
+          "value": "trong 30 giây"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Campaign mất bao lâu?",
+    "body": "Email provider nhận **1,000 email mỗi giây**. Campaign 10 triệu email mất 10,000,000 ÷ 1,000 = **10,000 giây, khoảng 2.8 giờ**, dù mọi việc khác tức thì. Transactional traffic khoảng 20 triệu mỗi ngày, trung bình 230 mỗi giây. Dùng chung queue thì mọi email “đơn đã giao đi” chờ sau campaign tối đa 2.8 giờ.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1,
+            "note": "10 M email",
+            "state": "hot"
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi",
+            "x": 8,
+            "y": 5
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "campaign",
+          "value": "10 triệu email"
+        },
+        {
+          "name": "quota",
+          "value": "1,000 mỗi giây"
+        },
+        {
+          "name": "campaign takes",
+          "value": "khoảng 2.8 giờ"
+        },
+        {
+          "name": "transactional",
+          "value": "khoảng 230 mỗi giây"
+        }
+      ],
+      "predict": {
+        "question": "Campaign gửi 10 triệu email qua provider nhận 1,000 email mỗi giây. Mất khoảng bao lâu?",
+        "options": [
+          "Khoảng 17 phút",
+          "Khoảng 2.8 giờ",
+          "Khoảng 28 giờ",
+          "Khoảng 10 giây"
+        ],
+        "answer": 1,
+        "explanation": "10,000,000 ÷ 1,000 = 10,000 giây, 10,000 ÷ 3,600 ≈ 2.8 giờ. Email chờ sau campaign cùng queue chờ lâu như vậy.",
+        "hides": [
+          "campaign takes"
+        ]
+      }
+    }
+  },
+  {
+    "title": "API, dữ liệu và thiết kế",
+    "body": "**API:** service gọi `notify(eventId, userId, type)`; người dùng đổi cài đặt qua preferences API. **Dữ liệu:** preference mỗi user, channel, category, quiet hours, múi giờ; **notification ID** (event, user), `attempts(notification ID, channel)` làm primary key cùng state: claimed, sent, delivered hoặc failed; device token, địa chỉ. **High-level design:** event tới queue at-least-once; worker biến mỗi event thành message trên queue mỗi channel và priority; **sender**, có pacer mỗi provider, lấy message sau khi chờ queue, nhận quyền attempt, đọc preference rồi gửi.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 6,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi",
+            "x": 8,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Attempt",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Tùy chọn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Push service",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            8
+          ],
+          [
+            5,
+            9
+          ]
+        ],
+        "path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          8
+        ],
+        "flows": [
+          {
+            "path": [
+              2,
+              4,
+              5,
+              9
+            ]
+          },
+          {
+            "path": [
+              5,
+              7
+            ]
+          },
+          {
+            "path": [
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "API",
+          "value": "notify(eventId, userId, type)"
+        },
+        {
+          "name": "attempts",
+          "value": "notification ID, channel, state"
+        },
+        {
+          "name": "queues",
+          "value": "theo channel và priority"
+        },
+        {
+          "name": "senders",
+          "value": "pacer, nhận quyền, preference, gửi"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Quota và priority",
+    "body": "Email pacer gửi tối đa **1,000 mỗi giây**, tính retry (SD 17). Luôn lấy transactional trước, giữ **200 mỗi giây**; campaign dùng 800 còn lại, khoảng 10,000,000 ÷ 800 = 12,500 giây, khoảng 3.5 giờ, thêm chút khi retry. Transactional email cao điểm khoảng **150 mỗi giây**, gồm retry, dưới phần giữ 200 nên queue không tích tụ, mỗi message bàn giao provider trong vài giây. Transactional ít thì campaign dùng phần dư.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1,
+            "note": "khẩn trước"
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi",
+            "x": 8,
+            "y": 5,
+            "note": "≤ 1,000 mỗi giây"
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "path": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "quota",
+          "value": "1,000 mỗi giây"
+        },
+        {
+          "name": "kept for transactional",
+          "value": "200 mỗi giây"
+        },
+        {
+          "name": "transactional peak",
+          "value": "khoảng 150 mỗi giây"
+        },
+        {
+          "name": "campaign",
+          "value": "800 mỗi giây, khoảng 3.5 giờ"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Cùng event hai lần",
+    "body": "Event queue giao ít nhất một lần, nên “đơn 123 đã giao đi” có thể tới hai worker, hai bản email vào email queue. Không kiểm tra thì mỗi bản được gửi: người dùng nhận **hai**. Thay vào đó sender insert attempt (order123:u42, email) vào `attempts` ở claimed trước. Primary key nhận insert đầu, từ chối thứ hai, chỉ gửi một bản. Attempt giữ 7 ngày; event queue giao lại tối đa 2 ngày, worker bỏ event cũ hơn nên không cần key sau hết hạn. Khoảng 3 GB attempt mỗi ngày.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4,
+            "note": "giao hai lần"
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 6,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi",
+            "x": 8,
+            "y": 5
+          },
+          {
+            "kind": "db",
+            "label": "Attempt",
+            "x": 3,
+            "y": 0,
+            "note": "order123:u42:email"
+          },
+          {
+            "kind": "db",
+            "label": "Tùy chọn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Push service",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            8
+          ],
+          [
+            5,
+            9
+          ]
+        ],
+        "path": [
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              8
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "event",
+          "value": "đơn 123 đã giao đi"
+        },
+        {
+          "name": "deliveries",
+          "value": "2"
+        },
+        {
+          "name": "emails without a key",
+          "value": "2"
+        },
+        {
+          "name": "with the key",
+          "value": "1"
+        }
+      ],
+      "predict": {
+        "question": "“Đơn 123 đã giao đi” được event queue giao hai lần, không có gì deduplicate message. Khách nhận bao nhiêu email?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "Tùy quota email provider"
+        ],
+        "answer": 2,
+        "explanation": "Mỗi lượt giao như event mới với worker nhận nó, nên mỗi lượt xếp một email, mỗi email được gửi. Nhận quyền attempt dưới primary key trước gửi chỉ cho bản đầu qua.",
+        "hides": [
+          "emails without a key",
+          "with the key"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Crash sau gửi",
+    "body": "Sender nhận quyền email attempt, gửi rồi crash trước đánh dấu sent. Message giao lại, attempt vẫn “claimed”, không ai biết provider nhận email chưa. **Gửi lại** có thể tới hai lần; **không gửi** có thể không nhận gì. Email provider nhận **idempotency key**, bỏ bản lặp cùng key trong 24 giờ: retry dùng attempt key, provider bỏ bản trùng. Push không có key đó, push claimed không bao giờ gửi lại: bỏ lỡ hiếm. Mã SMS đăng nhập gửi trước, ghi sau, chọn trùng hiếm, ngoại lệ đã nêu, vì thiếu mã khiến người dùng không đăng nhập được.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi",
+            "x": 8,
+            "y": 5,
+            "state": "down"
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0,
+            "note": "trùng key: bỏ qua"
+          },
+          {
+            "kind": "db",
+            "label": "Attempt",
+            "x": 3,
+            "y": 0,
+            "note": "trạng thái: claimed"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ]
+        ],
+        "path": [
+          3,
+          4,
+          5
+        ]
+      },
+      "vars": [
+        {
+          "name": "email",
+          "value": "retry cùng provider key"
+        },
+        {
+          "name": "push",
+          "value": "không retry: có thể bỏ lỡ hiếm"
+        },
+        {
+          "name": "SMS login code",
+          "value": "gửi trước: có thể trùng hiếm"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Preference lúc gửi",
+    "body": "Campaign vào queue lúc 11 a.m., đến message người dùng lúc 2 p.m. Người dùng hủy quảng cáo lúc trưa. Nếu preference kiểm tra khi campaign **vào queue**, email vẫn đi lúc 2 p.m. Kiểm tra quyết định nằm ở **sender**, sau thời gian chờ queue, ngay trước mỗi attempt và retry; worker có thể lọc trước nhưng chỉ để tiết kiệm công việc. Quiet hours không bỏ quảng cáo: sender đưa vào delay queue tới sáng theo múi giờ người dùng, kiểm tra lại khi đó.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 6,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi",
+            "x": 8,
+            "y": 5,
+            "note": "kiểm tra lúc 2 p.m."
+          },
+          {
+            "kind": "db",
+            "label": "Attempt",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Tùy chọn",
+            "x": 3,
+            "y": 8,
+            "note": "từ chối lúc trưa"
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Push service",
+            "x": 10,
+            "y": 7
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            8
+          ],
+          [
+            5,
+            9
+          ]
+        ],
+        "path": [
+          3,
+          5,
+          7
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              8
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "queued",
+          "value": "11 a.m."
+        },
+        {
+          "name": "unsubscribed",
+          "value": "trưa"
+        },
+        {
+          "name": "sent at",
+          "value": "2 p.m."
+        },
+        {
+          "name": "checked when queued",
+          "value": "email được gửi"
+        },
+        {
+          "name": "checked when sending",
+          "value": "không email"
+        }
+      ],
+      "predict": {
+        "question": "Quảng cáo vào queue lúc 11 a.m., gửi lúc 2 p.m. Người dùng hủy lúc trưa. Preference chỉ kiểm tra khi campaign vào queue. Người dùng có nhận email không?",
+        "options": [
+          "Không, hủy luôn thắng",
+          "Có, vì kiểm tra trước trưa",
+          "Chỉ khi đang quiet hours",
+          "Chỉ khi retry"
+        ],
+        "answer": 1,
+        "explanation": "Lúc 11 a.m. người dùng còn đăng ký, message qua kiểm tra rồi chờ queue. Không có gì xem lại lúc 2 p.m. Sender kiểm tra preference ngay trước mỗi attempt tôn trọng việc hủy lúc trưa.",
+        "hides": [
+          "checked when queued",
+          "checked when sending"
+        ]
+      }
+    }
+  },
+  {
+    "title": "Fallback, lỗi, tổng kết",
+    "body": "Push cập nhật đơn được báo failed vì device token điện thoại không còn hợp lệ, người dùng cho phép email cập nhật đơn. Notification ID giữ nguyên: fallback nhận quyền attempt (ID, email) một lần rồi gửi. Fallback job thứ hai không nhận quyền được nên không gửi. Push đã giao hoặc chưa nhận báo cáo thì không email. Email provider ngừng, message backoff có jitter tối đa một giờ rồi dead-letter queue. **Tổng kết:** priority, quota dự trữ cho N1; pacer tính retry cho N2; một attempt mỗi channel dưới notification ID chung, fallback chỉ khi lỗi chắc chắn, provider key email cho N3; sender kiểm tra preference mỗi attempt cho F3.",
+    "visual": {
+      "cells": [],
+      "arch": {
+        "nodes": [
+          {
+            "kind": "server",
+            "label": "Order service",
+            "x": 0,
+            "y": 7
+          },
+          {
+            "kind": "queue",
+            "label": "Event queue",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "kind": "server",
+            "label": "Worker",
+            "x": 5,
+            "y": 4
+          },
+          {
+            "kind": "queue",
+            "label": "Email queue",
+            "x": 7,
+            "y": 1
+          },
+          {
+            "kind": "queue",
+            "label": "Push queue",
+            "x": 6,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Bên gửi",
+            "x": 8,
+            "y": 5,
+            "note": "claim email một lần"
+          },
+          {
+            "kind": "db",
+            "label": "Attempt",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "kind": "db",
+            "label": "Tùy chọn",
+            "x": 3,
+            "y": 8
+          },
+          {
+            "kind": "server",
+            "label": "Email provider",
+            "x": 10,
+            "y": 0
+          },
+          {
+            "kind": "server",
+            "label": "Push service",
+            "x": 10,
+            "y": 7,
+            "state": "down"
+          }
+        ],
+        "links": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            8
+          ],
+          [
+            5,
+            9
+          ]
+        ],
+        "path": [
+          2,
+          4,
+          5,
+          9
+        ],
+        "flows": [
+          {
+            "path": [
+              5,
+              8
+            ]
+          },
+          {
+            "path": [
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      "vars": [
+        {
+          "name": "push failed",
+          "value": "email nếu được phép, nhận quyền một lần"
+        },
+        {
+          "name": "push delivered",
+          "value": "không email"
+        },
+        {
+          "name": "provider down",
+          "value": "backoff, rồi dead-letter"
+        },
+        {
+          "name": "N1",
+          "value": "priority, giữ 200/s"
+        },
+        {
+          "name": "N3",
+          "value": "một attempt mỗi channel"
+        }
+      ]
+    }
+  }
+]
