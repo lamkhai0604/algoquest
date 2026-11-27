@@ -1,0 +1,11 @@
+{
+  "question": "Văn phòng cấp thẻ khách ở quầy lễ tân. Cửa phòng server mở với mọi thẻ. Có gì sai?",
+  "options": [
+    "Cửa phòng server phải kiểm tra thẻ này được vào phòng đó không",
+    "Lễ tân nên kiểm tra giấy tờ chậm hơn",
+    "Khách nên được cấp thẻ thiết kế đẹp hơn",
+    "Tòa nhà nên có thêm quầy lễ tân"
+  ],
+  "answer": 0,
+  "explanation": "Lễ tân kiểm tra bạn là ai (authentication), nhưng mỗi cửa vẫn phải kiểm tra bạn được vào không (authorization). Cửa nhận mọi thẻ cho mọi khách vào phòng server, như API chỉ kiểm tra “đã đăng nhập” cho mọi người đọc mọi đơn."
+}
