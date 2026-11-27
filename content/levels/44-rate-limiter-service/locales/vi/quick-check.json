@@ -1,0 +1,35 @@
+[
+  {
+    "question": "API cho mỗi client gửi tối đa 20 request cùng lúc sau lúc yên, nhưng không quá 100 mỗi phút về dài hạn. Quy tắc nào phù hợp nhất?",
+    "options": [
+      "Token bucket chứa 20 token, nạp 100 mỗi phút",
+      "Fixed window 100 mỗi phút theo đồng hồ",
+      "Fixed window 20 mỗi phút",
+      "Sliding log 20 mỗi giây"
+    ],
+    "answer": 0,
+    "explanation": "Thùng chứa 20 cho burst; nạp 100 mỗi phút đặt tốc độ dài hạn. Fixed window 100 mỗi phút cho 200 trong một giây qua ranh giới; 20 mỗi phút thấp hơn nhiều tốc độ dài hạn."
+  },
+  {
+    "question": "Hai mươi API server dùng chung số đếm mỗi client trong store. Mỗi server đọc, kiểm tra rồi ghi count + 1. Điều gì sai khi tới giới hạn?",
+    "options": [
+      "Nhiều server cùng đọc số đếm, cùng cho request qua, vượt giới hạn",
+      "Không có gì: lần ghi cuối luôn thắng đúng",
+      "Store từ chối mọi lần ghi",
+      "Client bị từ chối quá sớm"
+    ],
+    "answer": 0,
+    "explanation": "Giữa lần đọc và ghi của server, server khác đọc cùng giá trị cũ và cùng thấy còn chỗ. Mỗi bên cho request qua nên vượt giới hạn không báo lỗi. Atomic increment hoặc script trong store thực hiện đọc, kiểm tra, ghi trong một bước."
+  },
+  {
+    "question": "Shared store của rate limiter ngừng hoạt động. Hành động bị giới hạn là gửi SMS trả phí, nhà mạng chặn cả tài khoản nếu nhận quá nhiều. Limiter nên làm gì?",
+    "options": [
+      "Fail closed: từ chối nhanh lượt gửi mới bằng 429 đến khi store trở lại",
+      "Fail open: cho mọi lượt gửi qua",
+      "Chọn cho qua hoặc từ chối ngẫu nhiên",
+      "Chờ store bao lâu cũng được"
+    ],
+    "answer": 0,
+    "explanation": "Mỗi tin dư tốn tiền, vượt giới hạn nhà mạng chặn mọi khách trong một giờ, nên cho tất cả qua là sai lầm tốn kém. Từ chối nhanh lượt gửi mới giữ hậu quả nhỏ; chờ store khiến mọi request treo."
+  }
+]

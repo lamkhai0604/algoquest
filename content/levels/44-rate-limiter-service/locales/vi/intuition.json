@@ -1,0 +1,11 @@
+{
+  "question": "Bảo tàng cho tối đa 100 khách mỗi giờ, nhưng nhóm tới 20 người được vào cùng nhau sau lúc vắng. Quy tắc vé nào phù hợp?",
+  "options": [
+    "Lọ tối đa 20 vé, thêm một vé mỗi 36 giây",
+    "100 vé đặt lại đúng đầu giờ",
+    "Mỗi khách một vé, chỉ thêm lại khi khách ra",
+    "Không vé, bảo vệ quyết định theo độ đông"
+  ],
+  "answer": 0,
+  "explanation": "Lọ 20 cho nhóm vào cùng lúc sau lúc vắng; thêm một vé mỗi 36 giây tạo 100 mỗi giờ về dài hạn: token bucket. Vé đặt lại đầu giờ cho 100 vào 10:59 và thêm 100 lúc 11:00."
+}
