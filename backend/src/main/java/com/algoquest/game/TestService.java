@@ -97,7 +97,18 @@ public class TestService {
           StoredTest running = tests.running(userId).orElse(null);
           if (running != null) {
             if (running.level() != level) {
-              throw conflict("Finish your Level " + running.level() + " test first.");
+              String blockingTitle =
+                  catalog.level(running.level())
+                      .map(levelContent -> levelContent.info().title())
+                      .orElse("Level " + running.level());
+              throw new ApiException(
+                  HttpStatus.CONFLICT,
+                  "Conflict",
+                  "Finish your Level " + running.level() + " test first.",
+                  Map.of(
+                      "blockingTestId", running.id().toString(),
+                      "blockingLevel", running.level(),
+                      "blockingLevelName", blockingTitle));
             }
             return view(running);
           }
