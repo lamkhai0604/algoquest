@@ -19,3 +19,8 @@ export function levelLabel(number: number): string {
     ? levelShort(number)
     : `Level ${number}`;
 }
+
+/** System Design levels have no level-up test (D-092). */
+export function hasLevelTest(number: number): boolean {
+  return number < FIRST_SYSTEM_DESIGN_LEVEL;
+}

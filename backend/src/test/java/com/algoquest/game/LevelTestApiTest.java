@@ -124,6 +124,11 @@ class LevelTestApiTest {
   }
 
   @Test
+  void aSystemDesignLevelHasNoTest() throws Exception {
+    mvc.perform(post("/api/v1/levels/28/tests").with(player)).andExpect(status().isNotFound());
+  }
+
+  @Test
   void aStartedTestHasThreeProblemsAndATwoHourClock() throws Exception {
     fillTheBar();
     String test = start();

@@ -18,6 +18,14 @@ public final class LevelRules {
   public static final int FIRST_SYSTEM_DESIGN_LEVEL = 28;
 
   /**
+   * Whether a level has a level-up test. System Design levels have none, so the test card and the
+   * test start are limited to the algorithm levels (D-092).
+   */
+  public static boolean hasLevelTest(int level) {
+    return level < FIRST_SYSTEM_DESIGN_LEVEL;
+  }
+
+  /**
    * Whether a level is open to every player from the start: Level 1 and every System Design level
    * (D-083, D-084).
    */

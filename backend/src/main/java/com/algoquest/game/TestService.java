@@ -122,7 +122,7 @@ public class TestService {
             return view(running);
           }
           LevelContent content = catalog.level(level).orElse(null);
-          if (content == null || !content.available()) {
+          if (!LevelRules.hasLevelTest(level) || content == null || !content.available()) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Not Found", "This level has no test.");
           }
           if (game.state(userId, level) == LevelState.LOCKED) {
