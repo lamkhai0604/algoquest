@@ -29,7 +29,7 @@ import type { Block } from "./parseMarkdown";
 import { QuickCheck } from "./QuickCheck";
 import type { Lesson } from "./types";
 import { Walkthrough } from "./Walkthrough";
-import { levelLabel } from "../game/levelLabel";
+import { hasLevelTest, levelLabel } from "../game/levelLabel";
 
 /** The five learner steps; the lesson text's sections are shared among them. */
 const STEPS = [
@@ -268,11 +268,13 @@ function PracticeStep({ level }: { level: number }) {
                 ? t("lessonMore.practiceOpen")
                 : `${t("lessonMore.practiceOpens")} ${practiceAt} XP.`}
             </li>
-            <li>
-              {info.testOpen
-                ? t("lessonMore.testOpen")
-                : t("lessonMore.testLocked")}
-            </li>
+            {hasLevelTest(level) && (
+              <li>
+                {info.testOpen
+                  ? t("lessonMore.testOpen")
+                  : t("lessonMore.testLocked")}
+              </li>
+            )}
           </ul>
         )}
       </div>

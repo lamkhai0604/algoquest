@@ -103,7 +103,7 @@ public class GameService {
               LevelRules.barXp(current, xp, number),
               XpRules.levelTarget(current, number),
               all || LevelRules.practiceOpen(current, xp, number),
-              all || LevelRules.testOpen(current, xp, number),
+              LevelRules.hasLevelTest(number) && (all || LevelRules.testOpen(current, xp, number)),
               playable,
               solved,
               best.get(number)));

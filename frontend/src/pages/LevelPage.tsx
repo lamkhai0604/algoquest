@@ -19,7 +19,7 @@ import game from "./Game.module.css";
 import { LevelNotes } from "../notes/LevelNotes";
 import { useCanKeepNotes } from "../notes/useCanKeepNotes";
 import styles from "./Pages.module.css";
-import { levelLabel } from "../game/levelLabel";
+import { hasLevelTest, levelLabel } from "../game/levelLabel";
 
 function ProblemStatus({ problem }: { problem: ProblemItem }) {
   const { t } = useTranslation();
@@ -161,7 +161,7 @@ export function LevelPage() {
       {level && problems.state.status === "ready" && (
         <PracticeRound level={level} problems={problems.state.data} />
       )}
-      {level && <TestStartCard level={level} />}
+      {level && hasLevelTest(level.number) && <TestStartCard level={level} />}
       <section className={game.path}>
         <h2 className={game.sectionTitle}>{t("level.problems")}</h2>
         <p className={game.note}>
